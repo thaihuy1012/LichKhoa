@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.2 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 14/14 (chờ duyệt) · M3: 0/4 · M4: 0/6
-- Đang làm: Giai đoạn 3 — duyệt M2 (báo cáo `docs/bao-cao/M2.md`, soát chéo Gemini, Kiến trúc sư)
+- M1: 8/8 ✔ tag `M1-ok` · M2: 14/15 · M3: 0/4 · M4: 0/6
+- Đang làm: T-2.14 (sửa 4 lỗi soát chéo Gemini M2) → rồi Kiến trúc sư duyệt M2 (báo cáo `docs/bao-cao/M2.md` + `M2-soat-cheo.md`)
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
 - Chờ Chủ dự án: đặt thử ảnh mẫu 1284×2778 (đã gửi 2026-09-13) — có đè đồng hồ/widget/nút không? (không chặn; cần trước T-2.3)
@@ -290,6 +290,18 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Lệnh kiểm tra (thợ): `npx tsc --noEmit; npm run test` (không build/e2e — T-2.END chạy song song).
 - Nhật ký: 2026-09-14 lượt 1: DONE (buildWithBudget; +1 test, fail trên code cũ đã xác nhận; 129×2) — thợ dùng `git stash` khi T-2.END đang chạy (không mất gì, ghi BAI-HOC). Chờ T-2.END xong để kiem-thu + ảnh mẫu. → kiem-thu PASS (chung T-2.END) → ảnh agenda 15 mục: không còn tiêu đề mồ côi, "+8" đúng → commit.
 - Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
+
+### T-2.14 — Sửa 4 lỗi từ soát chéo M2 (Gemini, Quản lý đã kiểm chứng)
+- Nguồn: `docs/bao-cao/M2-soat-cheo.md` (4 mục, Quản lý xác nhận có thật trong mã; hạ về S3).
+- Phạm vi file: `src/core/model.ts` (normalizeState), `src/ui/store.ts` (moveTodo), `src/ui/screens/events/EventsTab.tsx`, `src/ui/screens/events/util.ts`, `src/ui/screens/events/TodosTab.tsx`, `src/ui/screens/Preview.tsx`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`; test: `tests/unit/model.test.ts`, `tests/unit/store.test.ts`, `tests/e2e/m2-i18n.spec.ts`, `tests/e2e/events.spec.ts` (mọi test cũ chỉ THÊM, không sửa).
+- Yêu cầu:
+  1. `normalizeState`: `device` hợp lệ (width/height số) nhưng thiếu/sai `safeTop`/`safeBottom`/`id`/`label` → bù từ mặc định (preset trùng kích thước nếu có trong `DEVICES`, không thì 0.30/0.14, id `'custom'`); không NaN khi render. (Đóng S4 tồn đọng T-1.7.)
+  2. Sự kiện qua đêm: Kết thúc < Bắt đầu → `durationMin = end − start + 1440`; bằng nhau/trống → không `durationMin`. Mở lại hiển thị đúng giờ kết thúc.
+  3. Preview: mọi nhãn còn cứng ("Thiết bị", "Tự phát hiện", "Tùy chỉnh", "Lưu ảnh", alt ảnh, nhãn ô tùy chỉnh, thông báo lỗi…) qua `t()`; khóa đã có thì dùng lại, thiếu thì thêm (vi = en). Rà thêm `App.tsx`/`screens/**` bằng grep chữ có dấu tiếng Việt ngoài `t()` và báo lại chỗ nào còn (chỉ sửa trong phạm vi; ngoài phạm vi thì liệt kê).
+  4. `moveTodo`: hoán đổi với việc KỀ BÊN theo đúng thứ tự hiển thị (`cmpTodo`), chỉ khi cùng nhóm (cùng `done`, cùng có/không `due`, nếu có `due` thì cùng ngày) — khác nhóm → không đổi. UI tắt (disabled) `todo-up`/`todo-down` khi thao tác sẽ không đổi gì. Kèm S4 tồn đọng T-2.12: ô `todo-due` trống có nhãn/gợi ý "Hạn" (aria-label + chữ nhỏ hoặc placeholder hiển thị được trên webkit).
+- Tiêu chí: [ ] model.test: device thiếu safe* → có số hợp lệ; [ ] store.test: moveTodo trong nhóm đổi, khác nhóm không đổi, không mutate; [ ] events.spec: sự kiện 23:00–01:00 lưu → mở lại Kết thúc 01:00; bấm `todo-down` trên việc không hạn cuối nhóm → disabled; [ ] m2-i18n: `en` → nút lưu ảnh và nhãn thiết bị tiếng Anh; [ ] `npm run check` pass; [ ] Quản lý chụp webkit tab Việc + Preview (en).
+- Lệnh kiểm tra: `npm run check`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ### T-2.END — Kiểm thử tích hợp M2
 - Phạm vi file: `tests/e2e/m2-events.spec.ts`, `tests/e2e/m2-i18n.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo — TRỪ `src/render/layout/agenda.ts` (T-2.13 song song đang sửa). Dùng đúng `data-testid` đã chốt ở T-2.7/2.9/2.12 (xem các phiếu đó + `tests/e2e/{events,notes,settings}.spec.ts`).
