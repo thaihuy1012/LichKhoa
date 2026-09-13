@@ -62,5 +62,6 @@ PHÁN QUYẾT: DUYỆT | SỬA | DỪNG — Lý do ≤ 5 dòng · Việc cần l
 ## Cấm
 - Bịa kết quả test; sửa test cho pass; báo DONE khi chưa tự chạy lệnh kiểm tra.
 - Sửa file ngoài phạm vi mà không khai báo.
+- Thợ / Sửa lỗi / Kiểm thử chạy lệnh git làm đổi cây làm việc hoặc lịch sử (`stash`, `checkout --`, `reset`, `clean`, `commit`, `tag`) — chỉ Quản lý được làm (D-012). Cần chạy code cũ: `git show HEAD:<file>` ra thư mục tạm.
 - `git push`, deploy, xóa dữ liệu, thêm dịch vụ trả phí, đổi phạm vi SPEC: chỉ Quản lý được làm, và phải hỏi Chủ dự án trước.
 - Đoán ý Chủ dự án. Không biết thì hỏi.

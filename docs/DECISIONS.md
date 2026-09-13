@@ -61,3 +61,11 @@
   - To-do có hạn xếp trước theo hạn; không hạn theo `order`; nhãn "Quá hạn"/"Hôm nay"/"d/m".
 - Hợp đồng (SPEC §5): `Repeat` + `weekdays`; `LocalEvent.alarmMin?`; `Todo.due?`; `Note`; `AppState.notes`; bỏ `DesignConfig.noteText`; `RenderData.noteTitle?` (giữ `note: string` để test layout khóa không phải sửa); vẫn `version: 1` nhờ `normalizeState`.
 - Phiếu: T-2.10 (lõi) → T-2.11 (hình nền) ∥ T-2.12 (UI), trong M2. T-2.7 đang chạy được nhắn bỏ phần ghi chú đơn. Được sửa test khóa chỉ ở chỗ `noteText`/`setNote`, phải khai báo.
+
+## D-012 — Duyệt M2 tại `b438b60`; trả lời 6 điểm băn khoăn (2026-09-14 · người quyết: Kiến trúc sư)
+- Bối cảnh: M2 đạt đủ tiêu chí SPEC v1.3 §6 (KTS tự chạy `npm run check`: 132×2 unit, 32 e2e, exit 0; test M1 không có dòng xóa). SPEC v1.3 do Quản lý viết được KTS soát: đúng ý D-011, chỉ chỉnh chữ §3/§5/§9.
+- Trần agenda: 12 tính theo **dòng sự kiện**, tiêu đề ngày không tính (không trần theo chiều cao — mật độ phải ổn định giữa thiết bị/scale/ghi chú; đòn bẩy của người dùng là `agendaDays` và `scale`). Lý do: 7 ngày × 1 sự kiện hiện chỉ 5 + "+2" là quá ít; 20 dòng tối đa vẫn nằm trong vùng nhờ tự co. → T-2.15.
+- `boxAlpha`/nền đen: giữ đến T-4.2 (khi có ảnh thật mới quyết mặc định; khuyến nghị 0.35 chỉ khi `bg.kind='photo'`). Ảnh mẫu cho Chủ dự án: Quản lý hỏi khi tiện, không chặn.
+- Công cụ ảnh mẫu/chụp webkit phải nằm trong repo `scripts/` (đã ghi vào SPEC §5) → T-2.16.
+- Thợ cấm mọi lệnh git đổi cây làm việc (`stash`/`checkout --`/`reset`/`clean`); chỉ Quản lý commit/tag. Song song vẫn theo quy tắc "không chung file".
+- S4 mới KTS phát hiện (gộp T-2.15): `normalizeState` không kiểm `events/todos/notes` là mảng và không ép ≤ 1 ghi chú ghim (bất biến hiện chỉ do `NoteTab.save()` giữ); `eventToIcs` với `weekdays` mà DTSTART rơi T7/CN → Lịch iPhone có thể hiện thêm 1 lần (RFC 5545 để "undefined") → dời DTSTART tới T2 kế tiếp; gập dòng 75 octet (đóng S4 T-2.5). "Đang tải…" (App.tsx) làm trong T-3.3.
