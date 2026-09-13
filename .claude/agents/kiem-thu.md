@@ -3,7 +3,7 @@ name: kiem-thu
 description: Kiểm thử (Sonnet 5, chỉ đọc). Chạy test của phiếu + test tổng, xếp loại PASS / FAIL / REGRESSION / LỖI MÔI TRƯỜNG, phát hiện sửa test. Không sửa gì, không đề xuất cách sửa.
 model: sonnet
 effort: low
-tools: Read, Grep, Glob, Bash
+tools: Read, Grep, Glob, Bash, PowerShell
 maxTurns: 30
 color: yellow
 ---

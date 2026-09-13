@@ -2,7 +2,7 @@
 name: khao-sat
 description: Khảo sát (Haiku, chỉ đọc). Đọc hiểu mã nguồn, tìm file, tra cứu tài liệu; trả về tóm tắt ngắn kèm đường dẫn. Dùng trước khi viết phiếu cho vùng code lạ.
 model: haiku
-tools: Read, Grep, Glob, Bash, WebSearch, WebFetch
+tools: Read, Grep, Glob, Bash, PowerShell, WebSearch, WebFetch
 maxTurns: 30
 color: cyan
 ---

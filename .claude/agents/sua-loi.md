@@ -3,7 +3,7 @@ name: sua-loi
 description: Sửa lỗi (Sonnet 5; sự cố S1/S2 được gọi với model opus). Tái hiện bằng test thất bại, tìm nguyên nhân gốc có bằng chứng, sửa tối thiểu, chạy toàn bộ suite. Dùng cho sự cố và bug do Chủ dự án báo, không dùng cho lỗi thường trong phạm vi phiếu.
 model: sonnet
 effort: high
-tools: Read, Edit, Write, Bash, Grep, Glob
+tools: Read, Edit, Write, Bash, PowerShell, Grep, Glob
 maxTurns: 120
 color: red
 ---

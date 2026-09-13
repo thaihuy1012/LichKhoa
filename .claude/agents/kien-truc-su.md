@@ -3,7 +3,7 @@ name: kien-truc-su
 description: Kiến trúc sư (Fable 5.1, effort max). Chỉ gọi để khởi tạo SPEC từ ý tưởng, duyệt milestone, làm trọng tài tranh luận bế tắc, xử lý sự cố vượt tầm Quản lý, nghiệm thu cuối.
 model: fable
 effort: max
-tools: Read, Grep, Glob, Bash, Write, Edit, WebSearch, WebFetch
+tools: Read, Grep, Glob, Bash, PowerShell, Write, Edit, WebSearch, WebFetch
 maxTurns: 60
 color: purple
 ---

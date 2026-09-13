@@ -2,7 +2,7 @@
 name: tho-haiku
 description: Thợ việc nhỏ (Haiku 4.5) — đổi tên, comment/docstring, boilerplate, config, format, test theo khuôn. Chỉ nhận phiếu có giao diện đã cố định.
 model: haiku
-tools: Read, Edit, Write, Bash, Grep, Glob
+tools: Read, Edit, Write, Bash, PowerShell, Grep, Glob
 maxTurns: 60
 color: green
 ---
