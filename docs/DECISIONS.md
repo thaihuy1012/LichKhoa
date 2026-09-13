@@ -70,6 +70,9 @@
 - Điểm 1: không thêm kiểm tra webkit; `dist/sw.js` có `NavigationRoute(createHandlerBoundToURL("index.html"))` → (D) là phép thử quyết định. Điểm 2: chấp nhận localStorage (readonly, 1 giờ, không script ngoài) → giới hạn đã biết. Điểm 3: giữ chữ ký `fetchEvents`; +1 request/lượt là rẻ. Điểm 4: T-4.2. Điểm 5: gộp vào T-4.0.
 - S4 mới (Tồn đọng): sau redirect kết nối thành công, `App.tsx` L72 chỉ tự đồng bộ khi cache > 30′ → nên ép đồng bộ ngay (truyền cache = null khi `authResult.ok`); làm ở phiếu M4 chạm `App.tsx`.
 
+## D-017 — Ảnh nền lưu IndexedDB dạng ArrayBuffer (2026-09-14 · người quyết: Quản lý, chấp nhận khai báo ngoài phạm vi của T-4.2)
+- WebKit (Playwright) abort transaction khi structured-clone Blob vào IndexedDB → `saveBg` lưu `{buf: ArrayBuffer, type}`; `loadBg` đọc cả dạng mới lẫn Blob cũ. Chữ ký SPEC §5 (`Blob|null`) giữ nguyên. Safari cũ cũng từng lỗi Blob-in-IDB → an toàn hơn cho iPhone.
+
 ## D-016 — Chủ dự án dời thử máy thật T-4.0 về cuối M4 (2026-09-14 · người quyết: Chủ dự án)
 - Hỏi theo D-015 (thử OAuth PWA iOS sớm) → Chủ dự án chọn "Để cuối M4". Ảnh mẫu đặt thử hình nền khóa: "Chưa thử" → gộp vào bài thử máy thật.
 - Hệ quả: T-4.4 (Guide/HUONG-DAN) viết theo thiết kế hiện tại (PWA standalone) + nhánh dự phòng "dùng trong Safari" (D-015), đánh dấu phần OAuth "chờ xác nhận máy thật"; T-4.0 chạy sau T-4.4, trước T-4.END; kết quả T-4.0 có thể sinh phiếu sửa Guide. `dist` cho Netlify build lại ngay trước T-4.0 (bản `E:\DuAn\lichkhoa-dist` hiện tại là HEAD `095e2cc`, sẽ cũ).

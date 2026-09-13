@@ -1,5 +1,5 @@
-// Chụp màn hình: tab Sự kiện (events), Preview (preview) hoặc Đồng bộ (sync) trên webkit iPhone 13 Pro Max.
-// Dùng: npm run build; node scripts/chup.cjs <events|preview|sync> <thư-mục-ra> [--lang en] [--port N]
+// Chụp màn hình: tab Sự kiện (events), Preview (preview), Đồng bộ (sync) hoặc Thiết kế (design) trên webkit iPhone 13 Pro Max.
+// Dùng: npm run build; node scripts/chup.cjs <events|preview|sync|design> <thư-mục-ra> [--lang en] [--port N]
 const { createRequire } = require('module');
 const path = require('path');
 const repoRoot = path.resolve(__dirname, '..');
@@ -148,6 +148,23 @@ const addDays = (n) => { const d = new Date(); d.setDate(d.getDate() + n); retur
       await page.getByTestId('tab-sync').click();
       await page.waitForTimeout(600);
       await shot('3-ket-noi-lai');
+    } else if (mode === 'design') {
+      await page.getByTestId('tab-design').click();
+      await page.waitForTimeout(400);
+      await shot('1-thiet-ke-dau');
+      const photoPath = path.join(repoRoot, 'tests', 'fixtures', 'photo-4000x3000.jpg');
+      await page.getByTestId('bg-file').setInputFiles(photoPath);
+      await page.waitForFunction(() => {
+        const el = document.querySelector('[data-testid="box-alpha"]');
+        return el && el.value === '0.35';
+      });
+      await page.evaluate(() => { const s = document.querySelector('.design-screen'); if (s) s.scrollTop = s.scrollHeight; });
+      await page.waitForTimeout(400);
+      await shot('2-thiet-ke-cuoi');
+      await page.getByTestId('tab-preview').click();
+      await page.waitForFunction(() => { const el = document.querySelector('[data-testid="preview"]'); return el && el.naturalWidth === 1284; });
+      await page.waitForTimeout(500);
+      await shot('3-preview-anh-nen');
     }
 
     const sw = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]);

@@ -10,6 +10,7 @@ import { handleAuthRedirect, autoSyncIfNeeded } from './sync';
 import { createStore, type Store } from './store';
 import { Preview } from './screens/Preview';
 import { Events } from './screens/Events';
+import { Design } from './screens/Design';
 import { Sync, type AuthNotice } from './screens/Sync';
 
 const TABS = [
@@ -69,7 +70,9 @@ export function App() {
 
     const s = store.getState();
     const today = toISODate(new Date());
-    void autoSyncIfNeeded(s.google.cache, s.google.calendarIds, today, Date.now(), { getToken, clearToken }).then(
+    // D-015: sau redirect kết nối thành công, ép đồng bộ ngay (bỏ điều kiện cache > 30').
+    const force = authResult.handled && authResult.ok;
+    void autoSyncIfNeeded(s.google.cache, s.google.calendarIds, today, Date.now(), { getToken, clearToken }, force).then(
       (outcome) => {
         if (outcome.ran && outcome.result.ok) {
           store.dispatch({
@@ -91,7 +94,7 @@ export function App() {
       <main class="app-content">
         {tab === 'preview' && <Preview store={store} />}
         {tab === 'events' && <Events store={store} />}
-        {tab === 'design' && <div class="placeholder">{t('common.comingSoon', lang)}</div>}
+        {tab === 'design' && <Design store={store} />}
         {tab === 'sync' && (
           <Sync store={store} authNotice={authNotice} onAuthNoticeShown={() => setAuthNotice(null)} />
         )}

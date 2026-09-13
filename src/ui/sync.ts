@@ -107,8 +107,9 @@ export interface AutoSyncDeps {
 export type AutoSyncOutcome = { ran: false } | { ran: true; result: SyncResult };
 
 /**
- * Tự đồng bộ khi mở app (token còn hạn && cache cũ/không có); 401 → `clearToken()` (người dùng
- * thấy "Kết nối lại" khi mở tab Đồng bộ); lỗi mạng → giữ cache (không xóa gì).
+ * Tự đồng bộ khi mở app (token còn hạn && cache cũ/không có, trừ khi `force`); 401 → `clearToken()`
+ * (người dùng thấy "Kết nối lại" khi mở tab Đồng bộ); lỗi mạng → giữ cache (không xóa gì).
+ * `force` (D-015): bỏ qua điều kiện cache khi vừa kết nối Google thành công (chỉ cần có token).
  */
 export async function autoSyncIfNeeded(
   cache: { fetchedAt: number } | null,
@@ -116,10 +117,12 @@ export async function autoSyncIfNeeded(
   today: ISODate,
   now: number,
   deps: AutoSyncDeps,
+  force = false,
 ): Promise<AutoSyncOutcome> {
   const token = deps.getToken();
-  if (!shouldAutoSync(token != null, cache, now)) return { ran: false };
-  const result = await performSyncShared(token as string, calendarIds, today, now);
+  if (!force && !shouldAutoSync(token != null, cache, now)) return { ran: false };
+  if (!token) return { ran: false };
+  const result = await performSyncShared(token, calendarIds, today, now);
   if (!result.ok && result.reauth) deps.clearToken();
   return { ran: true, result };
 }

@@ -175,5 +175,30 @@
 
   "lunar.leap": " nhuận",
   "lunar.line": "Âm lịch {day}/{month}{leap} {yearName}",
-  "lunar.agenda": "{day}/{month}{leap} ÂL"
+  "lunar.agenda": "{day}/{month}{leap} ÂL",
+
+  "design.bg": "Nền",
+  "design.bgPhoto": "Ảnh",
+  "design.bgSolid": "Màu",
+  "design.bgGradient": "Gradient",
+  "design.bgPick": "Chọn ảnh",
+  "design.bgProcessing": "Đang xử lý ảnh…",
+  "design.bgError": "Không xử lý được ảnh này",
+  "design.bgColor": "Màu nền",
+  "design.bgColor2": "Màu nền 2",
+  "design.blur": "Độ mờ",
+  "design.dim": "Độ tối",
+  "design.textColor": "Màu chữ",
+  "design.accentColor": "Màu nhấn",
+  "design.font": "Phông chữ",
+  "design.fontSans": "Không chân",
+  "design.fontSerif": "Có chân",
+  "design.fontMono": "Đánh máy",
+  "design.position": "Vị trí",
+  "design.positionTop": "Trên",
+  "design.positionMiddle": "Giữa",
+  "design.positionBottom": "Dưới",
+  "design.scale": "Cỡ chữ",
+  "design.boxAlpha": "Độ đậm hộp nền",
+  "design.agendaDays": "Số ngày Agenda"
 }

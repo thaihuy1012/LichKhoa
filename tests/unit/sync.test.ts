@@ -1,9 +1,56 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { performSyncShared } from '../../src/ui/sync';
+import { performSyncShared, autoSyncIfNeeded } from '../../src/ui/sync';
 import calendarList from '../fixtures/google/calendarList.json';
 
 afterEach(() => {
   vi.unstubAllGlobals();
+});
+
+describe('autoSyncIfNeeded force (D-015: ép đồng bộ ngay sau kết nối thành công)', () => {
+  it('force=true bỏ qua cache mới (< 30 phút) và vẫn đồng bộ khi có token', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string) => {
+        if (url.includes('/calendarList')) return { ok: true, status: 200, json: async () => calendarList } as Response;
+        return { ok: true, status: 200, json: async () => ({ items: [] }) } as Response;
+      }),
+    );
+    const cacheFresh = { fetchedAt: Date.now() }; // cache vừa xong -> shouldAutoSync bình thường sẽ false
+    const outcome = await autoSyncIfNeeded(
+      cacheFresh,
+      ['cal1@group.calendar.google.com'],
+      '2026-01-01',
+      Date.now(),
+      { getToken: () => 'tok', clearToken: () => {} },
+      true,
+    );
+    expect(outcome.ran).toBe(true);
+  });
+
+  it('force=false + cache mới -> không chạy (hành vi cũ giữ nguyên)', async () => {
+    const cacheFresh = { fetchedAt: Date.now() };
+    const outcome = await autoSyncIfNeeded(
+      cacheFresh,
+      [],
+      '2026-01-01',
+      Date.now(),
+      { getToken: () => 'tok', clearToken: () => {} },
+      false,
+    );
+    expect(outcome.ran).toBe(false);
+  });
+
+  it('force=true nhưng không có token -> không chạy', async () => {
+    const outcome = await autoSyncIfNeeded(
+      null,
+      [],
+      '2026-01-01',
+      Date.now(),
+      { getToken: () => null, clearToken: () => {} },
+      true,
+    );
+    expect(outcome.ran).toBe(false);
+  });
 });
 
 describe('performSyncShared (T-3.4 yêu cầu 3: chống đồng bộ trùng)', () => {

@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.3 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 3/7
-- Đang làm: T-4.2 (DOING) → T-4.4 → T-4.0 (thử iPhone, Chủ dự án — D-016) → T-4.END.
+- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 4/8
+- Đang làm: T-4.4 ∥ T-4.6 (DOING; chỉ T-4.6 build/e2e) → T-4.0 (thử iPhone, Chủ dự án — D-016) → T-4.END.
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
@@ -426,7 +426,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   - Chụp: thêm tab `design` vào `scripts/chup.cjs` (phạm vi thêm) — 2 ảnh (đầu màn + cuộn cuối); Quản lý xem + dựng hình nền có ảnh trước khi DONE.
   - e2e mới `tests/e2e/design.spec.ts`: đổi blur/dim/position/font → hash PNG preview đổi mỗi bước; tải `tests/fixtures/photo-4000x3000.jpg` → preview 1284×2778, `boxAlpha` thành 0.35.
 - Lệnh kiểm tra: `npm run check`; `npx playwright test tests/e2e/design.spec.ts --repeat-each=3`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: chạm trần 100 lượt → nhắc 1 lần → DONE (Design.tsx, force sync D-015, nút sync accent, chup design; ngoài phạm vi đã khai: `db.ts` lưu ArrayBuffer — D-017) → kiem-thu PASS (full e2e ×2 92 pass/8 skip) → chụp: đạt chức năng, hộp 0.35 trên ảnh đẹp; 3 điểm giao diện (rãnh range vô hình, input color webkit bị cắt, swatch chọn không viền) → tách T-4.6 → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-4.3 — Sao chép + Đặt hình nền một chạm
 - Phạm vi file: `src/export/share.ts`, `src/ui/screens/Preview.tsx`, `src/core/i18n/*.json`.
@@ -443,8 +444,9 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Tham khảo: `F:/LICH_NEN/lich-nen.html` L320–325 khối trợ giúp (đặt màn hình khóa qua Ảnh → Dùng làm hình nền, thêm vào MH chính, nhắc giờ qua .ics); `F:/LICH_NEN/huong-dan-giai-doan-2.md` L61–68 các bước tạo Phím tắt — CHỈ lấy action "Set Wallpaper"; bỏ mọi bước Scriptable/"Run Script"/iCloud (LichKhoa dùng `input=clipboard`, SPEC mục 10 C).
 - Mục tiêu: 4 phần (cài PWA, tạo Shortcut, Google OAuth Client ID, HTTPS/hosting) theo SPEC mục 10 + quy trình hằng ngày + giới hạn đã biết; VI (EN ngắn trong UI).
 - Tiêu chí: [ ] HUONG-DAN.md có đủ 4 phần; [ ] `npm run check` pass.
-- Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Bổ sung (Quản lý 2026-09-14, D-015/D-016): phần Google OAuth viết theo luồng PWA standalone (redirect trong scope) + khung "Nếu kết nối trong app Màn hình chính không quay về được: mở LichKhoa trong Safari (bookmark) để dùng Google — dữ liệu hai nơi tách nhau" và ghi chú "(chờ xác nhận trên máy thật — T-4.0)". Thêm mục **"Bài thử trên iPhone"** (checklist cho T-4.0/M4): (1) Netlify Drop hoặc GitHub Pages → URL; (2) tạo Client ID với đúng origin/redirect của URL đó; (3) Thêm vào MH chính → mở icon; (4) Đồng bộ → Kết nối → quan sát A–E (D-015); (5) "Đặt hình nền" → Shortcut chạy → hình nền khóa; kiểm lịch có bị đồng hồ/widget/nút đè; (6) Chế độ máy bay → đóng hẳn app → mở icon → app mở, còn sự kiện. Quy trình hằng ngày ≤ 3 chạm (SPEC §1c). "Giới hạn đã biết": token 1 giờ không tự gia hạn (D-015), không tự đổi hình nền không chạm, Safari xóa dữ liệu web thường sau 7 ngày không dùng nếu không cài PWA (SPEC §8.4), `.ics` nhắc giờ phải thêm từng sự kiện. Màn Guide trong app: 4–6 thẻ ngắn (VI đầy đủ, EN rút gọn) + nút mở nhanh tab Đồng bộ/Thiết kế nếu tiện; `data-testid="guide"`.
+- Lệnh kiểm tra (thợ): `npx tsc --noEmit; npm run test` — KHÔNG build/e2e (T-4.6 song song). kiem-thu chạy `npm run check` sau.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ### T-4.5 — size.mjs + workflow GitHub Pages
 - Phạm vi file: `scripts/size.mjs`, `.github/workflows/pages.yml`, `package.json` (thêm script `size`).
@@ -454,6 +456,14 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Lệnh kiểm tra (thợ): KHÔNG `npm run build` (T-4.3 song song đang build) — sao chép `dist` hiện có ra thư mục tạm rồi `node scripts/size.mjs <tạm>` → in tổng + exit 0; thử thêm 1 thư mục giả > 150 KB → exit 1. Kiểm cú pháp YAML bằng `node -e` đọc file (không cần thư viện) hoặc mắt thường. kiem-thu chạy `npm run build; node scripts/size.mjs` sau.
 - Nhật ký: 2026-09-14 lượt 1: DONE (size.mjs [dir], pages.yml workflow_dispatch + push main, script `size`) → kiem-thu PASS (build + size 32,86 KB exit 0; package.json chỉ thêm 1 script) → commit.
 - Model: haiku · Lần thử: 0/3 · Trạng thái: DONE
+
+### T-4.6 — Hoàn thiện giao diện màn Thiết kế (review ảnh chụp T-4.2)
+- Nguồn: Quản lý chụp webkit 13 Pro Max (`scripts/chup.cjs design`) sau T-4.2.
+- Phạm vi file: `src/ui/styles.css`, `src/ui/screens/Design.tsx`, `tests/e2e/design.spec.ts` (chỉ THÊM test). Không đổi `data-testid` đã có.
+- Yêu cầu: (1) mọi `input[type=range]` (dim, scale, box-alpha): rãnh nhìn thấy được (màu rãnh tương phản nền, ví dụ #3a3a44; phần đã chọn = accent), thumb ≥ 28px, kèm nhãn giá trị hiện tại cạnh tiêu đề (dim "0.4", scale "1.0×", box-alpha "35%"); (2) `input[type=color]` (bg-color, bg-color2, text-color, accent-color): hiển thị ô màu ≥ 44×44px + mã hex bên cạnh; trên trình duyệt không hỗ trợ color (webkit Windows hiện thành ô chữ) vẫn đọc được trọn mã hex, không bị cắt; (3) swatch màu nhấn đang chọn có vòng viền rõ (kể cả swatch trắng trên nền tối — viền accent/ngoài 2px), `aria-pressed`.
+- Tiêu chí: [ ] e2e: range có `getComputedStyle` rãnh khác màu nền (hoặc pseudo-element kiểm được); nhãn giá trị đổi khi kéo `dim` → "0.4"; swatch đang chọn có `aria-pressed="true"`; [ ] 428×926 không cuộn ngang; [ ] `npm run check` pass; [ ] Quản lý chụp lại `chup.cjs design`.
+- Lệnh kiểm tra: `npm run check` (thợ duy nhất được build/e2e trong đợt T-4.4 ∥ T-4.6)
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ### T-4.END — Kiểm thử tích hợp M4
 - Phạm vi file: `tests/e2e/m4-design.spec.ts`, `tests/e2e/m4-export.spec.ts`, `tests/e2e/m4-offline.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.

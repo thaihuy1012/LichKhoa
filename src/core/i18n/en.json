@@ -175,5 +175,30 @@
 
   "lunar.leap": " leap",
   "lunar.line": "Lunar {day}/{month}{leap} {yearName}",
-  "lunar.agenda": "{day}/{month}{leap} lunar"
+  "lunar.agenda": "{day}/{month}{leap} lunar",
+
+  "design.bg": "Background",
+  "design.bgPhoto": "Photo",
+  "design.bgSolid": "Color",
+  "design.bgGradient": "Gradient",
+  "design.bgPick": "Choose photo",
+  "design.bgProcessing": "Processing photo…",
+  "design.bgError": "Could not process this photo",
+  "design.bgColor": "Background color",
+  "design.bgColor2": "Background color 2",
+  "design.blur": "Blur",
+  "design.dim": "Dim",
+  "design.textColor": "Text color",
+  "design.accentColor": "Accent color",
+  "design.font": "Font",
+  "design.fontSans": "Sans-serif",
+  "design.fontSerif": "Serif",
+  "design.fontMono": "Monospace",
+  "design.position": "Position",
+  "design.positionTop": "Top",
+  "design.positionMiddle": "Middle",
+  "design.positionBottom": "Bottom",
+  "design.scale": "Text size",
+  "design.boxAlpha": "Background box opacity",
+  "design.agendaDays": "Agenda days"
 }

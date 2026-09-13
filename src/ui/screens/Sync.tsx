@@ -166,7 +166,7 @@ export function Sync({ store, authNotice, onAuthNoticeShown }: SyncProps) {
       {!connected && !needsReauth && (
         <button
           type="button"
-          class="btn block"
+          class="btn btn-primary block"
           data-testid="sync-connect"
           disabled={!state.google.clientId.trim()}
           onClick={onConnect}
@@ -176,7 +176,7 @@ export function Sync({ store, authNotice, onAuthNoticeShown }: SyncProps) {
       )}
 
       {needsReauth && (
-        <button type="button" class="btn block" data-testid="sync-reconnect" onClick={onConnect}>
+        <button type="button" class="btn btn-primary block" data-testid="sync-reconnect" onClick={onConnect}>
           {t('sync.reconnect', lang)}
         </button>
       )}
@@ -205,7 +205,7 @@ export function Sync({ store, authNotice, onAuthNoticeShown }: SyncProps) {
             </div>
           </div>
 
-          <button type="button" class="btn block" data-testid="sync-now" disabled={syncing} onClick={() => void runSync()}>
+          <button type="button" class="btn btn-primary block" data-testid="sync-now" disabled={syncing} onClick={() => void runSync()}>
             {syncing ? t('sync.syncing', lang) : t('sync.syncNow', lang)}
           </button>
 
