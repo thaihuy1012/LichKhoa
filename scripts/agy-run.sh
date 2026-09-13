@@ -16,6 +16,10 @@ mkdir -p docs/gemini-out
 name=$(basename "$prompt_file" .md)
 out="docs/gemini-out/$name.md"; err="docs/gemini-out/$name.err"
 args=(-p "$(cat "$prompt_file")" --print-timeout 15m)
+# agy headless không tự coi thư mục hiện tại là workspace → read_file bị từ chối; phải --add-dir (D-009)
+args+=(--add-dir "$(pwd -W 2>/dev/null || pwd)")
+# Làn ghi: tự duyệt sửa file; lệnh shell vẫn bị từ chối (không dùng --dangerously-skip-permissions)
+{ [ "$mode" = "sinh" ] || [ "$mode" = "code" ]; } && args+=(--mode accept-edits)
 [ -n "$model" ] && args+=(--model "$model")
 
 agy "${args[@]}" >"$out" 2>"$err"; code=$?
@@ -31,5 +35,7 @@ fi
 
 echo "agy exit=$code | làn=$mode | kết quả=$out"
 if [ "$code" -ne 0 ]; then echo "LỖI — 5 dòng cuối $err:"; tail -n 5 "$err"; exit "$code"; fi
+# agy có thể exit 0 mà không in gì (vd. quyền bị từ chối) → coi là lỗi
+if [ ! -s "$out" ]; then echo "LỖI — kết quả rỗng. 5 dòng cuối $err:"; tail -n 5 "$err"; exit 3; fi
 [ -n "$changed" ] && { echo "File thay đổi:"; echo "$changed"; }
 echo "--- 15 dòng đầu kết quả:"; head -n 15 "$out"

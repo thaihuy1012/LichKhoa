@@ -1,5 +1,7 @@
 # LÀN GEMINI — Antigravity CLI (`agy`) — tùy chọn
 
+**Trạng thái: BẬT (2026-09-13, D-009).** Model Pro: `gemini-3.1-pro-high` (đọc rộng, soát chéo, ý kiến thứ hai) · Model Flash: `gemini-3.8-flash-high` (sinh file cơ học). Làn code cô lập: mặc định Pro. Luôn truyền slug ở tham số thứ 3 của script.
+
 Gemini không phải subagent của Claude Code. Nó chạy như công cụ ngoài, do Quản lý gọi qua `scripts/agy-run.sh`, dùng hạn mức gói Google AI Pro (tách biệt hạn mức Claude). Gemini đọc quy tắc ở `AGENTS.md` của dự án.
 
 ## Giao gì cho Gemini
@@ -35,3 +37,4 @@ Gemini không phải subagent của Claude Code. Nó chạy như công cụ ngo�
 4. Bị 429 dù có Pro: thoát, đăng nhập lại, thử lại — lỗi entitlement từng được báo cáo.
 5. Windows: script chạy trong Git Bash (Claude Code dùng bash này); `agy` phải có trong PATH.
 Tài liệu headless: https://antigravity.google/docs/cli/headless/ · Quyền trong headless: đọc/ghi file trong workspace được tự cho phép, lệnh shell mặc định bị từ chối mềm.
+6. Thực tế agy 1.2.2 (D-009): cwd KHÔNG tự là workspace → `read_file` bị từ chối, exit 0 kết quả rỗng. `scripts/agy-run.sh` đã tự thêm `--add-dir <repo>` (mọi làn) và `--mode accept-edits` (làn sinh/code); kết quả rỗng → exit 3. Không dùng `--dangerously-skip-permissions`.

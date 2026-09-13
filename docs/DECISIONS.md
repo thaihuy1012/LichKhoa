@@ -41,3 +41,10 @@
 - Việc: T-1.6 (bổ sung: fallback 1284×2778 ở `App.tsx`, không đổi `detectDevice`; giữ vùng an toàn 0.30/0.14; sửa nhãn 1179×2556) ∥ T-1.7 mới `normalizeState` (hợp đồng cho T-2.5 và T-2.8). SPEC v1.2 ghi D-007 vào §2, §3, §7; chuyển tiêu chí `lunar.test.ts` từ M3 sang M2; T-2.8 thêm i18n vào phạm vi.
 - Ảnh mẫu 1284×2778 gửi Chủ dự án đặt thử làm hình nền khóa, chỉ hỏi "có đè đồng hồ/widget/nút không" — không chặn M2, xong trước T-2.3.
 - T-1.6 + T-1.7 DONE và `check` pass → Quản lý tự gắn `M1-ok`, không cần duyệt lại.
+
+## D-009 — Bật làn Gemini (2026-09-13 · người quyết: Chủ dự án; kỹ thuật: Quản lý)
+- Chủ dự án bật làn Gemini: Pro = `gemini-3.1-pro-high` (đọc rộng, soát chéo), Flash = `gemini-3.8-flash-high` (sinh file). agy 1.2.2; cả 2 slug thử `-p` trả "ok".
+- Lỗi phát hiện khi thử: agy headless không coi cwd là workspace (dự án mặc định rỗng) → `read_file` bị tự từ chối, exit 0 mà kết quả rỗng.
+- Sửa `scripts/agy-run.sh`: luôn `--add-dir <repo>`; làn `sinh`/`code` thêm `--mode accept-edits` (ghi file tự duyệt, shell vẫn bị từ chối — đã thử); kết quả rỗng → exit 3 (tính là 1 lần lỗi của làn).
+- Không dùng `--dangerously-skip-permissions` (sẽ cho Gemini chạy shell, trái LAN-GEMINI.md) và không sửa `~/.gemini/antigravity-cli/settings.json` (cấu hình ngoài repo).
+- Làn `code` chưa thử thật; phiếu `code` đầu tiên phải đi đủ cổng kiem-thu → review như thợ Claude.
