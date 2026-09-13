@@ -82,29 +82,61 @@ function pad2(n: number): string {
   return n < 10 ? `0${n}` : String(n);
 }
 
-/** Chuẩn hóa sự kiện Google thô về `Occurrence` theo giờ địa phương; bỏ `cancelled`. Hàm thuần. */
-export function normalize(calendarId: string, color: string, events: RawGoogleEvent[]): Occurrence[] {
+/** Danh sách ISODate từ `start` (chứa) đến `endExclusive` (loại trừ, quy ước Google all-day). */
+function expandAllDayDates(start: ISODate, endExclusive: ISODate): ISODate[] {
+  const dates: ISODate[] = [];
+  const s = parseISODate(start);
+  let cur = new Date(s.y, s.m0, s.d);
+  const endIso = endExclusive;
+  let guard = 0;
+  while (toISODate(cur) < endIso && guard < 3660) {
+    dates.push(toISODate(cur));
+    cur = new Date(cur.getFullYear(), cur.getMonth(), cur.getDate() + 1);
+    guard++;
+  }
+  return dates.length > 0 ? dates : [start];
+}
+
+/**
+ * Chuẩn hóa sự kiện Google thô về `Occurrence` theo giờ địa phương; bỏ `cancelled`. Hàm thuần.
+ * `range` (tùy chọn) chặn occurrence đã sinh (hữu ích cho all-day nhiều ngày) trong [min, max].
+ * `id = google-<calendarId>-<eventId>@<date>` — tiền tố lịch giữ duy nhất khi gộp nhiều lịch,
+ * hậu tố `@<date>` thống nhất quy ước T-2.1 (một occurrence/ngày).
+ */
+export function normalize(
+  calendarId: string,
+  color: string,
+  events: RawGoogleEvent[],
+  range?: { min: ISODate; max: ISODate }
+): Occurrence[] {
   const result: Occurrence[] = [];
+  const inRange = (date: ISODate): boolean => !range || (date >= range.min && date <= range.max);
   for (const ev of events) {
     if (ev.status === 'cancelled' || !ev.start) continue;
     if (ev.start.date) {
-      result.push({
-        id: `google-${calendarId}-${ev.id}`,
-        sourceId: ev.id,
-        source: 'google',
-        title: ev.summary ?? '',
-        date: ev.start.date,
-        allDay: true,
-        color,
-      });
+      const dates = ev.end?.date ? expandAllDayDates(ev.start.date, ev.end.date) : [ev.start.date];
+      for (const date of dates) {
+        if (!inRange(date)) continue;
+        result.push({
+          id: `google-${calendarId}-${ev.id}@${date}`,
+          sourceId: ev.id,
+          source: 'google',
+          title: ev.summary ?? '',
+          date,
+          allDay: true,
+          color,
+        });
+      }
     } else if (ev.start.dateTime) {
       const d = new Date(ev.start.dateTime);
+      const date = toISODate(d);
+      if (!inRange(date)) continue;
       result.push({
-        id: `google-${calendarId}-${ev.id}`,
+        id: `google-${calendarId}-${ev.id}@${date}`,
         sourceId: ev.id,
         source: 'google',
         title: ev.summary ?? '',
-        date: toISODate(d),
+        date,
         time: `${pad2(d.getHours())}:${pad2(d.getMinutes())}`,
         allDay: false,
         color,
@@ -145,7 +177,7 @@ export async function fetchEvents(
   const all: Occurrence[] = [];
   for (const calendarId of calendarIds) {
     const raw = await fetchRawEvents(token, calendarId, timeMinStr, timeMaxStr);
-    all.push(...normalize(calendarId, colorById.get(calendarId) ?? '', raw));
+    all.push(...normalize(calendarId, colorById.get(calendarId) ?? '', raw, { min: timeMin, max: timeMax }));
   }
   return sortOccurrences(all);
 }

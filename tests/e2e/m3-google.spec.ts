@@ -1,6 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import calendarListFixture from '../fixtures/google/calendarList.json' with { type: 'json' };
 import eventsSyncTemplate from '../fixtures/google/events-sync.json' with { type: 'json' };
+import eventsSyncMultidayTemplate from '../fixtures/google/events-sync-multiday.json' with { type: 'json' };
 
 const CAL1 = 'cal1@group.calendar.google.com';
 const CLIENT_ID = 'test-client-id.apps.googleusercontent.com';
@@ -173,6 +174,48 @@ test.describe('M3 Google Calendar (mock OAuth + REST)', () => {
     await expect
       .poll(async () => opsTexts(page), { timeout: 10_000 })
       .toEqual(expect.arrayContaining([expect.stringContaining(FIXTURE_TITLE)]));
+  });
+
+  test('T-3.4 yêu cầu 1: sự kiện cả ngày 3 ngày → agenda hiện tiêu đề ở cả 3 ngày', async ({ page, context }) => {
+    await context.route('**/calendar/v3/users/me/calendarList', async (route) => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(calendarListFixture) });
+    });
+    await context.route('**/calendar/v3/calendars/**/events**', async (route) => {
+      const url = route.request().url();
+      if (!url.includes(encodeURIComponent(CAL1))) {
+        return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ items: [] }) });
+      }
+      const today = new Date();
+      const end = new Date(today);
+      end.setDate(end.getDate() + 3); // end loại trừ → 3 ngày: today, today+1, today+2
+      const body = JSON.parse(JSON.stringify(eventsSyncMultidayTemplate)) as {
+        items: { start: { date: string }; end: { date: string } }[];
+      };
+      body.items[0].start.date = isoDate(today);
+      body.items[0].end.date = isoDate(end);
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
+    });
+
+    await page.goto('/?test=1');
+    await page.evaluate(() => {
+      localStorage.setItem(
+        'google_oauth_token',
+        JSON.stringify({ accessToken: 'tok-multiday-test', expiresAt: Date.now() + 3_600_000 }),
+      );
+    });
+    await seedState(page, {
+      google: { clientId: CLIENT_ID, calendarIds: [CAL1], cache: { events: [], fetchedAt: Date.now() - 40 * 60 * 1000 } },
+    });
+
+    await page.reload();
+    await page.getByTestId('tab-preview').click();
+    await page.getByTestId('layout-agenda').click();
+    await expect
+      .poll(
+        async () => (await opsTexts(page)).filter((t) => t.includes('Fixture Nhieu Ngay')).length,
+        { timeout: 10_000 },
+      )
+      .toBe(3);
   });
 });
 

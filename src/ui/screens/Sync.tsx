@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import type { Store } from '../store';
 import { buildAuthUrl, newState, getToken, clearToken } from '../../google/oauth';
 import { fetchCalendars, AuthError, type GoogleCalendarInfo } from '../../google/calendar';
-import { performSync } from '../sync';
+import { performSyncShared } from '../sync';
 import { toISODate } from '../../core/calendar';
 import { t } from '../../core/i18n';
 import { Toast } from '../components/Toast';
@@ -104,7 +104,7 @@ export function Sync({ store, authNotice, onAuthNoticeShown }: SyncProps) {
     }
     setSyncing(true);
     const today = toISODate(new Date());
-    const result = await performSync(token, state.google.calendarIds, today);
+    const result = await performSyncShared(token, state.google.calendarIds, today);
     setSyncing(false);
     if (result.ok) {
       store.dispatch({ type: 'setGoogleCache', cache: { events: result.events, fetchedAt: result.fetchedAt } });

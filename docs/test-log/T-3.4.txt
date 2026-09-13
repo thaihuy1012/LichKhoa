@@ -1,0 +1,9 @@
+npm run check: PASS (tsc, vitest x2 TZ, build, playwright full) 183 unit pass, 39 e2e pass 1 skipped
+playwright m3-google --repeat-each=3: 21 pass, 3 skipped (intentional skip test, same across runs)
+playwright m2-events webkit --repeat-each=6: 12 pass, 0 fail
+playwright full --repeat-each=2: 78 pass, 2 skipped, 0 fail
+git diff -U0 tests/: only expected lines removed:
+  tests/unit/google-normalize.test.ts ~L57,60 (2 id assertions)
+  tests/unit/store.test.ts ~L112 (1 id assertion, D-014)
+No new .only/.skip/waitForTimeout found in diff.
+git status: src/google/*, src/ui/screens/Sync.tsx, src/ui/sync.ts, tests/e2e/m3-google.spec.ts, tests/unit/{google-normalize,oauth,store}.test.ts modified; new tests/unit/sync.test.ts, tests/fixtures/google/events-{multiday,sync-multiday}.json — all in scope of T-3.4.

@@ -1,0 +1,15 @@
+{
+  "items": [
+    {
+      "id": "ev-multi",
+      "summary": "Nghi le dai",
+      "start": { "date": "2026-09-14" },
+      "end": { "date": "2026-09-17" }
+    },
+    {
+      "id": "ev-oneday",
+      "summary": "Mot ngay khong end",
+      "start": { "date": "2026-09-20" }
+    }
+  ]
+}

@@ -251,7 +251,7 @@ describe('sync.ts (T-3.3, điều phối thuần)', () => {
     if (result.ok) {
       expect(result.fetchedAt).toBe(5000);
       expect(result.events).toEqual([
-        { id: 'google-c1-e1', sourceId: 'e1', source: 'google', title: 'Ev', date: '2026-03-10', allDay: true, color: '#fff' },
+        { id: 'google-c1-e1@2026-03-10', sourceId: 'e1', source: 'google', title: 'Ev', date: '2026-03-10', allDay: true, color: '#fff' },
       ]);
     }
   });

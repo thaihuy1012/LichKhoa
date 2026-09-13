@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.3 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 4/5 · M4: 0/6
-- Đang làm: T-3.4 (sửa 4 lỗi soát chéo M3) → rồi Kiến trúc sư duyệt M3 (kèm câu hỏi PWA iOS OAuth + webkit offline).
+- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 (chờ Kiến trúc sư) · M4: 0/6
+- Đang làm: Giai đoạn 3 — Kiến trúc sư duyệt M3 (`docs/bao-cao/M3.md` + `M3-soat-cheo.md`; câu hỏi nặng: OAuth redirect trong PWA iOS standalone).
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
@@ -376,7 +376,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   3. Chống đồng bộ trùng: một cờ/promise dùng chung trong `sync.ts` — tự đồng bộ đang chạy thì "Đồng bộ ngay" chờ chung (hoặc nút `sync-now` disabled + nhãn "Đang đồng bộ…"); không gọi fetch 2 lần song song.
 - Tiêu chí: [ ] unit: all-day 14→17 (end exclusive) → 3 occurrence 14,15,16, id `…@2026-09-14` …; all-day không end → 1; khoảng vượt timeMax bị chặn; [ ] unit: `parseFragment('#error=invalid_request%25&state=s','s')` không ném, trả `{error:'invalid_request%'}`; [ ] unit: gọi đồng bộ 2 lần liên tiếp khi lần 1 chưa xong → fetch giả chỉ bị gọi 1 lượt; [ ] e2e thêm (m3-google): fixture sự kiện cả ngày 3 ngày → agenda (`__lastOps`) có tiêu đề đó ở 3 ngày; [ ] `npm run check` pass; test cũ chỉ thêm (kể cả fixture cũ không đổi).
 - Lệnh kiểm tra: `npm run check`; `npx playwright test tests/e2e/m3-google.spec.ts --repeat-each=3`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 PHẢN BIỆN 1 (id mới vỡ 2 assertion cũ) → CHẤP NHẬN có điều chỉnh (D-014). Lượt 1: DONE (normalize tách all-day + id `google-<cal>-<ev>@<date>` + range; bỏ decode thừa; `performSyncShared`/`isSyncing`; 4 test mới đều fail trước; sửa thêm store.test L254 cùng lý do D-014 — đã khai) → kiem-thu PASS (183×2, 39 e2e/1 skip cũ; full repeat-each=2 78/0; m2-events webkit ×6 12/12 — flake thợ báo KHÔNG tái hiện; mỗi tiêu chí có test cụ thể) → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-3.END — Kiểm thử tích hợp M3
 - Phạm vi file: `tests/e2e/m3-google.spec.ts`, `tests/fixtures/google/*.json`; sửa tích hợp nhỏ `src/**` phải khai báo.

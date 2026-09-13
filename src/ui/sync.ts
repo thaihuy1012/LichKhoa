@@ -47,6 +47,31 @@ export async function performSync(
   }
 }
 
+let inFlightSync: Promise<SyncResult> | null = null;
+
+/**
+ * Bọc `performSync` bằng khóa dùng chung (T-3.4 yêu cầu 3): nếu một lượt đồng bộ (tự động hoặc
+ * tay) đang chạy, lượt gọi thêm chỉ chờ chung kết quả thay vì gọi fetch song song lần nữa.
+ */
+export function performSyncShared(
+  token: string,
+  calendarIds: string[],
+  today: ISODate,
+  now: number = Date.now(),
+): Promise<SyncResult> {
+  if (!inFlightSync) {
+    inFlightSync = performSync(token, calendarIds, today, now).finally(() => {
+      inFlightSync = null;
+    });
+  }
+  return inFlightSync;
+}
+
+/** Có lượt đồng bộ nào (tự động hoặc tay) đang chạy hay không — dùng để vô hiệu hóa nút "Đồng bộ ngay". */
+export function isSyncing(): boolean {
+  return inFlightSync !== null;
+}
+
 export interface AuthRedirectDeps {
   consumeState: () => string | null;
   saveToken: (accessToken: string, expiresIn: number) => void;
@@ -94,7 +119,7 @@ export async function autoSyncIfNeeded(
 ): Promise<AutoSyncOutcome> {
   const token = deps.getToken();
   if (!shouldAutoSync(token != null, cache, now)) return { ran: false };
-  const result = await performSync(token as string, calendarIds, today, now);
+  const result = await performSyncShared(token as string, calendarIds, today, now);
   if (!result.ok && result.reauth) deps.clearToken();
   return { ran: true, result };
 }

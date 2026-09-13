@@ -57,7 +57,7 @@ export function parseFragment(
 
   const params = new URLSearchParams(raw);
   const error = params.get('error');
-  if (error) return { error: decodeURIComponent(error) };
+  if (error) return { error }; // URLSearchParams đã giải mã — không decodeURIComponent lần nữa
 
   const accessToken = params.get('access_token');
   const expiresInRaw = params.get('expires_in');

@@ -88,6 +88,11 @@ describe('parseFragment', () => {
     const raw = 'access_token=tok&expires_in=100&state=abc';
     expect(parseFragment(raw, 'abc')).toEqual({ accessToken: 'tok', expiresIn: 100 });
   });
+
+  it('T-3.4 yêu cầu 2: error chứa %25 không ném lỗi (URLSearchParams đã giải mã 1 lần)', () => {
+    const hash = '#error=invalid_request%25&state=s';
+    expect(parseFragment(hash, 's')).toEqual({ error: 'invalid_request%' });
+  });
 });
 
 describe('token store', () => {
