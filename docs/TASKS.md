@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.0, Chủ dự án duyệt 2026-09-13). H
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 4/6 · M2: 0/8 · M3: 0/4 · M4: 0/6
-- Đang làm: T-1.5 (tho-sonnet)
+- M1: 5/6 · M2: 0/8 · M3: 0/4 · M4: 0/6
+- Đang làm: T-1.END (tho-sonnet)
 - Chờ Chủ dự án: (không)
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
 
@@ -88,7 +88,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   [ ] Chạy `npm run build; npm run preview` và mở trình duyệt: chọn 1179×2556 → preview đổi.
   [ ] `npx tsc --noEmit` sạch, `npm run check` pass (không làm vỡ smoke).
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-13 lượt 1: DONE (check pass; script Playwright tạm xác nhận 1179×2556, không commit) → kiem-thu PASS. Review chưa đạt: ô tùy chỉnh nhận 0/quá lớn + lỗi render không bắt; revoke URL ngay sau click (hủy download WebKit); render cũ ghi đè ảnh mới → trả thợ (Lần thử 1/3). Lượt 2: sửa đủ 3 điểm → kiem-thu PASS (check + kiểm tay 0 / 1000×2000) → review đạt → commit.
+- Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
 
 ### T-1.END — Kiểm thử tích hợp M1
 - Mục tiêu: E2E luồng chính M1 theo SPEC mục 6.
@@ -98,7 +99,7 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   [ ] Có `<link rel="manifest">`, `navigator.serviceWorker.ready` resolve (có thể giữ ở smoke.spec).
   [ ] `npm run check` pass toàn bộ.
 - Lệnh kiểm tra: `npx playwright test tests/e2e/m1-render.spec.ts; npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ---
 ## M2 — Sự kiện, to-do, ghi chú; Agenda / To-do / Note; sao lưu; i18n

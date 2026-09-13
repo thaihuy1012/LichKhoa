@@ -1,0 +1,94 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #0b0b0f;
+  color: #f2f2f2;
+  font-family: system-ui, sans-serif;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 390px;
+  margin: 0 auto;
+}
+
+.app-content {
+  flex: 1;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.preview-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.custom-size {
+  display: flex;
+  gap: 8px;
+}
+
+.custom-size input {
+  flex: 1;
+  min-width: 0;
+}
+
+.preview-screen img {
+  width: 100%;
+  border-radius: 8px;
+  background: #000;
+}
+
+.preview-screen button {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #4c6ef5;
+  color: white;
+  font-size: 16px;
+}
+
+.preview-screen button:disabled {
+  background: #444;
+}
+
+.error {
+  color: #ff6b6b;
+  font-size: 13px;
+  margin: 0;
+}
+
+.placeholder {
+  padding: 24px 0;
+  text-align: center;
+  color: #888;
+}
+
+.tabbar {
+  display: flex;
+  border-top: 1px solid #222;
+}
+
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #ccc;
+  padding: 10px 4px;
+  font-size: 12px;
+}
+
+.tab-active {
+  color: #4c6ef5;
+  font-weight: 600;
+}
