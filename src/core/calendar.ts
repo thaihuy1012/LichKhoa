@@ -1,4 +1,4 @@
-import type { ISODate } from './model';
+import type { ISODate, Occurrence } from './model';
 
 function pad2(n: number): string {
   return n < 10 ? `0${n}` : `${n}`;
@@ -34,4 +34,38 @@ export function monthGrid(year: number, month0: number, weekStart: 0 | 1): (ISOD
     grid.push(rowCells);
   }
   return grid;
+}
+
+/**
+ * Nhóm occurrence theo ngày trong khoảng [from, from+days-1] (đóng cả hai đầu).
+ * Bỏ qua ngày không có occurrence. Giữ nguyên thứ tự occurrence trong từng ngày
+ * (đầu vào `occ` phải đã sắp xếp sẵn theo cùng ngày → cả ngày trước → giờ → tiêu đề).
+ */
+export function groupAgenda(
+  occ: Occurrence[],
+  from: ISODate,
+  days: number
+): { date: ISODate; items: Occurrence[] }[] {
+  const fromP = parseISODate(from);
+  const start = new Date(fromP.y, fromP.m0, fromP.d, 12);
+  const end = new Date(start.getFullYear(), start.getMonth(), start.getDate() + days - 1, 12);
+  const to = toISODate(end);
+
+  const byDate = new Map<ISODate, Occurrence[]>();
+  for (const o of occ) {
+    if (o.date < from || o.date > to) continue;
+    const list = byDate.get(o.date);
+    if (list) list.push(o);
+    else byDate.set(o.date, [o]);
+  }
+
+  const result: { date: ISODate; items: Occurrence[] }[] = [];
+  let cursor = new Date(start);
+  for (let i = 0; i < days; i++) {
+    const d = toISODate(cursor);
+    const items = byDate.get(d);
+    if (items && items.length > 0) result.push({ date: d, items });
+    cursor = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate() + 1, 12);
+  }
+  return result;
 }

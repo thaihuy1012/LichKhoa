@@ -1,0 +1,128 @@
+import { describe, it, expect } from 'vitest';
+import { groupAgenda } from '../../src/core/calendar';
+import { collectRenderData } from '../../src/core/collect';
+import { defaultState } from '../../src/core/model';
+import type { DeviceSpec, LocalEvent, Occurrence, Todo } from '../../src/core/model';
+
+const device: DeviceSpec = {
+  id: 'x',
+  label: 'X',
+  width: 1179,
+  height: 2556,
+  safeTop: 0.3,
+  safeBottom: 0.14,
+};
+
+function occ(date: string, time: string | undefined, title: string, id = `${date}-${title}`): Occurrence {
+  return {
+    id,
+    sourceId: id,
+    source: 'local',
+    title,
+    date,
+    time,
+    allDay: !time,
+  };
+}
+
+describe('groupAgenda', () => {
+  it('nhóm 7 ngày đúng thứ tự, bỏ ngày trống', () => {
+    const items = [
+      occ('2026-03-01', undefined, 'A'),
+      occ('2026-03-01', '09:00', 'B'),
+      occ('2026-03-03', '10:00', 'C'),
+    ];
+    const grouped = groupAgenda(items, '2026-03-01', 7);
+    expect(grouped.map((g) => g.date)).toEqual(['2026-03-01', '2026-03-03']);
+    expect(grouped[0].items.map((i) => i.title)).toEqual(['A', 'B']);
+    expect(grouped[1].items.map((i) => i.title)).toEqual(['C']);
+  });
+
+  it('chỉ lấy trong khoảng [from, from+days-1]', () => {
+    const items = [occ('2026-02-28', undefined, 'Out'), occ('2026-03-05', undefined, 'Out2')];
+    const grouped = groupAgenda(items, '2026-03-01', 3);
+    expect(grouped).toEqual([]);
+  });
+});
+
+describe('collectRenderData', () => {
+  it('cache Google null không lỗi', () => {
+    const state = defaultState(device);
+    const data = collectRenderData(state, '2026-03-15');
+    expect(data.occurrences).toEqual([]);
+    expect(data.today).toBe('2026-03-15');
+  });
+
+  it('sự kiện ngày trước today trong cùng tháng vẫn có trong occurrences', () => {
+    const state = defaultState(device);
+    const ev: LocalEvent = {
+      id: 'e1',
+      title: 'Early',
+      date: '2026-03-02',
+      repeat: 'none',
+    };
+    state.events = [ev];
+    const data = collectRenderData(state, '2026-03-15');
+    expect(data.occurrences.some((o) => o.date === '2026-03-02')).toBe(true);
+  });
+
+  it('trộn local + google đúng thứ tự (ngày -> allDay -> giờ -> tiêu đề)', () => {
+    const state = defaultState(device);
+    const ev: LocalEvent = {
+      id: 'e1',
+      title: 'Zeta',
+      date: '2026-03-15',
+      time: '08:00',
+      repeat: 'none',
+    };
+    state.events = [ev];
+    state.google.cache = {
+      fetchedAt: 0,
+      events: [
+        occ('2026-03-15', undefined, 'AllDayG', 'g1'),
+        occ('2026-03-15', '07:00', 'EarlyG', 'g2'),
+      ],
+    };
+    const data = collectRenderData(state, '2026-03-15');
+    const mar15 = data.occurrences.filter((o) => o.date === '2026-03-15');
+    expect(mar15.map((o) => o.title)).toEqual(['AllDayG', 'EarlyG', 'Zeta']);
+  });
+
+  it('todos sắp theo order', () => {
+    const state = defaultState(device);
+    const todos: Todo[] = [
+      { id: 't2', text: 'B', done: false, order: 2 },
+      { id: 't1', text: 'A', done: false, order: 1 },
+    ];
+    state.todos = todos;
+    const data = collectRenderData(state, '2026-03-15');
+    expect(data.todos.map((t) => t.id)).toEqual(['t1', 't2']);
+  });
+
+  it('note theo showNote', () => {
+    const state = defaultState(device);
+    state.design.showNote = true;
+    state.design.noteText = 'hello';
+    expect(collectRenderData(state, '2026-03-15').note).toBe('hello');
+    state.design.showNote = false;
+    expect(collectRenderData(state, '2026-03-15').note).toBe('');
+  });
+
+  it('2 TZ giả lập: sự kiện đầu tháng và cuối agenda vẫn nằm trong khoảng expand', () => {
+    const state = defaultState(device);
+    state.design.agendaDays = 10;
+    state.events = [
+      { id: 'e1', title: 'FirstOfMonth', date: '2026-03-01', repeat: 'none' },
+      {
+        id: 'e2',
+        title: 'AgendaEnd',
+        date: '2026-03-24',
+        repeat: 'none',
+      },
+    ];
+    const data = collectRenderData(state, '2026-03-15');
+    const titles = data.occurrences.map((o) => o.title);
+    expect(titles).toContain('FirstOfMonth');
+    expect(titles).toContain('AgendaEnd');
+  });
+});

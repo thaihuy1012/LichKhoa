@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.1 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 3/9 · M3: 0/4 · M4: 0/6
-- Đang làm: T-2.2 (tho-sonnet)
+- M1: 8/8 ✔ tag `M1-ok` · M2: 4/9 · M3: 0/4 · M4: 0/6
+- Đang làm: T-2.3 (tho-sonnet)
 - Chờ Chủ dự án: đặt thử ảnh mẫu 1284×2778 (đã gửi 2026-09-13) — có đè đồng hồ/widget/nút không? (không chặn; cần trước T-2.3)
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
 
@@ -150,7 +150,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Mục tiêu: nhóm theo ngày, sắp xếp cả ngày trước rồi theo giờ; `collectRenderData` trộn local (đã expand trong [today, today+max(agendaDays, 42)]) + `google.cache.events` + todos + note.
 - Tiêu chí: [ ] agenda 7 ngày đúng thứ tự; ngày trống bị bỏ; [ ] cache Google null không lỗi; [ ] trộn 2 nguồn đúng.
 - Lệnh kiểm tra: `npm run test`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-13 lượt 1: DONE (groupAgenda trong calendar.ts; collect.ts expand từ ngày 1 tháng chứa today; 69×2 unit) → kiem-thu PASS (69×2, 6 e2e) → review đạt → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-2.3 — layoutAgenda, layoutTodo, layoutNote
 - Phạm vi file: `src/render/layout/agenda.ts`, `todo.ts`, `note.ts`, `common.ts` (thêm helper bọc dòng ước lượng độ rộng theo `size`), `tests/unit/layout.test.ts`.
