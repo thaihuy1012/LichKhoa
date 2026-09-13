@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.2 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 12/14 · M3: 0/4 · M4: 0/6
-- Đang làm: T-2.END ∥ T-2.13 (DOING, tho-sonnet lượt 1 mỗi phiếu)
+- M1: 8/8 ✔ tag `M1-ok` · M2: 14/14 (chờ duyệt) · M3: 0/4 · M4: 0/6
+- Đang làm: Giai đoạn 3 — duyệt M2 (báo cáo `docs/bao-cao/M2.md`, soát chéo Gemini, Kiến trúc sư)
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
 - Chờ Chủ dự án: đặt thử ảnh mẫu 1284×2778 (đã gửi 2026-09-13) — có đè đồng hồ/widget/nút không? (không chặn; cần trước T-2.3)
@@ -288,13 +288,15 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Yêu cầu: tiêu đề ngày chỉ được vẽ nếu còn chỗ cho ít nhất 1 sự kiện của ngày đó; nếu không, dừng trước tiêu đề đó và "+N" đếm mọi sự kiện chưa hiện (kể cả của ngày bị bỏ tiêu đề). Tổng dòng vẫn ≤ 12 (SPEC §9).
 - Tiêu chí: [ ] test: dữ liệu làm dòng thứ 11 là tiêu đề ngày → op cuối trước "+N" là một sự kiện, không phải tiêu đề; N đúng; [ ] test khóa (`layout.test.ts` cũ, `layout-month.test.ts`) pass nguyên văn; [ ] Quản lý xem lại ảnh agenda 15 mục.
 - Lệnh kiểm tra (thợ): `npx tsc --noEmit; npm run test` (không build/e2e — T-2.END chạy song song).
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (buildWithBudget; +1 test, fail trên code cũ đã xác nhận; 129×2) — thợ dùng `git stash` khi T-2.END đang chạy (không mất gì, ghi BAI-HOC). Chờ T-2.END xong để kiem-thu + ảnh mẫu. → kiem-thu PASS (chung T-2.END) → ảnh agenda 15 mục: không còn tiêu đề mồ côi, "+8" đúng → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-2.END — Kiểm thử tích hợp M2
 - Phạm vi file: `tests/e2e/m2-events.spec.ts`, `tests/e2e/m2-i18n.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo — TRỪ `src/render/layout/agenda.ts` (T-2.13 song song đang sửa). Dùng đúng `data-testid` đã chốt ở T-2.7/2.9/2.12 (xem các phiếu đó + `tests/e2e/{events,notes,settings}.spec.ts`).
 - Tiêu chí: [ ] thêm sự kiện lặp tuần → chuyển Agenda → hash PNG preview đổi → reload còn sự kiện → xuất JSON → xóa dữ liệu → nhập JSON → sự kiện trở lại (kèm ghi chú ghim + hạn to-do + nhắc trước — v1.3); [ ] đổi `en` → nhãn tab đổi; bật 12h → agenda (qua `window.__lastOps`) chứa "AM"/"PM"; tắt âm lịch → `__lastOps` không còn op "Âm lịch"; [ ] (v1.3) sự kiện T2–T6 đúng ngày trên Agenda; bố cục To-do có "Quá hạn"; 2 ghi chú, ghim cái 2 → `__lastOps` có tiêu đề ghi chú 2, không có ghi chú 1; [ ] `npm run check` pass, test M1 không bị sửa/skip.
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (m2-events 2 test, m2-i18n 1 test; không sửa src) — test T2–T6 chỉ đếm 5 ngày → trả thợ siết (Lần thử 1/3). Lượt 2: so đúng tập tiêu đề ngày getDay 1..5 → kiem-thu PASS (129×2 unit, 26 e2e; repeat-each=3 18/18; test M1 không đổi từ M1-ok) → commit.
+- Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
 
 ---
 ## M3 — Google Calendar (OAuth thuần client, chỉ đọc)
