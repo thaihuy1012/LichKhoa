@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.2 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 11/13 · M3: 0/4 · M4: 0/6
-- Đang làm: T-2.9 (DOING, tho-sonnet lượt 1)
+- M1: 8/8 ✔ tag `M1-ok` · M2: 12/14 · M3: 0/4 · M4: 0/6
+- Đang làm: T-2.END ∥ T-2.13 (DOING, tho-sonnet lượt 1 mỗi phiếu)
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
 - Chờ Chủ dự án: đặt thử ảnh mẫu 1284×2778 (đã gửi 2026-09-13) — có đè đồng hồ/widget/nút không? (không chặn; cần trước T-2.3)
@@ -22,7 +22,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Thứ tự & song song
 M1: 1.1 → 1.2 → (1.3 ∥ 1.4) → 1.5 → 1.END → (1.6 ∥ 1.7) → ảnh mẫu 1284×2778 cho Chủ dự án thử (xong trước T-2.3) → tag M1-ok
-M2: (2.1 ∥ 2.4 ∥ 2.5) → 2.2 → 2.3 → 2.8 → 2.6 → 2.7 → 2.10 → (2.11 ∥ 2.12) → 2.9 → 2.END   (2.9 dùng chung styles/i18n với 2.12 → sau 2.12)
+M2: (2.1 ∥ 2.4 ∥ 2.5) → 2.2 → 2.3 → 2.8 → 2.6 → 2.7 → 2.10 → (2.11 ∥ 2.12) → 2.9 → (2.END ∥ 2.13)   (2.9 dùng chung styles/i18n với 2.12 → sau 2.12)
 M3: (3.1 ∥ 3.2) → 3.3 → 3.END
 M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
@@ -251,7 +251,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   [ ] `npm run check` pass, test khóa không sửa.
   [ ] Quản lý chụp webkit 428×926 tab Preview (cuộn xuống phần cài đặt) trước khi DONE.
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (Preview: bố cục/lang/hour12/weekstart/lunar/xuất-nhập/xóa + toast; 20 e2e). Quản lý chụp (scratchpad `chup-t29.cjs`): segmented Bố cục cả 3 nút đều xanh (không thấy nút đang chọn); nhãn "Định dạng giờ" mơ hồ → trả thợ (Lần thử 1/3). kiem-thu lượt 1 PASS (logic). Lượt 2: `.preview-screen button` → `.preview-core button` (nguyên nhân đè `.seg-active`), aria-selected, nhãn "Giờ 12h (AM/PM)", assert màu segment → kiem-thu PASS (repeat-each=3 42/42) → ảnh lại: đạt (lộ lỗi agenda tiêu đề mồ côi → T-2.13) → commit.
+- Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
 
 ### T-2.10 — Mô hình v1.3: lặp T2–T6, nhắc trước, hạn to-do, nhiều ghi chú (lõi) — D-011
 - Mục tiêu: hợp đồng SPEC v1.3 mục 5 cho phần lõi; mọi thứ khác (render, UI) dựa trên đây.
@@ -281,11 +282,19 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Nhật ký: 2026-09-14 lượt 1: DONE (weekdays, ev-alarm + gợi ý, meta; todo-due/nhãn hạn/sắp theo hạn; NoteTab danh sách + sheet + ghim; nợ "Cả ngày" + S4 durationMin đã sửa; 18 e2e) — thợ chép lại cmpTodo/todoDueLabel vào util.ts (ngoài phạm vi không import được) → Quản lý gộp: export `cmpTodo` ở collect.ts, util.ts dùng lại + re-export `todoDueLabel` → kiem-thu PASS (repeat-each=3 36/36) → chụp webkit (scratchpad `chup-v13.cjs`): đạt → commit 7a4a5d2.
 - Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
+### T-2.13 — Agenda: bỏ tiêu đề ngày mồ côi khi cắt 12 dòng
+- Mục tiêu: khi agenda chạm trần 12 dòng, không được còn một tiêu đề ngày mà không có sự kiện nào bên dưới (ảnh T-2.9: "T6 18/9 · 8/8 ÂL" rồi "+1").
+- Phạm vi file: `src/render/layout/agenda.ts`, `tests/unit/layout.test.ts` (chỉ THÊM test). Song song T-2.END (không chung file).
+- Yêu cầu: tiêu đề ngày chỉ được vẽ nếu còn chỗ cho ít nhất 1 sự kiện của ngày đó; nếu không, dừng trước tiêu đề đó và "+N" đếm mọi sự kiện chưa hiện (kể cả của ngày bị bỏ tiêu đề). Tổng dòng vẫn ≤ 12 (SPEC §9).
+- Tiêu chí: [ ] test: dữ liệu làm dòng thứ 11 là tiêu đề ngày → op cuối trước "+N" là một sự kiện, không phải tiêu đề; N đúng; [ ] test khóa (`layout.test.ts` cũ, `layout-month.test.ts`) pass nguyên văn; [ ] Quản lý xem lại ảnh agenda 15 mục.
+- Lệnh kiểm tra (thợ): `npx tsc --noEmit; npm run test` (không build/e2e — T-2.END chạy song song).
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+
 ### T-2.END — Kiểm thử tích hợp M2
-- Phạm vi file: `tests/e2e/m2-events.spec.ts`, `tests/e2e/m2-i18n.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.
+- Phạm vi file: `tests/e2e/m2-events.spec.ts`, `tests/e2e/m2-i18n.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo — TRỪ `src/render/layout/agenda.ts` (T-2.13 song song đang sửa). Dùng đúng `data-testid` đã chốt ở T-2.7/2.9/2.12 (xem các phiếu đó + `tests/e2e/{events,notes,settings}.spec.ts`).
 - Tiêu chí: [ ] thêm sự kiện lặp tuần → chuyển Agenda → hash PNG preview đổi → reload còn sự kiện → xuất JSON → xóa dữ liệu → nhập JSON → sự kiện trở lại (kèm ghi chú ghim + hạn to-do + nhắc trước — v1.3); [ ] đổi `en` → nhãn tab đổi; bật 12h → agenda (qua `window.__lastOps`) chứa "AM"/"PM"; tắt âm lịch → `__lastOps` không còn op "Âm lịch"; [ ] (v1.3) sự kiện T2–T6 đúng ngày trên Agenda; bố cục To-do có "Quá hạn"; 2 ghi chú, ghim cái 2 → `__lastOps` có tiêu đề ghi chú 2, không có ghi chú 1; [ ] `npm run check` pass, test M1 không bị sửa/skip.
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ---
 ## M3 — Google Calendar (OAuth thuần client, chỉ đọc)

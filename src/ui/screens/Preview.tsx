@@ -1,14 +1,26 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { Store } from '../store';
+import type { DesignConfig } from '../../core/model';
 import { DEVICES, customDevice, detectDevice } from '../../render/devices';
 import { renderWallpaper } from '../../render/wallpaper';
 import { loadBg } from '../../storage/db';
 import { toISODate } from '../../core/calendar';
 import { savePng } from '../../export/share';
+import { exportBackup, importBackup } from '../../storage/backup';
+import { downloadBlob } from './events/util';
+import { t } from '../../core/i18n';
+import { Toast } from '../components/Toast';
 
 const RENDER_DEBOUNCE_MS = 150;
 const MIN_SIZE = 320;
 const MAX_SIZE = 4096;
+const TOAST_MS = 2600;
+
+const LAYOUTS: { id: DesignConfig['layout']; testid: string; key: string }[] = [
+  { id: 'month', testid: 'layout-month', key: 'settings.layoutMonth' },
+  { id: 'agenda', testid: 'layout-agenda', key: 'settings.layoutAgenda' },
+  { id: 'todo', testid: 'layout-todo', key: 'settings.layoutTodo' },
+];
 
 function isValidSize(n: number): boolean {
   return Number.isInteger(n) && n >= MIN_SIZE && n <= MAX_SIZE;
@@ -21,10 +33,12 @@ export function Preview({ store }: { store: Store }) {
   const [error, setError] = useState<string | null>(null);
   const [widthText, setWidthText] = useState(String(state.device.width));
   const [heightText, setHeightText] = useState(String(state.device.height));
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
   const bgRef = useRef<Blob | null>(null);
   const urlRef = useRef<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const renderTokenRef = useRef(0);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     // Đồng bộ ngay khi đăng ký: nếu dispatch xảy ra giữa lúc khởi tạo state cục bộ
@@ -76,9 +90,51 @@ export function Preview({ store }: { store: Store }) {
   useEffect(
     () => () => {
       if (urlRef.current) URL.revokeObjectURL(urlRef.current);
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     },
     [],
   );
+
+  function showToast(msg: string) {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToastMsg(msg);
+    toastTimerRef.current = setTimeout(() => setToastMsg(null), TOAST_MS);
+  }
+
+  const lang = state.design.lang;
+
+  function setDesign(partial: Partial<DesignConfig>) {
+    store.dispatch({ type: 'setDesign', partial });
+  }
+
+  function onExportJson() {
+    const json = exportBackup(state);
+    const blob = new Blob([json], { type: 'application/json' });
+    downloadBlob(blob, `lichkhoa-backup-${toISODate(new Date())}.json`);
+    showToast(t('settings.exportOk', lang));
+  }
+
+  async function onImportJson(e: Event) {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    input.value = '';
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const imported = importBackup(text);
+      if (!window.confirm(t('settings.importConfirm', lang))) return;
+      store.dispatch({ type: 'replaceState', state: imported });
+      showToast(t('settings.importOk', lang));
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : t('settings.importError', lang));
+    }
+  }
+
+  function onWipe() {
+    if (!window.confirm(t('settings.clearDataConfirm', lang))) return;
+    store.dispatch({ type: 'resetAll' });
+    showToast(t('settings.wipeOk', lang));
+  }
 
   const isPreset = DEVICES.some((d) => d.id === state.device.id);
   const selectValue = isPreset ? state.device.id : state.device.id === 'auto' ? 'auto' : 'custom';
@@ -123,43 +179,139 @@ export function Preview({ store }: { store: Store }) {
 
   return (
     <div class="preview-screen">
-      <label class="field">
-        Thiết bị
-        <select
-          data-testid="device"
-          value={selectValue}
-          onChange={(e) => onSelectDevice((e.target as HTMLSelectElement).value)}
-        >
-          {DEVICES.map((d) => (
-            <option key={d.id} value={d.id}>
-              {d.label}
-            </option>
-          ))}
-          <option value="auto">Tự phát hiện</option>
-          <option value="custom">Tùy chỉnh</option>
-        </select>
-      </label>
-      {selectValue === 'custom' && (
-        <div class="custom-size">
+      <div class="preview-core">
+        <label class="field">
+          Thiết bị
+          <select
+            data-testid="device"
+            value={selectValue}
+            onChange={(e) => onSelectDevice((e.target as HTMLSelectElement).value)}
+          >
+            {DEVICES.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.label}
+              </option>
+            ))}
+            <option value="auto">Tự phát hiện</option>
+            <option value="custom">Tùy chỉnh</option>
+          </select>
+        </label>
+        {selectValue === 'custom' && (
+          <div class="custom-size">
+            <input
+              type="number"
+              aria-label="Chiều rộng"
+              value={widthText}
+              onInput={(e) => onWidthInput((e.target as HTMLInputElement).value)}
+            />
+            <input
+              type="number"
+              aria-label="Chiều cao"
+              value={heightText}
+              onInput={(e) => onHeightInput((e.target as HTMLInputElement).value)}
+            />
+          </div>
+        )}
+        {error && <p class="error">{error}</p>}
+        {imgUrl && <img data-testid="preview" src={imgUrl} alt="Xem trước hình nền" />}
+        <button data-testid="save" onClick={() => void onSave()} disabled={!blob}>
+          Lưu ảnh
+        </button>
+      </div>
+
+      <div class="settings-section">
+        <div class="field">
+          <span>{t('settings.layout', lang)}</span>
+          <div class="segmented" role="tablist">
+            {LAYOUTS.map((l) => (
+              <button
+                key={l.id}
+                type="button"
+                role="tab"
+                aria-selected={state.design.layout === l.id}
+                aria-pressed={state.design.layout === l.id}
+                data-testid={l.testid}
+                class={state.design.layout === l.id ? 'seg-btn seg-active' : 'seg-btn'}
+                onClick={() => setDesign({ layout: l.id })}
+              >
+                {t(l.key, lang)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <label class="field">
+          {t('settings.language', lang)}
+          <select
+            data-testid="lang"
+            value={state.design.lang}
+            onChange={(e) => setDesign({ lang: (e.target as HTMLSelectElement).value as 'vi' | 'en' })}
+          >
+            <option value="vi">{t('settings.langVi', lang)}</option>
+            <option value="en">{t('settings.langEn', lang)}</option>
+          </select>
+        </label>
+
+        <div class="field field-between">
+          <label for="hour12">{t('settings.hour12Switch', lang)}</label>
           <input
-            type="number"
-            aria-label="Chiều rộng"
-            value={widthText}
-            onInput={(e) => onWidthInput((e.target as HTMLInputElement).value)}
-          />
-          <input
-            type="number"
-            aria-label="Chiều cao"
-            value={heightText}
-            onInput={(e) => onHeightInput((e.target as HTMLInputElement).value)}
+            type="checkbox"
+            id="hour12"
+            class="switch"
+            data-testid="hour12"
+            checked={state.design.hour12}
+            onChange={(e) => setDesign({ hour12: (e.target as HTMLInputElement).checked })}
           />
         </div>
-      )}
-      {error && <p class="error">{error}</p>}
-      {imgUrl && <img data-testid="preview" src={imgUrl} alt="Xem trước hình nền" />}
-      <button data-testid="save" onClick={() => void onSave()} disabled={!blob}>
-        Lưu ảnh
-      </button>
+
+        <label class="field">
+          {t('settings.weekStart', lang)}
+          <select
+            data-testid="weekstart"
+            value={String(state.design.weekStart)}
+            onChange={(e) => setDesign({ weekStart: (Number((e.target as HTMLSelectElement).value) as 0 | 1) })}
+          >
+            <option value="1">{t('settings.weekStartMon', lang)}</option>
+            <option value="0">{t('settings.weekStartSun', lang)}</option>
+          </select>
+        </label>
+
+        <div class="field field-between">
+          <label for="lunar">{t('settings.lunar', lang)}</label>
+          <input
+            type="checkbox"
+            id="lunar"
+            class="switch"
+            data-testid="lunar"
+            checked={state.design.showLunar}
+            onChange={(e) => setDesign({ showLunar: (e.target as HTMLInputElement).checked })}
+          />
+        </div>
+
+        <button type="button" class="btn block" data-testid="export-json" onClick={onExportJson}>
+          {t('settings.exportJson', lang)}
+        </button>
+        <p class="hint">{t('settings.exportHint', lang)}</p>
+
+        <label class="btn block btn-file" for="import-json">
+          {t('settings.importJson', lang)}
+        </label>
+        <input
+          type="file"
+          id="import-json"
+          data-testid="import-json"
+          accept=".json,application/json"
+          class="visually-hidden"
+          onChange={(e) => void onImportJson(e)}
+        />
+        <p class="hint">{t('settings.importHint', lang)}</p>
+
+        <button type="button" class="btn danger block" data-testid="wipe" onClick={onWipe}>
+          {t('settings.clearData', lang)}
+        </button>
+      </div>
+
+      <Toast message={toastMsg} />
     </div>
   );
 }

@@ -1,0 +1,81 @@
+
+> lichkhoa@0.1.0 check
+> tsc --noEmit && npm run test && npm run build && playwright test
+
+
+> lichkhoa@0.1.0 test
+> cross-env TZ=Asia/Ho_Chi_Minh vitest run && cross-env TZ=UTC vitest run
+
+
+ RUN  v5.0.0 E:/DuAn/thu-nghiem
+
+
+ Test Files  14 passed (14)
+      Tests  128 passed (128)
+   Start at  00:38:35
+   Duration  1.13s (import 42%, transform 41%, tests 12%, worker 5%)
+
+    Isolate  14 workers spawned · ~287ms startup each (spawn + environment, per file)
+             at least ~287ms faster with isolate: false — reuses workers across files instead of one per file
+
+
+ RUN  v5.0.0 E:/DuAn/thu-nghiem
+
+
+ Test Files  14 passed (14)
+      Tests  128 passed (128)
+   Start at  17:38:37
+   Duration  1.77s (transform 68%, import 22%, tests 7%, worker 3%)
+
+  Transform  transforming modules took 3.22s · 68% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+
+
+> lichkhoa@0.1.0 build
+> tsc --noEmit && vite build
+
+[36mvite v8.3.0 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 39 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/registerSW.js               0.13 kB
+dist/manifest.webmanifest        0.29 kB
+dist/index.html                  0.86 kB │ gzip:  0.42 kB
+dist/assets/index-C51Of0Vs.css   9.55 kB │ gzip:  2.47 kB
+dist/assets/index-C9rR_fSU.js   66.61 kB │ gzip: 22.87 kB
+
+[32m✓ built in 146ms[39m
+
+PWA v1.3.0
+mode      generateSW
+precache  7 entries (75.36 KiB)
+files generated
+  dist/sw.js
+  dist/workbox-9c191d2f.js
+
+Running 20 tests using 4 workers
+
+  ✓   4 [chromium] › tests\e2e\events.spec.ts:91:3 › iPhone 13 Pro Max (428x926): không cuộn ngang, ev-save trong viewport › tab Sự kiện + sheet mở (684ms)
+  ✓   3 [chromium] › tests\e2e\events.spec.ts:117:1 › Sự kiện: lặp Thứ Hai đến Thứ Sáu (v1.3) (833ms)
+  ✓   1 [chromium] › tests\e2e\events.spec.ts:153:1 › Sự kiện: Nhắc trước -> .ics có VALARM (1.2s)
+  ✓   5 [chromium] › tests\e2e\events.spec.ts:173:1 › Việc cần làm: hạn quá hạn hiện trước việc không hạn (554ms)
+  ✓   6 [chromium] › tests\e2e\iphone13pm.spec.ts:4:3 › iPhone 13 Pro Max (D-007) › lần đầu mở: preset 1284x2778, không cuộn, vùng chạm/áp dụng >= 16px/44px (754ms)
+  ✓   2 [chromium] › tests\e2e\events.spec.ts:8:1 › Sự kiện: thêm/sửa/xóa, xuất .ics, việc cần làm, ghi chú (1.7s)
+  ✓  10 [chromium] › tests\e2e\smoke.spec.ts:3:1 › trang có manifest và service worker sẵn sàng (215ms)
+  ✓   7 [chromium] › tests\e2e\m1-render.spec.ts:5:1 › M1: chọn thiết bị, xem preview, lưu ảnh, reload giữ trạng thái (1.7s)
+  ✓   8 [chromium] › tests\e2e\notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload (2.3s)
+  ✓  12 [webkit] › tests\e2e\events.spec.ts:91:3 › iPhone 13 Pro Max (428x926): không cuộn ngang, ev-save trong viewport › tab Sự kiện + sheet mở (1.2s)
+  ✓  13 [webkit] › tests\e2e\events.spec.ts:117:1 › Sự kiện: lặp Thứ Hai đến Thứ Sáu (v1.3) (1.4s)
+  ✓   9 [chromium] › tests\e2e\settings.spec.ts:25:1 › Preview: chọn bố cục, cài đặt chung, sao lưu (4.8s)
+  ✓  14 [webkit] › tests\e2e\events.spec.ts:153:1 › Sự kiện: Nhắc trước -> .ics có VALARM (1.5s)
+  ✓  15 [webkit] › tests\e2e\events.spec.ts:173:1 › Việc cần làm: hạn quá hạn hiện trước việc không hạn (1.3s)
+  ✓  11 [webkit] › tests\e2e\events.spec.ts:8:1 › Sự kiện: thêm/sửa/xóa, xuất .ics, việc cần làm, ghi chú (4.2s)
+  ✓  18 [webkit] › tests\e2e\iphone13pm.spec.ts:4:3 › iPhone 13 Pro Max (D-007) › lần đầu mở: preset 1284x2778, không cuộn, vùng chạm/áp dụng >= 16px/44px (1.5s)
+  ✓  16 [webkit] › tests\e2e\m1-render.spec.ts:5:1 › M1: chọn thiết bị, xem preview, lưu ảnh, reload giữ trạng thái (2.6s)
+  ✓  20 [webkit] › tests\e2e\smoke.spec.ts:3:1 › trang có manifest và service worker sẵn sàng (547ms)
+  ✓  17 [webkit] › tests\e2e\notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload (3.7s)
+  ✓  19 [webkit] › tests\e2e\settings.spec.ts:25:1 › Preview: chọn bố cục, cài đặt chung, sao lưu (7.0s)
+
+  20 passed (21.5s)

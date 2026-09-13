@@ -60,6 +60,47 @@ select option {
   gap: 12px;
   flex: 1;
   min-height: 0;
+  overflow-y: auto;
+}
+
+/* Phần bắt buộc thấy ngay khi mở (T-2.9): chiếm đúng chiều cao vùng xem trước,
+   giống hệt trước khi có phần cài đặt bên dưới -> không ảnh hưởng test iphone13pm. */
+.preview-core {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-shrink: 0;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Cài đặt chung + sao lưu (T-2.9), cuộn tới bằng .preview-screen ở trên. */
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+  padding-top: 12px;
+  border-top: 1px solid #222;
+}
+
+.btn-file {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .field {
@@ -102,7 +143,9 @@ select option {
   margin: 0 auto;
 }
 
-.preview-screen button {
+/* Chỉ nút "Lưu ảnh" (trong .preview-core) -- KHÔNG dùng .preview-screen ở đây nữa vì
+   .settings-section (T-2.9) cũng nằm trong .preview-screen và có nút riêng (.seg-btn/.btn). */
+.preview-core button {
   padding: 10px;
   border-radius: 8px;
   border: none;
@@ -113,7 +156,7 @@ select option {
   flex-shrink: 0;
 }
 
-.preview-screen button:disabled {
+.preview-core button:disabled {
   background: #444;
 }
 
