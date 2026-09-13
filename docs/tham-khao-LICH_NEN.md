@@ -94,7 +94,7 @@ Kết quả thô: `docs/gemini-out/tham-khao-lich-nen-ui.md`. Chủ dự án: "c
 | T-4.4 | L320–325; `huong-dan-giai-doan-2.md` L61–68 | Trợ giúp + tạo Phím tắt (chỉ "Set Wallpaper") | THAM KHẢO (chưa kiểm) |
 
 Hướng đi áp dụng: sheet trượt cho form (không rời màn hình); segmented thay `<select>` khi ≤ 4 lựa chọn; swatches + ô màu tự chọn; toast cho thông báo/lỗi; ẩn/hiện việc đã xong; lịch trong app có âm lịch + chấm màu.
-Không dùng (OUT): widget/Scriptable, tự đổi hình nền không chạm, lặp T2–T6, VALARM, nhập .ics, `lichnen-config.json`, nhiều ghi chú/ghim, hạn to-do.
+Không dùng (OUT): widget/Scriptable, tự đổi hình nền không chạm, nhập .ics, `lichnen-config.json`. (Lặp T2–T6, VALARM "Nhắc trước", hạn to-do, nhiều ghi chú + ghim 1: đã vào phạm vi SPEC v1.3 — D-011, phiếu T-2.10/2.11/2.12.)
 Cảnh báo Gemini: L666 cộng tháng tràn ngày 31 — nằm trong `parseICS` (nhập .ics, OUT) → không ảnh hưởng; `recurrence.ts` (T-2.1) đã có test ngày 31.
 
 ---

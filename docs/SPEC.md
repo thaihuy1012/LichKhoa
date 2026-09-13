@@ -1,7 +1,7 @@
 # SPEC — LichKhoa (tái tạo tính năng "Ink: Lockscreen Calendar, Note" dưới dạng PWA)
 (Kiến trúc sư điền ở Giai đoạn 0. Đây là nguồn sự thật; mọi thay đổi phạm vi phải qua Chủ dự án.)
 
-Phiên bản SPEC: 1.2 — 2026-09-13 (v1.0 + Âm lịch D-006 + thiết bị đích iPhone 13 Pro Max D-007). App gốc đối chiếu: "Ink: Lockscreen Calendar, Note" (SilverAI JSC, App Store id6769250805, bản 1.2.14). Tính năng gốc đã tra cứu: hình nền màn hình khóa có lịch / agenda / to-do chồng lên ảnh cá nhân; đồng bộ Google Calendar và Apple Calendar; tạo sự kiện lặp có nhắc; tùy chỉnh ảnh, màu, độ mờ, ngôn ngữ; widget lịch và ghi chú; dữ liệu xử lý trên máy. Tên làm việc "LichKhoa" — không dùng tên, logo, ảnh, font của app gốc; chỉ tái tạo tính năng và luồng dùng.
+Phiên bản SPEC: 1.3 — 2026-09-13 (v1.0 + Âm lịch D-006 + thiết bị đích iPhone 13 Pro Max D-007 + lặp T2–T6, nhắc giờ qua .ics, hạn chót to-do, nhiều ghi chú D-011). App gốc đối chiếu: "Ink: Lockscreen Calendar, Note" (SilverAI JSC, App Store id6769250805, bản 1.2.14). Tính năng gốc đã tra cứu: hình nền màn hình khóa có lịch / agenda / to-do chồng lên ảnh cá nhân; đồng bộ Google Calendar và Apple Calendar; tạo sự kiện lặp có nhắc; tùy chỉnh ảnh, màu, độ mờ, ngôn ngữ; widget lịch và ghi chú; dữ liệu xử lý trên máy. Tên làm việc "LichKhoa" — không dùng tên, logo, ảnh, font của app gốc; chỉ tái tạo tính năng và luồng dùng.
 
 ## 1. Mục tiêu
 Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Chủ dự án: (a) dựng ảnh hình nền màn hình khóa đúng kích thước pixel máy, có lịch tháng / agenda / to-do / ghi chú chồng lên ảnh nền tự chọn; (b) trộn sự kiện Google Calendar (chỉ đọc, OAuth thuần client, không backend) với sự kiện lặp và to-do nhập tại chỗ; (c) đặt làm hình nền khóa bằng ≤ 3 chạm mỗi ngày qua Shortcut. Dùng cá nhân, không đăng nhập, dữ liệu nằm trên máy.
@@ -18,7 +18,8 @@ Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Ch�
   1. Dựng PNG đúng kích thước pixel màn hình iPhone: preset (`devices.ts`, gồm 1284×2778 iPhone 12/13 Pro Max — mặc định khi không nhận ra máy, v1.2), tự phát hiện (`screen × devicePixelRatio`, mặc định), tùy chỉnh; vùng an toàn tránh đồng hồ (trên) và nút đèn pin/camera (dưới).
   2. Ba bố cục: **Tháng** (lưới 6×7, tô hôm nay, chấm sự kiện), **Agenda** (N ngày tới, giờ + tên, màu lịch), **To-do** (checklist). Lớp **Ghi chú** (văn bản tự do) bật/tắt trên mọi bố cục.
   3. Nền: ảnh từ Thư viện (cover-fit, tôn trọng EXIF), màu đơn, gradient; mờ (0–3) + tối (0–0.8); màu chữ / màu nhấn; 3 họ font hệ thống (sans/serif/mono); vị trí khối (trên/giữa/dưới trong vùng an toàn); cỡ chữ (scale); độ trong suốt hộp.
-  4. Sự kiện cục bộ: CRUD; cả ngày hoặc có giờ; lặp ngày/tuần/tháng/năm + ngày kết thúc; to-do tick/bỏ tick; ghi chú.
+  4. Sự kiện cục bộ: CRUD; cả ngày hoặc có giờ; lặp ngày/**T2–T6**/tuần/tháng/năm + ngày kết thúc; to-do tick/bỏ tick; ghi chú.
+  10. (v1.3, D-011 — theo `F:/LICH_NEN`) **Lặp T2–T6** (`repeat: 'weekdays'`; .ics `FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR`). **Nhắc giờ** = trường "Nhắc trước" (`alarmMin`: 5/15/30/60/1440 phút) xuất thành `VALARM` trong .ics — Lịch iPhone nhắc; app KHÔNG tự gửi thông báo. **Hạn chót to-do** (`due`): việc chưa xong có hạn xếp trước theo hạn tăng dần, việc không hạn xếp sau theo `order` (lên/xuống tay); nhãn "Quá hạn" / "Hôm nay" / "d/m" trong app và trên hình nền (quá hạn tô `accentColor`). **Nhiều ghi chú** (tiêu đề + nội dung) trong app; ghim đúng 1 ghi chú (ghim cái mới → bỏ ghim cái cũ); hình nền hiện ghi chú ghim (tiêu đề + ≤ 4 dòng) khi `showNote`; `noteText` cũ tự thành ghi chú ghim.
   5. Google Calendar chỉ đọc: OAuth implicit redirect tự viết (không SDK), chọn lịch, tải sự kiện trong [hôm nay − 1 … + 60 ngày], cache cục bộ dùng offline, tự đồng bộ khi mở app nếu token còn hạn và cache cũ hơn 30 phút.
   6. Xuất: "Lưu ảnh" (Web Share files → fallback tải PNG); "Đặt hình nền" = sao chép PNG vào clipboard rồi mở `shortcuts://run-shortcut?name=<tên>&input=clipboard`; xuất sự kiện `.ics` (Lịch iPhone tự nhắc).
   7. PWA: manifest, service worker (offline app shell), cài Màn hình chính; dữ liệu trong IndexedDB; sao lưu / khôi phục JSON.
@@ -26,7 +27,7 @@ Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Ch�
   9. **Âm lịch** (v1.1, D-006): ngày âm nhỏ dưới mỗi ô bố cục Tháng + dòng "Âm lịch d/m [nhuận] <Can Chi năm>" cho hôm nay (Tháng) và nhãn ngày (Agenda); bật/tắt bằng `DesignConfig.showLunar` (mặc định bật). Thuật toán Hồ Ngọc Đức, múi giờ +7, port từ `F:/LICH_NEN/lich-nen.html` L434–513.
 - OUT (không làm trong bản này):
   - Đồng bộ Apple Calendar / Reminders (không có API web; cần backend CalDAV); nhập file .ics.
-  - Widget Màn hình chính iOS; thông báo đẩy / nhắc cục bộ (PWA iOS không lập lịch nhắc offline được); tự đổi hình nền hằng ngày mà không cần chạm.
+  - Widget Màn hình chính iOS; thông báo đẩy / nhắc cục bộ do app gửi (PWA iOS không lập lịch nhắc offline được — nhắc giờ chỉ qua VALARM trong .ics, IN-10); tự đổi hình nền hằng ngày mà không cần chạm.
   - Ghi sự kiện ngược lên Google; tài khoản / đồng bộ đám mây; mọi backend.
   - Tối ưu riêng cho iPad, Android, desktop (Chrome desktop chạy được nhưng không nghiệm thu).
   - Thương hiệu / tài sản của app gốc; mua trong app; ngôn ngữ ngoài VI/EN.
@@ -71,18 +72,22 @@ docs/       HUONG-DAN.md (M4)
 ```ts
 // core/model.ts
 type ISODate = string;                       // 'YYYY-MM-DD' theo giờ địa phương
-type Repeat = 'none'|'daily'|'weekly'|'monthly'|'yearly';
-interface LocalEvent { id: string; title: string; date: ISODate; time?: string /*'HH:mm'*/; durationMin?: number; repeat: Repeat; until?: ISODate; color?: string }
-interface Todo { id: string; text: string; done: boolean; order: number }
+type Repeat = 'none'|'daily'|'weekdays' /* v1.3: T2–T6 */|'weekly'|'monthly'|'yearly';
+interface LocalEvent { id: string; title: string; date: ISODate; time?: string /*'HH:mm'*/; durationMin?: number; repeat: Repeat; until?: ISODate; color?: string;
+  alarmMin?: number /* v1.3: phút nhắc trước, 0/thiếu = không nhắc → VALARM trong .ics */ }
+interface Todo { id: string; text: string; done: boolean; order: number; due?: ISODate /* v1.3 */ }
+interface Note { id: string; title: string; body: string; pinned: boolean; updated: number }   // v1.3 — tối đa 1 note pinned
 interface Occurrence { id: string; sourceId: string; source: 'local'|'google'; title: string; date: ISODate; time?: string; allDay: boolean; color?: string }
 interface DeviceSpec { id: string; label: string; width: number; height: number; safeTop: number; safeBottom: number } // safe* là tỉ lệ 0..1 của height
-interface DesignConfig { layout: 'month'|'agenda'|'todo'; showNote: boolean; noteText: string; showLunar: boolean /* v1.1 */;
+interface DesignConfig { layout: 'month'|'agenda'|'todo'; showNote: boolean /* hiện ghi chú ghim */; showLunar: boolean /* v1.1 */;   // v1.3: bỏ noteText → AppState.notes
   bg: { kind: 'photo'|'solid'|'gradient'; color: string; color2?: string }; blur: 0|1|2|3; dim: number;
   textColor: string; accentColor: string; font: 'sans'|'serif'|'mono'; position: 'top'|'middle'|'bottom';
   scale: number; boxAlpha: number; agendaDays: number; weekStart: 0|1; hour12: boolean; lang: 'vi'|'en' }
-interface AppState { version: 1; events: LocalEvent[]; todos: Todo[]; design: DesignConfig; device: DeviceSpec;
+interface AppState { version: 1; events: LocalEvent[]; todos: Todo[]; notes: Note[] /* v1.3 */; design: DesignConfig; device: DeviceSpec;
   google: { clientId: string; calendarIds: string[]; cache: { events: Occurrence[]; fetchedAt: number } | null }; shortcutName: string }
-interface RenderData { today: ISODate; occurrences: Occurrence[]; todos: Todo[]; note: string }
+// v1.3: vẫn version 1 — normalizeState bù notes: [] và chuyển design.noteText (nếu có, khác rỗng) thành 1 Note pinned.
+interface RenderData { today: ISODate; occurrences: Occurrence[]; todos: Todo[] /* đã sắp: chưa xong có hạn ↑, chưa xong không hạn theo order, rồi đã xong */;
+  note: string /* body ghi chú ghim, '' nếu không có */; noteTitle?: string /* v1.3 */ }
 // core
 expandOccurrences(events: LocalEvent[], from: ISODate, to: ISODate): Occurrence[]
 monthGrid(year: number, month0: number, weekStart: 0|1): (ISODate|null)[][]          // luôn 6 hàng × 7 cột
@@ -129,6 +134,8 @@ Nội dung: màn Events (CRUD sự kiện lặp, to-do, ghi chú); `recurrence.t
   - [ ] E2E `m2-events.spec.ts` — **T-2.END**: thêm sự kiện lặp tuần → chuyển bố cục Agenda → hash PNG preview đổi → reload → sự kiện còn → xuất JSON → xóa dữ liệu → nhập JSON → sự kiện trở lại.
   - [ ] E2E: đổi ngôn ngữ `en` → nhãn tab đổi; bật 12h → agenda chứa "AM"/"PM".
   - [ ] (v1.1) `lunar.test.ts`: 17/02/2026 → 1/1 Bính Ngọ; 29/01/2025 → 1/1 Ất Tỵ; 10/02/2024 → 1/1 Giáp Thìn; 22/03/2023 → 1/2 nhuận; 25/07/2025 → 1/6 nhuận; pass cả 2 TZ. `showLunar=true` → `__lastOps` bố cục Tháng có op text ngày âm; `false` → không có.
+  - [ ] (v1.3) `recurrence.test.ts`: `weekdays` chỉ T2–T6, tôn trọng `until`. `ics.test.ts`: `weekdays` → `RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR`; `alarmMin=15` → `BEGIN:VALARM … TRIGGER:-PT15M … END:VALARM`; không `alarmMin` → không VALARM. `collect.test.ts`: thứ tự to-do theo hạn/`order`; `note`/`noteTitle` lấy từ ghi chú ghim. `model.test.ts`: state có `design.noteText` → 1 Note pinned. `layout.test.ts`: to-do có nhãn hạn, quá hạn tô accent; note có dòng tiêu đề.
+  - [ ] E2E T-2.END bổ sung: sự kiện lặp T2–T6 hiện đúng ngày; tải .ics có VALARM; 2 ghi chú, ghim cái thứ 2 → `__lastOps` chứa tiêu đề ghi chú thứ 2, không chứa ghi chú 1.
   - [ ] `npm run check` pass; test M1 không bị sửa/skip (kiem-thu xác nhận).
 
 ### M3 — Google Calendar (OAuth thuần client, chỉ đọc) + trộn dữ liệu

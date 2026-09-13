@@ -52,4 +52,12 @@
 ## D-010 — Tách T-2.7, theo hướng UI của LICH_NEN (2026-09-13 · người quyết: Quản lý)
 - Bối cảnh: Chủ dự án nhắc "tham khảo F:\LICH_NEN, cái nào dùng được thì lấy, tham khảo hướng đi". Gemini Pro đọc rộng → `docs/tham-khao-LICH_NEN.md` §6.
 - Quyết định: T-2.7 cũ quá lớn cho một lượt thợ → T-2.7 (tab Sự kiện: 3 phân đoạn Sự kiện/Việc/Ghi chú, lịch nhỏ + sheet trượt như LICH_NEN) và T-2.9 (Preview: bố cục, cài đặt chung, sao lưu — SPEC giữ 5 tab, không có tab Cài đặt, nên đặt dưới nút "Lưu ảnh" cạnh chọn thiết bị).
-- Chốt `data-testid` ngay trong phiếu để T-2.END dùng thống nhất. Tính năng LICH_NEN ngoài SPEC (lặp T2–T6, nhắc giờ, hạn to-do, nhiều ghi chú) KHÔNG thêm.
+- Chốt `data-testid` ngay trong phiếu để T-2.END dùng thống nhất. Tính năng LICH_NEN ngoài SPEC (lặp T2–T6, nhắc giờ, hạn to-do, nhiều ghi chú) KHÔNG thêm. → Đã được Chủ dự án thêm ngay sau đó, xem D-011.
+
+## D-011 — SPEC v1.3: lặp T2–T6, nhắc giờ, hạn to-do, nhiều ghi chú (2026-09-13 · người quyết: Chủ dự án)
+- Chủ dự án: "Thêm tính năng lặp thứ 2 đến thứ 6, nhắc giờ, hạn chót cho việc cần làm, nhiều ghi chú". Hỏi 3 điểm, Chủ dự án chọn cả 3 khuyến nghị (theo cách LICH_NEN):
+  - Nhắc giờ = "Nhắc trước" → VALARM trong .ics, Lịch iPhone nhắc (không Web Push — cần máy chủ, OUT).
+  - Nhiều ghi chú, ghim đúng 1 cái lên hình nền (tiêu đề + ≤ 4 dòng); `noteText` cũ → Note pinned.
+  - To-do có hạn xếp trước theo hạn; không hạn theo `order`; nhãn "Quá hạn"/"Hôm nay"/"d/m".
+- Hợp đồng (SPEC §5): `Repeat` + `weekdays`; `LocalEvent.alarmMin?`; `Todo.due?`; `Note`; `AppState.notes`; bỏ `DesignConfig.noteText`; `RenderData.noteTitle?` (giữ `note: string` để test layout khóa không phải sửa); vẫn `version: 1` nhờ `normalizeState`.
+- Phiếu: T-2.10 (lõi) → T-2.11 (hình nền) ∥ T-2.12 (UI), trong M2. T-2.7 đang chạy được nhắn bỏ phần ghi chú đơn. Được sửa test khóa chỉ ở chỗ `noteText`/`setNote`, phải khai báo.

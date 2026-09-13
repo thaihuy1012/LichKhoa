@@ -4,8 +4,9 @@ Nguồn sự thật: `docs/SPEC.md` (v1.2 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 7/10 · M3: 0/4 · M4: 0/6
-- Đang làm: T-2.7 (DOING, tho-sonnet lượt 1)
+- M1: 8/8 ✔ tag `M1-ok` · M2: 7/13 · M3: 0/4 · M4: 0/6
+- Đang làm: T-2.7 (DOING, tho-sonnet lượt 1 — đã nhắn thu hẹp phân đoạn Ghi chú, D-011)
+- SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
 - Chờ Chủ dự án: đặt thử ảnh mẫu 1284×2778 (đã gửi 2026-09-13) — có đè đồng hồ/widget/nút không? (không chặn; cần trước T-2.3)
 - Chuyển phiên: T-2.8 đã commit — điểm dừng sạch. Phiên mới (`claude --agent quan-ly`): đọc SU-CO → TASKS, giao T-2.6 (nhớ tiêu chí Quản lý dựng ảnh mẫu 3 bố cục xem bằng mắt). Ảnh mẫu mới nhất đã gửi Chủ dự án: có âm lịch (lichkhoa-amlich-r1.png).
@@ -19,7 +20,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Thứ tự & song song
 M1: 1.1 → 1.2 → (1.3 ∥ 1.4) → 1.5 → 1.END → (1.6 ∥ 1.7) → ảnh mẫu 1284×2778 cho Chủ dự án thử (xong trước T-2.3) → tag M1-ok
-M2: (2.1 ∥ 2.4 ∥ 2.5) → 2.2 → 2.3 → 2.8 → 2.6 → 2.7 → 2.9 → 2.END
+M2: (2.1 ∥ 2.4 ∥ 2.5) → 2.2 → 2.3 → 2.8 → 2.6 → 2.7 → 2.10 → (2.11 ∥ 2.12) → 2.9 → 2.END   (2.9 dùng chung styles/i18n với 2.12 → sau 2.12)
 M3: (3.1 ∥ 3.2) → 3.3 → 3.END
 M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
@@ -226,10 +227,10 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   - Events.tsx có 3 phân đoạn (segmented, `data-testid="seg-events|seg-todos|seg-note"`): **Sự kiện** · **Việc** · **Ghi chú**.
   - Sự kiện: lịch tháng (`cal-prev`, `cal-next`, ô `cal-cell-<ISO>`, theo `weekStart`, âm lịch khi `showLunar`, chấm theo occurrence của `expandOccurrences`), danh sách ngày đang chọn (`ev-item`), nút `add-event` mở Sheet; Sheet: `ev-title`, `ev-allday`, `ev-date`, `ev-start`, `ev-end`, `ev-repeat` (none/daily/weekly/monthly/yearly), `ev-until`, `ev-color-<i>` (bảng màu `EVENT_COLORS` lich-nen.html L411), `ev-save`, `ev-cancel`, `ev-delete` (chỉ khi sửa, confirm), `ev-ics` (tải `lichkhoa-<date>.ics` từ `eventToIcs`). Sự kiện lặp: bấm occurrence → sửa sự kiện gốc.
   - Việc: `todo-input`, `todo-add`, hàng `todo-item` gồm `todo-toggle`, `todo-edit` (sửa tại chỗ), `todo-up`, `todo-down`, `todo-del`; sắp theo `order`; nhóm đã xong ẩn/hiện (`todo-done-toggle`).
-  - Ghi chú: `note-text` (textarea, lưu bằng `setNote` debounce hoặc khi blur), `note-show` (switch `showNote`), gợi ý "Ghi chú hiện ở cuối hình nền".
+  - Ghi chú: ~~`note-text`, `note-show`~~ → (sửa 2026-09-13, D-011) CHỈ khung `seg-note` + placeholder "Sắp có"; ghi chú nhiều mục làm ở T-2.12. Không thêm weekdays/nhắc trước/hạn to-do (T-2.10–2.12), nhưng đừng khóa cứng bố cục sheet/hàng to-do.
   - Toast `data-testid="toast"`. Mọi nhãn qua `t()`; nhãn tab đổi theo `design.lang`. Vùng chạm ≥ 44px, ô nhập ≥ 16px, sheet chừa `env(safe-area-inset-bottom)`, không cuộn ngang ở 428px.
 - Tiêu chí nghiệm thu:
-  [ ] `events.spec.ts` (chromium + webkit): thêm sự kiện có giờ lặp tuần → xuất hiện trong danh sách ngày + chấm ở lịch; sửa tiêu đề → danh sách đổi; xóa (chấp nhận confirm) → mất; `ev-ics` tạo download `.ics` chứa `BEGIN:VEVENT`; thêm 2 việc → `todo-down` đổi thứ tự → `todo-toggle` → vào nhóm đã xong; nhập ghi chú + bật `note-show` → reload vẫn còn (IndexedDB).
+  [ ] `events.spec.ts` (chromium + webkit): thêm sự kiện có giờ lặp tuần → xuất hiện trong danh sách ngày + chấm ở lịch; sửa tiêu đề → danh sách đổi; xóa (chấp nhận confirm) → mất; `ev-ics` tạo download `.ics` chứa `BEGIN:VEVENT`; thêm 2 việc → `todo-down` đổi thứ tự → `todo-toggle` → vào nhóm đã xong → reload vẫn còn (IndexedDB). ~~ghi chú~~ (hủy, D-011)
   [ ] Ở webkit 13 Pro Max (428×926): `scrollWidth <= clientWidth` trên tab Sự kiện và khi mở sheet; nút `ev-save` nằm trong viewport khi sheet mở.
   [ ] `npm run check` pass; test khóa (smoke, m1-render, iphone13pm, unit) không sửa.
   [ ] Quản lý xem ảnh chụp màn hình tab Sự kiện 428×926 (3 phân đoạn + sheet mở) trước khi DONE.
@@ -248,9 +249,34 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Lệnh kiểm tra: `npm run check`
 - Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
 
+### T-2.10 — Mô hình v1.3: lặp T2–T6, nhắc trước, hạn to-do, nhiều ghi chú (lõi) — D-011
+- Mục tiêu: hợp đồng SPEC v1.3 mục 5 cho phần lõi; mọi thứ khác (render, UI) dựa trên đây.
+- Phạm vi file: `src/core/model.ts` (Repeat `weekdays`, `LocalEvent.alarmMin`, `Todo.due`, `Note`, `AppState.notes`, BỎ `DesignConfig.noteText` khỏi kiểu + `defaultDesign`, `defaultState.notes: []`, `normalizeState` bù `notes` + chuyển `design.noteText` khác rỗng → 1 Note pinned `{title:'', body:noteText}` và xóa `noteText` khỏi design), `src/core/recurrence.ts` (weekdays = getDay 1..5), `src/export/ics.ts` (BYDAY; VALARM `ACTION:DISPLAY`, `DESCRIPTION`, `TRIGGER:-PT<n>M` hoặc `-P1D` khi 1440), `src/core/collect.ts` (sắp to-do theo SPEC; `note`/`noteTitle` từ Note pinned), `src/ui/store.ts` (BỎ `setNote`; thêm `addNote(note)`, `updateNote(note)`, `deleteNote(id)`, `pinNote(id, pinned)` — ghim 1 thì bỏ ghim các cái khác, `updated = Date.now()` hoặc tham số; `addTodo` nhận `due?`; `setTodoDue(id, due|null)`), `src/core/i18n/vi.json` + `en.json` (khóa hiển thị trên hình nền: `todo.overdue` "Quá hạn"/"Overdue", `repeat.weekdays`; giữ 2 file khớp), `src/ui/screens/events/*` CHỈ để tsc sạch nếu T-2.7 lỡ dùng `setNote`/`noteText`.
+- Test: `tests/unit/recurrence.test.ts`, `ics.test.ts`, `collect.test.ts`, `model.test.ts`, `store.test.ts`, `backup.test.ts` — THÊM test mới. Được SỬA test khóa CHỈ ở chỗ dùng `noteText`/`setNote` (store.test, collect.test, wallpaper.test, model.test) để chuyển sang `notes` — mỗi chỗ sửa khai báo trong báo cáo; mọi test khác nguyên văn.
+- Tham khảo: `F:/LICH_NEN/lich-nen.html` L553 `weekdays` trong occursOn; L604 map RRULE (BYDAY); L610 dòng VALARM; L578–581 `taskSort` (có hạn trước, hạn tăng dần — ta thêm `order` cho việc không hạn); L920–926 `saveNote` (ghim 1 → bỏ ghim các cái khác).
+- Tiêu chí nghiệm thu: [ ] đúng các dòng (v1.3) của SPEC M2 cho recurrence/ics/collect/model; [ ] backup vòng tròn giữ `notes`, `due`, `alarmMin`; [ ] reducer: `pinNote` đảm bảo ≤ 1 pinned, không mutate; [ ] `npm run check` pass.
+- Lệnh kiểm tra: `npm run check`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+
+### T-2.11 — Hình nền v1.3: nhãn hạn to-do + tiêu đề ghi chú ghim
+- Phạm vi file: `src/render/layout/todo.ts`, `src/render/layout/note.ts`, `src/render/layout/common.ts` (`noteHeight` tính thêm dòng tiêu đề; helper nhãn hạn dùng `t()`), `tests/unit/layout.test.ts` (chỉ thêm). Sau T-2.10; song song T-2.12 (không chung file).
+- Tham khảo: `F:/LICH_NEN/lich-nen.html` L1273 nhãn hạn trên hình nền ("Quá hạn" / "Hôm nay" / "d/m"); L1132–1149 khối ghi chú ghim (tiêu đề đậm + ≤ 4 dòng).
+- Yêu cầu: to-do chưa xong có `due` → nhãn canh phải cùng dòng (tiêu đề cắt "…" để chừa chỗ); quá hạn → nhãn màu `accentColor`, chữ đậm; note: `noteTitle` khác rỗng → dòng tiêu đề đậm trước ≤ 4 dòng nội dung; khối chính và dải note vẫn không giao nhau; mọi op trong vùng an toàn (3 position × 2 thiết bị).
+- Tiêu chí: [ ] test nhãn hạn 3 trường hợp + quá hạn tô accent; [ ] note có tiêu đề → op text đậm đứng trước nội dung; bbox không giao; [ ] `npm run check` pass; [ ] Quản lý dựng ảnh mẫu có dữ liệu (khuôn `mau-t26.cjs`) và xem trước khi DONE.
+- Lệnh kiểm tra: `npm run check`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+
+### T-2.12 — Màn Sự kiện v1.3: T2–T6, nhắc trước, hạn to-do, danh sách ghi chú
+- Phạm vi file: `src/ui/screens/Events.tsx`, `src/ui/screens/events/*`, `src/ui/styles.css`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `tests/e2e/events.spec.ts` (chỉ thêm test), `tests/e2e/notes.spec.ts` (mới). Sau T-2.7 + T-2.10; song song T-2.11.
+- Tham khảo: `F:/LICH_NEN/lich-nen.html` L350–368 (option "Thứ hai đến thứ sáu", select "Nhắc trước" 0/5/15/30/60/1440 + gợi ý "Việc nhắc do Lịch iPhone thực hiện…"); L784–785 meta dưới sự kiện ("Hằng tuần, Nhắc trước 15 phút"); L275–279 ô ngày hạn cạnh ô việc mới; L876 + L133–134 nhãn hạn (quá hạn màu cảnh báo); L377–384 sheet ghi chú (Tiêu đề, Nội dung, switch "Ghim lên hình nền", Xóa); L895–932 danh sách ghi chú (ghim lên đầu, nhãn "Ghim", trạng thái rỗng, ghi chú trống → toast).
+- Yêu cầu / `data-testid`: sheet sự kiện thêm option `weekdays` trong `ev-repeat` và `ev-alarm` (select); hàng sự kiện hiện meta lặp + nhắc. To-do: `todo-due` (ô ngày cạnh `todo-input`), nhãn hạn `todo-due-label` trên hàng (quá hạn class cảnh báo), sửa hạn tại chỗ; thứ tự hiển thị theo SPEC (có hạn trước). Ghi chú: danh sách `note-item` (ghim lên đầu, nhãn Ghim), `add-note` mở sheet `nt-title`, `nt-body`, `nt-pin`, `nt-save`, `nt-cancel`, `nt-delete` (confirm); switch `note-show` (`showNote`) ở đầu phân đoạn; gợi ý "Ghi chú ghim hiện ở cuối hình nền".
+- Tiêu chí: [ ] `events.spec.ts` thêm: sự kiện `weekdays` → có chấm T2–T6, không có T7/CN của tuần đó; `ev-alarm`=15 → .ics tải về chứa `TRIGGER:-PT15M`; việc có hạn hôm qua hiện "Quá hạn" và đứng trên việc không hạn; [ ] `notes.spec.ts`: thêm 2 ghi chú, ghim cái 2 + bật `note-show` → `__lastOps` chứa tiêu đề ghi chú 2, không chứa ghi chú 1 → reload vẫn còn; [ ] 428×926 không cuộn ngang, `nt-save` trong viewport khi sheet mở; [ ] `npm run check` pass, test khóa không sửa; [ ] Quản lý xem ảnh chụp màn hình.
+- Lệnh kiểm tra: `npm run check`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+
 ### T-2.END — Kiểm thử tích hợp M2
 - Phạm vi file: `tests/e2e/m2-events.spec.ts`, `tests/e2e/m2-i18n.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.
-- Tiêu chí: [ ] thêm sự kiện lặp tuần → chuyển Agenda → hash PNG preview đổi → reload còn sự kiện → xuất JSON → xóa dữ liệu → nhập JSON → sự kiện trở lại; [ ] đổi `en` → nhãn tab đổi; bật 12h → agenda (qua `window.__lastOps`) chứa "AM"/"PM"; tắt âm lịch → `__lastOps` không còn op "Âm lịch"; [ ] `npm run check` pass, test M1 không bị sửa/skip.
+- Tiêu chí: [ ] thêm sự kiện lặp tuần → chuyển Agenda → hash PNG preview đổi → reload còn sự kiện → xuất JSON → xóa dữ liệu → nhập JSON → sự kiện trở lại (kèm ghi chú ghim + hạn to-do + nhắc trước — v1.3); [ ] đổi `en` → nhãn tab đổi; bật 12h → agenda (qua `window.__lastOps`) chứa "AM"/"PM"; tắt âm lịch → `__lastOps` không còn op "Âm lịch"; [ ] (v1.3) sự kiện T2–T6 đúng ngày trên Agenda; bố cục To-do có "Quá hạn"; 2 ghi chú, ghim cái 2 → `__lastOps` có tiêu đề ghi chú 2, không có ghi chú 1; [ ] `npm run check` pass, test M1 không bị sửa/skip.
 - Lệnh kiểm tra: `npm run check`
 - Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
 
