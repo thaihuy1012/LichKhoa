@@ -4,13 +4,13 @@ Nguồn sự thật: `docs/SPEC.md` (v1.0, Chủ dự án duyệt 2026-09-13). H
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 1/6 · M2: 0/8 · M3: 0/4 · M4: 0/6
-- Đang làm: T-1.2 (tho-sonnet)
+- M1: 2/6 · M2: 0/8 · M3: 0/4 · M4: 0/6
+- Đang làm: T-1.3 ∥ T-1.4 (tho-sonnet ×2)
 - Chờ Chủ dự án: (không)
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
 
 ## Tồn đọng (S4 — không chặn)
-- (trống)
+- S4 · T-1.2 · mặc định `boxAlpha=1` (hộp nền đặc) sẽ che ảnh nền ở M4 — xem lại mặc định khi làm T-4.2.
 
 ## Thứ tự & song song
 M1: 1.1 → 1.2 → (1.3 ∥ 1.4) → 1.5 → 1.END
@@ -51,7 +51,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   [ ] `monthGrid(2026,2,0)`: tháng 3/2026 bắt đầu CN → [0][0] = '2026-03-01', '2026-03-31' đúng vị trí.
   [ ] Test `toISODate` không lệch ngày ở cả 2 TZ.
 - Lệnh kiểm tra: `npx tsc --noEmit; npm run test`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-13 lượt 1: Chủ dự án dừng thợ giữa chừng. Dở dang trên đĩa (chưa commit, chưa kiểm): `src/core/model.ts` (113 dòng), `src/core/calendar.ts` (37 dòng); chưa có `tests/unit/calendar.test.ts`. Chủ dự án chọn "làm tiếp" → lượt 2: thợ mới (tho-sonnet) giữ phần dở, soát lại theo SPEC, viết test. Lượt 2: DONE (model.ts, calendar.ts của lượt 1 giữ nguyên; thêm calendar.test.ts, 11/11 × 2 TZ) → kiem-thu PASS (tsc sạch, 11×2 unit, 2 e2e) → review đạt → commit.
 
 ### T-1.3 — Thiết bị + layoutMonth
 - Mục tiêu: preset thiết bị, tự phát hiện, và bố cục Tháng dạng `DrawOp[]` thuần.
