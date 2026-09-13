@@ -18,6 +18,8 @@ out="docs/gemini-out/$name.md"; err="docs/gemini-out/$name.err"
 args=(-p "$(cat "$prompt_file")" --print-timeout 15m)
 # agy headless không tự coi thư mục hiện tại là workspace → read_file bị từ chối; phải --add-dir (D-009)
 args+=(--add-dir "$(pwd -W 2>/dev/null || pwd)")
+# Thư mục ngoài repo cần đọc (vd. tài liệu tham khảo): AGY_ADD_DIRS="F:/LICH_NEN" — cách nhau bằng dấu cách, không chứa dấu cách
+for d in ${AGY_ADD_DIRS:-}; do args+=(--add-dir "$d"); done
 # Làn ghi: tự duyệt sửa file; lệnh shell vẫn bị từ chối (không dùng --dangerously-skip-permissions)
 { [ "$mode" = "sinh" ] || [ "$mode" = "code" ]; } && args+=(--mode accept-edits)
 [ -n "$model" ] && args+=(--model "$model")

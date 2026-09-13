@@ -38,3 +38,4 @@ Gemini không phải subagent của Claude Code. Nó chạy như công cụ ngo�
 5. Windows: script chạy trong Git Bash (Claude Code dùng bash này); `agy` phải có trong PATH.
 Tài liệu headless: https://antigravity.google/docs/cli/headless/ · Quyền trong headless: đọc/ghi file trong workspace được tự cho phép, lệnh shell mặc định bị từ chối mềm.
 6. Thực tế agy 1.2.2 (D-009): cwd KHÔNG tự là workspace → `read_file` bị từ chối, exit 0 kết quả rỗng. `scripts/agy-run.sh` đã tự thêm `--add-dir <repo>` (mọi làn) và `--mode accept-edits` (làn sinh/code); kết quả rỗng → exit 3. Không dùng `--dangerously-skip-permissions`.
+7. Đọc thư mục ngoài repo: `AGY_ADD_DIRS="F:/LICH_NEN" bash scripts/agy-run.sh doc …` (chỉ dùng với làn `doc`/`soat`).
