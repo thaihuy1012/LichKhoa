@@ -38,11 +38,12 @@ export function fontSize(base: number, scale: number): number {
   return base * scale;
 }
 
-/** Chiều cao dải ghi chú (tối đa ~4 dòng) khi `showNote` bật; 0 khi tắt. */
+/** Chiều cao dải ghi chú (tối đa ~4 dòng + 1 dòng tiêu đề) khi `showNote` bật; 0 khi tắt. */
 export function noteHeight(dev: DeviceSpec, c: DesignConfig): number {
   if (!c.showNote) return 0;
   const size = fontSize(dev.width * 0.032, c.scale);
-  return size * 1.35 * 4 + dev.height * 0.02;
+  const titleLineH = size * 1.4;
+  return size * 1.35 * 4 + titleLineH + dev.height * 0.02;
 }
 
 /** Vùng an toàn dành cho khối chính (month/agenda/todo): vùng an toàn trừ dải ghi chú (nếu bật). */
@@ -153,4 +154,12 @@ export function truncate(text: string, width: number, size: number): string {
   const s = String(text ?? '');
   if (s.length <= cpl) return s;
   return `${s.slice(0, Math.max(1, cpl - 1))}…`;
+}
+
+/** Nhãn hạn to-do: "Quá hạn" nếu qua ngày `today`, "Hôm nay" nếu đúng hôm nay, còn lại "d/m". */
+export function todoDueLabel(due: ISODate, today: ISODate, lang: 'vi' | 'en'): { text: string; overdue: boolean } {
+  if (due < today) return { text: t('todo.overdue', lang), overdue: true };
+  if (due === today) return { text: t('date.today', lang), overdue: false };
+  const p = parseISODate(due);
+  return { text: `${p.d}/${p.m0 + 1}`, overdue: false };
 }

@@ -1,11 +1,11 @@
 import type { DesignConfig, DeviceSpec, RenderData } from '../../core/model';
-import { fontSize, noteArea, wrapText, type DrawOp } from './common';
+import { fontSize, noteArea, truncate, wrapText, type DrawOp } from './common';
 
-/** Dải ghi chú, tối đa ~4 dòng, nằm dưới khối chính. Hàm thuần. */
+/** Dải ghi chú, tối đa ~4 dòng (+ dòng tiêu đề nếu có), nằm dưới khối chính. Hàm thuần. */
 const MAX_LINES = 4;
 
 export function layoutNote(d: RenderData, c: DesignConfig, dev: DeviceSpec): DrawOp[] {
-  if (!c.showNote || !d.note) return [];
+  if (!c.showNote || (!d.note && !d.noteTitle)) return [];
   const ops: DrawOp[] = [];
   const area = noteArea(dev, c);
   const contentHeight = area.bottom - area.top;
@@ -14,10 +14,11 @@ export function layoutNote(d: RenderData, c: DesignConfig, dev: DeviceSpec): Dra
   const contentWidth = dev.width - 2 * margin;
 
   const size = fontSize(dev.width * 0.032, c.scale);
-  const lines = wrapText(d.note, contentWidth, size, MAX_LINES);
+  const lines = d.note ? wrapText(d.note, contentWidth, size, MAX_LINES) : [];
   const padding = fontSize(dev.width * 0.02, c.scale);
   const lineH = size * 1.4;
-  const boxHeight = Math.min(contentHeight, lines.length * lineH + padding * 2);
+  const titleH = d.noteTitle ? size * 1.4 : 0;
+  const boxHeight = Math.min(contentHeight, titleH + lines.length * lineH + padding * 2);
 
   ops.push({
     op: 'rect',
@@ -31,6 +32,21 @@ export function layoutNote(d: RenderData, c: DesignConfig, dev: DeviceSpec): Dra
   });
 
   let y = area.top + padding;
+  if (d.noteTitle) {
+    const rowCenterY = y + titleH / 2;
+    ops.push({
+      op: 'text',
+      x: contentLeft,
+      y: rowCenterY + size * 0.35,
+      text: truncate(d.noteTitle, contentWidth, size),
+      size,
+      weight: 700,
+      color: c.textColor,
+      align: 'left',
+      font: c.font,
+    });
+    y += titleH;
+  }
   for (const line of lines) {
     const rowCenterY = y + lineH / 2;
     ops.push({

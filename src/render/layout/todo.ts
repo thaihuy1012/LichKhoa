@@ -1,6 +1,6 @@
 import type { DesignConfig, DeviceSpec, RenderData, Todo } from '../../core/model';
 import { t } from '../../core/i18n';
-import { blockStartY, fontSize, mainArea, truncate, type DrawOp } from './common';
+import { blockStartY, fontSize, mainArea, truncate, todoDueLabel, type DrawOp } from './common';
 
 /** To-do tối đa 12 dòng (SPEC mục 9), vượt quá gộp thành dòng "+N". */
 const MAX_LINES = 12;
@@ -91,7 +91,26 @@ export function layoutTodo(d: RenderData, c: DesignConfig, dev: DeviceSpec): Dra
         font: c.font,
       });
       const textLeft = contentLeft + sLineSize * 1.4;
-      const availWidth = Math.max(1, contentLeft + contentWidth - textLeft);
+      let availWidth = Math.max(1, contentLeft + contentWidth - textLeft);
+
+      const due = !todo.done && todo.due ? todoDueLabel(todo.due, d.today, c.lang) : null;
+      if (due) {
+        const labelSize = sLineSize * 0.85;
+        const labelWidth = due.text.length * labelSize * 0.5 + sLineSize * 0.6;
+        availWidth = Math.max(1, availWidth - labelWidth);
+        ops.push({
+          op: 'text',
+          x: contentLeft + contentWidth,
+          y: rowCenterY + sLineSize * 0.35,
+          text: due.text,
+          size: labelSize,
+          weight: due.overdue ? 700 : 600,
+          color: due.overdue ? c.accentColor : c.textColor,
+          align: 'right',
+          font: c.font,
+        });
+      }
+
       ops.push({
         op: 'text',
         x: textLeft,

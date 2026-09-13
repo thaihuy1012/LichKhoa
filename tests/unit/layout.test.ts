@@ -252,6 +252,69 @@ describe('layoutNote', () => {
   });
 });
 
+describe('layoutTodo nhãn hạn', () => {
+  function todoDue(text: string, due: string | undefined, done = false): Todo {
+    return { id: text, text, done, due, order: 0 } as Todo;
+  }
+
+  it('due trước hôm nay -> "Quá hạn" tô accentColor', () => {
+    const design: DesignConfig = defaultDesign();
+    const d = renderData({ today: '2026-02-15', todos: [todoDue('Việc cũ', '2026-02-10')] });
+    const ops = layoutTodo(d, design, DEV_1179);
+    const label = ops.find((o) => o.op === 'text' && (o as { text: string }).text === 'Quá hạn') as Extract<DrawOp, { op: 'text' }>;
+    expect(label).toBeTruthy();
+    expect(label.color).toBe(design.accentColor);
+  });
+
+  it('due đúng hôm nay -> "Hôm nay"', () => {
+    const design: DesignConfig = defaultDesign();
+    const d = renderData({ today: '2026-02-15', todos: [todoDue('Việc hôm nay', '2026-02-15')] });
+    const ops = layoutTodo(d, design, DEV_1179);
+    const texts = textOf(ops);
+    expect(texts).toContain('Hôm nay');
+  });
+
+  it('due tương lai -> nhãn "d/m"', () => {
+    const design: DesignConfig = defaultDesign();
+    const d = renderData({ today: '2026-02-15', todos: [todoDue('Việc mai', '2026-02-20')] });
+    const ops = layoutTodo(d, design, DEV_1179);
+    const texts = textOf(ops);
+    expect(texts).toContain('20/2');
+  });
+
+  it('không có due hoặc đã xong -> không có nhãn hạn', () => {
+    const design: DesignConfig = defaultDesign();
+    const d = renderData({
+      today: '2026-02-15',
+      todos: [todoDue('Không hạn', undefined), todoDue('Xong rồi', '2026-02-10', true)],
+    });
+    const ops = layoutTodo(d, design, DEV_1179);
+    const texts = textOf(ops);
+    expect(texts.includes('Quá hạn')).toBe(false);
+  });
+});
+
+describe('layoutNote tiêu đề ghi chú ghim', () => {
+  it('noteTitle khác rỗng -> op text đậm (weight 700) đứng trước nội dung', () => {
+    const design: DesignConfig = { ...defaultDesign(), showNote: true };
+    const d = renderData({ note: 'Nội dung ghi chú', noteTitle: 'Tiêu đề' });
+    const ops = layoutNote(d, design, DEV_1179) as Extract<DrawOp, { op: 'text' }>[];
+    const texts = ops.filter((o) => o.op === 'text') as Extract<DrawOp, { op: 'text' }>[];
+    expect(texts[0].text).toBe('Tiêu đề');
+    expect(texts[0].weight).toBe(700);
+    expect(texts[1].y).toBeGreaterThan(texts[0].y);
+  });
+
+  it('note rỗng nhưng có noteTitle -> vẫn vẽ (không trả [])', () => {
+    const design: DesignConfig = { ...defaultDesign(), showNote: true };
+    const d = renderData({ note: '', noteTitle: 'Chỉ tiêu đề' });
+    const ops = layoutNote(d, design, DEV_1179);
+    expect(ops.length).toBeGreaterThan(0);
+    const texts = textOf(ops);
+    expect(texts).toContain('Chỉ tiêu đề');
+  });
+});
+
 describe('showNote: khối chính và dải ghi chú không chồng nhau', () => {
   function bbox(ops: ReturnType<typeof layoutMonth>): { minY: number; maxY: number } {
     let minY = Infinity;
