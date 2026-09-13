@@ -1,13 +1,13 @@
 # SPEC — LichKhoa (tái tạo tính năng "Ink: Lockscreen Calendar, Note" dưới dạng PWA)
 (Kiến trúc sư điền ở Giai đoạn 0. Đây là nguồn sự thật; mọi thay đổi phạm vi phải qua Chủ dự án.)
 
-Phiên bản SPEC: 1.1 — 2026-09-13 (v1.0 + bổ sung Âm lịch, D-006). App gốc đối chiếu: "Ink: Lockscreen Calendar, Note" (SilverAI JSC, App Store id6769250805, bản 1.2.14). Tính năng gốc đã tra cứu: hình nền màn hình khóa có lịch / agenda / to-do chồng lên ảnh cá nhân; đồng bộ Google Calendar và Apple Calendar; tạo sự kiện lặp có nhắc; tùy chỉnh ảnh, màu, độ mờ, ngôn ngữ; widget lịch và ghi chú; dữ liệu xử lý trên máy. Tên làm việc "LichKhoa" — không dùng tên, logo, ảnh, font của app gốc; chỉ tái tạo tính năng và luồng dùng.
+Phiên bản SPEC: 1.2 — 2026-09-13 (v1.0 + Âm lịch D-006 + thiết bị đích iPhone 13 Pro Max D-007). App gốc đối chiếu: "Ink: Lockscreen Calendar, Note" (SilverAI JSC, App Store id6769250805, bản 1.2.14). Tính năng gốc đã tra cứu: hình nền màn hình khóa có lịch / agenda / to-do chồng lên ảnh cá nhân; đồng bộ Google Calendar và Apple Calendar; tạo sự kiện lặp có nhắc; tùy chỉnh ảnh, màu, độ mờ, ngôn ngữ; widget lịch và ghi chú; dữ liệu xử lý trên máy. Tên làm việc "LichKhoa" — không dùng tên, logo, ảnh, font của app gốc; chỉ tái tạo tính năng và luồng dùng.
 
 ## 1. Mục tiêu
 Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Chủ dự án: (a) dựng ảnh hình nền màn hình khóa đúng kích thước pixel máy, có lịch tháng / agenda / to-do / ghi chú chồng lên ảnh nền tự chọn; (b) trộn sự kiện Google Calendar (chỉ đọc, OAuth thuần client, không backend) với sự kiện lặp và to-do nhập tại chỗ; (c) đặt làm hình nền khóa bằng ≤ 3 chạm mỗi ngày qua Shortcut. Dùng cá nhân, không đăng nhập, dữ liệu nằm trên máy.
 
 ## 2. Người dùng & tình huống dùng
-- Một người dùng (Chủ dự án), iPhone iOS 17+, Safari; máy dev Windows 10 (Chrome dùng để chỉnh thiết kế, không bắt buộc).
+- Một người dùng (Chủ dự án), **iPhone 13 Pro Max** (1284×2778 px, 428×926 pt, DPR 3, tai thỏ — v1.2, D-007), iOS 17+, Safari, dùng dạng PWA Màn hình chính; mọi UI và hình nền tối ưu cho máy này trước; máy dev Windows 10 (Chrome dùng để chỉnh thiết kế, không bắt buộc).
 - TH1 hằng ngày: mở icon → app tự đồng bộ Google nếu token còn hạn → hiện hình nền hôm nay → chạm "Đặt hình nền" → Shortcut đặt hình nền khóa.
 - TH2: thêm/sửa sự kiện lặp, to-do, ghi chú; xuất .ics để Lịch iPhone nhắc giờ.
 - TH3 thi thoảng: đổi ảnh nền / bố cục / màu / vị trí; kết nối lại Google khi token hết hạn.
@@ -15,7 +15,7 @@ Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Ch�
 
 ## 3. Phạm vi
 - IN:
-  1. Dựng PNG đúng kích thước pixel màn hình iPhone: preset (`devices.ts`), tự phát hiện (`screen × devicePixelRatio`, mặc định), tùy chỉnh; vùng an toàn tránh đồng hồ (trên) và nút đèn pin/camera (dưới).
+  1. Dựng PNG đúng kích thước pixel màn hình iPhone: preset (`devices.ts`, gồm 1284×2778 iPhone 12/13 Pro Max — mặc định khi không nhận ra máy, v1.2), tự phát hiện (`screen × devicePixelRatio`, mặc định), tùy chỉnh; vùng an toàn tránh đồng hồ (trên) và nút đèn pin/camera (dưới).
   2. Ba bố cục: **Tháng** (lưới 6×7, tô hôm nay, chấm sự kiện), **Agenda** (N ngày tới, giờ + tên, màu lịch), **To-do** (checklist). Lớp **Ghi chú** (văn bản tự do) bật/tắt trên mọi bố cục.
   3. Nền: ảnh từ Thư viện (cover-fit, tôn trọng EXIF), màu đơn, gradient; mờ (0–3) + tối (0–0.8); màu chữ / màu nhấn; 3 họ font hệ thống (sans/serif/mono); vị trí khối (trên/giữa/dưới trong vùng an toàn); cỡ chữ (scale); độ trong suốt hộp.
   4. Sự kiện cục bộ: CRUD; cả ngày hoặc có giờ; lặp ngày/tuần/tháng/năm + ngày kết thúc; to-do tick/bỏ tick; ghi chú.
@@ -128,6 +128,7 @@ Nội dung: màn Events (CRUD sự kiện lặp, to-do, ghi chú); `recurrence.t
   - [ ] Unit `recurrence.test.ts`: daily / weekly / monthly (sự kiện ngày 31 bỏ qua tháng thiếu ngày) / yearly (29/02 chỉ năm nhuận) / `until` / không lặp; chặn đúng khoảng `[from, to]`. `ics.test.ts`: có VCALENDAR, VEVENT, DTSTART, RRULE đúng, xuống dòng CRLF. `layout.test.ts`: agenda 7 ngày đúng thứ tự thời gian, to-do ≤ 12 dòng có dấu tick, note bọc dòng. `i18n.test.ts`: tập khóa `vi` = tập khóa `en`.
   - [ ] E2E `m2-events.spec.ts` — **T-2.END**: thêm sự kiện lặp tuần → chuyển bố cục Agenda → hash PNG preview đổi → reload → sự kiện còn → xuất JSON → xóa dữ liệu → nhập JSON → sự kiện trở lại.
   - [ ] E2E: đổi ngôn ngữ `en` → nhãn tab đổi; bật 12h → agenda chứa "AM"/"PM".
+  - [ ] (v1.1) `lunar.test.ts`: 17/02/2026 → 1/1 Bính Ngọ; 29/01/2025 → 1/1 Ất Tỵ; 10/02/2024 → 1/1 Giáp Thìn; 22/03/2023 → 1/2 nhuận; 25/07/2025 → 1/6 nhuận; pass cả 2 TZ. `showLunar=true` → `__lastOps` bố cục Tháng có op text ngày âm; `false` → không có.
   - [ ] `npm run check` pass; test M1 không bị sửa/skip (kiem-thu xác nhận).
 
 ### M3 — Google Calendar (OAuth thuần client, chỉ đọc) + trộn dữ liệu
@@ -136,7 +137,6 @@ Nội dung: `oauth.ts` (redirect implicit, `state` ngẫu nhiên chống CSRF, t
   - [ ] Unit `oauth.test.ts`: `buildAuthUrl` chứa `response_type=token`, `scope=…calendar.readonly`, `state`, `redirect_uri` đúng; `parseFragment` đúng state / sai state / có `error` / hash rỗng. `google-normalize.test.ts`: fixture all-day (`start.date`) → `allDay=true`, đúng ngày; `dateTime` có offset khác múi giờ máy → ngày/giờ địa phương đúng khi chạy với `TZ=Asia/Ho_Chi_Minh` và `TZ=UTC` (Vitest chạy 2 lần bằng biến môi trường trong script `test`); sự kiện `status=cancelled` bị bỏ; nhiều lịch gộp và sắp xếp.
   - [ ] E2E `m3-google.spec.ts` — **T-3.END**: `page.route` chặn `https://accounts.google.com/**` và trả 302 về `/#access_token=test&token_type=Bearer&expires_in=3600&state=<lấy từ query của request>`; mock `**/calendar/v3/**` bằng fixtures → dán clientId → Kết nối → danh sách lịch hiện → chọn 1 lịch → Đồng bộ → agenda hiện sự kiện fixture → `context.setOffline(true)` + reload → vẫn hiện từ cache → mock 401 → hiện "Kết nối lại".
   - [ ] Không có secret trong repo: `Select-String -Path src -Pattern client_secret -Recurse` trả rỗng.
-  - [ ] (v1.1) `lunar.test.ts`: 17/02/2026 → 1/1 Bính Ngọ; 29/01/2025 → 1/1 Ất Tỵ; 10/02/2024 → 1/1 Giáp Thìn; 22/03/2023 → 1/2 nhuận; 25/07/2025 → 1/6 nhuận; pass cả 2 TZ. `showLunar=true` → `__lastOps` bố cục Tháng có op text ngày âm; `false` → không có.
   - [ ] `npm run check` pass; test M1–M2 không bị sửa/skip.
 
 ### M4 — Ảnh nền & tùy biến, đặt hình nền một chạm, hướng dẫn, hoàn thiện iPhone
@@ -153,7 +153,7 @@ Nội dung: ảnh nền từ Thư viện (EXIF, cover-fit, thu nhỏ), mờ bằ
 - Lệnh chạy test tổng: `npm run check` (PowerShell, tại `E:\DuAn\thu-nghiem`) = `tsc --noEmit && vitest run && playwright test`.
 - Chuẩn bị một lần: `npm install`; `npx playwright install chromium webkit` (~400 MB).
 - Unit (Vitest, môi trường node): chỉ hàm thuần; fixture trong `tests/fixtures`; không mock `Date` toàn cục — mọi hàm nhận `today`/`from` làm tham số; script `test` chạy Vitest hai lần với `TZ=Asia/Ho_Chi_Minh` và `TZ=UTC` (dùng `cross-env` hoặc `process.env.TZ` trong `vitest.config.ts`).
-- E2E (Playwright): projects `chromium` và `webkit`, viewport 390×844, `webServer: npm run preview` (chạy trên bản build để service worker hoạt động), `page.route` cho Google, `?test=1` bật hook `window.__lastOps` và stub điều hướng `shortcuts://`.
+- E2E (Playwright): projects `chromium` (viewport 428×926) và `webkit` (`devices['iPhone 13 Pro Max']`, viewport 428×926 — v1.2), `webServer: npm run preview` (chạy trên bản build để service worker hoạt động), `page.route` cho Google, `?test=1` bật hook `window.__lastOps` và stub điều hướng `shortcuts://`.
 - Không test pixel-snapshot (font khác giữa máy); so sánh cấu trúc `DrawOp` và "hash PNG thay đổi" thay vì "bằng ảnh mẫu".
 - Test của phiếu DONE là khóa (CLAUDE.md); mỗi milestone có đúng một E2E luồng chính `T-n.END`.
 

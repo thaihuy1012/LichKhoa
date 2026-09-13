@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.1 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 6/7 (T-1.6 mới — D-007; Kiến trúc sư đang duyệt) · M2: 0/9 · M3: 0/4 · M4: 0/6
-- Đang làm: Giai đoạn 3 — duyệt M1 (kien-truc-su)
+- M1: 6/8 (Kiến trúc sư: SỬA — làm T-1.6 ∥ T-1.7 rồi Quản lý tự gắn `M1-ok`, D-008) · M2: 0/9 · M3: 0/4 · M4: 0/6
+- Đang làm: T-1.6 ∥ T-1.7 (tho-sonnet ×2)
 - Chờ Chủ dự án: (không)
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
 
@@ -13,7 +13,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - S4 · T-1.2 · mặc định `boxAlpha=1` (hộp nền đặc) sẽ che ảnh nền ở M4 — xem lại mặc định khi làm T-4.2.
 
 ## Thứ tự & song song
-M1: 1.1 → 1.2 → (1.3 ∥ 1.4) → 1.5 → 1.END → 1.6 (thêm sau, D-007)
+M1: 1.1 → 1.2 → (1.3 ∥ 1.4) → 1.5 → 1.END → (1.6 ∥ 1.7) → ảnh mẫu 1284×2778 cho Chủ dự án thử (xong trước T-2.3) → tag M1-ok
 M2: (2.1 ∥ 2.4 ∥ 2.5) → 2.2 → 2.3 → 2.8 → 2.6 → 2.7 → 2.END
 M3: (3.1 ∥ 3.2) → 3.3 → 3.END
 M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
@@ -106,8 +106,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Mục tiêu: app và hình nền tối ưu cho máy duy nhất của Chủ dự án: iPhone 13 Pro Max (1284×2778 px, 428×926 pt, DPR 3, tai thỏ).
 - Phạm vi file: `src/render/devices.ts`, `src/ui/App.tsx`, `src/ui/styles.css`, `src/ui/screens/Preview.tsx` (chỉ bố cục/khả dụng), `index.html`, `vite.config.ts` (manifest), `public/apple-touch-icon.png` (mới, 180×180, tự sinh), `playwright.config.ts`, `tests/e2e/iphone13pm.spec.ts` (mới), `tests/unit/devices.test.ts` (mới). Không sửa test đã khóa.
 - Yêu cầu:
-  - `DEVICES` thêm preset `iphone-1284x2778` "iPhone 12/13 Pro Max" (đặt đầu danh sách); `detectDevice(428, 926, 3)` → preset này. Lần đầu mở app mà `detectDevice` trả `'auto'` (không khớp preset) → dùng preset 1284×2778.
-  - `index.html`: `apple-touch-icon`, `apple-mobile-web-app-capable`, `apple-mobile-web-app-status-bar-style` (black-translucent), `apple-mobile-web-app-title` "LichKhoa", `theme-color`.
+  - `DEVICES` thêm preset `iphone-1284x2778` "iPhone 12/13 Pro Max" (đặt đầu danh sách); `detectDevice(428, 926, 3)` → preset này (vì đã có preset). KHÔNG đổi logic `detectDevice` — test khóa `layout-month.test.ts` cần `'auto'` khi không khớp. Fallback đặt ở `App.tsx` `loadInitialState`: không có state lưu và `detectDevice` trả `'auto'` → dùng preset 1284×2778. Sửa nhãn 1179×2556 → "iPhone 14 Pro/15/16". Vùng an toàn giữ 0.30/0.14 (Kiến trúc sư đã tính: 278pt trên ≥ đồng hồ+widget ≈ 260pt; 130pt dưới ≥ nút ≈ 95pt).
+  - `index.html` (đã có `viewport-fit=cover`, giữ nguyên): thêm `apple-touch-icon`, `apple-mobile-web-app-capable`, `apple-mobile-web-app-status-bar-style` (black-translucent), `apple-mobile-web-app-title` "LichKhoa", `theme-color`.
   - CSS thiết kế cho 428×926: `env(safe-area-inset-top/bottom)` (tai thỏ + thanh home), tab bar cố định đáy phía trên thanh home; `select/input` `font-size ≥ 16px` (tránh Safari tự phóng to); vùng chạm ≥ 44px; `-webkit-text-size-adjust: 100%`; không có cuộn ngang; ảnh preview co vừa để thấy trọn ảnh + nút "Lưu ảnh" không cần cuộn (428×926).
   - `playwright.config.ts`: chromium viewport 428×926; webkit dùng `devices['iPhone 13 Pro Max']` (isMobile, hasTouch, DPR 3) với viewport 428×926. Test khóa (`smoke`, `m1-render`) phải vẫn pass nguyên văn.
 - Tiêu chí nghiệm thu:
@@ -115,7 +115,18 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   [ ] `iphone13pm.spec.ts` (webkit mô phỏng 13 Pro Max): lần đầu mở (IndexedDB trống) → select = preset 1284×2778, preview naturalWidth 1284/naturalHeight 2778; nút "Lưu ảnh" và tab bar nằm trọn trong viewport không cần cuộn; `scrollWidth <= clientWidth`; `getComputedStyle(select).fontSize ≥ 16px`; mỗi nút tab cao ≥ 44px; `link[rel=apple-touch-icon]` tồn tại.
   [ ] `npm run check` pass (test cũ không bị sửa).
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO (chờ phán quyết M1 để gộp việc nếu Kiến trúc sư trả SỬA)
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+
+### T-1.7 — normalizeState: nạp state cũ an toàn (phán quyết M1, D-008)
+- Mục tiêu: state trong IndexedDB (hoặc file sao lưu) thiếu trường mới / sai phiên bản không làm app hỏng hay kẹt "Đang tải…".
+- Phạm vi file: `src/core/model.ts` (thêm hàm), `src/storage/db.ts` (`loadState`), `tests/unit/model.test.ts` (mới). Chạy song song T-1.6 (không đụng file chung).
+- Giao diện: `normalizeState(raw: unknown): AppState | null` trong `model.ts` — trả `null` nếu `raw` không phải object, `version !== 1`, hoặc `device` thiếu `width`/`height` là số; ngược lại `{...defaultState(raw.device), ...raw, design: {...defaultDesign(), ...raw.design}, google: {...mặc định google, ...raw.google}}`. `loadState()` giữ chữ ký: try `get` → `normalizeState`, catch → `null` (lỗi IndexedDB không làm kẹt app).
+- Tiêu chí nghiệm thu:
+  [ ] `model.test.ts`: state thiếu `design.boxAlpha`/`google`/`shortcutName` → được bù mặc định, giữ nguyên giá trị có sẵn; `version: 2` → null; không phải object / `device` thiếu số → null; không mutate `raw`.
+  [ ] `npm run check` pass (test khóa không đổi).
+- Ghi chú hợp đồng: T-2.5 `importBackup` PHẢI gọi `normalizeState`; T-2.8 chỉ cần thêm `showLunar` vào `defaultDesign()` là state cũ tự có mặc định.
+- Lệnh kiểm tra: `npm run check`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ---
 ## M2 — Sự kiện, to-do, ghi chú; Agenda / To-do / Note; sao lưu; i18n
@@ -155,6 +166,7 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 ### T-2.5 — ics + backup
 - Phạm vi file: `src/export/ics.ts`, `src/storage/backup.ts`, `tests/unit/ics.test.ts`, `tests/unit/backup.test.ts`.
 - Tham khảo (chép/port được, xem docs/tham-khao-LICH_NEN.md): `F:/LICH_NEN/lich-nen.html` L585–615 `icsEscape`, `icsForEvent` (map `time`+`durationMin` → DTSTART/DTEND; không có `time` → `VALUE=DATE`; bỏ VALARM/DESCRIPTION vì `LocalEvent` không có), L685 `validBackup` (ý tưởng).
+- Ràng buộc (D-008): `importBackup` dùng `normalizeState` (T-1.7) để kiểm/bù state; version lạ → ném lỗi.
 - Mục tiêu: `eventToIcs` (VCALENDAR/VEVENT, DTSTART có giờ hoặc `VALUE=DATE`, RRULE FREQ + UNTIL, CRLF, escape `,;\`); `exportBackup/importBackup` `{version:1, state}`, version lạ → ném lỗi.
 - Tiêu chí: [ ] ics có VCALENDAR, VEVENT, DTSTART, RRULE đúng, CRLF; [ ] backup vòng tròn giống hệt; version 2 → throw.
 - Lệnh kiểm tra: `npm run test`
@@ -162,7 +174,7 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
 ### T-2.8 — Âm lịch (SPEC v1.1, D-006)
 - Mục tiêu: `solarToLunar`, `lunarYearName` và hiển thị âm lịch trên bố cục Tháng + Agenda, bật/tắt bằng `showLunar`.
-- Phạm vi file: `src/core/lunar.ts` (mới), `tests/unit/lunar.test.ts` (mới), `src/core/model.ts` (thêm `showLunar: boolean` vào `DesignConfig`, mặc định `true`), `src/render/layout/month.ts`, `src/render/layout/agenda.ts`, `src/render/layout/common.ts`, `tests/unit/layout-month.test.ts`, `tests/unit/layout.test.ts`, `tests/unit/calendar.test.ts` (CHỈ chỗ kiểm `defaultDesign` thêm `showLunar` — khai báo trong báo cáo).
+- Phạm vi file: `src/core/lunar.ts` (mới), `tests/unit/lunar.test.ts` (mới), `src/core/model.ts` (thêm `showLunar: boolean` vào `DesignConfig`, mặc định `true`), `src/render/layout/month.ts`, `src/render/layout/agenda.ts`, `src/render/layout/common.ts`, `tests/unit/layout-month.test.ts`, `tests/unit/layout.test.ts`, `tests/unit/calendar.test.ts` (CHỈ chỗ kiểm `defaultDesign` thêm `showLunar` — khai báo trong báo cáo), `src/core/i18n/vi.json`, `src/core/i18n/en.json` (khóa "Âm lịch"/"nhuận"; nhãn qua `t(key, c.lang)`). State cũ tự có `showLunar` nhờ `normalizeState` (T-1.7).
 - Tham khảo (chép/port được, xem docs/tham-khao-LICH_NEN.md): `F:/LICH_NEN/lich-nen.html` L405–406 `CAN`, `CHI`; L434–513 thuật toán Hồ Ngọc Đức (`jdFromDate`…`solarToLunar`, `lunarYearName`, `lunarText`), múi giờ cố định +7 (không phụ thuộc TZ máy).
 - Giao diện / đầu vào có sẵn: SPEC v1.1 mục 3 IN-9, mục 5 (`solarToLunar(iso)`, `lunarYearName(year)`); `layoutMonth` (T-1.3), `layoutAgenda` (T-2.3).
 - Yêu cầu: `showLunar=true` → bố cục Tháng: số ngày âm nhỏ (vd. "1/1" ngày mùng 1, còn lại chỉ ngày) dưới số ngày dương mỗi ô, không đè chấm sự kiện/vòng hôm nay; một dòng "Âm lịch d/m [nhuận] <Can Chi>" cho hôm nay dưới tiêu đề tháng. Agenda: nhãn ngày kèm ngày âm. `false` → không có op âm lịch nào. Mọi op vẫn trong vùng an toàn.

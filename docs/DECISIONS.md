@@ -35,3 +35,9 @@
 - Chủ dự án: "tôi sử dụng hoàn toàn trên điện thoại iPhone 13 Pro Max, hãy tối ưu trên giao diện này tốt nhất".
 - Thông số: 1284×2778 px, 428×926 pt, DPR 3, tai thỏ (không Dynamic Island), iOS 17+.
 - Quyết định (không đổi phạm vi IN/OUT, chỉ thu hẹp đích tối ưu): thêm preset 1284×2778 và dùng làm mặc định khi không nhận ra máy; UI thiết kế cho 428×926 (thay 390 px); PWA iOS (apple-touch-icon, meta standalone, `env(safe-area-inset-*)`, chữ ô nhập ≥ 16px, vùng chạm ≥ 44pt); E2E đổi viewport 428×926 và project webkit mô phỏng `devices['iPhone 13 Pro Max']`. Phiếu T-1.6 (thêm vào M1, trước khi gắn tag M1-ok).
+
+## D-008 — Phán quyết duyệt M1: SỬA (2026-09-13 · người quyết: Kiến trúc sư)
+- Mã f295576 đạt trọn tiêu chí M1 (Kiến trúc sư tự chạy `npm run check` exit 0 và xem ảnh mẫu 1179×2556 bằng mắt: dùng được). SỬA chỉ vì D-007 và nợ kỹ thuật điểm 7.3.
+- Việc: T-1.6 (bổ sung: fallback 1284×2778 ở `App.tsx`, không đổi `detectDevice`; giữ vùng an toàn 0.30/0.14; sửa nhãn 1179×2556) ∥ T-1.7 mới `normalizeState` (hợp đồng cho T-2.5 và T-2.8). SPEC v1.2 ghi D-007 vào §2, §3, §7; chuyển tiêu chí `lunar.test.ts` từ M3 sang M2; T-2.8 thêm i18n vào phạm vi.
+- Ảnh mẫu 1284×2778 gửi Chủ dự án đặt thử làm hình nền khóa, chỉ hỏi "có đè đồng hồ/widget/nút không" — không chặn M2, xong trước T-2.3.
+- T-1.6 + T-1.7 DONE và `check` pass → Quản lý tự gắn `M1-ok`, không cần duyệt lại.
