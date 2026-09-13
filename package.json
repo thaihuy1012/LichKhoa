@@ -1,0 +1,28 @@
+{
+  "name": "lichkhoa",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 4173 --strictPort",
+    "test": "cross-env TZ=Asia/Ho_Chi_Minh vitest run && cross-env TZ=UTC vitest run",
+    "e2e": "playwright test",
+    "check": "tsc --noEmit && npm run test && npm run build && playwright test"
+  },
+  "dependencies": {
+    "preact": "10.29.8",
+    "idb-keyval": "6.3.0"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "2.10.6",
+    "vite": "8.3.0",
+    "vite-plugin-pwa": "1.3.0",
+    "typescript": "7.0.2",
+    "vitest": "5.0.0",
+    "@playwright/test": "1.63.0",
+    "@types/node": "26.5.1",
+    "cross-env": "10.1.0"
+  }
+}

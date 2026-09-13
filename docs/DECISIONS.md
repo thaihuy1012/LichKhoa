@@ -16,3 +16,7 @@
 ## D-002 — Chủ dự án chốt phạm vi (2026-09-13 · người quyết: Chủ dự án)
 - App gốc: Ink: Lockscreen Calendar, Note (SilverAI). Nền tảng: PWA. Mục đích: dùng cá nhân. Dịch vụ ngoài: đồng bộ Google Calendar.
 - SPEC v1.0 được Chủ dự án duyệt ngày 2026-09-13.
+
+## D-004 — Phiên bản thực tế của khung T-1.1 (2026-09-13 · người quyết: Quản lý)
+- Bối cảnh: T-1.1 cài bản mới nhất; lệch nhỏ so với SPEC mục 4.
+- Quyết định: chấp nhận Playwright 1.63.0 (SPEC ghi 1.62), TypeScript 7.0.2, thêm devDep `@types/node` (cho `process.env` trong config), `cross-env`. vite-plugin-pwa 1.3.0 + Vitest 5.0.0 chạy tốt với Vite 8.3.0 → không cần phương án dự phòng rủi ro 5. Phiên bản ghim chính xác (không `^`).

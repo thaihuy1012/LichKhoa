@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.0, Chủ dự án duyệt 2026-09-13). H
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 0/6 · M2: 0/8 · M3: 0/4 · M4: 0/6
-- Đang làm: T-1.1 (tho-sonnet)
+- M1: 1/6 · M2: 0/8 · M3: 0/4 · M4: 0/6
+- Đang làm: T-1.2 (tho-sonnet)
 - Chờ Chủ dự án: (không)
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
 
@@ -38,8 +38,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   [ ] `npx playwright test tests/e2e/smoke.spec.ts` pass chromium + webkit: trang có `<link rel="manifest">`, `navigator.serviceWorker.ready` resolve.
   [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
-- Nhật ký: 2026-09-13 lượt 1: BLOCKED, thợ không có shell → SC-001 (không tính vào Lần thử). 2026-09-13: SC-001 đóng, giao lại lượt 2 (môi trường: node v24.21.0, npm 11.2.0).
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-13 lượt 1: BLOCKED, thợ không có shell → SC-001 (không tính vào Lần thử). 2026-09-13: SC-001 đóng, giao lại lượt 2 (môi trường: node v24.21.0, npm 11.2.0). Lượt 2: DONE (thêm devDep `@types/node`; vite-plugin-pwa 1.3 + Vitest 5 OK với Vite 8) → kiem-thu PASS (6/0) → review đạt → commit.
 
 ### T-1.2 — Model dữ liệu + trạng thái mặc định + monthGrid
 - Mục tiêu: toàn bộ kiểu dữ liệu của SPEC mục 5 và toán lưới tháng.
