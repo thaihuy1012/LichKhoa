@@ -12,6 +12,7 @@ import { Preview } from './screens/Preview';
 import { Events } from './screens/Events';
 import { Design } from './screens/Design';
 import { Sync, type AuthNotice } from './screens/Sync';
+import { Guide } from './screens/Guide';
 
 const TABS = [
   { id: 'preview' },
@@ -98,7 +99,7 @@ export function App() {
         {tab === 'sync' && (
           <Sync store={store} authNotice={authNotice} onAuthNoticeShown={() => setAuthNotice(null)} />
         )}
-        {tab === 'guide' && <div class="placeholder">{t('common.comingSoon', lang)}</div>}
+        {tab === 'guide' && <Guide store={store} onGoToTab={(t) => setTab(t)} />}
       </main>
       <nav class="tabbar">
         {TABS.map((tabDef) => (

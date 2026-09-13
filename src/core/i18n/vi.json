@@ -200,5 +200,20 @@
   "design.positionBottom": "Dưới",
   "design.scale": "Cỡ chữ",
   "design.boxAlpha": "Độ đậm hộp nền",
-  "design.agendaDays": "Số ngày Agenda"
+  "design.agendaDays": "Số ngày Agenda",
+
+  "guide.installTitle": "1. Cài vào Màn hình chính",
+  "guide.installBody": "Mở LichKhoa bằng Safari trên iPhone. Bấm nút Chia sẻ (hình vuông có mũi tên lên) → \"Thêm vào MH chính\". Mở lại từ biểu tượng vừa thêm để dùng như một ứng dụng thật.",
+  "guide.googleTitle": "2. Kết nối Google Calendar (tùy chọn)",
+  "guide.googleBody": "Vào tab Đồng bộ, dán Google Client ID rồi bấm Kết nối. Chưa có Client ID? Tạo miễn phí tại console.cloud.google.com (khoảng 10 phút, không cần thẻ) — các bước ở mục B tài liệu Hướng dẫn đi kèm.",
+  "guide.shortcutTitle": "3. Tạo Shortcut đặt hình nền (làm 1 lần)",
+  "guide.shortcutBody": "Mở app Shortcuts → dấu + → thêm hành động \"Set Wallpaper\" (Đặt hình nền): Image = Shortcut Input, chọn Lock Screen, tắt \"Show Preview\". Đặt tên Shortcut trùng tên trong app (mặc định \"DatHinhNen\").",
+  "guide.dailyTitle": "4. Dùng hằng ngày (≤ 3 chạm)",
+  "guide.dailyBody": "Mở app → tab Xem trước → bấm \"Đặt hình nền\". Ảnh được sao chép và Shortcut tự mở để đặt làm hình nền khóa. Lần đầu iOS sẽ hỏi quyền cho Shortcut — hãy cho phép.",
+  "guide.fallbackTitle": "5. Nếu kết nối Google không quay lại app được",
+  "guide.fallbackBody": "Đang chờ xác nhận trên máy thật. Nếu gặp: mở LichKhoa bằng Safari thường (lưu làm Bookmark) để dùng Google — dữ liệu ở Safari và ở app cài trên Màn hình chính tách riêng nhau, hãy chọn một nơi dùng xuyên suốt.",
+  "guide.limitsTitle": "6. Giới hạn đã biết",
+  "guide.limitsBody": "Phiên Google chỉ sống 1 giờ, hết hạn bấm \"Kết nối lại\" (không tự làm mới trên iPhone được). App không tự đổi hình nền khi không chạm máy. Nếu không cài vào Màn hình chính, Safari có thể xóa dữ liệu sau 7 ngày không dùng. Muốn Lịch iPhone nhắc giờ: bấm \"Thêm vào Lịch iPhone\" cho từng sự kiện.",
+  "guide.goToSync": "Mở tab Đồng bộ",
+  "guide.goToDesign": "Mở tab Thiết kế"
 }
