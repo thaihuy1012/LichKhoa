@@ -1,0 +1,2379 @@
+diff --git a/docs/BAI-HOC.md b/docs/BAI-HOC.md
+index 19580ee..f6b47cf 100644
+--- a/docs/BAI-HOC.md
++++ b/docs/BAI-HOC.md
+@@ -7,4 +7,4 @@
+ - 2026-09-13 · T-2.3, T-2.8 · sonnet · test hình học (vùng an toàn, số op) đều PASS nhưng ảnh thật lỗi thẩm mỹ (dòng giãn, chữ tràn, vòng hôm nay cắt chữ) → quy tắc: mọi phiếu layout, Quản lý dựng ảnh 1284×2778 bằng `node scripts/mau-anh-1284.cjs <ra.png>` (sau `npm run build`) và XEM trước khi commit.
+ - 2026-09-14 · (Quản lý) · `sed -i "${m}s/.*/…/"` với biến `m` rỗng → sed thay MỌI dòng, TASKS.md bị ghi đè; khôi phục bằng `git checkout -- docs/TASKS.md` (bản commit trước còn nguyên) → quy tắc: sửa sổ sách bằng Edit, không dùng sed có địa chỉ dòng tính động; commit sổ sách sau mỗi bước để luôn có bản lùi.
+ - 2026-09-14 · T-2.13 ∥ T-2.END · sonnet · thợ T-2.13 dùng `git stash` để chứng minh test fail trên code cũ trong khi thợ T-2.END đang sửa cùng cây làm việc (lần này không mất gì vì T-2.END chưa sửa file tracked) → quy tắc: phiếu chạy song song thì ghi rõ trong prompt "KHÔNG `git stash`/`checkout`/`reset`; muốn chạy code cũ thì `git show HEAD:<file> > <scratch>` hoặc tạm đảo logic bằng tay rồi khôi phục". Song song thì chỉ một thợ được chạy build/e2e (cổng 4173 + `dist/`).
+-- 2026-09-13 · T-2.6 · sonnet · lỗi của layout cũ (chấm hôm nay vô hình, note giãn dòng) chỉ lộ khi render nhận dữ liệu thật; ảnh mẫu mặc định (state rỗng) không bắt được → quy tắc: ảnh mẫu phải có dữ liệu (sự kiện HÔM NAY, 0/2/15 mục, note bật). Dùng lại khuôn `mau-t26.cjs` (seed IndexedDB `keyval-store/keyval`, key `lichkhoa:state`) — nên đưa vào `scripts/` khi có phiếu công cụ.
++- 2026-09-13 · T-2.6 · sonnet · lỗi của layout cũ (chấm hôm nay vô hình, note giãn dòng) chỉ lộ khi render nhận dữ liệu thật; ảnh mẫu mặc định (state rỗng) không bắt được → quy tắc: ảnh mẫu phải có dữ liệu (sự kiện HÔM NAY, 0/2/15 mục, note bật). Dùng lại khuôn `mau-t26.cjs` (seed IndexedDB `keyval-store/keyval`, key `lichkhoa:state`) — nên đưa vào `scripts/` khi có phiếu công cụ. → Đã có (T-2.16): `node scripts/mau-anh.cjs <ra>` (hình nền có dữ liệu) và `node scripts/chup.cjs <events|preview> <ra> [--lang en]` (UI webkit 13 Pro Max).
+diff --git a/docs/DECISIONS.md b/docs/DECISIONS.md
+index 1eebcb1..5957861 100644
+--- a/docs/DECISIONS.md
++++ b/docs/DECISIONS.md
+@@ -62,7 +62,10 @@
+ - Hợp đồng (SPEC §5): `Repeat` + `weekdays`; `LocalEvent.alarmMin?`; `Todo.due?`; `Note`; `AppState.notes`; bỏ `DesignConfig.noteText`; `RenderData.noteTitle?` (giữ `note: string` để test layout khóa không phải sửa); vẫn `version: 1` nhờ `normalizeState`.
+ - Phiếu: T-2.10 (lõi) → T-2.11 (hình nền) ∥ T-2.12 (UI), trong M2. T-2.7 đang chạy được nhắn bỏ phần ghi chú đơn. Được sửa test khóa chỉ ở chỗ `noteText`/`setNote`, phải khai báo.
+ 
+-## D-012 — Duyệt M2 tại `b438b60`; trả lời 6 điểm băn khoăn (2026-09-14 · người quyết: Kiến trúc sư)
++## D-013 — T-3.END: mock OAuth bằng trang HTML chuyển hướng; webkit bỏ bước offline+reload (2026-09-14 · người quyết: Quản lý)
++- Webkit (Playwright, Windows) không cho `route.fulfill` trả 302 → mock `accounts.google.com` bằng trang HTML tự `location.replace('<app>/#access_token=…&state=<từ query>')` — tương đương 302 về mặt luồng app.
++- `context.setOffline(true)` + `reload()` trên webkit → "WebKit encountered an internal error" (kiem-thu tái hiện độc lập: app thật lỗi; `data:` URL không lỗi; chromium không lỗi — `docs/test-log/webkit-offline.txt`). Chưa loại trừ được khả năng SW của app không phục vụ navigation trên WebKit → chấp nhận `test.skip(webkit)` riêng bước này ở T-3.END (chromium kiểm đủ), NHƯNG: T-4.END phải thử lại (cách khác: `serviceWorker` state + `caches.match('/index.html')` trong page trên webkit), và bài thử tay trên iPhone M4 phải có bước "bật Chế độ máy bay → mở icon → app mở, còn sự kiện Google đã cache".
++ tại `b438b60`; trả lời 6 điểm băn khoăn (2026-09-14 · người quyết: Kiến trúc sư)
+ - Bối cảnh: M2 đạt đủ tiêu chí SPEC v1.3 §6 (KTS tự chạy `npm run check`: 132×2 unit, 32 e2e, exit 0; test M1 không có dòng xóa). SPEC v1.3 do Quản lý viết được KTS soát: đúng ý D-011, chỉ chỉnh chữ §3/§5/§9.
+ - Trần agenda: 12 tính theo **dòng sự kiện**, tiêu đề ngày không tính (không trần theo chiều cao — mật độ phải ổn định giữa thiết bị/scale/ghi chú; đòn bẩy của người dùng là `agendaDays` và `scale`). Lý do: 7 ngày × 1 sự kiện hiện chỉ 5 + "+2" là quá ít; 20 dòng tối đa vẫn nằm trong vùng nhờ tự co. → T-2.15.
+ - `boxAlpha`/nền đen: giữ đến T-4.2 (khi có ảnh thật mới quyết mặc định; khuyến nghị 0.35 chỉ khi `bg.kind='photo'`). Ảnh mẫu cho Chủ dự án: Quản lý hỏi khi tiện, không chặn.
+diff --git a/docs/TASKS.md b/docs/TASKS.md
+index ce485cb..a6264ea 100644
+--- a/docs/TASKS.md
++++ b/docs/TASKS.md
+@@ -4,8 +4,9 @@ Nguồn sự thật: `docs/SPEC.md` (v1.3 — v1.0 Chủ dự án duyệt 2026-0
+ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
+ 
+ ## Tiến độ
+-- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 (chờ Kiến trúc sư) · M3: 0/4 · M4: 0/6
+-- Đang làm: Giai đoạn 3 — Kiến trúc sư duyệt M2 (báo cáo `docs/bao-cao/M2.md` + `M2-soat-cheo.md`)
++- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 4/4 (chờ duyệt) · M4: 0/6
++- Đang làm: Giai đoạn 3 — duyệt M3 (báo cáo `docs/bao-cao/M3.md`, soát chéo Gemini, Kiến trúc sư).
++- Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
+ - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
+ - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
+ - Chờ Chủ dự án: đặt thử ảnh mẫu 1284×2778 (đã gửi 2026-09-13) — có đè đồng hồ/widget/nút không? (không chặn; cần trước T-2.3)
+@@ -19,7 +20,9 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
+ - ~~S4 · T-2.7 · `EventsTab.tsx` L93 durationMin ngầm 60~~ → đã sửa trong T-2.12.
+ - ~~S4 · T-2.12 · ô todo-due trống không nhãn~~ → đã sửa T-2.14.
+ - S4 · T-2.14 · `App.tsx` L52 "Đang tải…" cứng tiếng Việt (hiện trước khi nạp state — chưa biết ngôn ngữ); làm khi có phiếu chạm App.tsx.
+-- S4 · T-2.5 · `eventToIcs` chưa gập dòng > 75 byte (RFC 5545 §3.1); Lịch iPhone vẫn đọc được — làm nếu có phiếu chạm ics.
++- S4 · T-3.3 · nút `sync-connect` / `sync-now` dùng kiểu nút phụ (xám) dù là thao tác chính → kiểu accent như "Lưu ảnh"; làm ở T-4.2 (styles).
++- S4 · T-3.1 · `parseFragment` giải mã `error` 2 lần (`URLSearchParams` đã giải mã) và trả `{error}` không kiểm `state` — vô hại với mã lỗi ASCII của Google; sửa nếu có phiếu chạm oauth.ts.
++- ~~S4 · T-2.5 · `eventToIcs` chưa gập dòng > 75 byte~~ → đã sửa T-2.15.
+ 
+ ## Thứ tự & song song
+ M1: 1.1 → 1.2 → (1.3 ∥ 1.4) → 1.5 → 1.END → (1.6 ∥ 1.7) → ảnh mẫu 1284×2778 cho Chủ dự án thử (xong trước T-2.3) → tag M1-ok
+@@ -312,6 +315,28 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
+ - Nhật ký: 2026-09-14 lượt 1: DONE (m2-events 2 test, m2-i18n 1 test; không sửa src) — test T2–T6 chỉ đếm 5 ngày → trả thợ siết (Lần thử 1/3). Lượt 2: so đúng tập tiêu đề ngày getDay 1..5 → kiem-thu PASS (129×2 unit, 26 e2e; repeat-each=3 18/18; test M1 không đổi từ M1-ok) → commit.
+ - Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
+ 
++### T-2.15 — Nối tiếp duyệt M2 (D-012): trần agenda theo dòng sự kiện, normalizeState chặt hơn, ics weekdays + gập dòng
++- Nguồn: phán quyết Kiến trúc sư duyệt M2 (D-012). Không chặn `M2-ok`; làm trước T-3.1.
++- Phạm vi file: `src/render/layout/agenda.ts`, `src/core/model.ts`, `src/export/ics.ts`, `tests/unit/layout.test.ts`, `tests/unit/model.test.ts`, `tests/unit/ics.test.ts`. ĐƯỢC SỬA test khóa `layout.test.ts` ~L143 (test trần 12 dòng cũ) cho khớp quy tắc mới — khai báo trong báo cáo; mọi test khác chỉ THÊM.
++- Yêu cầu:
++  (a) Agenda: trần 12 = số **dòng sự kiện**; tiêu đề ngày KHÔNG tính vào trần (vẫn giữ quy tắc T-2.13: không có tiêu đề mồ côi; "+N" = sự kiện chưa hiện). Tổng dòng tối đa (tiêu đề + sự kiện + "+N") phải nằm trong vùng an toàn nhờ co chữ sẵn có — 3 position × 2 thiết bị (gồm 1284×2778), có và không `showNote`.
++  (b) `normalizeState`: `events`/`todos`/`notes` không phải mảng → `[]`; phần tử không phải object bị bỏ; `notes` có > 1 `pinned` → chỉ giữ ghim cái `updated` lớn nhất. Không mutate `raw`.
++  (c) `eventToIcs`: `repeat='weekdays'` mà `date` rơi T7/CN → DTSTART dời tới T2 kế tiếp (giữ giờ). Gập mọi dòng > 75 octet theo RFC 5545 §3.1 (CRLF + 1 dấu cách), KHÔNG cắt giữa chuỗi byte UTF-8 (tiêu đề tiếng Việt dài). Đóng S4 T-2.5.
++- Tham khảo: `F:/LICH_NEN/lich-nen.html` L585–615 (`icsEscape`, `icsForEvent`) — cách gập dòng nếu có.
++- Tiêu chí: [ ] layout.test: 7 ngày × 2 sự kiện → hiện 12 sự kiện + tiêu đề + "+2", mọi op trong vùng an toàn; [ ] model.test: `notes` 2 ghim → 1 ghim (updated mới nhất); `events: "x"` → `[]`; [ ] ics.test: weekdays ngày CN 2026-09-13 → `DTSTART…20260914`; tiêu đề 200 ký tự tiếng Việt → mọi dòng ≤ 75 octet, bỏ gập (xóa CRLF+space) ra lại đúng chuỗi UTF-8; [ ] `npm run check` pass (kiem-thu chạy); [ ] Quản lý xem ảnh agenda 15 mục.
++- Lệnh kiểm tra (thợ): `npx tsc --noEmit; npm run test` (T-2.16 song song dùng build/cổng).
++- Nhật ký: 2026-09-14 lượt 1: DONE (trần 12 dòng sự kiện; clampPinned + mảng; ics DTSTART weekdays + foldLine UTF-8; test khóa layout.test L113–144 sửa đúng khai báo; 139×2) → kiem-thu PASS (32 e2e) → ảnh agenda 15 mục bằng `scripts/mau-anh.cjs`: 12 sự kiện + "+3", co chữ khi có note, không chồng → commit.
++- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
++
++### T-2.16 — Công cụ ảnh mẫu + chụp webkit vào `scripts/` (D-012)
++- Nguồn: D-012 (công cụ review bằng mắt phải nằm trong repo). Bản nháp đang chạy tốt ở thư mục tạm của Quản lý: `C:/Users/HUY/AppData/Local/Temp/claude/E--DuAn-thu-nghiem/27403320-d85e-40f5-b985-ce5f41c1d16e/scratchpad/` — `mau-v13.cjs` (18 ảnh 1284×2778 + 3 tấm tổng hợp), `chup-v13.cjs` (tab Sự kiện, 6 ảnh), `chup-t29.cjs` + `chup-t214-en.cjs` (tab Preview, 3 ảnh), `crop.cjs` (cắt/phóng ảnh).
++- Phạm vi file (chỉ tạo mới trong `scripts/`): `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs`, `scripts/README-cong-cu.md`. Không sửa `src/`, `tests/`, `package.json`. Giữ nguyên `scripts/mau-anh-1284.cjs`.
++- Yêu cầu: chép từ bản nháp, sửa cho dùng lại được: đường dẫn repo lấy từ `path.resolve(__dirname, '..')` (không cứng `E:/DuAn/...`); cổng preview tham số `--port` (mặc định 4190–4199 khác 4173); `mau-anh.cjs <thư-mục-ra>` sinh 18 PNG + `tong-month|agenda|todo.png`; `chup.cjs <events|preview> <thư-mục-ra> [--lang en]`; `cat-anh.cjs <vào.png> <ra.png> x y w h [phóng]`. Dữ liệu mẫu (sự kiện có HÔM NAY, lặp T2–T6, nhắc trước, việc quá hạn/hôm nay/có hạn, 2 ghi chú 1 ghim) giữ như bản nháp, ngày tính theo hôm nay. Luôn tắt server preview khi xong/lỗi. README ≤ 30 dòng: khi nào dùng, lệnh, cần `npm run build` trước.
++- Tiêu chí: [ ] `npm run build; node scripts/mau-anh.cjs <tmp>` → 21 PNG, mỗi ảnh mẫu đọc IHDR = 1284×2778; [ ] `node scripts/chup.cjs events <tmp>` → 6 PNG; `node scripts/chup.cjs preview <tmp> --lang en` → 3 PNG; [ ] không tiến trình `vite preview` nào còn sót (kiểm `Get-Process node` trước/sau hoặc cổng đã giải phóng); [ ] `git status` chỉ có file mới trong `scripts/`.
++- Lệnh kiểm tra: như tiêu chí (thợ được chạy `npm run build` — T-2.15 song song không build).
++- Nhật ký: 2026-09-14 PHẢN BIỆN 1: build fail do T-2.15 sửa dở `agenda.ts` → BÁC BỎ sửa src; thợ viết xong script + `node --check`, chờ T-2.15 xong mới chạy kiểm tra runtime. Bài học: phiếu song song mà một bên cần build thì bên kia làm dở sẽ phá build → lần sau xếp tuần tự, hoặc bên cần build chạy sau. Sau T-2.15: chạy runtime — 21 PNG IHDR 1284×2778, chup events 6 / preview en 3, cổng giải phóng → kiem-thu PASS (`node --check`) → commit.
++- Model: haiku · Lần thử: 0/3 · Trạng thái: DONE
++
+ ---
+ ## M3 — Google Calendar (OAuth thuần client, chỉ đọc)
+ 
+@@ -319,28 +344,37 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
+ - Phạm vi file: `src/google/oauth.ts`, `tests/unit/oauth.test.ts`.
+ - Mục tiêu: `buildAuthUrl`, `parseFragment`, `newState()` (crypto ngẫu nhiên, lưu sessionStorage), token store localStorage `{accessToken, expiresAt}`, `getToken()` null khi hết hạn (nhận `now` tham số để test).
+ - Tiêu chí: [ ] URL có `response_type=token`, `scope=https://www.googleapis.com/auth/calendar.readonly`, `state`, `redirect_uri`, `prompt` tùy chọn; [ ] `parseFragment` đúng state / sai state / `error` / rỗng.
+-- Lệnh kiểm tra: `npm run test`
+-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
++- Bổ sung (Quản lý 2026-09-14): Vitest chạy môi trường node (không có `localStorage`/`sessionStorage`) → hàm lưu/đọc token và state nhận tham số `storage: Pick<Storage,'getItem'|'setItem'|'removeItem'>` (mặc định `globalThis.localStorage`/`sessionStorage` khi có); test dùng Map giả. `parseFragment` giải mã `%xx`, chấp nhận hash có/không `#`; `expiresIn` là số; `expiresAt = now + expiresIn*1000 − 60 s` (trừ biên an toàn). Không log token. Hợp đồng chữ ký theo SPEC §5 (được thêm tham số tùy chọn ở cuối).
++- Lệnh kiểm tra: `npx tsc --noEmit; npm run test` (song song T-3.2; không build/e2e)
++- Nhật ký: 2026-09-14 lượt 1: DONE (buildAuthUrl, parseFragment, newState, save/get/clearToken có storage tùy chọn; 152×2) → kiem-thu PASS (159×2, 32 e2e) → review: đạt; Quản lý sửa 1 dòng comment chứa chữ `client_secret` (tiêu chí T-3.END đòi `Select-String … client_secret` rỗng) → commit. Ghi chú cho T-3.3 (localStorage cho state, xóa state sau dùng).
++- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
+ 
+ ### T-3.2 — Google Calendar REST + normalize
+ - Phạm vi file: `src/google/calendar.ts`, `tests/unit/google-normalize.test.ts`, `tests/fixtures/google/*.json`.
+ - Mục tiêu: `fetchCalendars`, `fetchEvents` (fetch + Bearer, `singleEvents=true&orderBy=startTime&maxResults=250`, ≤ 2 trang/lịch), `normalize` thuần tách riêng; 401 → `AuthError`; bỏ `cancelled`; màu lịch.
+ - Tiêu chí: [ ] all-day → `allDay=true` đúng ngày; [ ] `dateTime` offset khác → ngày/giờ địa phương đúng ở cả 2 TZ; [ ] cancelled bị bỏ; [ ] nhiều lịch gộp + sắp xếp; [ ] fetch mock trả 401 → `AuthError`.
+-- Lệnh kiểm tra: `npm run test`
+-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
++- Bổ sung (Quản lý 2026-09-14): sự kiện cả ngày nhiều ngày (`start.date`..`end.date` — `end` là NGÀY SAU, không tính) → 1 `Occurrence` mỗi ngày trong khoảng, `id = <eventId>@<date>` (cùng quy ước recurrence T-2.1), chặn trong `[timeMin, timeMax]`; sự kiện có giờ qua đêm → chỉ ngày bắt đầu. `fetch` nhận qua tham số tùy chọn (mặc định `globalThis.fetch`) để test không cần mạng; phân trang bằng `nextPageToken`, dừng ở trang 2; `timeMin/timeMax` gửi dạng RFC3339 theo giờ địa phương (ISODate → đầu ngày/cuối ngày có offset máy). Màu: `backgroundColor` của lịch. Lỗi mạng/5xx → ném lỗi thường (không phải `AuthError`). Fixture tự viết theo định dạng Calendar API v3 (không dùng dữ liệu thật).
++- Lệnh kiểm tra: `npx tsc --noEmit; npm run test` (song song T-3.1; không build/e2e)
++- Nhật ký: 2026-09-14 lượt 1: DONE (fetchCalendars/fetchEvents/normalize/AuthError; all-day nhiều ngày tách ngày; fixtures giả; 159×2) — `fetchEvents` tự gọi calendarList để lấy màu (giữ chữ ký SPEC) → kiem-thu PASS (2 TZ, fixture không dữ liệu thật) → review múi giờ: đạt → commit.
++- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
+ 
+ ### T-3.3 — Màn Đồng bộ + tự đồng bộ
+ - Phạm vi file: `src/ui/screens/Sync.tsx`, `src/ui/App.tsx`, `src/ui/store.ts`, `src/ui/sync.ts` (điều phối), `src/core/i18n/*.json`, `tests/unit/store.test.ts`.
+ - Mục tiêu: dán Client ID, Kết nối (redirect), xử lý hash khi khởi động (xóa bằng `replaceState`), danh sách lịch + chọn, Đồng bộ ngay, thời điểm đồng bộ, Ngắt kết nối; tự đồng bộ khi mở nếu token còn hạn và cache > 30 phút; 401 → trạng thái "Kết nối lại"; lỗi mạng → giữ cache.
+ - Tiêu chí: [ ] `npm run check` pass; [ ] reducer test cho action google.
+-- Lệnh kiểm tra: `npm run check`
+-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
++- Bổ sung (Quản lý, review T-3.1): gọi `newState(localStorage)` (không dùng sessionStorage mặc định — PWA standalone iOS có thể mất sessionStorage qua redirect Google, SPEC §8 rủi ro 1); xóa `state` ngay sau khi `parseFragment` (dùng 1 lần, kể cả khi lỗi); `redirectUri` = `location.origin + location.pathname` (khớp `VITE_BASE`, có `/` cuối). 401 → `clearToken()` + trạng thái "Kết nối lại".
++- Bổ sung (D-012): `App.tsx` "Đang tải…" qua `t()` (dùng `navigator.language` bắt đầu `vi` → vi, khác → en khi chưa có state); đóng S4 T-2.14. Quản lý chụp webkit tab Đồng bộ (3 trạng thái: chưa kết nối / đã kết nối có danh sách lịch / "Kết nối lại") trước khi DONE — mở rộng `scripts/chup.cjs` thêm tab `sync` nếu cần (phạm vi thêm `scripts/chup.cjs`).
++- Nhật ký: 2026-09-14 lượt 1: DONE (Sync.tsx, sync.ts thuần, action google, "Đang tải…" i18n, chup sync; 166×2, 32 e2e). Review (trước kiem-thu): xử lý hash OAuth + tự đồng bộ nằm trong Sync.tsx → chỉ chạy khi mở tab Đồng bộ (redirect về tab Preview không nhận token; TH1 không tự đồng bộ); Sync.tsx chép hằng `google_oauth_state` → trả thợ: đưa lên App qua hàm điều phối trong sync.ts, export `consumeState` ở oauth.ts, thêm unit test (Lần thử 1/3). Phạm vi thêm: `src/google/oauth.ts` (chỉ thêm export), `tests/unit/oauth.test.ts`, `tests/unit/sync.test.ts`. Lượt 2: `consumeState`, `handleAuthRedirect` + `autoSyncIfNeeded` gọi 1 lần ở App (token/lỗi → mở tab Đồng bộ), Sync.tsx chỉ UI; +13 test (177×2) → kiem-thu PASS (toàn bộ e2e repeat-each=2 64/64) → chụp 3 trạng thái bằng `scripts/chup.cjs sync`: đạt → commit. Lưu ý cho T-3.END: webkit — service worker nuốt fetch trước `page.route` (chup.cjs phải `serviceWorkers:'block'`).
++- Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
+ 
+ ### T-3.END — Kiểm thử tích hợp M3
+ - Phạm vi file: `tests/e2e/m3-google.spec.ts`, `tests/fixtures/google/*.json`; sửa tích hợp nhỏ `src/**` phải khai báo.
+ - Tiêu chí: [ ] luồng mock OAuth + calendar như SPEC M3 (302 về `#access_token…&state=<từ query>` → chọn lịch → Đồng bộ → agenda có sự kiện fixture → offline + reload vẫn hiện → 401 → "Kết nối lại"); [ ] `Select-String -Path src -Pattern client_secret -Recurse` rỗng; [ ] `npm run check` pass, test M1–M2 không bị sửa/skip.
+-- Lệnh kiểm tra: `npm run check`
+-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
++- Bổ sung (Quản lý 2026-09-14): `data-testid` từ T-3.3: `sync-clientid`, `sync-connect`, `sync-reconnect`, `sync-status`, `sync-calendar-list`, `sync-cal-<id>`, `sync-now`, `sync-last`, `sync-disconnect`, `sync-reauth-msg`. Luồng redirect: sau khi quay về app ở tab bất kỳ, App tự xử lý hash và mở tab Đồng bộ (T-3.3 lượt 2) — test phải khẳng định điều này (mở ở tab Preview mặc định). Tự đồng bộ khi mở app (cache > 30′) cũng nên có 1 test (đặt `fetchedAt` cũ qua IndexedDB, reload → request calendar được gọi).
++  - Vướng đã biết: webkit — service worker nuốt fetch trước `page.route` (`scripts/chup.cjs` phải `serviceWorkers:'block'`), nhưng bước "offline + reload vẫn hiện" CẦN service worker. Thử theo thứ tự: (1) `context.route` thay `page.route`; (2) tách: phần mock chạy với `serviceWorkers:'block'`, phần offline chạy trong context cho phép SW, seed IndexedDB bằng cache từ fixture rồi `setOffline(true)` + reload; (3) nếu webkit vẫn không làm được bước offline → chỉ chromium cho bước đó bằng `test.skip(browserName==='webkit', '<lý do>')` NGAY TRONG test mới (khai báo, không đụng test cũ) — Quản lý duyệt. Không sửa `vite.config.ts`/SW để lách.
++- Lệnh kiểm tra: `npm run check`; `npx playwright test tests/e2e/m3-google.spec.ts --repeat-each=3`
++- Nhật ký: 2026-09-14 lượt 1: DONE (m3-google.spec + fixture events-sync ngày động; mock OAuth bằng trang HTML chuyển hướng vì webkit không fulfill 302; `test.skip(webkit)` riêng bước offline+reload; không sửa src) → kiem-thu PASS (check 37 pass/1 skip; repeat-each=3 15/0/3 skip) + tái hiện độc lập lỗi webkit offline (D-013) → commit.
++- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
+ 
+ ---
+ ## M4 — Ảnh nền & tùy biến, một chạm Shortcut, hướng dẫn
+@@ -386,6 +420,6 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
+ 
+ ### T-4.END — Kiểm thử tích hợp M4
+ - Phạm vi file: `tests/e2e/m4-design.spec.ts`, `tests/e2e/m4-export.spec.ts`, `tests/e2e/m4-offline.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.
+-- Tiêu chí: [ ] tải ảnh fixture → preview đổi, kích thước bằng thiết bị; blur=2, dim=0.4, position=bottom, font=serif → hash PNG khác sau mỗi bước; `__lastOps` trong vùng an toàn; [ ] chromium + `clipboard-write`: "Sao chép" ghi `image/png`; "Đặt hình nền" → `__lastNav` bắt đầu `shortcuts://run-shortcut?name=`; [ ] offline reload vẫn mở app; [ ] size < 150 KB; [ ] `npm run check` pass chromium + webkit.
++- Tiêu chí: [ ] tải ảnh fixture → preview đổi, kích thước bằng thiết bị; blur=2, dim=0.4, position=bottom, font=serif → hash PNG khác sau mỗi bước; `__lastOps` trong vùng an toàn; [ ] chromium + `clipboard-write`: "Sao chép" ghi `image/png`; "Đặt hình nền" → `__lastNav` bắt đầu `shortcuts://run-shortcut?name=`; [ ] offline reload vẫn mở app (webkit: xem D-013 — thử cách khác trước khi skip); [ ] size < 150 KB; [ ] `npm run check` pass chromium + webkit; [ ] bài thử tay iPhone (HUONG-DAN) có bước Chế độ máy bay → mở icon → app mở, còn sự kiện Google cache (D-013).
+ - Lệnh kiểm tra: `npm run check; node scripts/size.mjs`
+ - Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+diff --git a/scripts/README-cong-cu.md b/scripts/README-cong-cu.md
+new file mode 100644
+index 0000000..c35cbb8
+--- /dev/null
++++ b/scripts/README-cong-cu.md
+@@ -0,0 +1,51 @@
++# Công cụ ảnh mẫu và chụp
++
++Công cụ hỗ trợ dựng ảnh mẫu và chụp màn hình cho review.
++
++## Chuẩn bị
++
++```sh
++npm run build
++```
++
++## `mau-anh.cjs` — Dựng 18 ảnh + 3 tấm tổng hợp
++
++Dựng ảnh mẫu từ state mẫu: 3 bố cục (month/agenda/todo) × 2 showNote (true/false) × 3 số mục (0/2/15).
++Tạo 18 PNG + 3 tấm tổng hợp (tong-month/agenda/todo.png).
++
++```sh
++node scripts/mau-anh.cjs <thư-mục-ra> [--port 4190]
++```
++
++**Tham số**:
++- `<thư-mục-ra>`: Thư mục lưu ảnh ra.
++- `--port N` (tùy chọn): Cổng vite preview (mặc định 4190).
++
++## `chup.cjs` — Chụp tab Sự kiện hoặc Preview
++
++Chụp 6 ảnh tab Sự kiện hoặc 3 ảnh tab Preview trên webkit iPhone 13 Pro Max.
++
++```sh
++node scripts/chup.cjs events <thư-mục-ra> [--port 4191]
++node scripts/chup.cjs preview <thư-mục-ra> [--lang en] [--port 4191]
++```
++
++**Tham số**:
++- `<mode>`: `events` (tab Sự kiện, 6 ảnh) hoặc `preview` (tab Preview, 3 ảnh).
++- `<thư-mục-ra>`: Thư mục lưu ảnh.
++- `--lang en` (tùy chọn, chỉ preview): Ngôn ngữ tiếng Anh (mặc định vi).
++- `--port N` (tùy chọn): Cổng vite preview (mặc định 4191).
++
++## `cat-anh.cjs` — Cắt/phóng ảnh
++
++Cắt vùng từ ảnh PNG và tùy chọn phóng to.
++
++```sh
++node scripts/cat-anh.cjs <vào.png> <ra.png> <x> <y> <w> <h> [phóng]
++```
++
++**Tham số**:
++- `<vào.png>`: Ảnh nguồn.
++- `<ra.png>`: Ảnh ra.
++- `<x> <y> <w> <h>`: Vị trí (x, y) và kích thước (w, h) vùng cắt.
++- `[phóng]` (tùy chọn): Hệ số phóng (mặc định 1).
+diff --git a/scripts/cat-anh.cjs b/scripts/cat-anh.cjs
+new file mode 100644
+index 0000000..9b087b4
+--- /dev/null
++++ b/scripts/cat-anh.cjs
+@@ -0,0 +1,21 @@
++// Cắt và phóng ảnh PNG.
++// Dùng: node scripts/cat-anh.cjs <vào.png> <ra.png> x y w h [phóng]
++const { createRequire } = require('module');
++const path = require('path');
++const repoRoot = path.resolve(__dirname, '..');
++const req = createRequire(path.join(repoRoot, 'package.json'));
++const { chromium } = req('@playwright/test');
++const fs = require('fs');
++
++const [src, out, x, y, w, h, s] = process.argv.slice(2);
++(async () => {
++  const b = await chromium.launch(); const p = await b.newPage();
++  const b64 = fs.readFileSync(src).toString('base64');
++  const r = await p.evaluate(async ([b64, x, y, w, h, s]) => {
++    const img = new Image(); img.src = 'data:image/png;base64,' + b64; await img.decode();
++    const c = document.createElement('canvas'); c.width = w * s; c.height = h * s; const g = c.getContext('2d');
++    g.imageSmoothingEnabled = false; g.drawImage(img, x, y, w, h, 0, 0, w * s, h * s);
++    return c.toDataURL('image/png').split(',')[1];
++  }, [b64, +x, +y, +w, +h, +(s || 1)]);
++  fs.writeFileSync(out, Buffer.from(r, 'base64')); await b.close(); console.log('ok');
++})();
+diff --git a/scripts/chup.cjs b/scripts/chup.cjs
+new file mode 100644
+index 0000000..492366d
+--- /dev/null
++++ b/scripts/chup.cjs
+@@ -0,0 +1,159 @@
++// Chụp màn hình: tab Sự kiện (events), Preview (preview) hoặc Đồng bộ (sync) trên webkit iPhone 13 Pro Max.
++// Dùng: npm run build; node scripts/chup.cjs <events|preview|sync> <thư-mục-ra> [--lang en] [--port N]
++const { createRequire } = require('module');
++const path = require('path');
++const repoRoot = path.resolve(__dirname, '..');
++const req = createRequire(path.join(repoRoot, 'package.json'));
++const { webkit, devices } = req('@playwright/test');
++const { spawn } = require('child_process');
++const fs = require('fs');
++
++const mode = process.argv[2]; // 'events' hoặc 'preview'
++const OUTDIR = process.argv[3];
++let PORT = 4191;
++let lang = 'vi';
++
++const portIdx = process.argv.indexOf('--port');
++if (portIdx !== -1 && portIdx + 1 < process.argv.length) {
++  PORT = parseInt(process.argv[portIdx + 1], 10);
++}
++
++const langIdx = process.argv.indexOf('--lang');
++if (langIdx !== -1 && langIdx + 1 < process.argv.length) {
++  lang = process.argv[langIdx + 1];
++}
++
++const pad = (n) => String(n).padStart(2, '0');
++const iso = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
++const addDays = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return iso(d); };
++
++(async () => {
++  fs.mkdirSync(OUTDIR, { recursive: true });
++  const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { cwd: repoRoot, shell: true, stdio: 'ignore' });
++  try {
++    for (let i = 0; i < 60; i++) { try { const r = await fetch(`http://localhost:${PORT}/`); if (r.ok) break; } catch {} await new Promise((r) => setTimeout(r, 500)); }
++    const browser = await webkit.launch();
++    // serviceWorkers:'block' — nếu không, SW của vite-plugin-pwa nhận fetch trước và page.route
++    // (dùng ở mode 'sync' để giả REST Google) không chặn được request bên trong SW trên webkit.
++    const ctx = await browser.newContext({
++      ...devices['iPhone 13 Pro Max'],
++      viewport: { width: 428, height: 926 },
++      serviceWorkers: 'block',
++    });
++    const page = await ctx.newPage();
++    const url = `http://localhost:${PORT}/`;
++    await page.goto(url);
++
++    const state = {
++      version: 1,
++      device: { id: 'iphone-1284x2778', label: 'iPhone 12/13 Pro Max', width: 1284, height: 2778, safeTop: 0.30, safeBottom: 0.14 },
++      events: [
++        { id: 'e1', title: 'Họp nhóm dự án', date: addDays(0), time: '07:00', durationMin: 60, repeat: 'weekdays', alarmMin: 15, color: '#ff6b6b' },
++        { id: 'e2', title: 'Sinh nhật mẹ', date: addDays(0), repeat: 'yearly', color: '#51cf66' },
++        { id: 'e3', title: 'Gọi khách hàng Nguyễn Văn A về hợp đồng bảo trì dài hạn năm 2027', date: addDays(0), time: '14:30', repeat: 'none', color: '#4dabf7' },
++        { id: 'e4', title: 'Khám răng', date: addDays(2), time: '10:30', repeat: 'none' },
++      ],
++      todos: [
++        { id: 't1', text: 'Mua sữa', done: false, order: 0 },
++        { id: 't4', text: 'Nộp thuế', done: false, order: 3, due: addDays(-1) },
++        { id: 't5', text: 'Đặt vé máy bay', done: false, order: 4, due: addDays(0) },
++        { id: 't6', text: 'Gia hạn bảo hiểm', done: false, order: 5, due: addDays(5) },
++        { id: 't2', text: 'Sửa vòi nước nhà tắm và gọi thợ kiểm tra lại đường ống tầng hai', done: false, order: 1 },
++        { id: 't3', text: 'Gửi email cho sếp', done: true, order: 2 },
++      ],
++      notes: [{ id: 'n1', title: 'Ghi chú cũ', body: 'Mua quà sinh nhật', pinned: false, updated: 1 }, { id: 'n2', title: 'Việc tuần này', body: 'Nhớ mang ô, trời mưa chiều nay. Mật khẩu wifi 12345678.', pinned: true, updated: 2 }],
++      design: { showNote: true, lang },
++      google: { clientId: 'demo-client-id.apps.googleusercontent.com', calendarIds: [], cache: null }, shortcutName: 'DatHinhNen',
++    };
++
++    await page.evaluate((s) => new Promise((res, rej) => {
++      const o = indexedDB.open('keyval-store');
++      o.onupgradeneeded = () => o.result.createObjectStore('keyval');
++      o.onsuccess = () => { const tx = o.result.transaction('keyval', 'readwrite'); tx.objectStore('keyval').put(s, 'lichkhoa:state'); tx.oncomplete = () => { o.result.close(); res(); }; tx.onerror = rej; };
++      o.onerror = rej;
++    }), state);
++    await page.goto(url);
++
++    const shot = async (name) => { await page.screenshot({ path: path.join(OUTDIR, name + '.png') }); console.log('ok', name); };
++
++    if (mode === 'events') {
++      await page.getByTestId('tab-events').click();
++      await page.waitForTimeout(600);
++      await shot('1-su-kien');
++      await page.getByTestId('ev-item').first().click();
++      await page.waitForTimeout(600);
++      await shot('2-sheet-sua');
++      await page.getByTestId('ev-cancel').click();
++      await page.waitForTimeout(400);
++      await page.getByTestId('add-event').click();
++      await page.waitForTimeout(600);
++      await shot('3-sheet-moi');
++      await page.getByTestId('ev-cancel').click();
++      await page.waitForTimeout(400);
++      await page.getByTestId('seg-todos').click();
++      await page.waitForTimeout(400);
++      await shot('4-viec');
++      await page.getByTestId('seg-note').click();
++      await page.waitForTimeout(400);
++      await shot('5-ghi-chu');
++      await page.getByTestId('note-item').first().click();
++      await page.waitForTimeout(600);
++      await shot('6-sheet-ghi-chu');
++    } else if (mode === 'preview') {
++      await page.waitForFunction(() => { const el = document.querySelector('[data-testid="preview"]'); return el && el.naturalWidth === 1284; });
++      await page.waitForTimeout(500);
++      await shot('1-preview-dau');
++      await page.evaluate(() => { const s = document.querySelector('.preview-screen'); if (s) s.scrollTop = s.scrollHeight; window.scrollTo(0, document.body.scrollHeight); });
++      await page.waitForTimeout(400);
++      await shot('2-preview-cai-dat');
++      await page.getByTestId('layout-agenda').click();
++      await page.waitForTimeout(800);
++      await page.evaluate(() => { const s = document.querySelector('.preview-screen'); if (s) s.scrollTop = 0; });
++      await page.waitForTimeout(300);
++      await shot('3-preview-agenda');
++    } else if (mode === 'sync') {
++      // 1) Chưa kết nối: có sẵn Client ID (từ state ở trên) nhưng chưa có token.
++      await page.getByTestId('tab-sync').click();
++      await page.waitForTimeout(400);
++      await shot('1-chua-ket-noi');
++
++      // 2) Đã kết nối: seed token hợp lệ + mock calendarList trả danh sách lịch.
++      await page.route('**/calendar/v3/users/me/calendarList', (route) =>
++        route.fulfill({
++          status: 200,
++          contentType: 'application/json',
++          body: JSON.stringify({ items: [
++            { id: 'cal1', summary: 'Công việc', backgroundColor: '#4dabf7' },
++            { id: 'cal2', summary: 'Cá nhân', backgroundColor: '#51cf66' },
++          ] }),
++        }),
++      );
++      await page.evaluate(() => {
++        localStorage.setItem('google_oauth_token', JSON.stringify({ accessToken: 'tok-demo', expiresAt: Date.now() + 3600_000 }));
++      });
++      await page.getByTestId('tab-preview').click();
++      await page.getByTestId('tab-sync').click();
++      await page.waitForTimeout(600);
++      await page.getByTestId('sync-cal-cal1').check();
++      await page.waitForTimeout(200);
++      await shot('2-da-ket-noi');
++
++      // 3) 401 khi tải danh sách lịch -> "Kết nối lại".
++      await page.unroute('**/calendar/v3/users/me/calendarList');
++      await page.route('**/calendar/v3/users/me/calendarList', (route) => route.fulfill({ status: 401, body: '{}' }));
++      await page.evaluate(() => {
++        localStorage.setItem('google_oauth_token', JSON.stringify({ accessToken: 'tok-demo', expiresAt: Date.now() + 3600_000 }));
++      });
++      await page.getByTestId('tab-preview').click();
++      await page.getByTestId('tab-sync').click();
++      await page.waitForTimeout(600);
++      await shot('3-ket-noi-lai');
++    }
++
++    const sw = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]);
++    console.log('scrollWidth/clientWidth', sw);
++    await browser.close();
++  } finally {
++    server.kill();
++  }
++})().catch((e) => { console.error(e); process.exit(1); });
+diff --git a/scripts/mau-anh.cjs b/scripts/mau-anh.cjs
+new file mode 100644
+index 0000000..fb80d1f
+--- /dev/null
++++ b/scripts/mau-anh.cjs
+@@ -0,0 +1,95 @@
++// Dựng ảnh mẫu: 18 ảnh (3 bố cục × 2 showNote × 3 số mục) + 3 tấm tổng hợp.
++// Dùng: npm run build; node scripts/mau-anh.cjs <thư-mục-ra> [--port N]
++const { createRequire } = require('module');
++const path = require('path');
++const repoRoot = path.resolve(__dirname, '..');
++const req = createRequire(path.join(repoRoot, 'package.json'));
++const { chromium } = req('@playwright/test');
++const { spawn } = require('child_process');
++const fs = require('fs');
++
++const OUTDIR = process.argv[2];
++let PORT = 4190;
++const portIdx = process.argv.indexOf('--port');
++if (portIdx !== -1 && portIdx + 1 < process.argv.length) {
++  PORT = parseInt(process.argv[portIdx + 1], 10);
++}
++
++const pad = (n) => String(n).padStart(2, '0');
++const iso = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
++const addDays = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return iso(d); };
++
++function events(n) {
++  const titles = ['Họp nhóm dự án', 'Khám răng', 'Sinh nhật mẹ', 'Đón con', 'Gọi khách hàng Nguyễn Văn A về hợp đồng bảo trì dài hạn năm 2027',
++    'Tập gym', 'Nộp báo cáo', 'Cà phê với Minh', 'Đi chợ', 'Học tiếng Anh', 'Họp phụ huynh', 'Thanh toán điện nước', 'Chạy bộ', 'Xem phim', 'Đọc sách'];
++  const colors = ['#ff6b6b', '#4dabf7', '#51cf66', '#fcc419', undefined];
++  return Array.from({ length: n }, (_, i) => ({
++    id: 'e' + i, title: titles[i % titles.length], date: addDays(i % 7),
++    time: i % 4 === 2 ? undefined : `${pad(7 + (i * 3) % 14)}:${i % 2 ? '30' : '00'}`,
++    repeat: 'none', color: colors[i % colors.length],
++  }));
++}
++
++function todos(n) {
++  const texts = ['Mua sữa', 'Gửi email cho sếp', 'Sửa vòi nước nhà tắm và gọi thợ kiểm tra lại đường ống tầng hai', 'Đặt vé máy bay', 'Gia hạn bảo hiểm',
++    'Tưới cây', 'Dọn tủ lạnh', 'Trả sách thư viện', 'Rút tiền', 'Mua quà', 'Đổi dầu xe', 'In tài liệu', 'Gọi bà', 'Rửa xe', 'Đóng học phí'];
++  return Array.from({ length: n }, (_, i) => ({ id: 't' + i, text: texts[i % texts.length], done: i % 3 === 1, order: i, due: i % 4 === 0 ? addDays(-1) : i % 4 === 2 ? addDays(0) : i % 5 === 3 ? addDays(3) : undefined }));
++}
++
++(async () => {
++  fs.mkdirSync(OUTDIR, { recursive: true });
++  const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { cwd: repoRoot, shell: true, stdio: 'ignore' });
++  try {
++    for (let i = 0; i < 60; i++) { try { const r = await fetch(`http://localhost:${PORT}/`); if (r.ok) break; } catch {} await new Promise((r) => setTimeout(r, 500)); }
++    const browser = await chromium.launch();
++    const ctx = await browser.newContext({ viewport: { width: 428, height: 926 }, screen: { width: 428, height: 926 }, deviceScaleFactor: 3 });
++    const page = await ctx.newPage();
++    const url = `http://localhost:${PORT}/?test=1`;
++    await page.goto(url);
++    for (const layout of ['month', 'agenda', 'todo']) {
++      const shots = [];
++      for (const showNote of [false, true]) {
++        for (const n of [0, 2, 15]) {
++          const state = {
++            version: 1,
++            device: { id: 'iphone-1284x2778', label: 'iPhone 12/13 Pro Max', width: 1284, height: 2778, safeTop: 0.30, safeBottom: 0.14 },
++            design: { layout, showNote },
++            notes: [{ id: 'n1', title: 'Ghi chú cũ', body: 'Không được hiện', pinned: false, updated: 1 }, { id: 'n2', title: 'Việc tuần này', body: 'Nhớ mang ô, trời mưa chiều nay. Mật khẩu wifi nhà mới 12345678. Cuối tuần về quê thăm ông bà.', pinned: true, updated: 2 }],
++            events: events(n), todos: todos(n),
++            google: { clientId: '', calendarIds: [], cache: null }, shortcutName: 'LichKhoa',
++          };
++          await page.evaluate((s) => new Promise((res, rej) => {
++            const o = indexedDB.open('keyval-store');
++            o.onupgradeneeded = () => o.result.createObjectStore('keyval');
++            o.onsuccess = () => { const tx = o.result.transaction('keyval', 'readwrite'); tx.objectStore('keyval').put(s, 'lichkhoa:state'); tx.oncomplete = () => { o.result.close(); res(); }; tx.onerror = rej; };
++            o.onerror = rej;
++          }), state);
++          await page.goto(url);
++          await page.waitForFunction(() => { const el = document.querySelector('[data-testid="preview"]'); return el && el.naturalWidth === 1284 && el.naturalHeight === 2778; });
++          await page.waitForTimeout(400);
++          const b64 = await page.getByTestId('preview').evaluate(async (el) => {
++            const buf = new Uint8Array(await (await fetch(el.src)).arrayBuffer()); let s = ''; for (const c of buf) s += String.fromCharCode(c); return btoa(s);
++          });
++          const f = path.join(OUTDIR, `${layout}-note${showNote ? 1 : 0}-${n}.png`);
++          fs.writeFileSync(f, Buffer.from(b64, 'base64'));
++          shots.push({ b64, label: `${layout} note=${showNote} n=${n}` });
++        }
++      }
++      const sheet = await page.evaluate(async (shots) => {
++        const W = 428, H = 926, c = document.createElement('canvas'); c.width = W * 3 + 20; c.height = (H + 30) * 2; const g = c.getContext('2d');
++        g.fillStyle = '#888'; g.fillRect(0, 0, c.width, c.height);
++        for (let i = 0; i < shots.length; i++) {
++          const img = new Image(); img.src = 'data:image/png;base64,' + shots[i].b64; await img.decode();
++          const x = (i % 3) * (W + 10), y = Math.floor(i / 3) * (H + 30);
++          g.drawImage(img, x, y + 30, W, H); g.fillStyle = '#ff0'; g.font = 'bold 18px sans-serif'; g.fillText(shots[i].label, x + 6, y + 22);
++        }
++        return c.toDataURL('image/png').split(',')[1];
++      }, shots);
++      fs.writeFileSync(path.join(OUTDIR, `tong-${layout}.png`), Buffer.from(sheet, 'base64'));
++      console.log('ok', layout);
++    }
++    await browser.close();
++  } finally {
++    server.kill();
++  }
++})().catch((e) => { console.error(e); process.exit(1); });
+diff --git a/src/core/i18n/en.json b/src/core/i18n/en.json
+index 513cc60..424f0c6 100644
+--- a/src/core/i18n/en.json
++++ b/src/core/i18n/en.json
+@@ -147,6 +147,25 @@
+ 
+   "common.comingSoon": "Coming soon",
+   "sync.lastSync": "Last synced: {time}",
++  "sync.neverSynced": "Never synced yet",
++  "sync.clientIdLabel": "Google Client ID",
++  "sync.clientIdPlaceholder": "xxxx.apps.googleusercontent.com",
++  "sync.clientIdHint": "No Client ID yet? See the Guide tab.",
++  "sync.connect": "Connect",
++  "sync.connected": "Connected",
++  "sync.disconnect": "Disconnect",
++  "sync.reconnect": "Reconnect",
++  "sync.reauthNeeded": "Session expired, please reconnect",
++  "sync.calendars": "Calendars",
++  "sync.calendarsEmpty": "No calendars",
++  "sync.calendarsLoadError": "Could not load calendars",
++  "sync.syncNow": "Sync now",
++  "sync.syncing": "Syncing…",
++  "sync.syncOkToast": "Google Calendar synced",
++  "sync.networkError": "Network error, kept saved data",
++  "sync.connectedToast": "Connected to Google",
++  "sync.connectErrorPrefix": "Connect error: ",
++  "sync.disconnectedToast": "Disconnected",
+ 
+   "lunar.leap": " leap",
+   "lunar.line": "Lunar {day}/{month}{leap} {yearName}",
+diff --git a/src/core/i18n/vi.json b/src/core/i18n/vi.json
+index 8f53929..ee8baab 100644
+--- a/src/core/i18n/vi.json
++++ b/src/core/i18n/vi.json
+@@ -147,6 +147,25 @@
+ 
+   "common.comingSoon": "Sắp có",
+   "sync.lastSync": "Đồng bộ lần cuối: {time}",
++  "sync.neverSynced": "Chưa đồng bộ lần nào",
++  "sync.clientIdLabel": "Google Client ID",
++  "sync.clientIdPlaceholder": "xxxx.apps.googleusercontent.com",
++  "sync.clientIdHint": "Chưa có Client ID? Xem hướng dẫn ở tab Hướng dẫn.",
++  "sync.connect": "Kết nối",
++  "sync.connected": "Đã kết nối",
++  "sync.disconnect": "Ngắt kết nối",
++  "sync.reconnect": "Kết nối lại",
++  "sync.reauthNeeded": "Phiên đăng nhập hết hạn, cần kết nối lại",
++  "sync.calendars": "Danh sách lịch",
++  "sync.calendarsEmpty": "Không có lịch nào",
++  "sync.calendarsLoadError": "Không tải được danh sách lịch",
++  "sync.syncNow": "Đồng bộ ngay",
++  "sync.syncing": "Đang đồng bộ…",
++  "sync.syncOkToast": "Đã đồng bộ Google Calendar",
++  "sync.networkError": "Lỗi mạng, giữ dữ liệu đã lưu",
++  "sync.connectedToast": "Đã kết nối Google",
++  "sync.connectErrorPrefix": "Lỗi kết nối: ",
++  "sync.disconnectedToast": "Đã ngắt kết nối",
+ 
+   "lunar.leap": " nhuận",
+   "lunar.line": "Âm lịch {day}/{month}{leap} {yearName}",
+diff --git a/src/core/model.ts b/src/core/model.ts
+index 9603d41..bf6bc9b 100644
+--- a/src/core/model.ts
++++ b/src/core/model.ts
+@@ -169,18 +169,32 @@ export function normalizeState(raw: unknown): AppState | null {
+   delete mergedDesign['noteText'];
+ 
+   const rawNotes = raw['notes'];
++  const notesFromLegacy: Note[] = legacyNoteText !== ''
++    ? [{ id: `note-${Date.now()}`, title: '', body: legacyNoteText, pinned: true, updated: Date.now() }]
++    : [];
+   const notes: Note[] = Array.isArray(rawNotes)
+-    ? (rawNotes as Note[])
+-    : legacyNoteText !== ''
+-      ? [{ id: `note-${Date.now()}`, title: '', body: legacyNoteText, pinned: true, updated: Date.now() }]
+-      : [];
++    ? clampPinned((rawNotes as unknown[]).filter(isPlainObject) as unknown as Note[])
++    : notesFromLegacy;
++
++  const events: unknown[] = Array.isArray(raw['events']) ? (raw['events'] as unknown[]).filter(isPlainObject) : [];
++  const todos: unknown[] = Array.isArray(raw['todos']) ? (raw['todos'] as unknown[]).filter(isPlainObject) : [];
+ 
+   return {
+     ...base,
+     ...raw,
+     device,
++    events: events as AppState['events'],
++    todos: todos as AppState['todos'],
+     notes,
+     design: mergedDesign as unknown as DesignConfig,
+     google: { ...base.google, ...rawGoogle } as AppState['google'],
+   } as AppState;
+ }
++
++/** Giữ tối đa 1 ghi chú `pinned`: nếu có > 1, chỉ giữ ghim cái `updated` lớn nhất, các cái còn lại bỏ ghim. Không mutate mảng gốc. */
++function clampPinned(notes: Note[]): Note[] {
++  const pinned = notes.filter((n) => n.pinned === true);
++  if (pinned.length <= 1) return notes;
++  const keepId = pinned.reduce((best, n) => ((n.updated ?? 0) > (best.updated ?? 0) ? n : best)).id;
++  return notes.map((n) => (n.pinned && n.id !== keepId ? { ...n, pinned: false } : n));
++}
+diff --git a/src/export/ics.ts b/src/export/ics.ts
+index 2582c07..d0a84ef 100644
+--- a/src/export/ics.ts
++++ b/src/export/ics.ts
+@@ -27,6 +27,27 @@ function addDays(d: Date, n: number): Date {
+   return r;
+ }
+ 
++/** Gập 1 dòng nội dung .ics theo RFC 5545 §3.1: mỗi dòng vật lý ≤ 75 octet, tiếp theo CRLF + 1 dấu cách; không cắt giữa chuỗi byte UTF-8 (duyệt theo code point). */
++function foldLine(line: string): string {
++  const enc = new TextEncoder();
++  if (enc.encode(line).length <= 75) return line;
++  let out = '';
++  let seg = '';
++  let limit = 75;
++  for (const ch of line) {
++    const candidate = seg + ch;
++    if (enc.encode(candidate).length > limit) {
++      out += seg + '\r\n ';
++      seg = ch;
++      limit = 74; // dòng tiếp theo có 1 dấu cách chiếm 1 octet
++    } else {
++      seg = candidate;
++    }
++  }
++  out += seg;
++  return out;
++}
++
+ const FREQ: Record<string, string> = {
+   daily: 'FREQ=DAILY',
+   weekdays: 'FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR',
+@@ -49,7 +70,13 @@ export function eventToIcs(e: LocalEvent, now: Date = new Date()): string {
+     'SUMMARY:' + icsEscape(e.title || 'Sự kiện'),
+   ];
+ 
+-  const d0 = parseYMD(e.date);
++  let d0 = parseYMD(e.date);
++  if (e.repeat === 'weekdays') {
++    // v1.3/D-012: DTSTART phải rơi vào T2-T6 để BYDAY=MO-FR không tạo lệch lần đầu trên Lịch iPhone.
++    const dow = d0.getDay();
++    if (dow === 6) d0 = addDays(d0, 2);
++    else if (dow === 0) d0 = addDays(d0, 1);
++  }
+   if (e.time) {
+     const [h, mi] = e.time.split(':').map(Number);
+     const st = new Date(d0.getFullYear(), d0.getMonth(), d0.getDate(), h, mi || 0);
+@@ -79,5 +106,5 @@ export function eventToIcs(e: LocalEvent, now: Date = new Date()): string {
+   }
+ 
+   lines.push('END:VEVENT', 'END:VCALENDAR');
+-  return lines.join('\r\n') + '\r\n';
++  return lines.map(foldLine).join('\r\n') + '\r\n';
+ }
+diff --git a/src/google/calendar.ts b/src/google/calendar.ts
+new file mode 100644
+index 0000000..91c4cf3
+--- /dev/null
++++ b/src/google/calendar.ts
+@@ -0,0 +1,151 @@
++import type { Occurrence, ISODate } from '../core/model';
++import { toISODate, parseISODate } from '../core/calendar';
++
++const API_BASE = 'https://www.googleapis.com/calendar/v3';
++const MAX_RESULTS = 250;
++const MAX_PAGES = 2; // giới hạn theo phiếu: ≤ 2 trang/lịch
++
++/** Ném khi Google API trả 401 (token hết hạn/không hợp lệ). */
++export class AuthError extends Error {
++  constructor(message = 'Google auth failed (401)') {
++    super(message);
++    this.name = 'AuthError';
++  }
++}
++
++export interface GoogleCalendarInfo {
++  id: string;
++  summary: string;
++  color: string;
++}
++
++interface RawGoogleEventTime {
++  date?: string; // all-day 'YYYY-MM-DD'
++  dateTime?: string; // RFC3339 với offset
++}
++
++export interface RawGoogleEvent {
++  id: string;
++  status?: string;
++  summary?: string;
++  start?: RawGoogleEventTime;
++  end?: RawGoogleEventTime;
++}
++
++async function googleGet(url: string, token: string): Promise<any> {
++  const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
++  if (res.status === 401) throw new AuthError();
++  if (!res.ok) throw new Error(`Google API error: ${res.status}`);
++  return res.json();
++}
++
++/** GET .../users/me/calendarList — danh sách lịch của người dùng. */
++export async function fetchCalendars(token: string): Promise<GoogleCalendarInfo[]> {
++  const data = await googleGet(`${API_BASE}/users/me/calendarList`, token);
++  const items = Array.isArray(data.items) ? data.items : [];
++  return items.map((it: any) => ({
++    id: String(it.id),
++    summary: typeof it.summary === 'string' ? it.summary : String(it.id),
++    color: typeof it.backgroundColor === 'string' ? it.backgroundColor : '',
++  }));
++}
++
++async function fetchRawEvents(
++  token: string,
++  calendarId: string,
++  timeMin: string,
++  timeMax: string
++): Promise<RawGoogleEvent[]> {
++  const events: RawGoogleEvent[] = [];
++  let pageToken: string | undefined;
++  let page = 0;
++  do {
++    const params = new URLSearchParams({
++      singleEvents: 'true',
++      orderBy: 'startTime',
++      maxResults: String(MAX_RESULTS),
++      timeMin,
++      timeMax,
++    });
++    if (pageToken) params.set('pageToken', pageToken);
++    const url = `${API_BASE}/calendars/${encodeURIComponent(calendarId)}/events?${params.toString()}`;
++    const data = await googleGet(url, token);
++    const items: RawGoogleEvent[] = Array.isArray(data.items) ? data.items : [];
++    events.push(...items);
++    pageToken = typeof data.nextPageToken === 'string' ? data.nextPageToken : undefined;
++    page++;
++  } while (pageToken && page < MAX_PAGES);
++  return events;
++}
++
++function pad2(n: number): string {
++  return n < 10 ? `0${n}` : String(n);
++}
++
++/** Chuẩn hóa sự kiện Google thô về `Occurrence` theo giờ địa phương; bỏ `cancelled`. Hàm thuần. */
++export function normalize(calendarId: string, color: string, events: RawGoogleEvent[]): Occurrence[] {
++  const result: Occurrence[] = [];
++  for (const ev of events) {
++    if (ev.status === 'cancelled' || !ev.start) continue;
++    if (ev.start.date) {
++      result.push({
++        id: `google-${calendarId}-${ev.id}`,
++        sourceId: ev.id,
++        source: 'google',
++        title: ev.summary ?? '',
++        date: ev.start.date,
++        allDay: true,
++        color,
++      });
++    } else if (ev.start.dateTime) {
++      const d = new Date(ev.start.dateTime);
++      result.push({
++        id: `google-${calendarId}-${ev.id}`,
++        sourceId: ev.id,
++        source: 'google',
++        title: ev.summary ?? '',
++        date: toISODate(d),
++        time: `${pad2(d.getHours())}:${pad2(d.getMinutes())}`,
++        allDay: false,
++        color,
++      });
++    }
++  }
++  return result;
++}
++
++function sortOccurrences(occ: Occurrence[]): Occurrence[] {
++  return [...occ].sort((a, b) =>
++    a.date === b.date ? (a.time ?? '').localeCompare(b.time ?? '') : a.date.localeCompare(b.date)
++  );
++}
++
++/** Chuyển ISODate địa phương thành mốc RFC3339 (đầu ngày, hoặc đầu ngày kế tiếp nếu `endExclusive`). */
++function isoDateToInstant(date: ISODate, endExclusive: boolean): string {
++  const { y, m0, d } = parseISODate(date);
++  const dt = endExclusive ? new Date(y, m0, d + 1, 0, 0, 0, 0) : new Date(y, m0, d, 0, 0, 0, 0);
++  return dt.toISOString();
++}
++
++/**
++ * Lấy + chuẩn hóa sự kiện của nhiều lịch trong [timeMin,timeMax], gộp và sắp xếp theo ngày/giờ.
++ * Tự gọi `fetchCalendars` để lấy màu từng lịch.
++ */
++export async function fetchEvents(
++  token: string,
++  calendarIds: string[],
++  timeMin: ISODate,
++  timeMax: ISODate
++): Promise<Occurrence[]> {
++  const calendars = await fetchCalendars(token);
++  const colorById = new Map(calendars.map((c) => [c.id, c.color]));
++  const timeMinStr = isoDateToInstant(timeMin, false);
++  const timeMaxStr = isoDateToInstant(timeMax, true);
++
++  const all: Occurrence[] = [];
++  for (const calendarId of calendarIds) {
++    const raw = await fetchRawEvents(token, calendarId, timeMinStr, timeMaxStr);
++    all.push(...normalize(calendarId, colorById.get(calendarId) ?? '', raw));
++  }
++  return sortOccurrences(all);
++}
+diff --git a/src/google/oauth.ts b/src/google/oauth.ts
+new file mode 100644
+index 0000000..3beee9d
+--- /dev/null
++++ b/src/google/oauth.ts
+@@ -0,0 +1,116 @@
++const AUTH_ENDPOINT = 'https://accounts.google.com/o/oauth2/v2/auth';
++const SCOPE = 'https://www.googleapis.com/auth/calendar.readonly';
++const STATE_KEY = 'google_oauth_state';
++const TOKEN_KEY = 'google_oauth_token';
++/** Biên an toàn trừ khỏi hạn token để tránh dùng token sát hết hạn. */
++const EXPIRY_SAFETY_MS = 60_000;
++
++type StorageLike = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
++
++type TokenRecord = { accessToken: string; expiresAt: number };
++
++function defaultLocalStorage(): StorageLike | undefined {
++  return typeof globalThis.localStorage !== 'undefined' ? globalThis.localStorage : undefined;
++}
++
++function defaultSessionStorage(): StorageLike | undefined {
++  return typeof globalThis.sessionStorage !== 'undefined' ? globalThis.sessionStorage : undefined;
++}
++
++/** Sinh `state` ngẫu nhiên (≥128 bit) mã hóa base64url, dùng chống CSRF cho luồng OAuth implicit. */
++export function newState(storage: StorageLike | undefined = defaultSessionStorage()): string {
++  const bytes = new Uint8Array(16);
++  crypto.getRandomValues(bytes);
++  let binary = '';
++  for (const b of bytes) binary += String.fromCharCode(b);
++  const state = btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
++  storage?.setItem(STATE_KEY, state);
++  return state;
++}
++
++/** Xây URL ủy quyền Google OAuth implicit (`response_type=token`); luồng thuần client, không dùng khóa bí mật. */
++export function buildAuthUrl(
++  clientId: string,
++  redirectUri: string,
++  state: string,
++  prompt?: 'select_account' | 'none'
++): string {
++  const params = new URLSearchParams({
++    client_id: clientId,
++    redirect_uri: redirectUri,
++    response_type: 'token',
++    scope: SCOPE,
++    include_granted_scopes: 'true',
++    state,
++  });
++  if (prompt) params.set('prompt', prompt);
++  return `${AUTH_ENDPOINT}?${params.toString()}`;
++}
++
++/** Parse `#fragment` trả về từ Google sau redirect: token hợp lệ, lỗi, hoặc null nếu hash rỗng/không khớp. */
++export function parseFragment(
++  hash: string,
++  expectedState: string
++): { accessToken: string; expiresIn: number } | { error: string } | null {
++  const raw = hash.startsWith('#') ? hash.slice(1) : hash;
++  if (!raw) return null;
++
++  const params = new URLSearchParams(raw);
++  const error = params.get('error');
++  if (error) return { error: decodeURIComponent(error) };
++
++  const accessToken = params.get('access_token');
++  const expiresInRaw = params.get('expires_in');
++  const state = params.get('state');
++
++  if (!accessToken || !expiresInRaw) return null;
++  if (state !== expectedState) return null;
++
++  const expiresIn = Number(expiresInRaw);
++  if (!Number.isFinite(expiresIn)) return null;
++
++  return { accessToken, expiresIn };
++}
++
++/** Lưu token vào storage (mặc định localStorage) với `expiresAt = now + expiresIn*1000 - biên an toàn`. */
++export function saveToken(
++  accessToken: string,
++  expiresIn: number,
++  now: number = Date.now(),
++  storage: StorageLike | undefined = defaultLocalStorage()
++): void {
++  const record: TokenRecord = {
++    accessToken,
++    expiresAt: now + expiresIn * 1000 - EXPIRY_SAFETY_MS,
++  };
++  storage?.setItem(TOKEN_KEY, JSON.stringify(record));
++}
++
++/** Đọc token còn hạn từ storage; trả `null` nếu không có hoặc đã hết hạn. */
++export function getToken(
++  now: number = Date.now(),
++  storage: StorageLike | undefined = defaultLocalStorage()
++): string | null {
++  const raw = storage?.getItem(TOKEN_KEY);
++  if (!raw) return null;
++  try {
++    const record = JSON.parse(raw) as TokenRecord;
++    if (typeof record.accessToken !== 'string' || typeof record.expiresAt !== 'number') return null;
++    if (now >= record.expiresAt) return null;
++    return record.accessToken;
++  } catch {
++    return null;
++  }
++}
++
++/** Xóa token đã lưu (dùng khi Ngắt kết nối hoặc gặp 401). */
++export function clearToken(storage: StorageLike | undefined = defaultLocalStorage()): void {
++  storage?.removeItem(TOKEN_KEY);
++}
++
++/** Đọc `state` đã lưu bởi `newState` rồi xóa ngay (dùng 1 lần khi xử lý redirect Google, kể cả khi lỗi). */
++export function consumeState(storage: StorageLike | undefined = defaultLocalStorage()): string | null {
++  const value = storage?.getItem(STATE_KEY) ?? null;
++  storage?.removeItem(STATE_KEY);
++  return value;
++}
+diff --git a/src/render/layout/agenda.ts b/src/render/layout/agenda.ts
+index 51dddd3..e502e64 100644
+--- a/src/render/layout/agenda.ts
++++ b/src/render/layout/agenda.ts
+@@ -3,8 +3,8 @@ import { groupAgenda } from '../../core/calendar';
+ import { t } from '../../core/i18n';
+ import { blockStartY, dayLabel, fmtTime, fontSize, mainArea, truncate, type DrawOp } from './common';
+ 
+-/** Agenda tối đa 12 dòng (SPEC mục 9), vượt quá gộp thành dòng "+N". */
+-const MAX_LINES = 12;
++/** Agenda tối đa 12 dòng SỰ KIỆN (SPEC mục 9, D-012); tiêu đề ngày không tính vào trần. Vượt quá gộp thành dòng "+N". */
++const MAX_EVENT_LINES = 12;
+ 
+ type Row = { kind: 'header'; date: ISODate } | { kind: 'item'; occ: Occurrence } | { kind: 'empty' } | { kind: 'more'; count: number };
+ 
+@@ -20,28 +20,24 @@ export function layoutAgenda(d: RenderData, c: DesignConfig, dev: DeviceSpec): D
+ 
+   const groups = groupAgenda(d.occurrences, d.today, c.agendaDays);
+   const totalEvents = groups.reduce((n, g) => n + g.items.length, 0);
+-  const totalLines = groups.reduce((n, g) => n + 1 + g.items.length, 0);
+ 
+   /**
+-   * Xây danh sách dòng trong giới hạn `budget` dòng, không để lại tiêu đề ngày
+-   * mồ côi: chỉ vẽ tiêu đề nếu còn chỗ cho ≥ 1 sự kiện của ngày đó; nếu không,
+-   * dừng trước tiêu đề đó (và mọi ngày sau).
++   * Xây danh sách dòng trong giới hạn `budget` dòng SỰ KIỆN (tiêu đề ngày không
++   * tính vào trần), không để lại tiêu đề ngày mồ côi: chỉ vẽ tiêu đề nếu còn
++   * chỗ cho ≥ 1 sự kiện của ngày đó; nếu không, dừng trước tiêu đề đó (và mọi
++   * ngày sau).
+    */
+   const buildWithBudget = (budget: number): { visible: Row[]; shown: number } => {
+     const visible: Row[] = [];
+-    let lines = 0;
+     let shown = 0;
+     for (const g of groups) {
+-      if (lines + 2 > budget) break; // không đủ chỗ cho tiêu đề + ≥1 sự kiện
++      if (shown >= budget) break; // không còn chỗ cho ≥1 sự kiện của ngày này
+       visible.push({ kind: 'header', date: g.date });
+-      lines += 1;
+       for (const occ of g.items) {
+-        if (lines + 1 > budget) break;
++        if (shown >= budget) break;
+         visible.push({ kind: 'item', occ });
+-        lines += 1;
+         shown += 1;
+       }
+-      if (lines >= budget) break;
+     }
+     return { visible, shown };
+   };
+@@ -51,11 +47,8 @@ export function layoutAgenda(d: RenderData, c: DesignConfig, dev: DeviceSpec): D
+   if (groups.length === 0) {
+     visible = [{ kind: 'empty' }];
+     hidden = 0;
+-  } else if (totalLines <= MAX_LINES) {
+-    visible = buildWithBudget(MAX_LINES).visible;
+-    hidden = 0;
+   } else {
+-    const built = buildWithBudget(MAX_LINES - 1);
++    const built = buildWithBudget(MAX_EVENT_LINES);
+     visible = built.visible;
+     hidden = totalEvents - built.shown;
+   }
+diff --git a/src/ui/App.tsx b/src/ui/App.tsx
+index c647575..19dc3a2 100644
+--- a/src/ui/App.tsx
++++ b/src/ui/App.tsx
+@@ -1,12 +1,16 @@
+-import { useEffect, useState } from 'preact/hooks';
++import { useEffect, useRef, useState } from 'preact/hooks';
+ import type { AppState } from '../core/model';
+ import { defaultState } from '../core/model';
+ import { DEVICES, detectDevice } from '../render/devices';
+ import { loadState } from '../storage/db';
+ import { t } from '../core/i18n';
++import { toISODate } from '../core/calendar';
++import { consumeState, saveToken, getToken, clearToken } from '../google/oauth';
++import { handleAuthRedirect, autoSyncIfNeeded } from './sync';
+ import { createStore, type Store } from './store';
+ import { Preview } from './screens/Preview';
+ import { Events } from './screens/Events';
++import { Sync, type AuthNotice } from './screens/Sync';
+ 
+ const TABS = [
+   { id: 'preview' },
+@@ -30,6 +34,8 @@ export function App() {
+   const [store, setStore] = useState<Store | null>(null);
+   const [tab, setTab] = useState<TabId>('preview');
+   const [lang, setLang] = useState<AppState['design']['lang']>('vi');
++  const [authNotice, setAuthNotice] = useState<AuthNotice | null>(null);
++  const bootedRef = useRef(false);
+ 
+   useEffect(() => {
+     let cancelled = false;
+@@ -48,8 +54,36 @@ export function App() {
+     return store.subscribe(update);
+   }, [store]);
+ 
++  // Chạy 1 lần khi state đã nạp, KHÔNG phụ thuộc tab đang mở (SPEC §2 TH1): xử lý redirect Google
++  // (nếu có #access_token/#error) rồi tự đồng bộ nếu token còn hạn và cache cũ/không có.
++  useEffect(() => {
++    if (!store || bootedRef.current) return;
++    bootedRef.current = true;
++
++    const authResult = handleAuthRedirect(window.location.hash, { consumeState, saveToken });
++    if (authResult.handled) {
++      window.history.replaceState(null, '', window.location.pathname + window.location.search);
++      setAuthNotice(authResult.ok ? { ok: true } : { ok: false, error: authResult.error });
++      setTab('sync'); // để người dùng thấy ngay danh sách lịch / lỗi
++    }
++
++    const s = store.getState();
++    const today = toISODate(new Date());
++    void autoSyncIfNeeded(s.google.cache, s.google.calendarIds, today, Date.now(), { getToken, clearToken }).then(
++      (outcome) => {
++        if (outcome.ran && outcome.result.ok) {
++          store.dispatch({
++            type: 'setGoogleCache',
++            cache: { events: outcome.result.events, fetchedAt: outcome.result.fetchedAt },
++          });
++        }
++      },
++    );
++  }, [store]);
++
+   if (!store) {
+-    return <div class="app">Đang tải…</div>;
++    const detectedLang = navigator.language?.toLowerCase().startsWith('vi') ? 'vi' : 'en';
++    return <div class="app">{t('preview.loading', detectedLang)}</div>;
+   }
+ 
+   return (
+@@ -58,7 +92,9 @@ export function App() {
+         {tab === 'preview' && <Preview store={store} />}
+         {tab === 'events' && <Events store={store} />}
+         {tab === 'design' && <div class="placeholder">{t('common.comingSoon', lang)}</div>}
+-        {tab === 'sync' && <div class="placeholder">{t('common.comingSoon', lang)}</div>}
++        {tab === 'sync' && (
++          <Sync store={store} authNotice={authNotice} onAuthNoticeShown={() => setAuthNotice(null)} />
++        )}
+         {tab === 'guide' && <div class="placeholder">{t('common.comingSoon', lang)}</div>}
+       </main>
+       <nav class="tabbar">
+diff --git a/src/ui/screens/Sync.tsx b/src/ui/screens/Sync.tsx
+new file mode 100644
+index 0000000..3121cd9
+--- /dev/null
++++ b/src/ui/screens/Sync.tsx
+@@ -0,0 +1,229 @@
++import { useEffect, useRef, useState } from 'preact/hooks';
++import type { Store } from '../store';
++import { buildAuthUrl, newState, getToken, clearToken } from '../../google/oauth';
++import { fetchCalendars, AuthError, type GoogleCalendarInfo } from '../../google/calendar';
++import { performSync } from '../sync';
++import { toISODate } from '../../core/calendar';
++import { t } from '../../core/i18n';
++import { Toast } from '../components/Toast';
++
++const TOAST_MS = 2600;
++
++export interface AuthNotice {
++  ok: boolean;
++  error?: string;
++}
++
++export interface SyncProps {
++  store: Store;
++  /** Kết quả xử lý redirect Google, xử lý ở App.tsx (không phụ thuộc tab) — hiện 1 lần rồi báo đã xem. */
++  authNotice?: AuthNotice | null;
++  onAuthNoticeShown?: () => void;
++}
++
++/** Màn Đồng bộ: chỉ UI + gọi nút; xử lý redirect/tự đồng bộ nằm ở `ui/sync.ts` + `App.tsx`. */
++export function Sync({ store, authNotice, onAuthNoticeShown }: SyncProps) {
++  const [state, setState] = useState(store.getState());
++  const [hasToken, setHasToken] = useState(() => getToken() != null);
++  const [reauthFlag, setReauthFlag] = useState(false);
++  const [calendars, setCalendars] = useState<GoogleCalendarInfo[]>([]);
++  const [calendarsError, setCalendarsError] = useState<string | null>(null);
++  const [syncing, setSyncing] = useState(false);
++  const [toastMsg, setToastMsg] = useState<string | null>(null);
++  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
++
++  useEffect(() => store.subscribe(setState), [store]);
++
++  const lang = state.design.lang;
++
++  function showToast(msg: string) {
++    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
++    setToastMsg(msg);
++    toastTimerRef.current = setTimeout(() => setToastMsg(null), TOAST_MS);
++  }
++
++  useEffect(
++    () => () => {
++      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
++    },
++    [],
++  );
++
++  // Hiện 1 lần kết quả kết nối do App.tsx xử lý (redirect Google) rồi báo đã xem.
++  useEffect(() => {
++    if (!authNotice) return;
++    setHasToken(getToken() != null);
++    if (authNotice.ok) {
++      setReauthFlag(false);
++      showToast(t('sync.connectedToast', lang));
++    } else {
++      showToast(`${t('sync.connectErrorPrefix', lang)}${authNotice.error ?? ''}`);
++    }
++    onAuthNoticeShown?.();
++    // eslint-disable-next-line react-hooks/exhaustive-deps
++  }, [authNotice]);
++
++  // Tải danh sách lịch khi có token.
++  useEffect(() => {
++    if (!hasToken) {
++      setCalendars([]);
++      return;
++    }
++    const token = getToken();
++    if (!token) return;
++    let cancelled = false;
++    fetchCalendars(token)
++      .then((list) => {
++        if (!cancelled) {
++          setCalendars(list);
++          setCalendarsError(null);
++        }
++      })
++      .catch((err) => {
++        if (cancelled) return;
++        if (err instanceof AuthError) {
++          clearToken();
++          setHasToken(false);
++          setReauthFlag(true);
++        } else {
++          setCalendarsError(t('sync.calendarsLoadError', lang));
++        }
++      });
++    return () => {
++      cancelled = true;
++    };
++    // eslint-disable-next-line react-hooks/exhaustive-deps
++  }, [hasToken]);
++
++  async function runSync() {
++    const token = getToken();
++    if (!token) {
++      setHasToken(false);
++      setReauthFlag(true);
++      return;
++    }
++    setSyncing(true);
++    const today = toISODate(new Date());
++    const result = await performSync(token, state.google.calendarIds, today);
++    setSyncing(false);
++    if (result.ok) {
++      store.dispatch({ type: 'setGoogleCache', cache: { events: result.events, fetchedAt: result.fetchedAt } });
++      showToast(t('sync.syncOkToast', lang));
++    } else if (result.reauth) {
++      clearToken();
++      setHasToken(false);
++      setReauthFlag(true);
++    } else {
++      showToast(t('sync.networkError', lang));
++    }
++  }
++
++  function onConnect() {
++    const clientId = state.google.clientId.trim();
++    if (!clientId) return;
++    const s = newState(window.localStorage);
++    const redirectUri = window.location.origin + window.location.pathname;
++    window.location.href = buildAuthUrl(clientId, redirectUri, s);
++  }
++
++  function onDisconnect() {
++    clearToken();
++    setHasToken(false);
++    setReauthFlag(false);
++    setCalendars([]);
++    store.dispatch({ type: 'disconnectGoogle' });
++    showToast(t('sync.disconnectedToast', lang));
++  }
++
++  function toggleCalendar(id: string, checked: boolean) {
++    const cur = new Set(state.google.calendarIds);
++    if (checked) cur.add(id);
++    else cur.delete(id);
++    store.dispatch({ type: 'setGoogleCalendarIds', calendarIds: [...cur] });
++  }
++
++  const connected = hasToken;
++  // Từng kết nối (còn calendarIds đã chọn) nhưng nay mất token -> "Kết nối lại", kể cả khi
++  // token bị xóa lúc app tự đồng bộ ở nền (App.tsx), không chỉ khi thao tác ngay trong màn này.
++  const needsReauth = !connected && (reauthFlag || state.google.calendarIds.length > 0);
++
++  return (
++    <div class="sync-screen">
++      <label class="field">
++        {t('sync.clientIdLabel', lang)}
++        <input
++          type="text"
++          data-testid="sync-clientid"
++          value={state.google.clientId}
++          placeholder={t('sync.clientIdPlaceholder', lang)}
++          onInput={(e) =>
++            store.dispatch({ type: 'setGoogleClientId', clientId: (e.target as HTMLInputElement).value })
++          }
++        />
++      </label>
++      <p class="hint">{t('sync.clientIdHint', lang)}</p>
++
++      {!connected && !needsReauth && (
++        <button
++          type="button"
++          class="btn block"
++          data-testid="sync-connect"
++          disabled={!state.google.clientId.trim()}
++          onClick={onConnect}
++        >
++          {t('sync.connect', lang)}
++        </button>
++      )}
++
++      {needsReauth && (
++        <button type="button" class="btn block" data-testid="sync-reconnect" onClick={onConnect}>
++          {t('sync.reconnect', lang)}
++        </button>
++      )}
++
++      {connected && (
++        <>
++          <p data-testid="sync-status">{t('sync.connected', lang)}</p>
++
++          <div class="field">
++            <span>{t('sync.calendars', lang)}</span>
++            <div data-testid="sync-calendar-list" class="sync-calendar-list">
++              {calendarsError && <p class="error">{calendarsError}</p>}
++              {!calendarsError && calendars.length === 0 && <p class="hint">{t('sync.calendarsEmpty', lang)}</p>}
++              {calendars.map((c) => (
++                <label key={c.id} class="field field-between sync-calendar-item">
++                  <span>{c.summary}</span>
++                  <input
++                    type="checkbox"
++                    class="switch"
++                    data-testid={`sync-cal-${c.id}`}
++                    checked={state.google.calendarIds.includes(c.id)}
++                    onChange={(e) => toggleCalendar(c.id, (e.target as HTMLInputElement).checked)}
++                  />
++                </label>
++              ))}
++            </div>
++          </div>
++
++          <button type="button" class="btn block" data-testid="sync-now" disabled={syncing} onClick={() => void runSync()}>
++            {syncing ? t('sync.syncing', lang) : t('sync.syncNow', lang)}
++          </button>
++
++          <p data-testid="sync-last">
++            {state.google.cache
++              ? t('sync.lastSync', lang, { time: new Date(state.google.cache.fetchedAt).toLocaleString() })
++              : t('sync.neverSynced', lang)}
++          </p>
++
++          <button type="button" class="btn danger block" data-testid="sync-disconnect" onClick={onDisconnect}>
++            {t('sync.disconnect', lang)}
++          </button>
++        </>
++      )}
++
++      {needsReauth && <p class="error" data-testid="sync-reauth-msg">{t('sync.reauthNeeded', lang)}</p>}
++
++      <Toast message={toastMsg} />
++    </div>
++  );
++}
+diff --git a/src/ui/store.ts b/src/ui/store.ts
+index 9f2eb59..3b5497b 100644
+--- a/src/ui/store.ts
++++ b/src/ui/store.ts
+@@ -1,4 +1,4 @@
+-import type { AppState, DesignConfig, DeviceSpec, ISODate, LocalEvent, Note, Todo } from '../core/model';
++import type { AppState, DesignConfig, DeviceSpec, ISODate, LocalEvent, Note, Occurrence, Todo } from '../core/model';
+ import { defaultState, normalizeState } from '../core/model';
+ import { cmpTodo } from '../core/collect';
+ import { saveState } from '../storage/db';
+@@ -33,7 +33,11 @@ export type Action =
+   | { type: 'deleteNote'; id: string }
+   | { type: 'pinNote'; id: string; pinned: boolean }
+   | { type: 'replaceState'; state: unknown }
+-  | { type: 'resetAll' };
++  | { type: 'resetAll' }
++  | { type: 'setGoogleClientId'; clientId: string }
++  | { type: 'setGoogleCalendarIds'; calendarIds: string[] }
++  | { type: 'setGoogleCache'; cache: { events: Occurrence[]; fetchedAt: number } | null }
++  | { type: 'disconnectGoogle' };
+ 
+ function nextId(explicit?: string): string {
+   if (explicit) return explicit;
+@@ -116,6 +120,14 @@ export function reducer(state: AppState, action: Action): AppState {
+     }
+     case 'resetAll':
+       return defaultState(state.device);
++    case 'setGoogleClientId':
++      return { ...state, google: { ...state.google, clientId: action.clientId } };
++    case 'setGoogleCalendarIds':
++      return { ...state, google: { ...state.google, calendarIds: action.calendarIds } };
++    case 'setGoogleCache':
++      return { ...state, google: { ...state.google, cache: action.cache } };
++    case 'disconnectGoogle':
++      return { ...state, google: { ...state.google, calendarIds: [], cache: null } };
+     default:
+       return state;
+   }
+diff --git a/src/ui/styles.css b/src/ui/styles.css
+index 1005920..9d7d39e 100644
+--- a/src/ui/styles.css
++++ b/src/ui/styles.css
+@@ -830,3 +830,22 @@ select option {
+   opacity: 1;
+   transform: translateX(-50%);
+ }
++
++/* Màn Đồng bộ (T-3.3): tái dùng .field/.field-between/.switch/.btn/.hint. */
++.sync-screen {
++  display: flex;
++  flex-direction: column;
++  gap: 12px;
++  padding: 12px 16px 24px;
++  overflow-y: auto;
++}
++
++.sync-calendar-list {
++  display: flex;
++  flex-direction: column;
++  gap: 6px;
++}
++
++.sync-calendar-item {
++  min-height: 44px;
++}
+diff --git a/src/ui/sync.ts b/src/ui/sync.ts
+new file mode 100644
+index 0000000..09f35c2
+--- /dev/null
++++ b/src/ui/sync.ts
+@@ -0,0 +1,100 @@
++import type { Occurrence, ISODate } from '../core/model';
++import { fetchEvents, AuthError } from '../google/calendar';
++import { parseFragment } from '../google/oauth';
++import { toISODate, parseISODate } from '../core/calendar';
++
++/** Cache Google coi là cũ sau 30 phút (SPEC §3 IN-5). */
++export const AUTO_SYNC_STALE_MS = 30 * 60 * 1000;
++
++/**
++ * Quyết định có tự đồng bộ khi mở app: token còn hạn && (chưa có cache hoặc cache cũ hơn 30 phút).
++ * Hàm thuần — test bằng `now`/`hasToken`/`cache` giả, không cần fetch.
++ */
++export function shouldAutoSync(hasToken: boolean, cache: { fetchedAt: number } | null, now: number): boolean {
++  if (!hasToken) return false;
++  if (!cache) return true;
++  return now - cache.fetchedAt > AUTO_SYNC_STALE_MS;
++}
++
++/** Khoảng đồng bộ cố định [today - 1, today + 60] (SPEC §9). */
++export function syncRange(today: ISODate): { timeMin: ISODate; timeMax: ISODate } {
++  const { y, m0, d } = parseISODate(today);
++  return {
++    timeMin: toISODate(new Date(y, m0, d - 1)),
++    timeMax: toISODate(new Date(y, m0, d + 60)),
++  };
++}
++
++export type SyncResult =
++  | { ok: true; events: Occurrence[]; fetchedAt: number }
++  | { ok: false; reauth: true }
++  | { ok: false; reauth: false; error: string };
++
++/** Gọi Google, chuẩn hóa kết quả thành `SyncResult`; 401 → `reauth:true`, lỗi khác (vd. mạng) → giữ cache của caller. */
++export async function performSync(
++  token: string,
++  calendarIds: string[],
++  today: ISODate,
++  now: number = Date.now(),
++): Promise<SyncResult> {
++  try {
++    const { timeMin, timeMax } = syncRange(today);
++    const events = await fetchEvents(token, calendarIds, timeMin, timeMax);
++    return { ok: true, events, fetchedAt: now };
++  } catch (err) {
++    if (err instanceof AuthError) return { ok: false, reauth: true };
++    return { ok: false, reauth: false, error: err instanceof Error ? err.message : String(err) };
++  }
++}
++
++export interface AuthRedirectDeps {
++  consumeState: () => string | null;
++  saveToken: (accessToken: string, expiresIn: number) => void;
++}
++
++export type AuthRedirectResult =
++  | { handled: false }
++  | { handled: true; ok: true }
++  | { handled: true; ok: false; error: string };
++
++/**
++ * Xử lý `#access_token=…`/`#error=…` khi Google redirect về app. Gọi MỘT lần ở cấp App (không phụ
++ * thuộc tab đang mở — SPEC §2 TH1 tự đồng bộ khi mở icon). Không đụng DOM (`history.replaceState`
++ * do caller làm sau khi có kết quả).
++ */
++export function handleAuthRedirect(hash: string, deps: AuthRedirectDeps): AuthRedirectResult {
++  if (!hash || !(hash.includes('access_token=') || hash.includes('error='))) return { handled: false };
++  const expectedState = deps.consumeState() ?? '';
++  const parsed = parseFragment(hash, expectedState);
++  if (parsed && 'accessToken' in parsed) {
++    deps.saveToken(parsed.accessToken, parsed.expiresIn);
++    return { handled: true, ok: true };
++  }
++  if (parsed && 'error' in parsed) return { handled: true, ok: false, error: parsed.error };
++  return { handled: true, ok: false, error: 'invalid_state' };
++}
++
++export interface AutoSyncDeps {
++  getToken: () => string | null;
++  clearToken: () => void;
++}
++
++export type AutoSyncOutcome = { ran: false } | { ran: true; result: SyncResult };
++
++/**
++ * Tự đồng bộ khi mở app (token còn hạn && cache cũ/không có); 401 → `clearToken()` (người dùng
++ * thấy "Kết nối lại" khi mở tab Đồng bộ); lỗi mạng → giữ cache (không xóa gì).
++ */
++export async function autoSyncIfNeeded(
++  cache: { fetchedAt: number } | null,
++  calendarIds: string[],
++  today: ISODate,
++  now: number,
++  deps: AutoSyncDeps,
++): Promise<AutoSyncOutcome> {
++  const token = deps.getToken();
++  if (!shouldAutoSync(token != null, cache, now)) return { ran: false };
++  const result = await performSync(token as string, calendarIds, today, now);
++  if (!result.ok && result.reauth) deps.clearToken();
++  return { ran: true, result };
++}
+diff --git a/tests/e2e/m3-google.spec.ts b/tests/e2e/m3-google.spec.ts
+new file mode 100644
+index 0000000..cd34eb9
+--- /dev/null
++++ b/tests/e2e/m3-google.spec.ts
+@@ -0,0 +1,226 @@
++import { test, expect, type Page } from '@playwright/test';
++import calendarListFixture from '../fixtures/google/calendarList.json' with { type: 'json' };
++import eventsSyncTemplate from '../fixtures/google/events-sync.json' with { type: 'json' };
++
++const CAL1 = 'cal1@group.calendar.google.com';
++const CLIENT_ID = 'test-client-id.apps.googleusercontent.com';
++const BASE_URL = 'http://localhost:4173';
++const FIXTURE_TITLE = 'Fixture Dong Bo';
++
++const DEVICE = {
++  id: 'iphone-1284x2778',
++  label: 'iPhone 12/13 Pro Max',
++  width: 1284,
++  height: 2778,
++  safeTop: 0.3,
++  safeBottom: 0.14,
++};
++
++function pad2(n: number): string {
++  return n < 10 ? `0${n}` : String(n);
++}
++function isoDate(d: Date): string {
++  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
++}
++
++/** Sự kiện cả ngày "hôm nay" (chắc chắn nằm trong khoảng đồng bộ [today-1, today+60]). */
++function eventsBody(): string {
++  const today = new Date();
++  const tomorrow = new Date(today);
++  tomorrow.setDate(tomorrow.getDate() + 1);
++  const body = JSON.parse(JSON.stringify(eventsSyncTemplate)) as {
++    items: { start: { date: string }; end: { date: string } }[];
++  };
++  body.items[0].start.date = isoDate(today);
++  body.items[0].end.date = isoDate(tomorrow);
++  return JSON.stringify(body);
++}
++
++async function opsTexts(page: Page): Promise<string[]> {
++  return page.evaluate(() =>
++    ((window as unknown as { __lastOps?: { text?: string }[] }).__lastOps ?? [])
++      .map((o) => o.text)
++      .filter((t): t is string => !!t),
++  );
++}
++
++/** Chặn `accounts.google.com` (302 kèm access_token lấy state từ query) + REST calendar/v3. */
++async function mockGoogle(
++  context: import('@playwright/test').BrowserContext,
++  opts: { calendarStatus: () => number; eventsStatus: () => number },
++) {
++  await context.route('https://accounts.google.com/**', async (route) => {
++    const url = new URL(route.request().url());
++    const state = url.searchParams.get('state') ?? '';
++    // Giữ `?test=1` qua redirect để `window.__lastOps` tiếp tục được ghi sau khi Google trả về.
++    const redirect = `${BASE_URL}/?test=1#access_token=test&token_type=Bearer&expires_in=3600&state=${state}`;
++    // webkit: route.fulfill không hỗ trợ status redirect (302) cho điều hướng cấp cao nhất
++    // ("Cannot fulfill with redirect status") → trả trang HTML tự điều hướng bằng script,
++    // tương đương hành vi 302 của Google với client (SPEC chỉ quan tâm kết quả điều hướng).
++    await route.fulfill({
++      status: 200,
++      contentType: 'text/html',
++      body: `<script>location.replace(${JSON.stringify(redirect)});</script>`,
++    });
++  });
++  await context.route('**/calendar/v3/users/me/calendarList', async (route) => {
++    const status = opts.calendarStatus();
++    if (status !== 200) return route.fulfill({ status, body: '{}' });
++    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(calendarListFixture) });
++  });
++  await context.route('**/calendar/v3/calendars/**/events**', async (route) => {
++    const status = opts.eventsStatus();
++    if (status !== 200) return route.fulfill({ status, body: '{}' });
++    const url = route.request().url();
++    if (url.includes(encodeURIComponent(CAL1))) {
++      return route.fulfill({ status: 200, contentType: 'application/json', body: eventsBody() });
++    }
++    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ items: [] }) });
++  });
++}
++
++/** Ghi thẳng `lichkhoa:state` vào IndexedDB (`keyval-store`/`keyval`), hợp nhất trên state đã có. */
++async function seedState(page: Page, patch: Record<string, unknown>): Promise<void> {
++  await page.evaluate(
++    ({ patch, device }) =>
++      new Promise<void>((resolve, reject) => {
++        const req = indexedDB.open('keyval-store');
++        req.onupgradeneeded = () => req.result.createObjectStore('keyval');
++        req.onerror = () => reject(req.error);
++        req.onsuccess = () => {
++          const tx = req.result.transaction('keyval', 'readonly');
++          const getReq = tx.objectStore('keyval').get('lichkhoa:state');
++          getReq.onerror = () => reject(getReq.error);
++          getReq.onsuccess = () => {
++            const cur = (getReq.result ?? { version: 1, device }) as Record<string, unknown>;
++            const next = { ...cur, ...patch };
++            const tx2 = req.result.transaction('keyval', 'readwrite');
++            tx2.objectStore('keyval').put(next, 'lichkhoa:state');
++            tx2.oncomplete = () => {
++              req.result.close();
++              resolve();
++            };
++            tx2.onerror = () => reject(tx2.error);
++          };
++        };
++      }),
++    { patch, device: DEVICE },
++  );
++}
++
++test.describe('M3 Google Calendar (mock OAuth + REST)', () => {
++  // Webkit: service worker "nuốt" fetch trước context.route (xem docs/TASKS.md T-3.END,
++  // mục "Vướng đã biết"). Bù lại, các test này không cần offline nên không cần SW.
++  test.use({ serviceWorkers: 'block' });
++
++  test('Kết nối → tự về tab Đồng bộ → chọn lịch → Đồng bộ ngay → agenda hiện sự kiện → 401 → Kết nối lại', async ({
++    page,
++    context,
++  }) => {
++    let eventsStatus = 200;
++    await mockGoogle(context, { calendarStatus: () => 200, eventsStatus: () => eventsStatus });
++
++    await page.goto('/?test=1');
++    await expect(page.getByTestId('tab-preview')).toHaveClass(/tab-active/);
++
++    await page.getByTestId('tab-sync').click();
++    const clientIdInput = page.getByTestId('sync-clientid');
++    // webkit: click trước fill để đảm bảo input đã ổn định sau khi chuyển tab (tránh giá trị rỗng).
++    await clientIdInput.click();
++    await clientIdInput.fill(CLIENT_ID);
++    await page.getByTestId('sync-connect').click();
++
++    // Sau redirect, App tự mở tab Đồng bộ (không cần bấm lại tab-sync).
++    await expect(page.getByTestId('tab-sync')).toHaveClass(/tab-active/, { timeout: 10_000 });
++    await expect(page.getByTestId('sync-status')).toBeVisible();
++    await expect(page.getByTestId(`sync-cal-${CAL1}`)).toBeVisible();
++
++    await page.getByTestId(`sync-cal-${CAL1}`).check();
++    await page.getByTestId('sync-now').click();
++    await expect(page.getByTestId('sync-last')).not.toHaveText('', { timeout: 10_000 });
++
++    await page.getByTestId('tab-preview').click();
++    await page.getByTestId('layout-agenda').click();
++    await expect
++      .poll(async () => opsTexts(page), { timeout: 5000 })
++      .toEqual(expect.arrayContaining([expect.stringContaining(FIXTURE_TITLE)]));
++
++    // 401 khi đồng bộ → "Kết nối lại".
++    eventsStatus = 401;
++    await page.getByTestId('tab-sync').click();
++    await page.getByTestId('sync-now').click();
++    await expect(page.getByTestId('sync-reconnect')).toBeVisible({ timeout: 10_000 });
++    await expect(page.getByTestId('sync-reauth-msg')).toBeVisible();
++  });
++
++  test('Tự đồng bộ khi mở app với cache cũ (> 30 phút)', async ({ page, context }) => {
++    await mockGoogle(context, { calendarStatus: () => 200, eventsStatus: () => 200 });
++
++    await page.goto('/?test=1');
++    await page.evaluate(() => {
++      localStorage.setItem(
++        'google_oauth_token',
++        JSON.stringify({ accessToken: 'tok-stale-test', expiresAt: Date.now() + 3_600_000 }),
++      );
++    });
++    await seedState(page, {
++      google: { clientId: CLIENT_ID, calendarIds: [CAL1], cache: { events: [], fetchedAt: Date.now() - 40 * 60 * 1000 } },
++    });
++
++    await page.reload();
++    await page.getByTestId('tab-preview').click();
++    await page.getByTestId('layout-agenda').click();
++    await expect
++      .poll(async () => opsTexts(page), { timeout: 10_000 })
++      .toEqual(expect.arrayContaining([expect.stringContaining(FIXTURE_TITLE)]));
++  });
++});
++
++// Offline: không thể chặn REST bằng route (vướng SW trên webkit) và cũng không cần — cache đã có
++// sẵn trong IndexedDB, chỉ cần app shell (service worker) phục vụ được lúc mất mạng.
++test('offline + reload vẫn hiện sự kiện Google đã đồng bộ (từ cache IndexedDB)', async ({ page, context, browserName }) => {
++  await page.goto('/?test=1');
++  await page.evaluate(async () => {
++    if ('serviceWorker' in navigator) await navigator.serviceWorker.ready;
++  });
++
++  await seedState(page, {
++    design: { layout: 'agenda' },
++    google: {
++      clientId: CLIENT_ID,
++      calendarIds: [CAL1],
++      cache: {
++        fetchedAt: Date.now(),
++        events: [
++          {
++            id: `google-${CAL1}-sync-ev1`,
++            sourceId: 'sync-ev1',
++            source: 'google',
++            title: FIXTURE_TITLE,
++            date: isoDate(new Date()),
++            allDay: true,
++            color: '#4285F4',
++          },
++        ],
++      },
++    },
++  });
++
++  await page.reload();
++  await expect
++    .poll(async () => opsTexts(page), { timeout: 10_000 })
++    .toEqual(expect.arrayContaining([expect.stringContaining(FIXTURE_TITLE)]));
++
++  // webkit: `context.setOffline(true)` + `page.reload()` làm engine WebKit lỗi nội bộ
++  // ("WebKit encountered an internal error") kể cả khi service worker đã active và không
++  // liên quan gì đến app (tái hiện với app trống, mọi waitUntil) — giới hạn của
++  // Playwright-WebKit khi giả lập offline cho điều hướng, không phải lỗi LichKhoa. Xem
++  // docs/TASKS.md T-3.END "Vướng đã biết", phương án (3). Chromium vẫn kiểm đủ bước offline.
++  test.skip(browserName === 'webkit', 'Playwright-WebKit: context.setOffline + page.reload gây lỗi nội bộ engine, không liên quan app (tái hiện với app trống)');
++
++  await context.setOffline(true);
++  await page.reload();
++  await expect
++    .poll(async () => opsTexts(page), { timeout: 10_000 })
++    .toEqual(expect.arrayContaining([expect.stringContaining(FIXTURE_TITLE)]));
++});
+diff --git a/tests/fixtures/google/calendarList.json b/tests/fixtures/google/calendarList.json
+new file mode 100644
+index 0000000..70d9f89
+--- /dev/null
++++ b/tests/fixtures/google/calendarList.json
+@@ -0,0 +1,6 @@
++{
++  "items": [
++    { "id": "cal1@group.calendar.google.com", "summary": "Cong viec", "backgroundColor": "#4285F4" },
++    { "id": "cal2@group.calendar.google.com", "summary": "Ca nhan", "backgroundColor": "#0B8043" }
++  ]
++}
+diff --git a/tests/fixtures/google/events-cal1.json b/tests/fixtures/google/events-cal1.json
+new file mode 100644
+index 0000000..637c23a
+--- /dev/null
++++ b/tests/fixtures/google/events-cal1.json
+@@ -0,0 +1,18 @@
++{
++  "items": [
++    { "id": "ev1", "summary": "Nghi le", "start": { "date": "2026-01-01" }, "end": { "date": "2026-01-02" } },
++    {
++      "id": "ev2",
++      "summary": "Hop nhom",
++      "status": "cancelled",
++      "start": { "dateTime": "2026-01-05T09:00:00+07:00" },
++      "end": { "dateTime": "2026-01-05T10:00:00+07:00" }
++    },
++    {
++      "id": "ev3",
++      "summary": "Khach hang",
++      "start": { "dateTime": "2026-01-05T14:30:00+07:00" },
++      "end": { "dateTime": "2026-01-05T15:30:00+07:00" }
++    }
++  ]
++}
+diff --git a/tests/fixtures/google/events-cal2.json b/tests/fixtures/google/events-cal2.json
+new file mode 100644
+index 0000000..88869ea
+--- /dev/null
++++ b/tests/fixtures/google/events-cal2.json
+@@ -0,0 +1,10 @@
++{
++  "items": [
++    {
++      "id": "ev4",
++      "summary": "Sinh nhat",
++      "start": { "dateTime": "2026-01-03T08:00:00+07:00" },
++      "end": { "dateTime": "2026-01-03T09:00:00+07:00" }
++    }
++  ]
++}
+diff --git a/tests/fixtures/google/events-sync.json b/tests/fixtures/google/events-sync.json
+new file mode 100644
+index 0000000..d3de225
+--- /dev/null
++++ b/tests/fixtures/google/events-sync.json
+@@ -0,0 +1,10 @@
++{
++  "items": [
++    {
++      "id": "sync-ev1",
++      "summary": "Fixture Dong Bo",
++      "start": { "date": "{{START}}" },
++      "end": { "date": "{{END}}" }
++    }
++  ]
++}
+diff --git a/tests/unit/google-normalize.test.ts b/tests/unit/google-normalize.test.ts
+new file mode 100644
+index 0000000..6d7829f
+--- /dev/null
++++ b/tests/unit/google-normalize.test.ts
+@@ -0,0 +1,122 @@
++import { describe, it, expect, vi, afterEach } from 'vitest';
++import { fetchCalendars, fetchEvents, normalize, AuthError } from '../../src/google/calendar';
++import type { RawGoogleEvent } from '../../src/google/calendar';
++import calendarList from '../fixtures/google/calendarList.json';
++import eventsCal1 from '../fixtures/google/events-cal1.json';
++import eventsCal2 from '../fixtures/google/events-cal2.json';
++
++function jsonResponse(body: unknown, status = 200): Response {
++  return {
++    ok: status >= 200 && status < 300,
++    status,
++    json: async () => body,
++  } as Response;
++}
++
++afterEach(() => {
++  vi.unstubAllGlobals();
++});
++
++describe('normalize (thuần)', () => {
++  it('all-day → allDay=true đúng ngày', () => {
++    const raw: RawGoogleEvent[] = (eventsCal1.items as RawGoogleEvent[]).filter((e) => e.id === 'ev1');
++    const result = normalize('cal1', '#4285F4', raw);
++    expect(result).toEqual([
++      {
++        id: 'google-cal1-ev1',
++        sourceId: 'ev1',
++        source: 'google',
++        title: 'Nghi le',
++        date: '2026-01-01',
++        allDay: true,
++        color: '#4285F4',
++      },
++    ]);
++  });
++
++  it('dateTime offset khác → ngày/giờ địa phương đúng (chạy đúng ở cả 2 TZ do dùng Date thật)', () => {
++    const raw: RawGoogleEvent[] = (eventsCal1.items as RawGoogleEvent[]).filter((e) => e.id === 'ev3');
++    const result = normalize('cal1', '#4285F4', raw);
++    const d = new Date('2026-01-05T14:30:00+07:00');
++    const expectedDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
++    const expectedTime = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
++    expect(result).toEqual([
++      {
++        id: 'google-cal1-ev3',
++        sourceId: 'ev3',
++        source: 'google',
++        title: 'Khach hang',
++        date: expectedDate,
++        time: expectedTime,
++        allDay: false,
++        color: '#4285F4',
++      },
++    ]);
++  });
++
++  it('cancelled bị bỏ', () => {
++    const result = normalize('cal1', '#4285F4', eventsCal1.items as RawGoogleEvent[]);
++    expect(result.find((o) => o.sourceId === 'ev2')).toBeUndefined();
++    expect(result.length).toBe(2); // ev1 + ev3, bỏ ev2 (cancelled)
++  });
++});
++
++describe('fetchCalendars', () => {
++  it('gọi calendarList với Bearer, trả id/summary/color', async () => {
++    const fetchMock = vi.fn(async () => jsonResponse(calendarList));
++    vi.stubGlobal('fetch', fetchMock);
++
++    const result = await fetchCalendars('tok123');
++    expect(result).toEqual([
++      { id: 'cal1@group.calendar.google.com', summary: 'Cong viec', color: '#4285F4' },
++      { id: 'cal2@group.calendar.google.com', summary: 'Ca nhan', color: '#0B8043' },
++    ]);
++    expect(fetchMock).toHaveBeenCalledWith(
++      'https://www.googleapis.com/calendar/v3/users/me/calendarList',
++      expect.objectContaining({ headers: { Authorization: 'Bearer tok123' } })
++    );
++  });
++
++  it('401 → AuthError', async () => {
++    vi.stubGlobal(
++      'fetch',
++      vi.fn(async () => jsonResponse({}, 401))
++    );
++    await expect(fetchCalendars('bad')).rejects.toBeInstanceOf(AuthError);
++  });
++});
++
++describe('fetchEvents', () => {
++  it('nhiều lịch gộp + sắp xếp theo ngày/giờ', async () => {
++    const fetchMock = vi.fn(async (url: string) => {
++      if (url.includes('/calendarList')) return jsonResponse(calendarList);
++      if (url.includes(encodeURIComponent('cal1@group.calendar.google.com'))) return jsonResponse(eventsCal1);
++      if (url.includes(encodeURIComponent('cal2@group.calendar.google.com'))) return jsonResponse(eventsCal2);
++      throw new Error(`URL không mong đợi: ${url}`);
++    });
++    vi.stubGlobal('fetch', fetchMock);
++
++    const result = await fetchEvents(
++      'tok123',
++      ['cal1@group.calendar.google.com', 'cal2@group.calendar.google.com'],
++      '2026-01-01',
++      '2026-01-31'
++    );
++
++    expect(result.map((o) => o.sourceId)).toEqual(['ev1', 'ev4', 'ev3']); // 01/01, 03/01, 05/01 — cancelled đã bỏ
++    expect(result.every((o) => o.date >= '2026-01-01' && o.date <= '2026-01-31')).toBe(true);
++    expect(result.find((o) => o.sourceId === 'ev4')?.color).toBe('#0B8043');
++  });
++
++  it('fetch trả 401 khi lấy sự kiện → AuthError', async () => {
++    const fetchMock = vi.fn(async (url: string) => {
++      if (url.includes('/calendarList')) return jsonResponse(calendarList);
++      return jsonResponse({}, 401);
++    });
++    vi.stubGlobal('fetch', fetchMock);
++
++    await expect(fetchEvents('bad', ['cal1@group.calendar.google.com'], '2026-01-01', '2026-01-31')).rejects.toBeInstanceOf(
++      AuthError
++    );
++  });
++});
+diff --git a/tests/unit/ics.test.ts b/tests/unit/ics.test.ts
+index ef62a30..624f9b7 100644
+--- a/tests/unit/ics.test.ts
++++ b/tests/unit/ics.test.ts
+@@ -100,6 +100,40 @@ describe('eventToIcs', () => {
+     expect(withoutCrlf.includes('\n')).toBe(false);
+   });
+ 
++  it('D-012: weekdays, ngày CN (2026-09-13) -> DTSTART dời tới T2 kế tiếp (2026-09-14), giữ giờ', () => {
++    const e: LocalEvent = { id: 'e13', title: 'Hop tuan', date: '2026-09-13', time: '08:00', repeat: 'weekdays' };
++    const ics = eventToIcs(e, now);
++    expect(ics).toContain('DTSTART:20260914T080000\r\n');
++  });
++
++  it('D-012: weekdays, ngày T7 (2026-09-12) -> DTSTART dời tới T2 (2026-09-14)', () => {
++    const e: LocalEvent = { id: 'e14', title: 'Hop tuan', date: '2026-09-12', time: '08:00', repeat: 'weekdays' };
++    const ics = eventToIcs(e, now);
++    expect(ics).toContain('DTSTART:20260914T080000\r\n');
++  });
++
++  it('D-012: weekdays, ngày đã là T2-T6 -> không đổi ngày', () => {
++    const e: LocalEvent = { id: 'e15', title: 'Hop tuan', date: '2026-09-14', time: '08:00', repeat: 'weekdays' };
++    const ics = eventToIcs(e, now);
++    expect(ics).toContain('DTSTART:20260914T080000\r\n');
++  });
++
++  it('D-012: tiêu đề 200 ký tự tiếng Việt -> mọi dòng vật lý <= 75 octet UTF-8, bỏ gập ra lại đúng chuỗi', () => {
++    const longTitle = 'Đầu tư dự án ăn uống '.repeat(10).slice(0, 200);
++    const e: LocalEvent = { id: 'e16', title: longTitle, date: '2026-01-05', repeat: 'none' };
++    const ics = eventToIcs(e, now);
++    const physicalLines = ics.split('\r\n');
++    const enc = new TextEncoder();
++    for (const line of physicalLines) {
++      if (line === '') continue;
++      expect(enc.encode(line).length).toBeLessThanOrEqual(75);
++    }
++    // Bỏ gập: nối "\r\n " (CRLF + 1 dấu cách) lại thành dòng gốc, rồi lấy lại icsEscape(longTitle)
++    const unfolded = ics.replace(/\r\n /g, '');
++    const summaryLine = unfolded.split('\r\n').find((l) => l.startsWith('SUMMARY:'))!;
++    expect(summaryLine.slice('SUMMARY:'.length)).toBe(longTitle);
++  });
++
+   it('DTSTAMP dùng giờ UTC của `now`', () => {
+     const e: LocalEvent = { id: 'e8', title: 'X', date: '2026-01-01', repeat: 'none' };
+     const ics = eventToIcs(e, now);
+diff --git a/tests/unit/layout.test.ts b/tests/unit/layout.test.ts
+index a313ff0..7941739 100644
+--- a/tests/unit/layout.test.ts
++++ b/tests/unit/layout.test.ts
+@@ -110,19 +110,15 @@ describe('layoutAgenda', () => {
+     expect(texts).toContain('Không có sự kiện sắp tới');
+   });
+ 
+-  it('cắt 12 dòng: không để tiêu đề ngày mồ côi (không có sự kiện bên dưới)', () => {
++  it('cắt 12 dòng SỰ KIỆN (D-012): tiêu đề ngày không tính vào trần, không để lại tiêu đề mồ côi', () => {
++    // 15 sự kiện: A(5)+B(5)+C(3)+D(2). Budget 12 sự kiện: A(5)+B(5)+C1,C2(2)=12 -> C3,D1,D2 ẩn.
++    // Ngày D không có sự kiện nào hiện -> tiêu đề D cũng phải bị bỏ hoàn toàn (không mồ côi).
+     const design: DesignConfig = defaultDesign();
+     const occs: Occurrence[] = [
+-      occ('2026-02-15', '01:00', 'A1'),
+-      occ('2026-02-15', '02:00', 'A2'),
+-      occ('2026-02-15', '03:00', 'A3'),
+-      occ('2026-02-16', '01:00', 'B1'),
+-      occ('2026-02-16', '02:00', 'B2'),
+-      occ('2026-02-16', '03:00', 'B3'),
+-      occ('2026-02-17', '01:00', 'C1'),
+-      occ('2026-02-17', '02:00', 'C2'),
+-      occ('2026-02-18', '01:00', 'D1'),
+-      occ('2026-02-18', '02:00', 'D2'),
++      ...Array.from({ length: 5 }, (_, i) => occ('2026-02-15', `0${i + 1}:00`, `A${i + 1}`)),
++      ...Array.from({ length: 5 }, (_, i) => occ('2026-02-16', `0${i + 1}:00`, `B${i + 1}`)),
++      ...Array.from({ length: 3 }, (_, i) => occ('2026-02-17', `0${i + 1}:00`, `C${i + 1}`)),
++      ...Array.from({ length: 2 }, (_, i) => occ('2026-02-18', `0${i + 1}:00`, `D${i + 1}`)),
+     ];
+     const d = renderData({ occurrences: occs });
+     const ops = layoutAgenda(d, design, DEV_1179);
+@@ -137,10 +133,13 @@ describe('layoutAgenda', () => {
+     expect(prevOp.weight).not.toBe(700);
+     // "+N" đếm đúng mọi sự kiện chưa hiện (kể cả ngày D bị bỏ tiêu đề hoàn toàn)
+     const headerCount = textOps.filter((o) => o.weight === 700).length;
+-    const itemTitles = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'D1', 'D2'];
++    const itemTitles = ['A1', 'A2', 'A3', 'A4', 'A5', 'B1', 'B2', 'B3', 'B4', 'B5', 'C1', 'C2', 'C3', 'D1', 'D2'];
+     const shownItems = itemTitles.filter((title) => texts.includes(title)).length;
+     expect(shownItems + moreCount).toBe(occs.length);
+-    expect(headerCount + shownItems + 1).toBeLessThanOrEqual(12);
++    // Trần D-012: 12 dòng SỰ KIỆN, tiêu đề ngày không tính vào trần.
++    expect(shownItems).toBe(12);
++    expect(headerCount).toBe(3); // A, B, C — ngày D không có sự kiện hiện nên không có tiêu đề
++    expect(texts.includes('D1')).toBe(false);
+   });
+ 
+   it('tiêu đề 200 ký tự: cắt kèm "…" và độ rộng ước lượng <= bề rộng hộp', () => {
+diff --git a/tests/unit/model.test.ts b/tests/unit/model.test.ts
+index 67467e3..e53aa02 100644
+--- a/tests/unit/model.test.ts
++++ b/tests/unit/model.test.ts
+@@ -105,6 +105,46 @@ describe('normalizeState', () => {
+     expect(result!.device.safeBottom).toBeCloseTo(0.14);
+   });
+ 
++  it('D-012: events/todos không phải mảng -> []', () => {
++    const raw = { version: 1 as const, events: 'x', todos: 42, design: defaultDesign(), device };
++    const result = normalizeState(raw);
++    expect(result!.events).toEqual([]);
++    expect(result!.todos).toEqual([]);
++  });
++
++  it('D-012: phần tử không phải object trong events/todos/notes bị bỏ', () => {
++    const raw = {
++      version: 1 as const,
++      events: [{ id: 'e1' }, 'bad', 42, null],
++      todos: [{ id: 't1' }, 'bad'],
++      notes: [{ id: 'n1', pinned: false, updated: 1 }, 'bad'],
++      design: defaultDesign(),
++      device,
++    };
++    const result = normalizeState(raw);
++    expect(result!.events.length).toBe(1);
++    expect(result!.todos.length).toBe(1);
++    expect(result!.notes.length).toBe(1);
++  });
++
++  it('D-012: notes có > 1 pinned -> chỉ giữ ghim cái updated lớn nhất', () => {
++    const raw = {
++      version: 1 as const,
++      events: [],
++      todos: [],
++      notes: [
++        { id: 'n1', title: '', body: 'cũ', pinned: true, updated: 100 },
++        { id: 'n2', title: '', body: 'mới', pinned: true, updated: 200 },
++      ],
++      design: defaultDesign(),
++      device,
++    };
++    const result = normalizeState(raw);
++    const pinned = result!.notes.filter((n) => n.pinned);
++    expect(pinned.length).toBe(1);
++    expect(pinned[0].id).toBe('n2');
++  });
++
+   it('giữ nguyên giá trị có sẵn khi hợp lệ đầy đủ', () => {
+     const full = defaultState(device);
+     full.design.accentColor = '#abcdef';
+diff --git a/tests/unit/oauth.test.ts b/tests/unit/oauth.test.ts
+new file mode 100644
+index 0000000..b6164c5
+--- /dev/null
++++ b/tests/unit/oauth.test.ts
+@@ -0,0 +1,121 @@
++import { describe, it, expect } from 'vitest';
++import { buildAuthUrl, parseFragment, newState, saveToken, getToken, clearToken, consumeState } from '../../src/google/oauth';
++
++class MapStorage {
++  private map = new Map<string, string>();
++  getItem(key: string): string | null {
++    return this.map.has(key) ? this.map.get(key)! : null;
++  }
++  setItem(key: string, value: string): void {
++    this.map.set(key, value);
++  }
++  removeItem(key: string): void {
++    this.map.delete(key);
++  }
++}
++
++describe('buildAuthUrl', () => {
++  it('chứa response_type=token, scope calendar.readonly, state, redirect_uri', () => {
++    const url = buildAuthUrl('client-123', 'https://app.example/redirect', 'state-abc');
++    const u = new URL(url);
++    expect(u.origin + u.pathname).toBe('https://accounts.google.com/o/oauth2/v2/auth');
++    expect(u.searchParams.get('response_type')).toBe('token');
++    expect(u.searchParams.get('scope')).toBe('https://www.googleapis.com/auth/calendar.readonly');
++    expect(u.searchParams.get('state')).toBe('state-abc');
++    expect(u.searchParams.get('redirect_uri')).toBe('https://app.example/redirect');
++    expect(u.searchParams.get('client_id')).toBe('client-123');
++  });
++
++  it('không có client_secret ở bất kỳ đâu', () => {
++    const url = buildAuthUrl('client-123', 'https://app.example/redirect', 'state-abc');
++    expect(url).not.toContain('client_secret');
++  });
++
++  it('nhận prompt tùy chọn', () => {
++    const url = buildAuthUrl('c', 'https://a', 's', 'select_account');
++    expect(new URL(url).searchParams.get('prompt')).toBe('select_account');
++  });
++});
++
++describe('newState', () => {
++  it('sinh state ngẫu nhiên base64url, lưu vào storage', () => {
++    const storage = new MapStorage();
++    const s1 = newState(storage);
++    const s2 = newState(storage);
++    expect(s1).not.toBe(s2);
++    expect(s1).toMatch(/^[A-Za-z0-9_-]+$/);
++    expect(storage.getItem('google_oauth_state')).toBe(s2);
++  });
++});
++
++describe('consumeState (T-3.3)', () => {
++  it('đọc state đã lưu bởi newState rồi xóa (dùng 1 lần)', () => {
++    const storage = new MapStorage();
++    const s = newState(storage);
++    expect(consumeState(storage)).toBe(s);
++    expect(consumeState(storage)).toBeNull(); // đã bị xóa
++  });
++
++  it('không có state đã lưu -> null', () => {
++    const storage = new MapStorage();
++    expect(consumeState(storage)).toBeNull();
++  });
++});
++
++describe('parseFragment', () => {
++  it('đúng state → trả accessToken và expiresIn', () => {
++    const hash = '#access_token=tok123&token_type=Bearer&expires_in=3600&state=abc';
++    const result = parseFragment(hash, 'abc');
++    expect(result).toEqual({ accessToken: 'tok123', expiresIn: 3600 });
++  });
++
++  it('sai state → null', () => {
++    const hash = '#access_token=tok123&expires_in=3600&state=abc';
++    expect(parseFragment(hash, 'other')).toBeNull();
++  });
++
++  it('có error → trả { error }', () => {
++    const hash = '#error=access_denied&state=abc';
++    expect(parseFragment(hash, 'abc')).toEqual({ error: 'access_denied' });
++  });
++
++  it('hash rỗng → null', () => {
++    expect(parseFragment('', 'abc')).toBeNull();
++    expect(parseFragment('#', 'abc')).toBeNull();
++  });
++
++  it('chấp nhận hash không có dấu #', () => {
++    const raw = 'access_token=tok&expires_in=100&state=abc';
++    expect(parseFragment(raw, 'abc')).toEqual({ accessToken: 'tok', expiresIn: 100 });
++  });
++});
++
++describe('token store', () => {
++  it('saveToken rồi getToken trả accessToken khi còn hạn', () => {
++    const storage = new MapStorage();
++    const now = 1_000_000;
++    saveToken('tok-xyz', 3600, now, storage);
++    expect(getToken(now + 1000, storage)).toBe('tok-xyz');
++  });
++
++  it('getToken trả null khi hết hạn (trừ biên an toàn 60s)', () => {
++    const storage = new MapStorage();
++    const now = 1_000_000;
++    saveToken('tok-xyz', 3600, now, storage);
++    // expiresAt = now + 3600_000 - 60_000
++    expect(getToken(now + 3600_000 - 60_000, storage)).toBeNull();
++    expect(getToken(now + 3600_000 - 60_001, storage)).toBe('tok-xyz');
++  });
++
++  it('getToken trả null khi không có token', () => {
++    const storage = new MapStorage();
++    expect(getToken(Date.now(), storage)).toBeNull();
++  });
++
++  it('clearToken xóa token đã lưu', () => {
++    const storage = new MapStorage();
++    saveToken('tok', 3600, 0, storage);
++    clearToken(storage);
++    expect(getToken(0, storage)).toBeNull();
++  });
++});
+diff --git a/tests/unit/store.test.ts b/tests/unit/store.test.ts
+index 301ff41..42860b4 100644
+--- a/tests/unit/store.test.ts
++++ b/tests/unit/store.test.ts
+@@ -1,5 +1,6 @@
+-import { describe, it, expect } from 'vitest';
++import { describe, it, expect, vi, afterEach } from 'vitest';
+ import { reducer } from '../../src/ui/store';
++import { shouldAutoSync, performSync, syncRange, handleAuthRedirect, autoSyncIfNeeded } from '../../src/ui/sync';
+ import { defaultState, defaultDesign } from '../../src/core/model';
+ import type { DeviceSpec } from '../../src/core/model';
+ 
+@@ -183,4 +184,199 @@ describe('reducer', () => {
+     expect(reset).toEqual(defaultState(device));
+     expect(reset.device).toEqual(device);
+   });
++
++  it('T-3.3: setGoogleClientId/setGoogleCalendarIds/setGoogleCache cập nhật đúng trường, không mutate state cũ', () => {
++    const state = defaultState(device);
++
++    const s1 = reducer(state, { type: 'setGoogleClientId', clientId: 'abc.apps.googleusercontent.com' });
++    expect(s1.google.clientId).toBe('abc.apps.googleusercontent.com');
++    expect(state.google.clientId).toBe('');
++
++    const s2 = reducer(s1, { type: 'setGoogleCalendarIds', calendarIds: ['cal1', 'cal2'] });
++    expect(s2.google.calendarIds).toEqual(['cal1', 'cal2']);
++    expect(s1.google.calendarIds).toEqual([]);
++
++    const cache = { events: [], fetchedAt: 12345 };
++    const s3 = reducer(s2, { type: 'setGoogleCache', cache });
++    expect(s3.google.cache).toEqual(cache);
++    expect(s2.google.cache).toBeNull();
++    expect(s3.google.clientId).toBe('abc.apps.googleusercontent.com'); // giữ nguyên phần khác
++  });
++
++  it('T-3.3: disconnectGoogle xóa calendarIds + cache, giữ clientId', () => {
++    const state = defaultState(device);
++    const connected = {
++      ...state,
++      google: { clientId: 'abc.apps.googleusercontent.com', calendarIds: ['cal1'], cache: { events: [], fetchedAt: 1 } },
++    };
++    const next = reducer(connected, { type: 'disconnectGoogle' });
++    expect(next.google.calendarIds).toEqual([]);
++    expect(next.google.cache).toBeNull();
++    expect(next.google.clientId).toBe('abc.apps.googleusercontent.com');
++    expect(connected.google.calendarIds).toEqual(['cal1']); // không mutate
++  });
++});
++
++describe('sync.ts (T-3.3, điều phối thuần)', () => {
++  afterEach(() => {
++    vi.unstubAllGlobals();
++  });
++
++  it('shouldAutoSync: không token -> false; không cache -> true; cache mới (<30p) -> false; cache cũ (>30p) -> true', () => {
++    const now = 1_000_000;
++    expect(shouldAutoSync(false, null, now)).toBe(false);
++    expect(shouldAutoSync(true, null, now)).toBe(true);
++    expect(shouldAutoSync(true, { fetchedAt: now - 10 * 60_000 }, now)).toBe(false);
++    expect(shouldAutoSync(true, { fetchedAt: now - 31 * 60_000 }, now)).toBe(true);
++  });
++
++  it('syncRange: [today-1, today+60]', () => {
++    expect(syncRange('2026-03-10')).toEqual({ timeMin: '2026-03-09', timeMax: '2026-05-09' });
++  });
++
++  it('performSync: fetch ok -> {ok:true, events, fetchedAt}', async () => {
++    vi.stubGlobal(
++      'fetch',
++      vi.fn(async (url: string) => {
++        if (url.includes('calendarList')) {
++          return new Response(JSON.stringify({ items: [{ id: 'c1', summary: 'C1', backgroundColor: '#fff' }] }));
++        }
++        return new Response(
++          JSON.stringify({ items: [{ id: 'e1', summary: 'Ev', start: { date: '2026-03-10' } }] }),
++        );
++      }),
++    );
++    const result = await performSync('tok', ['c1'], '2026-03-10', 5000);
++    expect(result.ok).toBe(true);
++    if (result.ok) {
++      expect(result.fetchedAt).toBe(5000);
++      expect(result.events).toEqual([
++        { id: 'google-c1-e1', sourceId: 'e1', source: 'google', title: 'Ev', date: '2026-03-10', allDay: true, color: '#fff' },
++      ]);
++    }
++  });
++
++  it('performSync: fetch 401 -> {ok:false, reauth:true}', async () => {
++    vi.stubGlobal('fetch', vi.fn(async () => new Response('{}', { status: 401 })));
++    const result = await performSync('tok', ['c1'], '2026-03-10');
++    expect(result).toEqual({ ok: false, reauth: true });
++  });
++
++  it('performSync: lỗi mạng -> {ok:false, reauth:false, error}', async () => {
++    vi.stubGlobal(
++      'fetch',
++      vi.fn(async () => {
++        throw new Error('network down');
++      }),
++    );
++    const result = await performSync('tok', ['c1'], '2026-03-10');
++    expect(result).toEqual({ ok: false, reauth: false, error: 'network down' });
++  });
++});
++
++describe('handleAuthRedirect (T-3.3, chạy 1 lần ở App.tsx, không phụ thuộc tab)', () => {
++  it('hash rỗng/không liên quan -> handled:false, không gọi consumeState/saveToken', () => {
++    const consumeState = vi.fn(() => 'abc');
++    const saveToken = vi.fn();
++    expect(handleAuthRedirect('', { consumeState, saveToken })).toEqual({ handled: false });
++    expect(handleAuthRedirect('#foo=bar', { consumeState, saveToken })).toEqual({ handled: false });
++    expect(consumeState).not.toHaveBeenCalled();
++    expect(saveToken).not.toHaveBeenCalled();
++  });
++
++  it('state đúng -> lưu token, trả ok:true', () => {
++    const saveToken = vi.fn();
++    const result = handleAuthRedirect('#access_token=tok123&expires_in=3600&state=abc', {
++      consumeState: () => 'abc',
++      saveToken,
++    });
++    expect(result).toEqual({ handled: true, ok: true });
++    expect(saveToken).toHaveBeenCalledWith('tok123', 3600);
++  });
++
++  it('state sai -> không lưu token, trả ok:false (bỏ qua)', () => {
++    const saveToken = vi.fn();
++    const result = handleAuthRedirect('#access_token=tok123&expires_in=3600&state=abc', {
++      consumeState: () => 'khac',
++      saveToken,
++    });
++    expect(result).toEqual({ handled: true, ok: false, error: 'invalid_state' });
++    expect(saveToken).not.toHaveBeenCalled();
++  });
++
++  it('#error= -> trả ok:false kèm error, không lưu token', () => {
++    const saveToken = vi.fn();
++    const result = handleAuthRedirect('#error=access_denied&state=abc', {
++      consumeState: () => 'abc',
++      saveToken,
++    });
++    expect(result).toEqual({ handled: true, ok: false, error: 'access_denied' });
++    expect(saveToken).not.toHaveBeenCalled();
++  });
++});
++
++describe('autoSyncIfNeeded (T-3.3)', () => {
++  afterEach(() => {
++    vi.unstubAllGlobals();
++  });
++
++  it('không có token -> không gọi fetch, ran:false', async () => {
++    vi.stubGlobal('fetch', vi.fn());
++    const outcome = await autoSyncIfNeeded(null, ['c1'], '2026-03-10', 1000, {
++      getToken: () => null,
++      clearToken: vi.fn(),
++    });
++    expect(outcome).toEqual({ ran: false });
++    expect(fetch).not.toHaveBeenCalled();
++  });
++
++  it('cache mới (<30 phút) -> không gọi fetch, ran:false', async () => {
++    vi.stubGlobal('fetch', vi.fn());
++    const now = 1_000_000;
++    const outcome = await autoSyncIfNeeded({ fetchedAt: now - 60_000 }, ['c1'], '2026-03-10', now, {
++      getToken: () => 'tok',
++      clearToken: vi.fn(),
++    });
++    expect(outcome).toEqual({ ran: false });
++    expect(fetch).not.toHaveBeenCalled();
++  });
++
++  it('cache cũ (>30 phút) -> gọi fetch, ran:true, ok:true', async () => {
++    vi.stubGlobal(
++      'fetch',
++      vi.fn(async (url: string) =>
++        url.includes('calendarList')
++          ? new Response(JSON.stringify({ items: [] }))
++          : new Response(JSON.stringify({ items: [] })),
++      ),
++    );
++    const now = 1_000_000;
++    const outcome = await autoSyncIfNeeded({ fetchedAt: now - 31 * 60_000 }, ['c1'], '2026-03-10', now, {
++      getToken: () => 'tok',
++      clearToken: vi.fn(),
++    });
++    expect(outcome.ran).toBe(true);
++    if (outcome.ran) expect(outcome.result).toEqual({ ok: true, events: [], fetchedAt: now });
++  });
++
++  it('401 -> clearToken() được gọi, ran:true, ok:false, reauth:true', async () => {
++    vi.stubGlobal('fetch', vi.fn(async () => new Response('{}', { status: 401 })));
++    const clearToken = vi.fn();
++    const outcome = await autoSyncIfNeeded(null, ['c1'], '2026-03-10', 1000, { getToken: () => 'tok', clearToken });
++    expect(outcome).toEqual({ ran: true, result: { ok: false, reauth: true } });
++    expect(clearToken).toHaveBeenCalledOnce();
++  });
++
++  it('lỗi mạng -> giữ cache, không gọi clearToken', async () => {
++    vi.stubGlobal(
++      'fetch',
++      vi.fn(async () => {
++        throw new Error('offline');
++      }),
++    );
++    const clearToken = vi.fn();
++    const outcome = await autoSyncIfNeeded(null, ['c1'], '2026-03-10', 1000, { getToken: () => 'tok', clearToken });
++    expect(outcome).toEqual({ ran: true, result: { ok: false, reauth: false, error: 'offline' } });
++    expect(clearToken).not.toHaveBeenCalled();
++  });
+ });
