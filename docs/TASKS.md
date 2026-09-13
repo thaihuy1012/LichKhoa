@@ -247,10 +247,11 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Tham khảo: `F:/LICH_NEN/lich-nen.html` L305–314 nhóm cài đặt dạng hàng (nhãn + gợi ý): Sao lưu dữ liệu · Khôi phục từ file sao lưu (confirm "Thay toàn bộ dữ liệu hiện tại…") · Xóa toàn bộ dữ liệu (nút đỏ, confirm); JS L971–990 `backupData/restoreData/wipeData`; L66–68 `.seg` (segmented control) cho chọn bố cục. Bỏ: nhập .ics, mục Scriptable (L310, L315–317).
 - Yêu cầu: `layout` segmented (`data-testid="layout-month|layout-agenda|layout-todo"`); `lang` (select vi/en), `hour12` (switch), `weekstart` (select T2/CN), `lunar` (switch `showLunar`); `export-json` (tải `lichkhoa-backup-YYYY-MM-DD.json`), `import-json` (input file `.json` → confirm → `replaceState`; file hỏng / version lạ → toast lỗi, state giữ nguyên), `wipe` (confirm → `resetAll`, giữ thiết bị). Nút "Lưu ảnh" vẫn thấy không cần cuộn ở 428×926 (test khóa iphone13pm).
 - Tiêu chí nghiệm thu:
-  [ ] `settings.spec.ts`: chọn `layout-agenda` → `__lastOps` có nhãn "Hôm nay"; đổi `lang` en → nhãn tab tiếng Anh; bật `hour12` → `__lastOps` agenda chứa "AM"/"PM"; tắt `lunar` → không op "Âm lịch"; xuất JSON → `wipe` → nhập lại → sự kiện trở lại; nhập file hỏng → toast lỗi, dữ liệu còn.
+  [ ] `settings.spec.ts`: chọn `layout-agenda` → `__lastOps` có nhãn "Hôm nay"; đổi `lang` en → nhãn tab tiếng Anh; bật `hour12` → `__lastOps` agenda chứa "AM"/"PM"; tắt `lunar` → không op "Âm lịch"; xuất JSON → `wipe` → nhập lại → sự kiện, ghi chú (v1.3), hạn to-do trở lại; nhập file hỏng → toast lỗi, dữ liệu còn.
   [ ] `npm run check` pass, test khóa không sửa.
+  [ ] Quản lý chụp webkit 428×926 tab Preview (cuộn xuống phần cài đặt) trước khi DONE.
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ### T-2.10 — Mô hình v1.3: lặp T2–T6, nhắc trước, hạn to-do, nhiều ghi chú (lõi) — D-011
 - Mục tiêu: hợp đồng SPEC v1.3 mục 5 cho phần lõi; mọi thứ khác (render, UI) dựa trên đây.
@@ -277,7 +278,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Yêu cầu / `data-testid`: sheet sự kiện thêm option `weekdays` trong `ev-repeat` và `ev-alarm` (select); hàng sự kiện hiện meta lặp + nhắc. Nợ từ T-2.7: hàng "Cả ngày" phải là nhãn TRÁI – công tắc PHẢI trên cùng một hàng (hiện nhãn nằm giữa phía trên công tắc); áp cùng kiểu cho `nt-pin`, `note-show`. To-do: `todo-due` (ô ngày cạnh `todo-input`), nhãn hạn `todo-due-label` trên hàng (quá hạn class cảnh báo), sửa hạn tại chỗ; thứ tự hiển thị theo SPEC (có hạn trước). Ghi chú: danh sách `note-item` (ghim lên đầu, nhãn Ghim), `add-note` mở sheet `nt-title`, `nt-body`, `nt-pin`, `nt-save`, `nt-cancel`, `nt-delete` (confirm); switch `note-show` (`showNote`) ở đầu phân đoạn; gợi ý "Ghi chú ghim hiện ở cuối hình nền".
 - Tiêu chí: [ ] `events.spec.ts` thêm: sự kiện `weekdays` → có chấm T2–T6, không có T7/CN của tuần đó; `ev-alarm`=15 → .ics tải về chứa `TRIGGER:-PT15M`; việc có hạn hôm qua hiện "Quá hạn" và đứng trên việc không hạn; [ ] `notes.spec.ts`: thêm 2 ghi chú, ghim cái 2 + bật `note-show` → `__lastOps` chứa tiêu đề ghi chú 2, không chứa ghi chú 1 → reload vẫn còn (nếu T-2.11 chưa xong, `__lastOps` có thể chưa có tiêu đề → assert nội dung ghi chú 2 thay vì tiêu đề, ghi chú trong báo cáo); [ ] 428×926 không cuộn ngang, `nt-save` trong viewport khi sheet mở; [ ] `npm run check` pass, test khóa không sửa; [ ] Quản lý xem ảnh chụp màn hình.
 - Lệnh kiểm tra: `npm run check` (T-2.11 song song chỉ chạy unit — không tranh build/cổng)
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (weekdays, ev-alarm + gợi ý, meta; todo-due/nhãn hạn/sắp theo hạn; NoteTab danh sách + sheet + ghim; nợ "Cả ngày" + S4 durationMin đã sửa; 18 e2e) — thợ chép lại cmpTodo/todoDueLabel vào util.ts (ngoài phạm vi không import được) → Quản lý gộp: export `cmpTodo` ở collect.ts, util.ts dùng lại + re-export `todoDueLabel` → kiem-thu PASS (repeat-each=3 36/36) → chụp webkit (scratchpad `chup-v13.cjs`): đạt → commit 7a4a5d2.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-2.END — Kiểm thử tích hợp M2
 - Phạm vi file: `tests/e2e/m2-events.spec.ts`, `tests/e2e/m2-i18n.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.
