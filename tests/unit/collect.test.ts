@@ -99,13 +99,44 @@ describe('collectRenderData', () => {
     expect(data.todos.map((t) => t.id)).toEqual(['t1', 't2']);
   });
 
-  it('note theo showNote', () => {
+  it('note theo showNote, lấy từ ghi chú ghim', () => {
     const state = defaultState(device);
     state.design.showNote = true;
-    state.design.noteText = 'hello';
+    state.notes = [{ id: 'n1', title: '', body: 'hello', pinned: true, updated: 0 }];
     expect(collectRenderData(state, '2026-03-15').note).toBe('hello');
     state.design.showNote = false;
     expect(collectRenderData(state, '2026-03-15').note).toBe('');
+  });
+
+  it('note/noteTitle lấy từ ghi chú ghim; không có ghi chú ghim -> rỗng/undefined', () => {
+    const state = defaultState(device);
+    state.design.showNote = true;
+    state.notes = [
+      { id: 'n1', title: '', body: 'not pinned', pinned: false, updated: 0 },
+      { id: 'n2', title: 'Tiêu đề', body: 'Nội dung', pinned: true, updated: 1 },
+    ];
+    const data = collectRenderData(state, '2026-03-15');
+    expect(data.note).toBe('Nội dung');
+    expect(data.noteTitle).toBe('Tiêu đề');
+
+    state.notes = [];
+    const data2 = collectRenderData(state, '2026-03-15');
+    expect(data2.note).toBe('');
+    expect(data2.noteTitle).toBeUndefined();
+  });
+
+  it('todos: chưa xong có due tăng dần -> chưa xong không due theo order -> đã xong theo order', () => {
+    const state = defaultState(device);
+    const todos: Todo[] = [
+      { id: 'done1', text: 'Done', done: true, order: 0 },
+      { id: 'nodue2', text: 'NoDue2', done: false, order: 2 },
+      { id: 'due2', text: 'Due2', done: false, order: 5, due: '2026-03-20' },
+      { id: 'nodue1', text: 'NoDue1', done: false, order: 1 },
+      { id: 'due1', text: 'Due1', done: false, order: 9, due: '2026-03-10' },
+    ];
+    state.todos = todos;
+    const data = collectRenderData(state, '2026-03-15');
+    expect(data.todos.map((t) => t.id)).toEqual(['due1', 'due2', 'nodue1', 'nodue2', 'done1']);
   });
 
   it('2 TZ giả lập: sự kiện đầu tháng và cuối agenda vẫn nằm trong khoảng expand', () => {

@@ -106,11 +106,32 @@ describe('reducer', () => {
     expect(s5).toEqual(s3);
   });
 
-  it('setNote đổi noteText trong design, không mutate', () => {
+  it('addNote/updateNote/deleteNote CRUD ghi chú, không mutate state cũ', () => {
     const state = defaultState(device);
-    const next = reducer(state, { type: 'setNote', text: 'Ghi chú' });
-    expect(next.design.noteText).toBe('Ghi chú');
-    expect(state.design.noteText).toBe('');
+    const note = { id: 'n1', title: 'T', body: 'B', pinned: false, updated: 1 };
+    const s1 = reducer(state, { type: 'addNote', note });
+    expect(s1.notes).toEqual([note]);
+    expect(state.notes).toEqual([]);
+
+    const note2 = { ...note, body: 'B2' };
+    const s2 = reducer(s1, { type: 'updateNote', note: note2 });
+    expect(s2.notes).toEqual([note2]);
+    expect(s1.notes).toEqual([note]);
+
+    const s3 = reducer(s2, { type: 'deleteNote', id: 'n1' });
+    expect(s3.notes).toEqual([]);
+  });
+
+  it('pinNote ghim đúng 1 ghi chú, bỏ ghim các cái khác', () => {
+    const state = defaultState(device);
+    const a = { id: 'a', title: '', body: 'A', pinned: true, updated: 1 };
+    const b = { id: 'b', title: '', body: 'B', pinned: false, updated: 1 };
+    const s1 = { ...state, notes: [a, b] };
+
+    const s2 = reducer(s1, { type: 'pinNote', id: 'b', pinned: true });
+    expect(s2.notes.find((n) => n.id === 'a')!.pinned).toBe(false);
+    expect(s2.notes.find((n) => n.id === 'b')!.pinned).toBe(true);
+    expect(s1.notes).toEqual([a, b]); // không mutate
   });
 
   it('replaceState hợp lệ thay toàn bộ state qua normalizeState; null giữ state cũ', () => {

@@ -22,6 +22,16 @@ describe('exportBackup/importBackup', () => {
     expect(result).toEqual(s);
   });
 
+  it('v1.3: vòng tròn giữ notes, due, alarmMin', () => {
+    const s = defaultState(device);
+    s.events.push({ id: 'e1', title: 'Hop', date: '2026-01-01', repeat: 'weekdays', alarmMin: 15 });
+    s.todos.push({ id: 't1', text: 'Viec', done: false, order: 0, due: '2026-01-05' });
+    s.notes.push({ id: 'n1', title: 'Tieu de', body: 'Noi dung', pinned: true, updated: 1 });
+    const json = exportBackup(s);
+    const result = importBackup(json);
+    expect(result).toEqual(s);
+  });
+
   it('version khác 1 → throw', () => {
     const json = JSON.stringify({ version: 2, state: defaultState(device) });
     expect(() => importBackup(json)).toThrow();

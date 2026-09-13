@@ -44,6 +44,7 @@
 
   "repeat.none": "Không lặp",
   "repeat.daily": "Hằng ngày",
+  "repeat.weekdays": "Thứ Hai đến Thứ Sáu",
   "repeat.weekly": "Hằng tuần",
   "repeat.monthly": "Hằng tháng",
   "repeat.yearly": "Hằng năm",
@@ -98,6 +99,7 @@
 
   "agenda.empty": "Không có sự kiện sắp tới",
   "todo.empty": "Không có việc cần làm",
+  "todo.overdue": "Quá hạn",
 
   "common.comingSoon": "Sắp có",
   "sync.lastSync": "Đồng bộ lần cuối: {time}",

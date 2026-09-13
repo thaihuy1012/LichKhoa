@@ -44,6 +44,7 @@
 
   "repeat.none": "No repeat",
   "repeat.daily": "Daily",
+  "repeat.weekdays": "Monday to Friday",
   "repeat.weekly": "Weekly",
   "repeat.monthly": "Monthly",
   "repeat.yearly": "Yearly",
@@ -98,6 +99,7 @@
 
   "agenda.empty": "No upcoming events",
   "todo.empty": "No to-dos",
+  "todo.overdue": "Overdue",
 
   "common.comingSoon": "Coming soon",
   "sync.lastSync": "Last synced: {time}",

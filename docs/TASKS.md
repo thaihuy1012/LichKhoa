@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.2 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 8/13 · M3: 0/4 · M4: 0/6
-- Đang làm: T-2.10 (DOING, tho-sonnet lượt 1)
+- M1: 8/8 ✔ tag `M1-ok` · M2: 9/13 · M3: 0/4 · M4: 0/6
+- Đang làm: T-2.11 ∥ T-2.12 (DOING, tho-sonnet lượt 1 mỗi phiếu; không chung file)
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
 - Chờ Chủ dự án: đặt thử ảnh mẫu 1284×2778 (đã gửi 2026-09-13) — có đè đồng hồ/widget/nút không? (không chặn; cần trước T-2.3)
@@ -258,23 +258,24 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Tham khảo: `F:/LICH_NEN/lich-nen.html` L553 `weekdays` trong occursOn; L604 map RRULE (BYDAY); L610 dòng VALARM; L578–581 `taskSort` (có hạn trước, hạn tăng dần — ta thêm `order` cho việc không hạn); L920–926 `saveNote` (ghim 1 → bỏ ghim các cái khác).
 - Tiêu chí nghiệm thu: [ ] đúng các dòng (v1.3) của SPEC M2 cho recurrence/ics/collect/model; [ ] backup vòng tròn giữ `notes`, `due`, `alarmMin`; [ ] reducer: `pinNote` đảm bảo ≤ 1 pinned, không mutate; [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Nhật ký: 2026-09-14 lượt 1: DONE (122×2 unit; sửa test khóa đúng 3 chỗ noteText/setNote, đã khai) → kiem-thu PASS (mọi dòng `-` trong phạm vi được phép) → review đạt (ghi chú ghim chỉ có tiêu đề → chuyển yêu cầu sang T-2.11) → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-2.11 — Hình nền v1.3: nhãn hạn to-do + tiêu đề ghi chú ghim
 - Phạm vi file: `src/render/layout/todo.ts`, `src/render/layout/note.ts`, `src/render/layout/common.ts` (`noteHeight` tính thêm dòng tiêu đề; helper nhãn hạn dùng `t()`), `tests/unit/layout.test.ts` (chỉ thêm). Sau T-2.10; song song T-2.12 (không chung file).
 - Tham khảo: `F:/LICH_NEN/lich-nen.html` L1273 nhãn hạn trên hình nền ("Quá hạn" / "Hôm nay" / "d/m"); L1132–1149 khối ghi chú ghim (tiêu đề đậm + ≤ 4 dòng).
-- Yêu cầu: to-do chưa xong có `due` → nhãn canh phải cùng dòng (tiêu đề cắt "…" để chừa chỗ); quá hạn → nhãn màu `accentColor`, chữ đậm; note: `noteTitle` khác rỗng → dòng tiêu đề đậm trước ≤ 4 dòng nội dung; khối chính và dải note vẫn không giao nhau; mọi op trong vùng an toàn (3 position × 2 thiết bị).
-- Tiêu chí: [ ] test nhãn hạn 3 trường hợp + quá hạn tô accent; [ ] note có tiêu đề → op text đậm đứng trước nội dung; bbox không giao; [ ] `npm run check` pass; [ ] Quản lý dựng ảnh mẫu có dữ liệu (khuôn `mau-t26.cjs`) và xem trước khi DONE.
-- Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Yêu cầu: to-do chưa xong có `due` → nhãn canh phải cùng dòng (tiêu đề cắt "…" để chừa chỗ); quá hạn → nhãn màu `accentColor`, chữ đậm; note: `noteTitle` khác rỗng → dòng tiêu đề đậm trước ≤ 4 dòng nội dung; ghi chú ghim CHỈ có tiêu đề (`note === ''`, `noteTitle` có) vẫn phải vẽ (hiện `layoutNote` trả [] khi `!d.note`) — `noteHeight` cũng tính theo đó; khối chính và dải note vẫn không giao nhau; mọi op trong vùng an toàn (3 position × 2 thiết bị).
+- Tiêu chí: [ ] test nhãn hạn 3 trường hợp + quá hạn tô accent; [ ] note có tiêu đề → op text đậm đứng trước nội dung; bbox không giao; [ ] `npm run check` pass (kiem-thu chạy); [ ] Quản lý dựng ảnh mẫu có dữ liệu (khuôn `mau-t26.cjs`) và xem trước khi DONE.
+- Lệnh kiểm tra (thợ): `npx tsc --noEmit; npm run test` — KHÔNG chạy build/e2e vì T-2.12 chạy song song (tránh tranh `dist/` + cổng 4173); `npm run check` do kiem-thu chạy sau.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ### T-2.12 — Màn Sự kiện v1.3: T2–T6, nhắc trước, hạn to-do, danh sách ghi chú
 - Phạm vi file: `src/ui/screens/Events.tsx`, `src/ui/screens/events/*`, `src/ui/styles.css`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `tests/e2e/events.spec.ts` (chỉ thêm test), `tests/e2e/notes.spec.ts` (mới). Sau T-2.7 + T-2.10; song song T-2.11.
 - Tham khảo: `F:/LICH_NEN/lich-nen.html` L350–368 (option "Thứ hai đến thứ sáu", select "Nhắc trước" 0/5/15/30/60/1440 + gợi ý "Việc nhắc do Lịch iPhone thực hiện…"); L784–785 meta dưới sự kiện ("Hằng tuần, Nhắc trước 15 phút"); L275–279 ô ngày hạn cạnh ô việc mới; L876 + L133–134 nhãn hạn (quá hạn màu cảnh báo); L377–384 sheet ghi chú (Tiêu đề, Nội dung, switch "Ghim lên hình nền", Xóa); L895–932 danh sách ghi chú (ghim lên đầu, nhãn "Ghim", trạng thái rỗng, ghi chú trống → toast).
 - Yêu cầu / `data-testid`: sheet sự kiện thêm option `weekdays` trong `ev-repeat` và `ev-alarm` (select); hàng sự kiện hiện meta lặp + nhắc. Nợ từ T-2.7: hàng "Cả ngày" phải là nhãn TRÁI – công tắc PHẢI trên cùng một hàng (hiện nhãn nằm giữa phía trên công tắc); áp cùng kiểu cho `nt-pin`, `note-show`. To-do: `todo-due` (ô ngày cạnh `todo-input`), nhãn hạn `todo-due-label` trên hàng (quá hạn class cảnh báo), sửa hạn tại chỗ; thứ tự hiển thị theo SPEC (có hạn trước). Ghi chú: danh sách `note-item` (ghim lên đầu, nhãn Ghim), `add-note` mở sheet `nt-title`, `nt-body`, `nt-pin`, `nt-save`, `nt-cancel`, `nt-delete` (confirm); switch `note-show` (`showNote`) ở đầu phân đoạn; gợi ý "Ghi chú ghim hiện ở cuối hình nền".
-- Tiêu chí: [ ] `events.spec.ts` thêm: sự kiện `weekdays` → có chấm T2–T6, không có T7/CN của tuần đó; `ev-alarm`=15 → .ics tải về chứa `TRIGGER:-PT15M`; việc có hạn hôm qua hiện "Quá hạn" và đứng trên việc không hạn; [ ] `notes.spec.ts`: thêm 2 ghi chú, ghim cái 2 + bật `note-show` → `__lastOps` chứa tiêu đề ghi chú 2, không chứa ghi chú 1 → reload vẫn còn; [ ] 428×926 không cuộn ngang, `nt-save` trong viewport khi sheet mở; [ ] `npm run check` pass, test khóa không sửa; [ ] Quản lý xem ảnh chụp màn hình.
-- Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Tiêu chí: [ ] `events.spec.ts` thêm: sự kiện `weekdays` → có chấm T2–T6, không có T7/CN của tuần đó; `ev-alarm`=15 → .ics tải về chứa `TRIGGER:-PT15M`; việc có hạn hôm qua hiện "Quá hạn" và đứng trên việc không hạn; [ ] `notes.spec.ts`: thêm 2 ghi chú, ghim cái 2 + bật `note-show` → `__lastOps` chứa tiêu đề ghi chú 2, không chứa ghi chú 1 → reload vẫn còn (nếu T-2.11 chưa xong, `__lastOps` có thể chưa có tiêu đề → assert nội dung ghi chú 2 thay vì tiêu đề, ghi chú trong báo cáo); [ ] 428×926 không cuộn ngang, `nt-save` trong viewport khi sheet mở; [ ] `npm run check` pass, test khóa không sửa; [ ] Quản lý xem ảnh chụp màn hình.
+- Lệnh kiểm tra: `npm run check` (T-2.11 song song chỉ chạy unit — không tranh build/cổng)
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ### T-2.END — Kiểm thử tích hợp M2
 - Phạm vi file: `tests/e2e/m2-events.spec.ts`, `tests/e2e/m2-i18n.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.

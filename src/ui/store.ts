@@ -1,4 +1,4 @@
-import type { AppState, DesignConfig, DeviceSpec, LocalEvent, Todo } from '../core/model';
+import type { AppState, DesignConfig, DeviceSpec, ISODate, LocalEvent, Note, Todo } from '../core/model';
 import { defaultState, normalizeState } from '../core/model';
 import { saveState } from '../storage/db';
 
@@ -9,12 +9,16 @@ export type Action =
   | { type: 'addEvent'; event: LocalEvent }
   | { type: 'updateEvent'; event: LocalEvent }
   | { type: 'deleteEvent'; id: string }
-  | { type: 'addTodo'; text: string; id?: string }
+  | { type: 'addTodo'; text: string; id?: string; due?: ISODate }
   | { type: 'toggleTodo'; id: string }
   | { type: 'updateTodo'; id: string; text: string }
   | { type: 'deleteTodo'; id: string }
   | { type: 'moveTodo'; id: string; dir: -1 | 1 }
-  | { type: 'setNote'; text: string }
+  | { type: 'setTodoDue'; id: string; due: ISODate | null }
+  | { type: 'addNote'; note: Note }
+  | { type: 'updateNote'; note: Note }
+  | { type: 'deleteNote'; id: string }
+  | { type: 'pinNote'; id: string; pinned: boolean }
   | { type: 'replaceState'; state: unknown }
   | { type: 'resetAll' };
 
@@ -40,7 +44,7 @@ export function reducer(state: AppState, action: Action): AppState {
       return { ...state, events: state.events.filter((e) => e.id !== action.id) };
     case 'addTodo': {
       const order = state.todos.length > 0 ? Math.max(...state.todos.map((t) => t.order)) + 1 : 0;
-      const todo: Todo = { id: nextId(action.id), text: action.text, done: false, order };
+      const todo: Todo = { id: nextId(action.id), text: action.text, done: false, order, ...(action.due ? { due: action.due } : {}) };
       return { ...state, todos: [...state.todos, todo] };
     }
     case 'toggleTodo':
@@ -63,8 +67,33 @@ export function reducer(state: AppState, action: Action): AppState {
       ]);
       return { ...state, todos: state.todos.map((t) => (orders.has(t.id) ? { ...t, order: orders.get(t.id)! } : t)) };
     }
-    case 'setNote':
-      return { ...state, design: { ...state.design, noteText: action.text } };
+    case 'setTodoDue': {
+      return {
+        ...state,
+        todos: state.todos.map((t) => {
+          if (t.id !== action.id) return t;
+          if (action.due === null) {
+            const { due: _due, ...rest } = t;
+            return rest as Todo;
+          }
+          return { ...t, due: action.due };
+        }),
+      };
+    }
+    case 'addNote':
+      return { ...state, notes: [...state.notes, action.note] };
+    case 'updateNote':
+      return { ...state, notes: state.notes.map((n) => (n.id === action.note.id ? action.note : n)) };
+    case 'deleteNote':
+      return { ...state, notes: state.notes.filter((n) => n.id !== action.id) };
+    case 'pinNote': {
+      const notes = state.notes.map((n) => {
+        if (n.id === action.id) return { ...n, pinned: action.pinned, updated: Date.now() };
+        if (action.pinned && n.pinned) return { ...n, pinned: false };
+        return n;
+      });
+      return { ...state, notes };
+    }
     case 'replaceState': {
       const normalized = normalizeState(action.state);
       return normalized ?? state;

@@ -29,6 +29,7 @@ function addDays(d: Date, n: number): Date {
 
 const FREQ: Record<string, string> = {
   daily: 'FREQ=DAILY',
+  weekdays: 'FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR',
   weekly: 'FREQ=WEEKLY',
   monthly: 'FREQ=MONTHLY',
   yearly: 'FREQ=YEARLY',
@@ -70,6 +71,11 @@ export function eventToIcs(e: LocalEvent, now: Date = new Date()): string {
       }
       lines.push('RRULE:' + r);
     }
+  }
+
+  if (e.alarmMin) {
+    const trigger = e.alarmMin === 1440 ? '-P1D' : `-PT${e.alarmMin}M`;
+    lines.push('BEGIN:VALARM', 'TRIGGER:' + trigger, 'ACTION:DISPLAY', 'DESCRIPTION:' + icsEscape(e.title || 'Sự kiện'), 'END:VALARM');
   }
 
   lines.push('END:VEVENT', 'END:VCALENDAR');

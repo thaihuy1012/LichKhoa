@@ -37,7 +37,7 @@ describe('buildOps', () => {
   it('showNote=true: thêm op ghi chú', () => {
     const state = defaultState(DEV_1179);
     state.design.showNote = true;
-    state.design.noteText = 'Ghi chú thử';
+    state.notes = [{ id: 'n1', title: '', body: 'Ghi chú thử', pinned: true, updated: 0 }];
     const opsWith = buildOps(state, '2026-02-15');
     expect(opsWith.some((op) => textOf(op) === 'Ghi chú thử')).toBe(true);
 

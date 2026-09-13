@@ -1,4 +1,4 @@
-import type { AppState, Occurrence, RenderData, ISODate } from './model';
+import type { AppState, Occurrence, RenderData, ISODate, Todo } from './model';
 import { parseISODate, toISODate } from './calendar';
 import { expandOccurrences } from './recurrence';
 
@@ -10,6 +10,18 @@ function cmpOccurrence(a: Occurrence, b: Occurrence): number {
   if (ta !== tb) return ta < tb ? -1 : 1;
   if (a.title !== b.title) return a.title < b.title ? -1 : 1;
   return 0;
+}
+
+/** v1.3: chưa xong có `due` (tăng dần) -> chưa xong không `due` (theo `order`) -> đã xong (theo `order`). */
+function cmpTodo(a: Todo, b: Todo): number {
+  if (a.done !== b.done) return a.done ? 1 : -1;
+  if (!a.done) {
+    const aHas = a.due != null;
+    const bHas = b.due != null;
+    if (aHas !== bHas) return aHas ? -1 : 1;
+    if (aHas && bHas && a.due !== b.due) return a.due! < b.due! ? -1 : 1;
+  }
+  return a.order - b.order;
 }
 
 /**
@@ -33,12 +45,17 @@ export function collectRenderData(state: AppState, today: ISODate): RenderData {
 
   const occurrences = [...localOcc, ...googleOcc].sort(cmpOccurrence);
 
-  const todos = [...state.todos].sort((a, b) => a.order - b.order);
+  const todos = [...state.todos].sort(cmpTodo);
+
+  const pinned = state.notes.find((n) => n.pinned);
+  const note = state.design.showNote && pinned ? pinned.body : '';
+  const noteTitle = state.design.showNote && pinned && pinned.title ? pinned.title : undefined;
 
   return {
     today,
     occurrences,
     todos,
-    note: state.design.showNote ? state.design.noteText : '',
+    note,
+    noteTitle,
   };
 }

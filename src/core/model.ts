@@ -1,5 +1,5 @@
 export type ISODate = string; // 'YYYY-MM-DD' theo giờ địa phương
-export type Repeat = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly';
+export type Repeat = 'none' | 'daily' | 'weekdays' /* v1.3: T2-T6 */ | 'weekly' | 'monthly' | 'yearly';
 
 export interface LocalEvent {
   id: string;
@@ -10,6 +10,7 @@ export interface LocalEvent {
   repeat: Repeat;
   until?: ISODate;
   color?: string;
+  alarmMin?: number; // v1.3: phút nhắc trước, 0/thiếu = không nhắc -> VALARM trong .ics
 }
 
 export interface Todo {
@@ -17,7 +18,16 @@ export interface Todo {
   text: string;
   done: boolean;
   order: number;
+  due?: ISODate; // v1.3
 }
+
+export interface Note {
+  id: string;
+  title: string;
+  body: string;
+  pinned: boolean;
+  updated: number;
+} // v1.3 - toi da 1 note pinned
 
 export interface Occurrence {
   id: string;
@@ -42,7 +52,6 @@ export interface DeviceSpec {
 export interface DesignConfig {
   layout: 'month' | 'agenda' | 'todo';
   showNote: boolean;
-  noteText: string;
   bg: { kind: 'photo' | 'solid' | 'gradient'; color: string; color2?: string };
   blur: 0 | 1 | 2 | 3;
   dim: number;
@@ -63,6 +72,7 @@ export interface AppState {
   version: 1;
   events: LocalEvent[];
   todos: Todo[];
+  notes: Note[]; // v1.3
   design: DesignConfig;
   device: DeviceSpec;
   google: {
@@ -78,13 +88,13 @@ export interface RenderData {
   occurrences: Occurrence[];
   todos: Todo[];
   note: string;
+  noteTitle?: string; // v1.3
 }
 
 export function defaultDesign(): DesignConfig {
   return {
     layout: 'month',
     showNote: false,
-    noteText: '',
     bg: { kind: 'solid', color: '#000000' },
     blur: 0,
     dim: 0,
@@ -107,6 +117,7 @@ export function defaultState(device: DeviceSpec): AppState {
     version: 1,
     events: [],
     todos: [],
+    notes: [],
     design: defaultDesign(),
     device,
     google: { clientId: '', calendarIds: [], cache: null },
@@ -138,10 +149,23 @@ export function normalizeState(raw: unknown): AppState | null {
 
   const base = defaultState(device);
 
+  // v1.3: gộp design (bản sao, không đụng rawDesign/raw), rồi tách noteText cũ ra thành Note pinned.
+  const mergedDesign: Record<string, unknown> = { ...defaultDesign(), ...rawDesign };
+  const legacyNoteText = typeof mergedDesign['noteText'] === 'string' ? (mergedDesign['noteText'] as string) : '';
+  delete mergedDesign['noteText'];
+
+  const rawNotes = raw['notes'];
+  const notes: Note[] = Array.isArray(rawNotes)
+    ? (rawNotes as Note[])
+    : legacyNoteText !== ''
+      ? [{ id: `note-${Date.now()}`, title: '', body: legacyNoteText, pinned: true, updated: Date.now() }]
+      : [];
+
   return {
     ...base,
     ...raw,
-    design: { ...defaultDesign(), ...rawDesign } as DesignConfig,
+    notes,
+    design: mergedDesign as unknown as DesignConfig,
     google: { ...base.google, ...rawGoogle } as AppState['google'],
   } as AppState;
 }

@@ -1,7 +1,7 @@
 import type { LocalEvent, Occurrence, ISODate } from './model';
 import { parseISODate, toISODate } from './calendar';
 
-/** true nếu event `ev` diễn ra vào ngày `s` (ISODate). Port từ lich-nen.html L545-559, bỏ 'weekdays'. */
+/** true nếu event `ev` diễn ra vào ngày `s` (ISODate). Port từ lich-nen.html L545-559. */
 function occursOn(ev: LocalEvent, s: ISODate): boolean {
   if (s < ev.date) return false;
   if (ev.until && s > ev.until) return false;
@@ -12,6 +12,10 @@ function occursOn(ev: LocalEvent, s: ISODate): boolean {
       return s === ev.date;
     case 'daily':
       return true;
+    case 'weekdays': {
+      const curDow = new Date(cur.y, cur.m0, cur.d, 12).getDay();
+      return curDow >= 1 && curDow <= 5;
+    }
     case 'weekly': {
       const startDow = new Date(start.y, start.m0, start.d, 12).getDay();
       const curDow = new Date(cur.y, cur.m0, cur.d, 12).getDay();

@@ -63,6 +63,28 @@ describe('normalizeState', () => {
     expect(raw).toEqual(snapshot);
   });
 
+  it('v1.3: design.noteText khác rỗng -> chuyển thành 1 Note pinned, xóa noteText khỏi design', () => {
+    const raw = {
+      version: 1 as const,
+      events: [],
+      todos: [],
+      design: { ...defaultDesign(), noteText: 'Ghi chú cũ' },
+      device,
+    };
+    const result = normalizeState(raw);
+    expect(result).not.toBeNull();
+    expect(result!.notes.length).toBe(1);
+    expect(result!.notes[0].body).toBe('Ghi chú cũ');
+    expect(result!.notes[0].pinned).toBe(true);
+    expect((result!.design as unknown as Record<string, unknown>)['noteText']).toBeUndefined();
+  });
+
+  it('v1.3: notes thiếu -> bù mặc định []', () => {
+    const raw = { version: 1 as const, events: [], todos: [], design: defaultDesign(), device };
+    const result = normalizeState(raw);
+    expect(result!.notes).toEqual([]);
+  });
+
   it('giữ nguyên giá trị có sẵn khi hợp lệ đầy đủ', () => {
     const full = defaultState(device);
     full.design.accentColor = '#abcdef';

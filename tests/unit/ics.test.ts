@@ -51,6 +51,36 @@ describe('eventToIcs', () => {
     expect(ics).toContain('RRULE:FREQ=WEEKLY;UNTIL=20261231\r\n');
   });
 
+  it('repeat weekdays (v1.3): RRULE FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR', () => {
+    const e: LocalEvent = { id: 'e9', title: 'Lam', date: '2026-01-05', repeat: 'weekdays' };
+    const ics = eventToIcs(e, now);
+    expect(ics).toContain('RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR\r\n');
+  });
+
+  it('alarmMin=15 (v1.3): VALARM trong VEVENT với TRIGGER:-PT15M', () => {
+    const e: LocalEvent = { id: 'e10', title: 'Nhac', date: '2026-01-05', repeat: 'none', alarmMin: 15 };
+    const ics = eventToIcs(e, now);
+    expect(ics).toContain('BEGIN:VALARM\r\n');
+    expect(ics).toContain('TRIGGER:-PT15M\r\n');
+    expect(ics).toContain('ACTION:DISPLAY\r\n');
+    expect(ics).toContain('DESCRIPTION:Nhac\r\n');
+    expect(ics).toContain('END:VALARM\r\n');
+    expect(ics.indexOf('BEGIN:VALARM')).toBeGreaterThan(ics.indexOf('BEGIN:VEVENT'));
+    expect(ics.indexOf('END:VALARM')).toBeLessThan(ics.lastIndexOf('END:VEVENT'));
+  });
+
+  it('alarmMin=1440 (v1.3): TRIGGER:-P1D', () => {
+    const e: LocalEvent = { id: 'e11', title: 'X', date: '2026-01-05', repeat: 'none', alarmMin: 1440 };
+    const ics = eventToIcs(e, now);
+    expect(ics).toContain('TRIGGER:-P1D\r\n');
+  });
+
+  it('không alarmMin (v1.3): không có VALARM', () => {
+    const e: LocalEvent = { id: 'e12', title: 'X', date: '2026-01-05', repeat: 'none' };
+    const ics = eventToIcs(e, now);
+    expect(ics).not.toContain('VALARM');
+  });
+
   it('repeat none: không có dòng RRULE', () => {
     const e: LocalEvent = { id: 'e5', title: 'X', date: '2026-01-01', repeat: 'none' };
     const ics = eventToIcs(e, now);
