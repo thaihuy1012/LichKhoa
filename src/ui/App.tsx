@@ -3,15 +3,17 @@ import type { AppState } from '../core/model';
 import { defaultState } from '../core/model';
 import { DEVICES, detectDevice } from '../render/devices';
 import { loadState } from '../storage/db';
+import { t } from '../core/i18n';
 import { createStore, type Store } from './store';
 import { Preview } from './screens/Preview';
+import { Events } from './screens/Events';
 
 const TABS = [
-  { id: 'preview', label: 'Preview' },
-  { id: 'events', label: 'Sự kiện' },
-  { id: 'design', label: 'Thiết kế' },
-  { id: 'sync', label: 'Đồng bộ' },
-  { id: 'guide', label: 'Hướng dẫn' },
+  { id: 'preview' },
+  { id: 'events' },
+  { id: 'design' },
+  { id: 'sync' },
+  { id: 'guide' },
 ] as const;
 
 type TabId = (typeof TABS)[number]['id'];
@@ -27,6 +29,7 @@ async function loadInitialState(): Promise<AppState> {
 export function App() {
   const [store, setStore] = useState<Store | null>(null);
   const [tab, setTab] = useState<TabId>('preview');
+  const [lang, setLang] = useState<AppState['design']['lang']>('vi');
 
   useEffect(() => {
     let cancelled = false;
@@ -38,6 +41,13 @@ export function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!store) return;
+    const update = () => setLang(store.getState().design.lang);
+    update();
+    return store.subscribe(update);
+  }, [store]);
+
   if (!store) {
     return <div class="app">Đang tải…</div>;
   }
@@ -46,15 +56,20 @@ export function App() {
     <div class="app">
       <main class="app-content">
         {tab === 'preview' && <Preview store={store} />}
-        {tab === 'events' && <div class="placeholder">Sự kiện (sắp có)</div>}
-        {tab === 'design' && <div class="placeholder">Thiết kế (sắp có)</div>}
-        {tab === 'sync' && <div class="placeholder">Đồng bộ (sắp có)</div>}
-        {tab === 'guide' && <div class="placeholder">Hướng dẫn (sắp có)</div>}
+        {tab === 'events' && <Events store={store} />}
+        {tab === 'design' && <div class="placeholder">{t('common.comingSoon', lang)}</div>}
+        {tab === 'sync' && <div class="placeholder">{t('common.comingSoon', lang)}</div>}
+        {tab === 'guide' && <div class="placeholder">{t('common.comingSoon', lang)}</div>}
       </main>
       <nav class="tabbar">
-        {TABS.map((t) => (
-          <button key={t.id} class={tab === t.id ? 'tab tab-active' : 'tab'} onClick={() => setTab(t.id)}>
-            {t.label}
+        {TABS.map((tabDef) => (
+          <button
+            key={tabDef.id}
+            data-testid={`tab-${tabDef.id}`}
+            class={tab === tabDef.id ? 'tab tab-active' : 'tab'}
+            onClick={() => setTab(tabDef.id)}
+          >
+            {t(`tab.${tabDef.id}`, lang)}
           </button>
         ))}
       </nav>

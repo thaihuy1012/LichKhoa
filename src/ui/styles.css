@@ -8,6 +8,28 @@ html, body {
   overflow-x: hidden;
 }
 
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #0b0b0f;
+  color: #f2f2f2;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23f2f2f2' d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  padding-right: 32px;
+}
+
+select option {
+  background: #16161c;
+  color: #f2f2f2;
+}
+
 .app {
   display: flex;
   flex-direction: column;
@@ -127,4 +149,539 @@ html, body {
 .tab-active {
   color: #4c6ef5;
   font-weight: 600;
+}
+
+/* ===== Sự kiện (T-2.7) ===== */
+
+.events-screen {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.segmented {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.seg-btn {
+  flex: 1;
+  min-height: 44px;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  background: #1b1b22;
+  color: #ccc;
+}
+
+.seg-active {
+  background: #4c6ef5;
+  color: #fff;
+}
+
+.events-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.cal-header button {
+  min-width: 44px;
+  min-height: 44px;
+  font-size: 20px;
+  background: none;
+  border: none;
+  color: #f2f2f2;
+}
+
+.cal-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.cal-weekdays,
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.cal-wd {
+  text-align: center;
+  font-size: 11px;
+  color: #888;
+  padding: 4px 0;
+}
+
+.cal-cell,
+.cal-cell-empty {
+  min-height: 44px;
+  box-sizing: border-box;
+}
+
+.cal-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  color: #f2f2f2;
+  font-size: 13px;
+  padding: 2px;
+}
+
+.cal-today {
+  background: #4c6ef5;
+  border-radius: 50%;
+}
+
+.cal-selected {
+  outline: 1px solid #4c6ef5;
+  border-radius: 8px;
+}
+
+.cal-lunar {
+  font-size: 10px;
+  color: #ccc;
+}
+
+.cal-today .cal-lunar {
+  color: #eef;
+}
+
+.cal-dots {
+  display: flex;
+  gap: 2px;
+  min-height: 6px;
+}
+
+.cal-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.day-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ev-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  background: #1b1b22;
+  border: none;
+  border-radius: 8px;
+  color: #f2f2f2;
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.ev-item-bar {
+  width: 4px;
+  align-self: stretch;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.ev-item-time {
+  font-size: 12px;
+  color: #aaa;
+  flex-shrink: 0;
+  min-width: 44px;
+}
+
+.ev-item-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty {
+  color: #888;
+  font-size: 13px;
+  text-align: center;
+  margin: 4px 0;
+}
+
+/* ---- sheet trượt (port lich-nen.html L144-163/L341-375) ---- */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 30;
+}
+
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 31;
+  background: #16161c;
+  border-radius: 18px 18px 0 0;
+  max-height: 92vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 10px 16px calc(18px + env(safe-area-inset-bottom));
+  max-width: 428px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  min-height: 44px;
+}
+
+.sheet-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.link {
+  background: none;
+  border: none;
+  color: #4c6ef5;
+  font-size: 16px;
+  min-height: 44px;
+  padding: 0 8px;
+}
+
+.link.strong {
+  font-weight: 700;
+}
+
+.sheet .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.sheet .field label {
+  font-size: 13px;
+  color: #aaa;
+}
+
+.field input[type='text'],
+.field input[type='date'],
+.field input[type='time'],
+.field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  background: #0b0b0f;
+  color: #f2f2f2;
+  font-size: 16px;
+  box-sizing: border-box;
+  min-height: 44px;
+}
+
+.field select {
+  width: 100%;
+  padding: 10px 32px 10px 12px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  background-color: #0b0b0f;
+  color: #f2f2f2;
+  font-size: 16px;
+  box-sizing: border-box;
+  min-height: 44px;
+}
+
+.field-between {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+}
+
+/* Công tắc kiểu iOS, port lich-nen.html L72-75 (`.switch`), tông tối. */
+.switch {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 48px;
+  height: 29px;
+  border-radius: 15px;
+  background: #3a3a44;
+  position: relative;
+  flex: none;
+  transition: background 0.2s;
+  cursor: pointer;
+  margin: 0;
+}
+
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  transition: left 0.2s;
+}
+
+.switch:checked {
+  background: #4c6ef5;
+}
+
+.switch:checked::after {
+  left: 21px;
+}
+
+.field-inline {
+  display: flex;
+  gap: 10px;
+}
+
+.field-inline .field {
+  flex: 1;
+  min-width: 0;
+}
+
+.sheet-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.btn {
+  min-height: 44px;
+  border-radius: 10px;
+  border: none;
+  font-size: 15px;
+  background: #2a2a33;
+  color: #f2f2f2;
+}
+
+.btn.block {
+  width: 100%;
+}
+
+.btn.danger {
+  background: #7a2020;
+  color: #fff;
+}
+
+.swatches {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.swatch {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+}
+
+.swatch-on {
+  border-color: #fff;
+}
+
+/* ---- việc cần làm (port lich-nen.html L275-286/L862-892) ---- */
+
+.addrow {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.addrow input {
+  flex: 1;
+  min-width: 0;
+  font-size: 16px;
+  min-height: 44px;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #0b0b0f;
+  color: #f2f2f2;
+}
+
+.addrow button {
+  min-height: 44px;
+  min-width: 44px;
+  border-radius: 8px;
+  border: none;
+  background: #4c6ef5;
+  color: #fff;
+  font-size: 15px;
+  padding: 0 14px;
+}
+
+.todo-list,
+.todo-done-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+}
+
+.todo-toggle {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  color: #fff;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.todo-toggle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid #8b8b95;
+  box-sizing: border-box;
+}
+
+.todo-toggle-done::before {
+  background: #4c6ef5;
+  border-color: #4c6ef5;
+}
+
+.todo-text,
+.todo-edit-input {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  background: none;
+  border: none;
+  color: #f2f2f2;
+  font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.todo-edit-input {
+  border-bottom: 1px solid #4c6ef5;
+  font-size: 16px;
+  padding: 4px 0;
+}
+
+.todo-item button {
+  min-width: 44px;
+  min-height: 44px;
+  background: none;
+  border: none;
+  color: #ccc;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.todo-item button:disabled {
+  opacity: 0.35;
+}
+
+.todo-done-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row.btnrow {
+  min-height: 44px;
+  background: none;
+  border: none;
+  color: #ccc;
+  text-align: left;
+  font-size: 14px;
+}
+
+/* ---- ghi chú ---- */
+
+.note-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.note-tab textarea {
+  width: 100%;
+  min-height: 120px;
+  font-size: 16px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #333;
+  background: #0b0b0f;
+  color: #f2f2f2;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+/* ---- toast (port lich-nen.html L166-168/L706) ---- */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(60px + env(safe-area-inset-bottom) + 16px);
+  transform: translateX(-50%) translateY(8px);
+  background: #f2f2f2;
+  color: #111;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  opacity: 0;
+  transition: 0.2s;
+  z-index: 45;
+  pointer-events: none;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%);
 }
