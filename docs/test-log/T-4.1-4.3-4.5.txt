@@ -1,0 +1,9 @@
+npm run check: 192 unit pass, 48 e2e pass (4 skipped webkit clipboard) -> ALL PASS
+npm run build + node scripts/size.mjs: exit 0, Total: 32.86 KB
+npx playwright test tests/e2e/share.spec.ts --repeat-each=3: 15 passed, 9 skipped (webkit clipboard-write), 0 fail
+vitest background.test.ts + i18n.test.ts: 15 pass
+git diff HEAD -- tests/: no modified test files, only new files (share.spec.ts, background.test.ts)
+grep ctx.filter in background.ts: only in comments, not used
+wallpaper.ts:48 if (state.design.bg.kind === 'photo' && bg) { ... } else fallback color
+store.ts diff: +1 action type (setShortcutName) + 1 reducer case; union line 40 rewritten (-1/+2) only to move semicolon, no existing action removed
+package.json diff: line 12 rewritten (-1/+2) to add trailing comma + new "size" script; no dependency changed

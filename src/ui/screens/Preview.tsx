@@ -5,7 +5,7 @@ import { DEVICES, customDevice, detectDevice } from '../../render/devices';
 import { renderWallpaper } from '../../render/wallpaper';
 import { loadBg } from '../../storage/db';
 import { toISODate } from '../../core/calendar';
-import { savePng } from '../../export/share';
+import { savePng, copyPng, openShortcut } from '../../export/share';
 import { exportBackup, importBackup } from '../../storage/backup';
 import { downloadBlob } from './events/util';
 import { t } from '../../core/i18n';
@@ -33,6 +33,7 @@ export function Preview({ store }: { store: Store }) {
   const [error, setError] = useState<string | null>(null);
   const [widthText, setWidthText] = useState(String(state.device.width));
   const [heightText, setHeightText] = useState(String(state.device.height));
+  const [shortcutNameText, setShortcutNameText] = useState(state.shortcutName);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const bgRef = useRef<Blob | null>(null);
   const urlRef = useRef<string | null>(null);
@@ -52,6 +53,10 @@ export function Preview({ store }: { store: Store }) {
     setWidthText(String(state.device.width));
     setHeightText(String(state.device.height));
   }, [state.device.width, state.device.height]);
+
+  useEffect(() => {
+    setShortcutNameText(state.shortcutName);
+  }, [state.shortcutName]);
 
   useEffect(() => {
     loadBg().then((b) => {
@@ -177,6 +182,31 @@ export function Preview({ store }: { store: Store }) {
     await savePng(blob, `lichkhoa-${today}.png`);
   }
 
+  function onShortcutNameInput(text: string) {
+    setShortcutNameText(text);
+    if (text.trim()) {
+      store.dispatch({ type: 'setShortcutName', shortcutName: text });
+    }
+  }
+
+  async function onCopy() {
+    if (!blob) return;
+    // copyPng gọi navigator.clipboard.write ngay đầu — không await gì trước đó (user activation).
+    const ok = await copyPng(blob);
+    showToast(ok ? t('preview.copyOk', lang) : t('preview.copyError', lang));
+  }
+
+  async function onSetWallpaper() {
+    if (!blob) return;
+    const ok = await copyPng(blob);
+    if (!ok) {
+      showToast(t('preview.copyError', lang));
+      return;
+    }
+    openShortcut(state.shortcutName);
+    showToast(t('preview.setWallpaperOk', lang));
+  }
+
   return (
     <div class="preview-screen">
       <div class="preview-core">
@@ -214,9 +244,31 @@ export function Preview({ store }: { store: Store }) {
         )}
         {error && <p class="error">{error}</p>}
         {imgUrl && <img data-testid="preview" src={imgUrl} alt={t('preview.previewAlt', lang)} />}
-        <button data-testid="save" onClick={() => void onSave()} disabled={!blob}>
-          {t('preview.save', lang)}
-        </button>
+        <label class="field shortcut-name-field">
+          {t('preview.shortcutName', lang)}
+          <input
+            type="text"
+            data-testid="shortcut-name"
+            value={shortcutNameText}
+            onInput={(e) => onShortcutNameInput((e.target as HTMLInputElement).value)}
+          />
+        </label>
+        <div class="row-actions">
+          <button data-testid="save" onClick={() => void onSave()} disabled={!blob}>
+            {t('preview.save', lang)}
+          </button>
+          <button data-testid="copy" onClick={() => void onCopy()} disabled={!blob}>
+            {t('preview.copy', lang)}
+          </button>
+          <button
+            data-testid="set-wallpaper"
+            class="btn-primary"
+            onClick={() => void onSetWallpaper()}
+            disabled={!blob}
+          >
+            {t('preview.setWallpaper', lang)}
+          </button>
+        </div>
       </div>
 
       <div class="settings-section">

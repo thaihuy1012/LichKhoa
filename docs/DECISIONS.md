@@ -70,6 +70,11 @@
 - Điểm 1: không thêm kiểm tra webkit; `dist/sw.js` có `NavigationRoute(createHandlerBoundToURL("index.html"))` → (D) là phép thử quyết định. Điểm 2: chấp nhận localStorage (readonly, 1 giờ, không script ngoài) → giới hạn đã biết. Điểm 3: giữ chữ ký `fetchEvents`; +1 request/lượt là rẻ. Điểm 4: T-4.2. Điểm 5: gộp vào T-4.0.
 - S4 mới (Tồn đọng): sau redirect kết nối thành công, `App.tsx` L72 chỉ tự đồng bộ khi cache > 30′ → nên ép đồng bộ ngay (truyền cache = null khi `authResult.ok`); làm ở phiếu M4 chạm `App.tsx`.
 
+## D-016 — Chủ dự án dời thử máy thật T-4.0 về cuối M4 (2026-09-14 · người quyết: Chủ dự án)
+- Hỏi theo D-015 (thử OAuth PWA iOS sớm) → Chủ dự án chọn "Để cuối M4". Ảnh mẫu đặt thử hình nền khóa: "Chưa thử" → gộp vào bài thử máy thật.
+- Hệ quả: T-4.4 (Guide/HUONG-DAN) viết theo thiết kế hiện tại (PWA standalone) + nhánh dự phòng "dùng trong Safari" (D-015), đánh dấu phần OAuth "chờ xác nhận máy thật"; T-4.0 chạy sau T-4.4, trước T-4.END; kết quả T-4.0 có thể sinh phiếu sửa Guide. `dist` cho Netlify build lại ngay trước T-4.0 (bản `E:\DuAn\lichkhoa-dist` hiện tại là HEAD `095e2cc`, sẽ cũ).
+- Rủi ro chấp nhận: nếu OAuth trong PWA không chạy thì phát hiện muộn; theo D-015 phương án dự phòng không đổi mã.
+
 ## D-013 — T-3.END: mock OAuth bằng trang HTML chuyển hướng; webkit bỏ bước offline+reload (2026-09-14 · người quyết: Quản lý)
 - Webkit (Playwright, Windows) không cho `route.fulfill` trả 302 → mock `accounts.google.com` bằng trang HTML tự `location.replace('<app>/#access_token=…&state=<từ query>')` — tương đương 302 về mặt luồng app.
 - `context.setOffline(true)` + `reload()` trên webkit → "WebKit encountered an internal error" (kiem-thu tái hiện độc lập: app thật lỗi; `data:` URL không lỗi; chromium không lỗi — `docs/test-log/webkit-offline.txt`). Chưa loại trừ được khả năng SW của app không phục vụ navigation trên WebKit → chấp nhận `test.skip(webkit)` riêng bước này ở T-3.END (chromium kiểm đủ), NHƯNG: T-4.END phải thử lại (cách khác: `serviceWorker` state + `caches.match('/index.html')` trong page trên webkit), và bài thử tay trên iPhone M4 phải có bước "bật Chế độ máy bay → mở icon → app mở, còn sự kiện Google đã cache".

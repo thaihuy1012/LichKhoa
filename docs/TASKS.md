@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.3 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 0/7
-- Đang làm: T-4.1 ∥ T-4.3 ∥ T-4.5 (DOING; chỉ T-4.3 build/e2e) · T-4.0 CHỜ CHỦ DỰ ÁN (Client ID + Netlify Drop + thử iPhone).
+- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 3/7
+- Đang làm: T-4.2 (DOING) → T-4.4 → T-4.0 (thử iPhone, Chủ dự án — D-016) → T-4.END.
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
@@ -399,7 +399,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Quan sát (D-015): (A) Google mở trong-app (có nút Xong/Done) hay văng sang Safari; (B) quay về PWA + "Đã kết nối" + danh sách lịch, hay kẹt trong-app / báo lỗi state; (C) chọn lịch → Đồng bộ → Agenda có sự kiện thật; (D) Chế độ máy bay → đóng hẳn app → mở icon → app mở, còn sự kiện; (E) sau > 1 giờ: "Kết nối lại" có phải đăng nhập lại không.
 - Kết quả ghi vào `docs/bao-cao/M4.md` mục "Thử máy thật". (B) thất bại → không đổi mã, Guide hướng dẫn dùng trong Safari (D-015). (D) thất bại → S2 tại T-4.END. Google chặn implicit → đổi SPEC, hỏi Chủ dự án.
 - Không chặn T-4.1/4.3/4.5; T-4.4 và T-4.END chờ kết quả.
-- Trạng thái: CHỜ CHỦ DỰ ÁN
+- 2026-09-14: Chủ dự án chọn "Để cuối M4" (D-016) → chạy sau T-4.4, trước T-4.END; gộp thêm bước đặt ảnh hình nền khóa thật (có đè đồng hồ/widget/nút?). Build lại `dist` ngay trước khi thử.
+- Trạng thái: TODO (cuối M4)
 
 ### T-4.1 — Ảnh nền: nạp, EXIF, thu nhỏ, cover-fit, mờ, tối
 - Phạm vi file: `src/render/background.ts` (mới: `loadPhoto(file, dev): Promise<Blob>`, `drawBackground(ctx, bg, design, dev)`), `src/render/wallpaper.ts`, `tests/unit/background.test.ts` (phần toán cover-fit thuần), `tests/fixtures/photo-4000x3000.jpg`.
@@ -408,7 +409,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Tiêu chí: [ ] test cover-fit (tỉ lệ ngang/dọc); [ ] `npm run check` pass (kiem-thu chạy).
 - Bổ sung (Quản lý 2026-09-14): `renderWallpaper(state, bg, today)` dùng `bg` khi `design.bg.kind==='photo'` và `bg` khác null (null → rơi về màu `bg.color`); thứ tự vẽ: ảnh (cover-fit) → mờ → tối → `buildOps`/paint. Toán cover-fit + tính kích thước thu nhỏ (≤ 2× thiết bị, giữ tỉ lệ) + bán kính/tỉ lệ hạ mẫu cho blur 0–3 tách thành hàm THUẦN để unit test; phần canvas giữ mỏng. `loadPhoto` trả Blob JPEG/PNG đã thu nhỏ. Fixture `photo-4000x3000.jpg` tự sinh (Playwright/canvas, ảnh gradient + chữ "TOP" ở mép trên để e2e kiểm hướng), dung lượng ≤ 1,5 MB. Mỗi yêu cầu → test; liệt kê trong báo cáo.
 - Lệnh kiểm tra (thợ): `npx tsc --noEmit; npm run test` — KHÔNG build/e2e (T-4.3 song song dùng build + cổng). Được chạy Playwright chỉ để sinh fixture (không `vite preview`).
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (coverFit/fitDownscale/blurDownsampleRatio thuần + loadPhoto/drawBackground; fixture 78 KB có "TOP") → kiem-thu PASS (không `ctx.filter`; wallpaper.ts:48 dùng ảnh) → Quản lý dựng 4 ảnh có ảnh nền (scratchpad `mau-anh-nen.cjs`): cover-fit đúng hướng, blur/dim đúng; hộp đen `boxAlpha=1` che ảnh → T-4.2 (D-012) → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-4.2 — Màn Thiết kế
 - Phạm vi file: `src/ui/screens/Design.tsx`, `src/ui/App.tsx`, `src/ui/styles.css`, `src/core/i18n/*.json`, `src/render/layout/common.ts` (nếu cần áp font/scale/boxAlpha đồng nhất).
@@ -425,7 +427,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Tiêu chí: [ ] `npm run check` pass.
 - Bổ sung (Quản lý 2026-09-14): `shortcutName` đã có trong `AppState` (mặc định `DatHinhNen`, SPEC §9) — ô cấu hình `shortcut-name` + nút `copy` ("Sao chép"), `set-wallpaper` ("Đặt hình nền") trên Preview, cạnh "Lưu ảnh"; nút "Đặt hình nền" là nút chính (accent), vẫn thấy không cần cuộn ở 428×926 cùng "Lưu ảnh" (test khóa `iphone13pm`). `copyPng` phải gọi `navigator.clipboard.write` ĐỒNG BỘ trong sự kiện chạm (Safari yêu cầu user activation — truyền `ClipboardItem({'image/png': promiseBlob})` nếu blob chưa sẵn). copy thất bại → toast + hướng dẫn "Lưu ảnh rồi dùng Shortcut với Get Latest Photos" (SPEC §8 rủi ro 2), không mở Shortcut. e2e (spec mới `tests/e2e/share.spec.ts`): chromium + `clipboard-write` → copy ghi `image/png`; `?test=1` → `__lastNav` bắt đầu `shortcuts://run-shortcut?name=DatHinhNen&input=clipboard`; tên Shortcut có dấu cách/tiếng Việt được encode. Phạm vi thêm `tests/e2e/share.spec.ts`, `src/ui/styles.css`.
 - Lệnh kiểm tra: `npm run check` (chỉ phiếu này được build/e2e trong đợt song song T-4.1 ∥ T-4.3 ∥ T-4.5)
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (copyPng giữ user-activation, openShortcut + `__lastNav`, nút copy/set-wallpaper + shortcut-name; ngoài phạm vi đã khai: `store.ts` thêm `setShortcutName`; share.spec 4 test, webkit skip vì không cấp clipboard-write) → kiem-thu PASS (repeat-each=3 15/0/9 skip) → commit. Chưa chụp UI Preview mới — gộp vào ảnh chụp T-4.2.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-4.4 — Màn Hướng dẫn + HUONG-DAN.md
 - Phạm vi file: `src/ui/screens/Guide.tsx`, `src/core/i18n/*.json`, `docs/HUONG-DAN.md`.
@@ -441,7 +444,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Tiêu chí: [ ] `npm run build; node scripts/size.mjs` in tổng và exit 0.
 - Bổ sung (Quản lý 2026-09-14): `size.mjs [thư-mục]` (mặc định `dist`) — để thợ kiểm được trên bản sao. Workflow: `actions/checkout`, `actions/setup-node` (Node 22, cache npm), `npm ci`, `npm run build` với `VITE_BASE`, `actions/upload-pages-artifact` (path `dist`), `actions/deploy-pages`; `permissions: pages: write, id-token: write`; chỉ chạy `workflow_dispatch` + push nhánh `main` (repo đang ở `master` → workflow không tự chạy; ghi chú trong file). KHÔNG chạy e2e trong workflow.
 - Lệnh kiểm tra (thợ): KHÔNG `npm run build` (T-4.3 song song đang build) — sao chép `dist` hiện có ra thư mục tạm rồi `node scripts/size.mjs <tạm>` → in tổng + exit 0; thử thêm 1 thư mục giả > 150 KB → exit 1. Kiểm cú pháp YAML bằng `node -e` đọc file (không cần thư viện) hoặc mắt thường. kiem-thu chạy `npm run build; node scripts/size.mjs` sau.
-- Model: haiku · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (size.mjs [dir], pages.yml workflow_dispatch + push main, script `size`) → kiem-thu PASS (build + size 32,86 KB exit 0; package.json chỉ thêm 1 script) → commit.
+- Model: haiku · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-4.END — Kiểm thử tích hợp M4
 - Phạm vi file: `tests/e2e/m4-design.spec.ts`, `tests/e2e/m4-export.spec.ts`, `tests/e2e/m4-offline.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.

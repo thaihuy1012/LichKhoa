@@ -143,21 +143,49 @@ select option {
   margin: 0 auto;
 }
 
-/* Chỉ nút "Lưu ảnh" (trong .preview-core) -- KHÔNG dùng .preview-screen ở đây nữa vì
-   .settings-section (T-2.9) cũng nằm trong .preview-screen và có nút riêng (.seg-btn/.btn). */
+/* Nút trong .preview-core ("Lưu ảnh"/"Sao chép"/"Đặt hình nền", T-4.3) -- KHÔNG dùng
+   .preview-screen ở đây nữa vì .settings-section (T-2.9) cũng nằm trong .preview-screen
+   và có nút riêng (.seg-btn/.btn). Mặc định phụ (xám); .btn-primary là nút chính (accent). */
 .preview-core button {
   padding: 10px;
   border-radius: 8px;
   border: none;
-  background: #4c6ef5;
+  background: #33333d;
   color: white;
   font-size: 16px;
   min-height: 44px;
   flex-shrink: 0;
 }
 
+.preview-core button.btn-primary {
+  background: #4c6ef5;
+}
+
 .preview-core button:disabled {
   background: #444;
+}
+
+.row-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.row-actions button {
+  flex: 1;
+  min-width: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.shortcut-name-field {
+  flex-shrink: 0;
+}
+
+.shortcut-name-field input {
+  font-size: 16px;
+  min-height: 44px;
+  box-sizing: border-box;
 }
 
 .error {

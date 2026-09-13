@@ -37,7 +37,8 @@ export type Action =
   | { type: 'setGoogleClientId'; clientId: string }
   | { type: 'setGoogleCalendarIds'; calendarIds: string[] }
   | { type: 'setGoogleCache'; cache: { events: Occurrence[]; fetchedAt: number } | null }
-  | { type: 'disconnectGoogle' };
+  | { type: 'disconnectGoogle' }
+  | { type: 'setShortcutName'; shortcutName: string };
 
 function nextId(explicit?: string): string {
   if (explicit) return explicit;
@@ -128,6 +129,8 @@ export function reducer(state: AppState, action: Action): AppState {
       return { ...state, google: { ...state.google, cache: action.cache } };
     case 'disconnectGoogle':
       return { ...state, google: { ...state.google, calendarIds: [], cache: null } };
+    case 'setShortcutName':
+      return { ...state, shortcutName: action.shortcutName };
     default:
       return state;
   }
