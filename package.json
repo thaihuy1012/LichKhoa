@@ -9,7 +9,8 @@
     "preview": "vite preview --port 4173 --strictPort",
     "test": "cross-env TZ=Asia/Ho_Chi_Minh vitest run && cross-env TZ=UTC vitest run",
     "e2e": "playwright test",
-    "check": "tsc --noEmit && npm run test && npm run build && playwright test"
+    "check": "tsc --noEmit && npm run test && npm run build && playwright test",
+    "size": "node scripts/size.mjs"
   },
   "dependencies": {
     "preact": "10.29.8",
