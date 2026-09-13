@@ -1,0 +1,10 @@
+{
+  "items": [
+    {
+      "id": "sync-ev1",
+      "summary": "Fixture Dong Bo",
+      "start": { "date": "{{START}}" },
+      "end": { "date": "{{END}}" }
+    }
+  ]
+}

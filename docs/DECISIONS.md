@@ -62,7 +62,10 @@
 - Hợp đồng (SPEC §5): `Repeat` + `weekdays`; `LocalEvent.alarmMin?`; `Todo.due?`; `Note`; `AppState.notes`; bỏ `DesignConfig.noteText`; `RenderData.noteTitle?` (giữ `note: string` để test layout khóa không phải sửa); vẫn `version: 1` nhờ `normalizeState`.
 - Phiếu: T-2.10 (lõi) → T-2.11 (hình nền) ∥ T-2.12 (UI), trong M2. T-2.7 đang chạy được nhắn bỏ phần ghi chú đơn. Được sửa test khóa chỉ ở chỗ `noteText`/`setNote`, phải khai báo.
 
-## D-012 — Duyệt M2 tại `b438b60`; trả lời 6 điểm băn khoăn (2026-09-14 · người quyết: Kiến trúc sư)
+## D-013 — T-3.END: mock OAuth bằng trang HTML chuyển hướng; webkit bỏ bước offline+reload (2026-09-14 · người quyết: Quản lý)
+- Webkit (Playwright, Windows) không cho `route.fulfill` trả 302 → mock `accounts.google.com` bằng trang HTML tự `location.replace('<app>/#access_token=…&state=<từ query>')` — tương đương 302 về mặt luồng app.
+- `context.setOffline(true)` + `reload()` trên webkit → "WebKit encountered an internal error" (kiem-thu tái hiện độc lập: app thật lỗi; `data:` URL không lỗi; chromium không lỗi — `docs/test-log/webkit-offline.txt`). Chưa loại trừ được khả năng SW của app không phục vụ navigation trên WebKit → chấp nhận `test.skip(webkit)` riêng bước này ở T-3.END (chromium kiểm đủ), NHƯNG: T-4.END phải thử lại (cách khác: `serviceWorker` state + `caches.match('/index.html')` trong page trên webkit), và bài thử tay trên iPhone M4 phải có bước "bật Chế độ máy bay → mở icon → app mở, còn sự kiện Google đã cache".
+ tại `b438b60`; trả lời 6 điểm băn khoăn (2026-09-14 · người quyết: Kiến trúc sư)
 - Bối cảnh: M2 đạt đủ tiêu chí SPEC v1.3 §6 (KTS tự chạy `npm run check`: 132×2 unit, 32 e2e, exit 0; test M1 không có dòng xóa). SPEC v1.3 do Quản lý viết được KTS soát: đúng ý D-011, chỉ chỉnh chữ §3/§5/§9.
 - Trần agenda: 12 tính theo **dòng sự kiện**, tiêu đề ngày không tính (không trần theo chiều cao — mật độ phải ổn định giữa thiết bị/scale/ghi chú; đòn bẩy của người dùng là `agendaDays` và `scale`). Lý do: 7 ngày × 1 sự kiện hiện chỉ 5 + "+2" là quá ít; 20 dòng tối đa vẫn nằm trong vùng nhờ tự co. → T-2.15.
 - `boxAlpha`/nền đen: giữ đến T-4.2 (khi có ảnh thật mới quyết mặc định; khuyến nghị 0.35 chỉ khi `bg.kind='photo'`). Ảnh mẫu cho Chủ dự án: Quản lý hỏi khi tiện, không chặn.

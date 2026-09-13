@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.3 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 3/4 · M4: 0/6
-- Đang làm: T-3.END (DOING, sonnet). T-3.1 ✔, T-3.2 ✔, T-3.3 ✔. e2e M3 dùng mock, chưa cần Client ID thật.
+- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 4/4 (chờ duyệt) · M4: 0/6
+- Đang làm: Giai đoạn 3 — duyệt M3 (báo cáo `docs/bao-cao/M3.md`, soát chéo Gemini, Kiến trúc sư).
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
@@ -373,7 +373,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Bổ sung (Quản lý 2026-09-14): `data-testid` từ T-3.3: `sync-clientid`, `sync-connect`, `sync-reconnect`, `sync-status`, `sync-calendar-list`, `sync-cal-<id>`, `sync-now`, `sync-last`, `sync-disconnect`, `sync-reauth-msg`. Luồng redirect: sau khi quay về app ở tab bất kỳ, App tự xử lý hash và mở tab Đồng bộ (T-3.3 lượt 2) — test phải khẳng định điều này (mở ở tab Preview mặc định). Tự đồng bộ khi mở app (cache > 30′) cũng nên có 1 test (đặt `fetchedAt` cũ qua IndexedDB, reload → request calendar được gọi).
   - Vướng đã biết: webkit — service worker nuốt fetch trước `page.route` (`scripts/chup.cjs` phải `serviceWorkers:'block'`), nhưng bước "offline + reload vẫn hiện" CẦN service worker. Thử theo thứ tự: (1) `context.route` thay `page.route`; (2) tách: phần mock chạy với `serviceWorkers:'block'`, phần offline chạy trong context cho phép SW, seed IndexedDB bằng cache từ fixture rồi `setOffline(true)` + reload; (3) nếu webkit vẫn không làm được bước offline → chỉ chromium cho bước đó bằng `test.skip(browserName==='webkit', '<lý do>')` NGAY TRONG test mới (khai báo, không đụng test cũ) — Quản lý duyệt. Không sửa `vite.config.ts`/SW để lách.
 - Lệnh kiểm tra: `npm run check`; `npx playwright test tests/e2e/m3-google.spec.ts --repeat-each=3`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (m3-google.spec + fixture events-sync ngày động; mock OAuth bằng trang HTML chuyển hướng vì webkit không fulfill 302; `test.skip(webkit)` riêng bước offline+reload; không sửa src) → kiem-thu PASS (check 37 pass/1 skip; repeat-each=3 15/0/3 skip) + tái hiện độc lập lỗi webkit offline (D-013) → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ---
 ## M4 — Ảnh nền & tùy biến, một chạm Shortcut, hướng dẫn
@@ -419,6 +420,6 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
 ### T-4.END — Kiểm thử tích hợp M4
 - Phạm vi file: `tests/e2e/m4-design.spec.ts`, `tests/e2e/m4-export.spec.ts`, `tests/e2e/m4-offline.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.
-- Tiêu chí: [ ] tải ảnh fixture → preview đổi, kích thước bằng thiết bị; blur=2, dim=0.4, position=bottom, font=serif → hash PNG khác sau mỗi bước; `__lastOps` trong vùng an toàn; [ ] chromium + `clipboard-write`: "Sao chép" ghi `image/png`; "Đặt hình nền" → `__lastNav` bắt đầu `shortcuts://run-shortcut?name=`; [ ] offline reload vẫn mở app; [ ] size < 150 KB; [ ] `npm run check` pass chromium + webkit.
+- Tiêu chí: [ ] tải ảnh fixture → preview đổi, kích thước bằng thiết bị; blur=2, dim=0.4, position=bottom, font=serif → hash PNG khác sau mỗi bước; `__lastOps` trong vùng an toàn; [ ] chromium + `clipboard-write`: "Sao chép" ghi `image/png`; "Đặt hình nền" → `__lastNav` bắt đầu `shortcuts://run-shortcut?name=`; [ ] offline reload vẫn mở app (webkit: xem D-013 — thử cách khác trước khi skip); [ ] size < 150 KB; [ ] `npm run check` pass chromium + webkit; [ ] bài thử tay iPhone (HUONG-DAN) có bước Chế độ máy bay → mở icon → app mở, còn sự kiện Google cache (D-013).
 - Lệnh kiểm tra: `npm run check; node scripts/size.mjs`
 - Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO

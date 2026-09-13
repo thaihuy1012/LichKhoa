@@ -1,0 +1,15 @@
+Kiem chung doc lap tuyen bo cua Tho: WebKit + context.setOffline(true) + page.reload() gay loi noi bo engine.
+
+(a) App that (http://localhost:4173/, sau khi cho serviceWorker.ready) + setOffline(true) + reload():
+[webkit] page.reload: WebKit encountered an internal error
+Call log:
+  - waiting for navigation until "load"
+
+(b) about:blank -> data:text/html,<h1>hi</h1> + setOffline(true) + reload() tren webkit:
+[webkit] OK no error
+
+(c) Cung kich ban tren chromium (ca app that lan data: url):
+[chromium] (a) app real: OK no error
+[chromium] (b) data-url: OK no error
+
+Ket luan: loi chi xay ra tren webkit khi reload trang thuc su (co network/SW), khong xay ra voi trang data: tinh tren cung engine, va khong xay ra tren chromium o ca hai truong hop -> xac nhan la loi/gioi han cua Playwright-WebKit engine khi offline+reload, khong lien quan app.
