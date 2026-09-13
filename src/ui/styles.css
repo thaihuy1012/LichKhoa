@@ -830,3 +830,22 @@ select option {
   opacity: 1;
   transform: translateX(-50%);
 }
+
+/* Màn Đồng bộ (T-3.3): tái dùng .field/.field-between/.switch/.btn/.hint. */
+.sync-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 16px 24px;
+  overflow-y: auto;
+}
+
+.sync-calendar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sync-calendar-item {
+  min-height: 44px;
+}

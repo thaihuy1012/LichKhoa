@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildAuthUrl, parseFragment, newState, saveToken, getToken, clearToken } from '../../src/google/oauth';
+import { buildAuthUrl, parseFragment, newState, saveToken, getToken, clearToken, consumeState } from '../../src/google/oauth';
 
 class MapStorage {
   private map = new Map<string, string>();
@@ -45,6 +45,20 @@ describe('newState', () => {
     expect(s1).not.toBe(s2);
     expect(s1).toMatch(/^[A-Za-z0-9_-]+$/);
     expect(storage.getItem('google_oauth_state')).toBe(s2);
+  });
+});
+
+describe('consumeState (T-3.3)', () => {
+  it('đọc state đã lưu bởi newState rồi xóa (dùng 1 lần)', () => {
+    const storage = new MapStorage();
+    const s = newState(storage);
+    expect(consumeState(storage)).toBe(s);
+    expect(consumeState(storage)).toBeNull(); // đã bị xóa
+  });
+
+  it('không có state đã lưu -> null', () => {
+    const storage = new MapStorage();
+    expect(consumeState(storage)).toBeNull();
   });
 });
 

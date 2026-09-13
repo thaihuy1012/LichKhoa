@@ -1,4 +1,4 @@
-import type { AppState, DesignConfig, DeviceSpec, ISODate, LocalEvent, Note, Todo } from '../core/model';
+import type { AppState, DesignConfig, DeviceSpec, ISODate, LocalEvent, Note, Occurrence, Todo } from '../core/model';
 import { defaultState, normalizeState } from '../core/model';
 import { cmpTodo } from '../core/collect';
 import { saveState } from '../storage/db';
@@ -33,7 +33,11 @@ export type Action =
   | { type: 'deleteNote'; id: string }
   | { type: 'pinNote'; id: string; pinned: boolean }
   | { type: 'replaceState'; state: unknown }
-  | { type: 'resetAll' };
+  | { type: 'resetAll' }
+  | { type: 'setGoogleClientId'; clientId: string }
+  | { type: 'setGoogleCalendarIds'; calendarIds: string[] }
+  | { type: 'setGoogleCache'; cache: { events: Occurrence[]; fetchedAt: number } | null }
+  | { type: 'disconnectGoogle' };
 
 function nextId(explicit?: string): string {
   if (explicit) return explicit;
@@ -116,6 +120,14 @@ export function reducer(state: AppState, action: Action): AppState {
     }
     case 'resetAll':
       return defaultState(state.device);
+    case 'setGoogleClientId':
+      return { ...state, google: { ...state.google, clientId: action.clientId } };
+    case 'setGoogleCalendarIds':
+      return { ...state, google: { ...state.google, calendarIds: action.calendarIds } };
+    case 'setGoogleCache':
+      return { ...state, google: { ...state.google, cache: action.cache } };
+    case 'disconnectGoogle':
+      return { ...state, google: { ...state.google, calendarIds: [], cache: null } };
     default:
       return state;
   }

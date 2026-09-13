@@ -20,6 +20,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - ~~S4 · T-2.7 · `EventsTab.tsx` L93 durationMin ngầm 60~~ → đã sửa trong T-2.12.
 - ~~S4 · T-2.12 · ô todo-due trống không nhãn~~ → đã sửa T-2.14.
 - S4 · T-2.14 · `App.tsx` L52 "Đang tải…" cứng tiếng Việt (hiện trước khi nạp state — chưa biết ngôn ngữ); làm khi có phiếu chạm App.tsx.
+- S4 · T-3.3 · nút `sync-connect` / `sync-now` dùng kiểu nút phụ (xám) dù là thao tác chính → kiểu accent như "Lưu ảnh"; làm ở T-4.2 (styles).
 - S4 · T-3.1 · `parseFragment` giải mã `error` 2 lần (`URLSearchParams` đã giải mã) và trả `{error}` không kiểm `state` — vô hại với mã lỗi ASCII của Google; sửa nếu có phiếu chạm oauth.ts.
 - ~~S4 · T-2.5 · `eventToIcs` chưa gập dòng > 75 byte~~ → đã sửa T-2.15.
 
@@ -363,7 +364,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Tiêu chí: [ ] `npm run check` pass; [ ] reducer test cho action google.
 - Bổ sung (Quản lý, review T-3.1): gọi `newState(localStorage)` (không dùng sessionStorage mặc định — PWA standalone iOS có thể mất sessionStorage qua redirect Google, SPEC §8 rủi ro 1); xóa `state` ngay sau khi `parseFragment` (dùng 1 lần, kể cả khi lỗi); `redirectUri` = `location.origin + location.pathname` (khớp `VITE_BASE`, có `/` cuối). 401 → `clearToken()` + trạng thái "Kết nối lại".
 - Bổ sung (D-012): `App.tsx` "Đang tải…" qua `t()` (dùng `navigator.language` bắt đầu `vi` → vi, khác → en khi chưa có state); đóng S4 T-2.14. Quản lý chụp webkit tab Đồng bộ (3 trạng thái: chưa kết nối / đã kết nối có danh sách lịch / "Kết nối lại") trước khi DONE — mở rộng `scripts/chup.cjs` thêm tab `sync` nếu cần (phạm vi thêm `scripts/chup.cjs`).
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Nhật ký: 2026-09-14 lượt 1: DONE (Sync.tsx, sync.ts thuần, action google, "Đang tải…" i18n, chup sync; 166×2, 32 e2e). Review (trước kiem-thu): xử lý hash OAuth + tự đồng bộ nằm trong Sync.tsx → chỉ chạy khi mở tab Đồng bộ (redirect về tab Preview không nhận token; TH1 không tự đồng bộ); Sync.tsx chép hằng `google_oauth_state` → trả thợ: đưa lên App qua hàm điều phối trong sync.ts, export `consumeState` ở oauth.ts, thêm unit test (Lần thử 1/3). Phạm vi thêm: `src/google/oauth.ts` (chỉ thêm export), `tests/unit/oauth.test.ts`, `tests/unit/sync.test.ts`. Lượt 2: `consumeState`, `handleAuthRedirect` + `autoSyncIfNeeded` gọi 1 lần ở App (token/lỗi → mở tab Đồng bộ), Sync.tsx chỉ UI; +13 test (177×2) → kiem-thu PASS (toàn bộ e2e repeat-each=2 64/64) → chụp 3 trạng thái bằng `scripts/chup.cjs sync`: đạt → commit. Lưu ý cho T-3.END: webkit — service worker nuốt fetch trước `page.route` (chup.cjs phải `serviceWorkers:'block'`).
+- Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
 
 ### T-3.END — Kiểm thử tích hợp M3
 - Phạm vi file: `tests/e2e/m3-google.spec.ts`, `tests/fixtures/google/*.json`; sửa tích hợp nhỏ `src/**` phải khai báo.

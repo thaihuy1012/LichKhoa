@@ -1,0 +1,7 @@
+npm run check: tsc OK; vitest (TZ Asia/HCM + UTC) 177/177 pass mỗi lượt; vite build OK; playwright 32/32 pass (chromium+webkit).
+npx playwright test --repeat-each=2: 64/64 pass.
+git diff -U0 tests/: chỉ đổi dòng import (thêm consumeState/vi/afterEach) + thêm test mới, không xóa assertion.
+git diff HEAD tests/e2e/: rỗng.
+git diff -U0 src/google/oauth.ts: chỉ warning CRLF, không có nội dung xóa (không match -[^-]).
+Select-String client_secret: rỗng.
+git status --porcelain: đúng phạm vi phiếu (Sync.tsx, sync.ts mới; App.tsx, store.ts, styles.css, i18n, oauth.ts, chup.cjs, test files sửa).

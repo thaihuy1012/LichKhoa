@@ -107,3 +107,10 @@ export function getToken(
 export function clearToken(storage: StorageLike | undefined = defaultLocalStorage()): void {
   storage?.removeItem(TOKEN_KEY);
 }
+
+/** Đọc `state` đã lưu bởi `newState` rồi xóa ngay (dùng 1 lần khi xử lý redirect Google, kể cả khi lỗi). */
+export function consumeState(storage: StorageLike | undefined = defaultLocalStorage()): string | null {
+  const value = storage?.getItem(STATE_KEY) ?? null;
+  storage?.removeItem(STATE_KEY);
+  return value;
+}

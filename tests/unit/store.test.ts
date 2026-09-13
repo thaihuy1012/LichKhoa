@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { reducer } from '../../src/ui/store';
+import { shouldAutoSync, performSync, syncRange, handleAuthRedirect, autoSyncIfNeeded } from '../../src/ui/sync';
 import { defaultState, defaultDesign } from '../../src/core/model';
 import type { DeviceSpec } from '../../src/core/model';
 
@@ -182,5 +183,200 @@ describe('reducer', () => {
     const reset = reducer(withData, { type: 'resetAll' });
     expect(reset).toEqual(defaultState(device));
     expect(reset.device).toEqual(device);
+  });
+
+  it('T-3.3: setGoogleClientId/setGoogleCalendarIds/setGoogleCache cập nhật đúng trường, không mutate state cũ', () => {
+    const state = defaultState(device);
+
+    const s1 = reducer(state, { type: 'setGoogleClientId', clientId: 'abc.apps.googleusercontent.com' });
+    expect(s1.google.clientId).toBe('abc.apps.googleusercontent.com');
+    expect(state.google.clientId).toBe('');
+
+    const s2 = reducer(s1, { type: 'setGoogleCalendarIds', calendarIds: ['cal1', 'cal2'] });
+    expect(s2.google.calendarIds).toEqual(['cal1', 'cal2']);
+    expect(s1.google.calendarIds).toEqual([]);
+
+    const cache = { events: [], fetchedAt: 12345 };
+    const s3 = reducer(s2, { type: 'setGoogleCache', cache });
+    expect(s3.google.cache).toEqual(cache);
+    expect(s2.google.cache).toBeNull();
+    expect(s3.google.clientId).toBe('abc.apps.googleusercontent.com'); // giữ nguyên phần khác
+  });
+
+  it('T-3.3: disconnectGoogle xóa calendarIds + cache, giữ clientId', () => {
+    const state = defaultState(device);
+    const connected = {
+      ...state,
+      google: { clientId: 'abc.apps.googleusercontent.com', calendarIds: ['cal1'], cache: { events: [], fetchedAt: 1 } },
+    };
+    const next = reducer(connected, { type: 'disconnectGoogle' });
+    expect(next.google.calendarIds).toEqual([]);
+    expect(next.google.cache).toBeNull();
+    expect(next.google.clientId).toBe('abc.apps.googleusercontent.com');
+    expect(connected.google.calendarIds).toEqual(['cal1']); // không mutate
+  });
+});
+
+describe('sync.ts (T-3.3, điều phối thuần)', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('shouldAutoSync: không token -> false; không cache -> true; cache mới (<30p) -> false; cache cũ (>30p) -> true', () => {
+    const now = 1_000_000;
+    expect(shouldAutoSync(false, null, now)).toBe(false);
+    expect(shouldAutoSync(true, null, now)).toBe(true);
+    expect(shouldAutoSync(true, { fetchedAt: now - 10 * 60_000 }, now)).toBe(false);
+    expect(shouldAutoSync(true, { fetchedAt: now - 31 * 60_000 }, now)).toBe(true);
+  });
+
+  it('syncRange: [today-1, today+60]', () => {
+    expect(syncRange('2026-03-10')).toEqual({ timeMin: '2026-03-09', timeMax: '2026-05-09' });
+  });
+
+  it('performSync: fetch ok -> {ok:true, events, fetchedAt}', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string) => {
+        if (url.includes('calendarList')) {
+          return new Response(JSON.stringify({ items: [{ id: 'c1', summary: 'C1', backgroundColor: '#fff' }] }));
+        }
+        return new Response(
+          JSON.stringify({ items: [{ id: 'e1', summary: 'Ev', start: { date: '2026-03-10' } }] }),
+        );
+      }),
+    );
+    const result = await performSync('tok', ['c1'], '2026-03-10', 5000);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.fetchedAt).toBe(5000);
+      expect(result.events).toEqual([
+        { id: 'google-c1-e1', sourceId: 'e1', source: 'google', title: 'Ev', date: '2026-03-10', allDay: true, color: '#fff' },
+      ]);
+    }
+  });
+
+  it('performSync: fetch 401 -> {ok:false, reauth:true}', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('{}', { status: 401 })));
+    const result = await performSync('tok', ['c1'], '2026-03-10');
+    expect(result).toEqual({ ok: false, reauth: true });
+  });
+
+  it('performSync: lỗi mạng -> {ok:false, reauth:false, error}', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        throw new Error('network down');
+      }),
+    );
+    const result = await performSync('tok', ['c1'], '2026-03-10');
+    expect(result).toEqual({ ok: false, reauth: false, error: 'network down' });
+  });
+});
+
+describe('handleAuthRedirect (T-3.3, chạy 1 lần ở App.tsx, không phụ thuộc tab)', () => {
+  it('hash rỗng/không liên quan -> handled:false, không gọi consumeState/saveToken', () => {
+    const consumeState = vi.fn(() => 'abc');
+    const saveToken = vi.fn();
+    expect(handleAuthRedirect('', { consumeState, saveToken })).toEqual({ handled: false });
+    expect(handleAuthRedirect('#foo=bar', { consumeState, saveToken })).toEqual({ handled: false });
+    expect(consumeState).not.toHaveBeenCalled();
+    expect(saveToken).not.toHaveBeenCalled();
+  });
+
+  it('state đúng -> lưu token, trả ok:true', () => {
+    const saveToken = vi.fn();
+    const result = handleAuthRedirect('#access_token=tok123&expires_in=3600&state=abc', {
+      consumeState: () => 'abc',
+      saveToken,
+    });
+    expect(result).toEqual({ handled: true, ok: true });
+    expect(saveToken).toHaveBeenCalledWith('tok123', 3600);
+  });
+
+  it('state sai -> không lưu token, trả ok:false (bỏ qua)', () => {
+    const saveToken = vi.fn();
+    const result = handleAuthRedirect('#access_token=tok123&expires_in=3600&state=abc', {
+      consumeState: () => 'khac',
+      saveToken,
+    });
+    expect(result).toEqual({ handled: true, ok: false, error: 'invalid_state' });
+    expect(saveToken).not.toHaveBeenCalled();
+  });
+
+  it('#error= -> trả ok:false kèm error, không lưu token', () => {
+    const saveToken = vi.fn();
+    const result = handleAuthRedirect('#error=access_denied&state=abc', {
+      consumeState: () => 'abc',
+      saveToken,
+    });
+    expect(result).toEqual({ handled: true, ok: false, error: 'access_denied' });
+    expect(saveToken).not.toHaveBeenCalled();
+  });
+});
+
+describe('autoSyncIfNeeded (T-3.3)', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('không có token -> không gọi fetch, ran:false', async () => {
+    vi.stubGlobal('fetch', vi.fn());
+    const outcome = await autoSyncIfNeeded(null, ['c1'], '2026-03-10', 1000, {
+      getToken: () => null,
+      clearToken: vi.fn(),
+    });
+    expect(outcome).toEqual({ ran: false });
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('cache mới (<30 phút) -> không gọi fetch, ran:false', async () => {
+    vi.stubGlobal('fetch', vi.fn());
+    const now = 1_000_000;
+    const outcome = await autoSyncIfNeeded({ fetchedAt: now - 60_000 }, ['c1'], '2026-03-10', now, {
+      getToken: () => 'tok',
+      clearToken: vi.fn(),
+    });
+    expect(outcome).toEqual({ ran: false });
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('cache cũ (>30 phút) -> gọi fetch, ran:true, ok:true', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string) =>
+        url.includes('calendarList')
+          ? new Response(JSON.stringify({ items: [] }))
+          : new Response(JSON.stringify({ items: [] })),
+      ),
+    );
+    const now = 1_000_000;
+    const outcome = await autoSyncIfNeeded({ fetchedAt: now - 31 * 60_000 }, ['c1'], '2026-03-10', now, {
+      getToken: () => 'tok',
+      clearToken: vi.fn(),
+    });
+    expect(outcome.ran).toBe(true);
+    if (outcome.ran) expect(outcome.result).toEqual({ ok: true, events: [], fetchedAt: now });
+  });
+
+  it('401 -> clearToken() được gọi, ran:true, ok:false, reauth:true', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('{}', { status: 401 })));
+    const clearToken = vi.fn();
+    const outcome = await autoSyncIfNeeded(null, ['c1'], '2026-03-10', 1000, { getToken: () => 'tok', clearToken });
+    expect(outcome).toEqual({ ran: true, result: { ok: false, reauth: true } });
+    expect(clearToken).toHaveBeenCalledOnce();
+  });
+
+  it('lỗi mạng -> giữ cache, không gọi clearToken', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        throw new Error('offline');
+      }),
+    );
+    const clearToken = vi.fn();
+    const outcome = await autoSyncIfNeeded(null, ['c1'], '2026-03-10', 1000, { getToken: () => 'tok', clearToken });
+    expect(outcome).toEqual({ ran: true, result: { ok: false, reauth: false, error: 'offline' } });
+    expect(clearToken).not.toHaveBeenCalled();
   });
 });

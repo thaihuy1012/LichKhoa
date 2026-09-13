@@ -1,12 +1,16 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import type { AppState } from '../core/model';
 import { defaultState } from '../core/model';
 import { DEVICES, detectDevice } from '../render/devices';
 import { loadState } from '../storage/db';
 import { t } from '../core/i18n';
+import { toISODate } from '../core/calendar';
+import { consumeState, saveToken, getToken, clearToken } from '../google/oauth';
+import { handleAuthRedirect, autoSyncIfNeeded } from './sync';
 import { createStore, type Store } from './store';
 import { Preview } from './screens/Preview';
 import { Events } from './screens/Events';
+import { Sync, type AuthNotice } from './screens/Sync';
 
 const TABS = [
   { id: 'preview' },
@@ -30,6 +34,8 @@ export function App() {
   const [store, setStore] = useState<Store | null>(null);
   const [tab, setTab] = useState<TabId>('preview');
   const [lang, setLang] = useState<AppState['design']['lang']>('vi');
+  const [authNotice, setAuthNotice] = useState<AuthNotice | null>(null);
+  const bootedRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -48,8 +54,36 @@ export function App() {
     return store.subscribe(update);
   }, [store]);
 
+  // Chạy 1 lần khi state đã nạp, KHÔNG phụ thuộc tab đang mở (SPEC §2 TH1): xử lý redirect Google
+  // (nếu có #access_token/#error) rồi tự đồng bộ nếu token còn hạn và cache cũ/không có.
+  useEffect(() => {
+    if (!store || bootedRef.current) return;
+    bootedRef.current = true;
+
+    const authResult = handleAuthRedirect(window.location.hash, { consumeState, saveToken });
+    if (authResult.handled) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      setAuthNotice(authResult.ok ? { ok: true } : { ok: false, error: authResult.error });
+      setTab('sync'); // để người dùng thấy ngay danh sách lịch / lỗi
+    }
+
+    const s = store.getState();
+    const today = toISODate(new Date());
+    void autoSyncIfNeeded(s.google.cache, s.google.calendarIds, today, Date.now(), { getToken, clearToken }).then(
+      (outcome) => {
+        if (outcome.ran && outcome.result.ok) {
+          store.dispatch({
+            type: 'setGoogleCache',
+            cache: { events: outcome.result.events, fetchedAt: outcome.result.fetchedAt },
+          });
+        }
+      },
+    );
+  }, [store]);
+
   if (!store) {
-    return <div class="app">Đang tải…</div>;
+    const detectedLang = navigator.language?.toLowerCase().startsWith('vi') ? 'vi' : 'en';
+    return <div class="app">{t('preview.loading', detectedLang)}</div>;
   }
 
   return (
@@ -58,7 +92,9 @@ export function App() {
         {tab === 'preview' && <Preview store={store} />}
         {tab === 'events' && <Events store={store} />}
         {tab === 'design' && <div class="placeholder">{t('common.comingSoon', lang)}</div>}
-        {tab === 'sync' && <div class="placeholder">{t('common.comingSoon', lang)}</div>}
+        {tab === 'sync' && (
+          <Sync store={store} authNotice={authNotice} onAuthNoticeShown={() => setAuthNotice(null)} />
+        )}
         {tab === 'guide' && <div class="placeholder">{t('common.comingSoon', lang)}</div>}
       </main>
       <nav class="tabbar">

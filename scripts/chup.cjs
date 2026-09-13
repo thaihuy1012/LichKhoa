@@ -1,5 +1,5 @@
-// Chụp màn hình: tab Sự kiện (events) hoặc tab Preview (preview) trên webkit iPhone 13 Pro Max.
-// Dùng: npm run build; node scripts/chup.cjs <events|preview> <thư-mục-ra> [--lang en] [--port N]
+// Chụp màn hình: tab Sự kiện (events), Preview (preview) hoặc Đồng bộ (sync) trên webkit iPhone 13 Pro Max.
+// Dùng: npm run build; node scripts/chup.cjs <events|preview|sync> <thư-mục-ra> [--lang en] [--port N]
 const { createRequire } = require('module');
 const path = require('path');
 const repoRoot = path.resolve(__dirname, '..');
@@ -33,7 +33,13 @@ const addDays = (n) => { const d = new Date(); d.setDate(d.getDate() + n); retur
   try {
     for (let i = 0; i < 60; i++) { try { const r = await fetch(`http://localhost:${PORT}/`); if (r.ok) break; } catch {} await new Promise((r) => setTimeout(r, 500)); }
     const browser = await webkit.launch();
-    const ctx = await browser.newContext({ ...devices['iPhone 13 Pro Max'], viewport: { width: 428, height: 926 } });
+    // serviceWorkers:'block' — nếu không, SW của vite-plugin-pwa nhận fetch trước và page.route
+    // (dùng ở mode 'sync' để giả REST Google) không chặn được request bên trong SW trên webkit.
+    const ctx = await browser.newContext({
+      ...devices['iPhone 13 Pro Max'],
+      viewport: { width: 428, height: 926 },
+      serviceWorkers: 'block',
+    });
     const page = await ctx.newPage();
     const url = `http://localhost:${PORT}/`;
     await page.goto(url);
@@ -57,7 +63,7 @@ const addDays = (n) => { const d = new Date(); d.setDate(d.getDate() + n); retur
       ],
       notes: [{ id: 'n1', title: 'Ghi chú cũ', body: 'Mua quà sinh nhật', pinned: false, updated: 1 }, { id: 'n2', title: 'Việc tuần này', body: 'Nhớ mang ô, trời mưa chiều nay. Mật khẩu wifi 12345678.', pinned: true, updated: 2 }],
       design: { showNote: true, lang },
-      google: { clientId: '', calendarIds: [], cache: null }, shortcutName: 'DatHinhNen',
+      google: { clientId: 'demo-client-id.apps.googleusercontent.com', calendarIds: [], cache: null }, shortcutName: 'DatHinhNen',
     };
 
     await page.evaluate((s) => new Promise((res, rej) => {
@@ -105,6 +111,43 @@ const addDays = (n) => { const d = new Date(); d.setDate(d.getDate() + n); retur
       await page.evaluate(() => { const s = document.querySelector('.preview-screen'); if (s) s.scrollTop = 0; });
       await page.waitForTimeout(300);
       await shot('3-preview-agenda');
+    } else if (mode === 'sync') {
+      // 1) Chưa kết nối: có sẵn Client ID (từ state ở trên) nhưng chưa có token.
+      await page.getByTestId('tab-sync').click();
+      await page.waitForTimeout(400);
+      await shot('1-chua-ket-noi');
+
+      // 2) Đã kết nối: seed token hợp lệ + mock calendarList trả danh sách lịch.
+      await page.route('**/calendar/v3/users/me/calendarList', (route) =>
+        route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({ items: [
+            { id: 'cal1', summary: 'Công việc', backgroundColor: '#4dabf7' },
+            { id: 'cal2', summary: 'Cá nhân', backgroundColor: '#51cf66' },
+          ] }),
+        }),
+      );
+      await page.evaluate(() => {
+        localStorage.setItem('google_oauth_token', JSON.stringify({ accessToken: 'tok-demo', expiresAt: Date.now() + 3600_000 }));
+      });
+      await page.getByTestId('tab-preview').click();
+      await page.getByTestId('tab-sync').click();
+      await page.waitForTimeout(600);
+      await page.getByTestId('sync-cal-cal1').check();
+      await page.waitForTimeout(200);
+      await shot('2-da-ket-noi');
+
+      // 3) 401 khi tải danh sách lịch -> "Kết nối lại".
+      await page.unroute('**/calendar/v3/users/me/calendarList');
+      await page.route('**/calendar/v3/users/me/calendarList', (route) => route.fulfill({ status: 401, body: '{}' }));
+      await page.evaluate(() => {
+        localStorage.setItem('google_oauth_token', JSON.stringify({ accessToken: 'tok-demo', expiresAt: Date.now() + 3600_000 }));
+      });
+      await page.getByTestId('tab-preview').click();
+      await page.getByTestId('tab-sync').click();
+      await page.waitForTimeout(600);
+      await shot('3-ket-noi-lai');
     }
 
     const sw = await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]);
