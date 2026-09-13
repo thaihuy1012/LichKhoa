@@ -75,3 +75,35 @@ test('Thiết kế: đổi từng tùy chọn -> preview đổi; chọn ảnh ->
   await waitPreview1284(page);
   await expect.poll(() => previewHash(page)).not.toBe(h4);
 });
+
+test('T-4.6: rãnh trượt có màu + nhãn giá trị, mã hex đọc trọn vẹn, swatch chọn có viền', async ({ page }) => {
+  await page.goto('/?test=1');
+  await page.getByTestId('tab-design').click();
+
+  // Nhãn giá trị dim đổi khi kéo.
+  await expect(page.getByTestId('dim-value')).toHaveText('0.0');
+  await page.getByTestId('dim').fill('0.4');
+  await expect(page.getByTestId('dim-value')).toHaveText('0.4');
+
+  // Rãnh: --pct (phần đã chọn = accent) phản ánh đúng giá trị (0.4 trên thang 0..0.8 -> 50%).
+  const pct = await page.getByTestId('dim').evaluate((el) => getComputedStyle(el).getPropertyValue('--pct').trim());
+  expect(pct).toBe('50.00%');
+
+  // scale/box-alpha có nhãn định dạng đúng.
+  await expect(page.getByTestId('scale-value')).toHaveText('1.0×');
+  await expect(page.getByTestId('box-alpha-value')).toHaveText('100%');
+  await page.getByTestId('box-alpha').fill('0.35');
+  await expect(page.getByTestId('box-alpha-value')).toHaveText('35%');
+
+  // Mã hex đọc được trọn vẹn cạnh mọi ô màu (không phụ thuộc webkit có color picker hay không).
+  await page.getByTestId('bg-kind-solid').click();
+  await expect(page.getByTestId('bg-color-hex')).toHaveText(/^#[0-9A-F]{6}$/);
+  await expect(page.getByTestId('text-color-hex')).toHaveText(/^#[0-9A-F]{6}$/);
+  await expect(page.getByTestId('accent-color-hex')).toHaveText(/^#[0-9A-F]{6}$/);
+
+  // Swatch đang chọn (mặc định trắng) có aria-pressed=true; chọn cái khác thì đổi.
+  await expect(page.getByTestId('accent-5')).toHaveAttribute('aria-pressed', 'true');
+  await page.getByTestId('accent-0').click();
+  await expect(page.getByTestId('accent-0')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByTestId('accent-5')).toHaveAttribute('aria-pressed', 'false');
+});

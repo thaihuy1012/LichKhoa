@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { Store } from '../store';
 import { buildAuthUrl, newState, getToken, clearToken } from '../../google/oauth';
 import { fetchCalendars, AuthError, type GoogleCalendarInfo } from '../../google/calendar';
@@ -32,7 +32,11 @@ export function Sync({ store, authNotice, onAuthNoticeShown }: SyncProps) {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => store.subscribe(setState), [store]);
+  // useLayoutEffect + đọc lại state: không lọt dispatch xảy ra ngay sau mount (cùng lỗi T-1.END/T-4.6).
+  useLayoutEffect(() => {
+    setState(store.getState());
+    return store.subscribe(setState);
+  }, [store]);
 
   const lang = state.design.lang;
 

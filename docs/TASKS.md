@@ -20,7 +20,9 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - ~~S4 · T-2.7 · `EventsTab.tsx` L93 durationMin ngầm 60~~ → đã sửa trong T-2.12.
 - ~~S4 · T-2.12 · ô todo-due trống không nhãn~~ → đã sửa T-2.14.
 - S4 · T-2.14 · `App.tsx` L52 "Đang tải…" cứng tiếng Việt (hiện trước khi nạp state — chưa biết ngôn ngữ); làm khi có phiếu chạm App.tsx.
-- S4 · D-015 · sau redirect kết nối thành công, `App.tsx` L72 chỉ tự đồng bộ khi cache > 30′ → ép đồng bộ ngay (cache = null khi `authResult.ok`); làm ở T-4.2 (App.tsx trong phạm vi).
+- S4 · T-4.6 · webkit Windows: `input[type=color]` hiện chữ "#00000(" cạnh span hex → mã màu hiện 2 lần (iPhone có ô màu thật nên không bị). Làm nếu có phiếu chạm Design.tsx.
+- ~~S4 · D-015 · sau redirect kết nối thành công~~ → đã sửa T-4.2.
+- (cũ) S4 · D-015 · sau redirect kết nối thành công, `App.tsx` L72 chỉ tự đồng bộ khi cache > 30′ → ép đồng bộ ngay (cache = null khi `authResult.ok`); làm ở T-4.2 (App.tsx trong phạm vi).
 - S4 · T-3.3 · nút `sync-connect` / `sync-now` dùng kiểu nút phụ (xám) dù là thao tác chính → kiểu accent như "Lưu ảnh"; làm ở T-4.2 (styles).
 - S4 · T-3.1 · `parseFragment` giải mã `error` 2 lần (`URLSearchParams` đã giải mã) và trả `{error}` không kiểm `state` — vô hại với mã lỗi ASCII của Google; sửa nếu có phiếu chạm oauth.ts.
 - ~~S4 · T-2.5 · `eventToIcs` chưa gập dòng > 75 byte~~ → đã sửa T-2.15.
@@ -446,7 +448,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Tiêu chí: [ ] HUONG-DAN.md có đủ 4 phần; [ ] `npm run check` pass.
 - Bổ sung (Quản lý 2026-09-14, D-015/D-016): phần Google OAuth viết theo luồng PWA standalone (redirect trong scope) + khung "Nếu kết nối trong app Màn hình chính không quay về được: mở LichKhoa trong Safari (bookmark) để dùng Google — dữ liệu hai nơi tách nhau" và ghi chú "(chờ xác nhận trên máy thật — T-4.0)". Thêm mục **"Bài thử trên iPhone"** (checklist cho T-4.0/M4): (1) Netlify Drop hoặc GitHub Pages → URL; (2) tạo Client ID với đúng origin/redirect của URL đó; (3) Thêm vào MH chính → mở icon; (4) Đồng bộ → Kết nối → quan sát A–E (D-015); (5) "Đặt hình nền" → Shortcut chạy → hình nền khóa; kiểm lịch có bị đồng hồ/widget/nút đè; (6) Chế độ máy bay → đóng hẳn app → mở icon → app mở, còn sự kiện. Quy trình hằng ngày ≤ 3 chạm (SPEC §1c). "Giới hạn đã biết": token 1 giờ không tự gia hạn (D-015), không tự đổi hình nền không chạm, Safari xóa dữ liệu web thường sau 7 ngày không dùng nếu không cài PWA (SPEC §8.4), `.ics` nhắc giờ phải thêm từng sự kiện. Màn Guide trong app: 4–6 thẻ ngắn (VI đầy đủ, EN rút gọn) + nút mở nhanh tab Đồng bộ/Thiết kế nếu tiện; `data-testid="guide"`.
 - Lệnh kiểm tra (thợ): `npx tsc --noEmit; npm run test` — KHÔNG build/e2e (T-4.6 song song). kiem-thu chạy `npm run check` sau.
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (Guide.tsx 6 thẻ + nút mở tab; HUONG-DAN.md A–D + hằng ngày + giới hạn + bài thử iPhone) → Quản lý sửa 3 câu HUONG-DAN + chuỗi `guide.googleBody` (trỏ "mục A HUONG-DAN.md" sai mục, người dùng không có file) → kiem-thu PASS (chung T-4.6) → commit 008eefd.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-4.5 — size.mjs + workflow GitHub Pages
 - Phạm vi file: `scripts/size.mjs`, `.github/workflows/pages.yml`, `package.json` (thêm script `size`).
@@ -463,7 +466,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Yêu cầu: (1) mọi `input[type=range]` (dim, scale, box-alpha): rãnh nhìn thấy được (màu rãnh tương phản nền, ví dụ #3a3a44; phần đã chọn = accent), thumb ≥ 28px, kèm nhãn giá trị hiện tại cạnh tiêu đề (dim "0.4", scale "1.0×", box-alpha "35%"); (2) `input[type=color]` (bg-color, bg-color2, text-color, accent-color): hiển thị ô màu ≥ 44×44px + mã hex bên cạnh; trên trình duyệt không hỗ trợ color (webkit Windows hiện thành ô chữ) vẫn đọc được trọn mã hex, không bị cắt; (3) swatch màu nhấn đang chọn có vòng viền rõ (kể cả swatch trắng trên nền tối — viền accent/ngoài 2px), `aria-pressed`.
 - Tiêu chí: [ ] e2e: range có `getComputedStyle` rãnh khác màu nền (hoặc pseudo-element kiểm được); nhãn giá trị đổi khi kéo `dim` → "0.4"; swatch đang chọn có `aria-pressed="true"`; [ ] 428×926 không cuộn ngang; [ ] `npm run check` pass; [ ] Quản lý chụp lại `chup.cjs design`.
 - Lệnh kiểm tra: `npm run check` (thợ duy nhất được build/e2e trong đợt T-4.4 ∥ T-4.6)
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (rãnh range + nhãn giá trị, hex, swatch viền + aria-pressed) → kiem-thu PASS nhưng full ×2 có 1 fail webkit `design.spec.ts:26` (click tab-design timeout) → Quản lý chạy `design.spec --project webkit --repeat-each=10`: :26 10/10 pass, NHƯNG test mới :86 fail 1/10 (nhãn `dim-value` không đổi sau `fill`) → trả thợ tìm nguyên nhân gốc (Lần thử 1/3). Lượt 2: nguyên nhân gốc = `store.subscribe` trong `useEffect` (sau paint) → dispatch ngay sau mount bị mất (bug thật, lặp T-1.END); sửa `useLayoutEffect`. Quản lý rà mọi màn: Sync.tsx cùng lỗi → tự sửa (useLayoutEffect + đọc lại state). Thợ phát hiện test trước đó chạy trên dist cũ (BAI-HOC) → kiem-thu PASS (design webkit ×20 40/0; full ×2 96/0/8 skip) → commit.
+- Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
 
 ### T-4.END — Kiểm thử tích hợp M4
 - Phạm vi file: `tests/e2e/m4-design.spec.ts`, `tests/e2e/m4-export.spec.ts`, `tests/e2e/m4-offline.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.

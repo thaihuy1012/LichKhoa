@@ -618,8 +618,11 @@ select option {
   border: 2px solid transparent;
 }
 
+/* T-4.6: viền trắng + vòng ngoài accent (2px) -- vẫn thấy rõ kể cả swatch trắng
+   vì vòng ngoài luôn tương phản với nền tối, không phụ thuộc màu swatch. */
 .swatch-on {
   border-color: #fff;
+  box-shadow: 0 0 0 2px #4c6ef5;
 }
 
 /* ---- việc cần làm (port lich-nen.html L275-286/L862-892) ---- */
@@ -899,9 +902,78 @@ select option {
 }
 
 .design-screen input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
   width: 100%;
   height: 44px;
   margin: 0;
+  background: transparent;
+}
+
+/* T-4.6: rãnh tương phản nền (#3a3a44), phần đã chọn = accent (var(--pct) set inline theo giá trị). */
+.design-screen input[type='range']::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, #4c6ef5 var(--pct, 0%), #3a3a44 var(--pct, 0%));
+}
+
+.design-screen input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #4c6ef5;
+  margin-top: -11px;
+  cursor: pointer;
+}
+
+.design-screen input[type='range']::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: #3a3a44;
+}
+
+.design-screen input[type='range']::-moz-range-progress {
+  height: 6px;
+  border-radius: 3px;
+  background: #4c6ef5;
+}
+
+.design-screen input[type='range']::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #4c6ef5;
+  cursor: pointer;
+}
+
+.design-screen .field-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.design-screen .field-value {
+  color: #ccc;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ô màu + mã hex bên cạnh (webkit Windows không có color picker: ô nhỏ cắt chữ,
+   nhãn hex riêng luôn đọc được trọn vẹn). */
+.color-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-hex {
+  font-size: 13px;
+  color: #ccc;
+  font-family: ui-monospace, monospace;
+  white-space: nowrap;
 }
 
 .sync-calendar-list {

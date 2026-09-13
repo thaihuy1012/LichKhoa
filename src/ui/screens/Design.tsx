@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useLayoutEffect, useState } from 'preact/hooks';
 import type { Store } from '../store';
 import type { DesignConfig } from '../../core/model';
 import { loadPhoto } from '../../render/background';
@@ -30,13 +30,21 @@ const POSITIONS: { id: DesignConfig['position']; testid: string; key: string }[]
 
 const AGENDA_DAYS_OPTIONS = [3, 5, 7, 14];
 
+/** T-4.6: % vị trí giá trị trên rãnh, dùng làm CSS var `--pct` để tô phần đã chọn = accent. */
+function rangePct(value: number, min: number, max: number): string {
+  return `${(((value - min) / (max - min)) * 100).toFixed(2)}%`;
+}
+
 /** Màn Thiết kế: nền (ảnh/màu/gradient), mờ/tối, màu chữ/nhấn, font, vị trí, scale, boxAlpha, agendaDays. */
 export function Design({ store }: { store: Store }) {
   const [state, setState] = useState(store.getState());
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => store.subscribe(setState), [store]);
+  // useLayoutEffect (không phải useEffect): đăng ký subscribe ngay sau commit, trước khi
+  // trình duyệt vẽ khung hình kế tiếp -- tránh lọt mất dispatch xảy ra ngay sau khi mount
+  // (vd. chuyển tab rồi bấm/kéo range ngay lập tức) do useEffect bị hoãn tới sau paint.
+  useLayoutEffect(() => store.subscribe(setState), [store]);
 
   const lang = state.design.lang;
   const { bg } = state.design;
@@ -113,24 +121,34 @@ export function Design({ store }: { store: Store }) {
         <div class="field-inline">
           <label class="field">
             {t('design.bgColor', lang)}
-            <input
-              type="color"
-              data-testid="bg-color"
-              class="color-input"
-              value={bg.color}
-              onInput={(e) => setDesign({ bg: { ...bg, color: (e.target as HTMLInputElement).value } })}
-            />
+            <span class="color-row">
+              <input
+                type="color"
+                data-testid="bg-color"
+                class="color-input"
+                value={bg.color}
+                onInput={(e) => setDesign({ bg: { ...bg, color: (e.target as HTMLInputElement).value } })}
+              />
+              <span class="color-hex" data-testid="bg-color-hex">
+                {bg.color.toUpperCase()}
+              </span>
+            </span>
           </label>
           {bg.kind === 'gradient' && (
             <label class="field">
               {t('design.bgColor2', lang)}
-              <input
-                type="color"
-                data-testid="bg-color2"
-                class="color-input"
-                value={bg.color2 ?? bg.color}
-                onInput={(e) => setDesign({ bg: { ...bg, color2: (e.target as HTMLInputElement).value } })}
-              />
+              <span class="color-row">
+                <input
+                  type="color"
+                  data-testid="bg-color2"
+                  class="color-input"
+                  value={bg.color2 ?? bg.color}
+                  onInput={(e) => setDesign({ bg: { ...bg, color2: (e.target as HTMLInputElement).value } })}
+                />
+                <span class="color-hex" data-testid="bg-color2-hex">
+                  {(bg.color2 ?? bg.color).toUpperCase()}
+                </span>
+              </span>
             </label>
           )}
         </div>
@@ -156,7 +174,12 @@ export function Design({ store }: { store: Store }) {
       </div>
 
       <label class="field">
-        {t('design.dim', lang)}
+        <span class="field-title">
+          {t('design.dim', lang)}
+          <span class="field-value" data-testid="dim-value">
+            {state.design.dim.toFixed(1)}
+          </span>
+        </span>
         <input
           type="range"
           data-testid="dim"
@@ -164,35 +187,45 @@ export function Design({ store }: { store: Store }) {
           max={0.8}
           step={0.1}
           value={state.design.dim}
+          style={{ '--pct': rangePct(state.design.dim, 0, 0.8) }}
           onInput={(e) => setDesign({ dim: Number((e.target as HTMLInputElement).value) })}
         />
       </label>
 
       <label class="field">
         {t('design.textColor', lang)}
-        <input
-          type="color"
-          data-testid="text-color"
-          class="color-input"
-          value={state.design.textColor}
-          onInput={(e) => setDesign({ textColor: (e.target as HTMLInputElement).value })}
-        />
+        <span class="color-row">
+          <input
+            type="color"
+            data-testid="text-color"
+            class="color-input"
+            value={state.design.textColor}
+            onInput={(e) => setDesign({ textColor: (e.target as HTMLInputElement).value })}
+          />
+          <span class="color-hex" data-testid="text-color-hex">
+            {state.design.textColor.toUpperCase()}
+          </span>
+        </span>
       </label>
 
       <div class="field">
         <span>{t('design.accentColor', lang)}</span>
         <div class="swatches">
-          {ACCENTS.map((c, i) => (
-            <button
-              key={c}
-              type="button"
-              data-testid={`accent-${i}`}
-              class={c.toLowerCase() === state.design.accentColor.toLowerCase() ? 'swatch swatch-on' : 'swatch'}
-              style={{ background: c }}
-              aria-label={c}
-              onClick={() => setDesign({ accentColor: c })}
-            />
-          ))}
+          {ACCENTS.map((c, i) => {
+            const on = c.toLowerCase() === state.design.accentColor.toLowerCase();
+            return (
+              <button
+                key={c}
+                type="button"
+                data-testid={`accent-${i}`}
+                class={on ? 'swatch swatch-on' : 'swatch'}
+                style={{ background: c }}
+                aria-label={c}
+                aria-pressed={on}
+                onClick={() => setDesign({ accentColor: c })}
+              />
+            );
+          })}
           <input
             type="color"
             data-testid="accent-color"
@@ -200,6 +233,9 @@ export function Design({ store }: { store: Store }) {
             value={state.design.accentColor}
             onInput={(e) => setDesign({ accentColor: (e.target as HTMLInputElement).value })}
           />
+          <span class="color-hex" data-testid="accent-color-hex">
+            {state.design.accentColor.toUpperCase()}
+          </span>
         </div>
       </div>
 
@@ -242,7 +278,12 @@ export function Design({ store }: { store: Store }) {
       </div>
 
       <label class="field">
-        {t('design.scale', lang)}
+        <span class="field-title">
+          {t('design.scale', lang)}
+          <span class="field-value" data-testid="scale-value">
+            {state.design.scale.toFixed(1)}×
+          </span>
+        </span>
         <input
           type="range"
           data-testid="scale"
@@ -250,12 +291,18 @@ export function Design({ store }: { store: Store }) {
           max={1.3}
           step={0.05}
           value={state.design.scale}
+          style={{ '--pct': rangePct(state.design.scale, 0.8, 1.3) }}
           onInput={(e) => setDesign({ scale: Number((e.target as HTMLInputElement).value) })}
         />
       </label>
 
       <label class="field">
-        {t('design.boxAlpha', lang)}
+        <span class="field-title">
+          {t('design.boxAlpha', lang)}
+          <span class="field-value" data-testid="box-alpha-value">
+            {Math.round(state.design.boxAlpha * 100)}%
+          </span>
+        </span>
         <input
           type="range"
           data-testid="box-alpha"
@@ -263,6 +310,7 @@ export function Design({ store }: { store: Store }) {
           max={1}
           step={0.05}
           value={state.design.boxAlpha}
+          style={{ '--pct': rangePct(state.design.boxAlpha, 0, 1) }}
           onInput={(e) => setDesign({ boxAlpha: Number((e.target as HTMLInputElement).value) })}
         />
       </label>
