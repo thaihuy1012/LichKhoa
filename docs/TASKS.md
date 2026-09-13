@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.3 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 2/4 · M4: 0/6
-- Đang làm: T-3.3 (DOING, sonnet). T-3.1 ✔, T-3.2 ✔. e2e M3 dùng mock, chưa cần Client ID thật.
+- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 3/4 · M4: 0/6
+- Đang làm: T-3.END (DOING, sonnet). T-3.1 ✔, T-3.2 ✔, T-3.3 ✔. e2e M3 dùng mock, chưa cần Client ID thật.
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
@@ -370,8 +370,10 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 ### T-3.END — Kiểm thử tích hợp M3
 - Phạm vi file: `tests/e2e/m3-google.spec.ts`, `tests/fixtures/google/*.json`; sửa tích hợp nhỏ `src/**` phải khai báo.
 - Tiêu chí: [ ] luồng mock OAuth + calendar như SPEC M3 (302 về `#access_token…&state=<từ query>` → chọn lịch → Đồng bộ → agenda có sự kiện fixture → offline + reload vẫn hiện → 401 → "Kết nối lại"); [ ] `Select-String -Path src -Pattern client_secret -Recurse` rỗng; [ ] `npm run check` pass, test M1–M2 không bị sửa/skip.
-- Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Bổ sung (Quản lý 2026-09-14): `data-testid` từ T-3.3: `sync-clientid`, `sync-connect`, `sync-reconnect`, `sync-status`, `sync-calendar-list`, `sync-cal-<id>`, `sync-now`, `sync-last`, `sync-disconnect`, `sync-reauth-msg`. Luồng redirect: sau khi quay về app ở tab bất kỳ, App tự xử lý hash và mở tab Đồng bộ (T-3.3 lượt 2) — test phải khẳng định điều này (mở ở tab Preview mặc định). Tự đồng bộ khi mở app (cache > 30′) cũng nên có 1 test (đặt `fetchedAt` cũ qua IndexedDB, reload → request calendar được gọi).
+  - Vướng đã biết: webkit — service worker nuốt fetch trước `page.route` (`scripts/chup.cjs` phải `serviceWorkers:'block'`), nhưng bước "offline + reload vẫn hiện" CẦN service worker. Thử theo thứ tự: (1) `context.route` thay `page.route`; (2) tách: phần mock chạy với `serviceWorkers:'block'`, phần offline chạy trong context cho phép SW, seed IndexedDB bằng cache từ fixture rồi `setOffline(true)` + reload; (3) nếu webkit vẫn không làm được bước offline → chỉ chromium cho bước đó bằng `test.skip(browserName==='webkit', '<lý do>')` NGAY TRONG test mới (khai báo, không đụng test cũ) — Quản lý duyệt. Không sửa `vite.config.ts`/SW để lách.
+- Lệnh kiểm tra: `npm run check`; `npx playwright test tests/e2e/m3-google.spec.ts --repeat-each=3`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ---
 ## M4 — Ảnh nền & tùy biến, một chạm Shortcut, hướng dẫn
