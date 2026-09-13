@@ -1,0 +1,93 @@
+
+> lichkhoa@0.1.0 check
+> tsc --noEmit && npm run test && npm run build && playwright test
+
+
+> lichkhoa@0.1.0 test
+> cross-env TZ=Asia/Ho_Chi_Minh vitest run && cross-env TZ=UTC vitest run
+
+
+ RUN  v5.0.0 E:/DuAn/thu-nghiem
+
+
+ Test Files  14 passed (14)
+      Tests  139 passed (139)
+   Start at  01:27:03
+   Duration  1.11s (transform 44%, import 38%, tests 12%, worker 5%)
+
+    Isolate  14 workers spawned · ~284ms startup each (spawn + environment, per file)
+             at least ~284ms faster with isolate: false — reuses workers across files instead of one per file
+
+
+ RUN  v5.0.0 E:/DuAn/thu-nghiem
+
+
+ Test Files  14 passed (14)
+      Tests  139 passed (139)
+   Start at  18:27:05
+   Duration  1.73s (transform 73%, import 19%, tests 6%, worker 2%)
+
+  Transform  transforming modules took 4.32s · 73% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+
+
+> lichkhoa@0.1.0 build
+> tsc --noEmit && vite build
+
+[36mvite v8.3.0 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 39 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/registerSW.js               0.13 kB
+dist/manifest.webmanifest        0.29 kB
+dist/index.html                  0.86 kB │ gzip:  0.42 kB
+dist/assets/index-C51Of0Vs.css   9.55 kB │ gzip:  2.47 kB
+dist/assets/index-DH0HzWb4.js   68.04 kB │ gzip: 23.35 kB
+
+[32m✓ built in 133ms[39m
+
+PWA v1.3.0
+mode      generateSW
+precache  7 entries (76.75 KiB)
+files generated
+  dist/sw.js
+  dist/workbox-9c191d2f.js
+
+Running 32 tests using 4 workers
+
+  ✓   1 [chromium] › tests\e2e\events.spec.ts:117:1 › Sự kiện: lặp Thứ Hai đến Thứ Sáu (v1.3) (785ms)
+  ✓   2 [chromium] › tests\e2e\events.spec.ts:91:3 › iPhone 13 Pro Max (428x926): không cuộn ngang, ev-save trong viewport › tab Sự kiện + sheet mở (617ms)
+  ✓   4 [chromium] › tests\e2e\events.spec.ts:153:1 › Sự kiện: Nhắc trước -> .ics có VALARM (956ms)
+  ✓   5 [chromium] › tests\e2e\events.spec.ts:173:1 › Sự kiện qua đêm: Kết thúc < Bắt đầu -> mở lại vẫn giữ giờ Kết thúc (T-2.14) (515ms)
+  ✓   6 [chromium] › tests\e2e\events.spec.ts:186:1 › Việc cần làm: todo-down tắt (disabled) khi việc kề bên khác nhóm (T-2.14) (521ms)
+  ✓   3 [chromium] › tests\e2e\events.spec.ts:8:1 › Sự kiện: thêm/sửa/xóa, xuất .ics, việc cần làm, ghi chú (1.9s)
+  ✓   7 [chromium] › tests\e2e\events.spec.ts:209:1 › Việc cần làm: hạn quá hạn hiện trước việc không hạn (553ms)
+  ✓   8 [chromium] › tests\e2e\iphone13pm.spec.ts:4:3 › iPhone 13 Pro Max (D-007) › lần đầu mở: preset 1284x2778, không cuộn, vùng chạm/áp dụng >= 16px/44px (767ms)
+  ✓  11 [chromium] › tests\e2e\m2-events.spec.ts:145:1 › Sự kiện lặp Thứ Hai đến Thứ Sáu (v1.3): hiện đúng ngày trên Agenda (952ms)
+  ✓   9 [chromium] › tests\e2e\m1-render.spec.ts:5:1 › M1: chọn thiết bị, xem preview, lưu ảnh, reload giữ trạng thái (1.8s)
+  ✓  13 [chromium] › tests\e2e\m2-i18n.spec.ts:55:1 › T-2.14: đổi en -> nhãn "Thiết bị"/"Tự phát hiện"/"Tùy chỉnh"/"Lưu ảnh" trên Preview đổi theo (286ms)
+  ✓  12 [chromium] › tests\e2e\m2-i18n.spec.ts:11:1 › i18n: đổi ngôn ngữ đổi nhãn tab; 12h -> AM/PM trong agenda; tắt âm lịch -> mất dòng Âm lịch (2.2s)
+  ✓  16 [chromium] › tests\e2e\smoke.spec.ts:3:1 › trang có manifest và service worker sẵn sàng (237ms)
+  ✓  14 [chromium] › tests\e2e\notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload (2.2s)
+  ✓  10 [chromium] › tests\e2e\m2-events.spec.ts:33:1 › M2 luồng chính: sự kiện lặp tuần + nhắc trước, agenda đổi hash, ghi chú ghim, hạn to-do, sao lưu/khôi phục (4.2s)
+  ✓  18 [webkit] › tests\e2e\events.spec.ts:91:3 › iPhone 13 Pro Max (428x926): không cuộn ngang, ev-save trong viewport › tab Sự kiện + sheet mở (1.1s)
+  ✓  15 [chromium] › tests\e2e\settings.spec.ts:25:1 › Preview: chọn bố cục, cài đặt chung, sao lưu (4.8s)
+  ✓  19 [webkit] › tests\e2e\events.spec.ts:117:1 › Sự kiện: lặp Thứ Hai đến Thứ Sáu (v1.3) (1.9s)
+  ✓  20 [webkit] › tests\e2e\events.spec.ts:153:1 › Sự kiện: Nhắc trước -> .ics có VALARM (1.6s)
+  ✓  21 [webkit] › tests\e2e\events.spec.ts:186:1 › Việc cần làm: todo-down tắt (disabled) khi việc kề bên khác nhóm (T-2.14) (1.3s)
+  ✓  23 [webkit] › tests\e2e\events.spec.ts:209:1 › Việc cần làm: hạn quá hạn hiện trước việc không hạn (1.3s)
+  ✓  17 [webkit] › tests\e2e\events.spec.ts:8:1 › Sự kiện: thêm/sửa/xóa, xuất .ics, việc cần làm, ghi chú (4.3s)
+  ✓  22 [webkit] › tests\e2e\events.spec.ts:173:1 › Sự kiện qua đêm: Kết thúc < Bắt đầu -> mở lại vẫn giữ giờ Kết thúc (T-2.14) (1.8s)
+  ✓  24 [webkit] › tests\e2e\iphone13pm.spec.ts:4:3 › iPhone 13 Pro Max (D-007) › lần đầu mở: preset 1284x2778, không cuộn, vùng chạm/áp dụng >= 16px/44px (1.3s)
+  ✓  25 [webkit] › tests\e2e\m1-render.spec.ts:5:1 › M1: chọn thiết bị, xem preview, lưu ảnh, reload giữ trạng thái (2.4s)
+  ✓  27 [webkit] › tests\e2e\m2-events.spec.ts:145:1 › Sự kiện lặp Thứ Hai đến Thứ Sáu (v1.3): hiện đúng ngày trên Agenda (2.0s)
+  ✓  29 [webkit] › tests\e2e\m2-i18n.spec.ts:55:1 › T-2.14: đổi en -> nhãn "Thiết bị"/"Tự phát hiện"/"Tùy chỉnh"/"Lưu ảnh" trên Preview đổi theo (931ms)
+  ✓  28 [webkit] › tests\e2e\m2-i18n.spec.ts:11:1 › i18n: đổi ngôn ngữ đổi nhãn tab; 12h -> AM/PM trong agenda; tắt âm lịch -> mất dòng Âm lịch (4.5s)
+  ✓  30 [webkit] › tests\e2e\notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload (3.1s)
+  ✓  32 [webkit] › tests\e2e\smoke.spec.ts:3:1 › trang có manifest và service worker sẵn sàng (462ms)
+  ✓  26 [webkit] › tests\e2e\m2-events.spec.ts:33:1 › M2 luồng chính: sự kiện lặp tuần + nhắc trước, agenda đổi hash, ghi chú ghim, hạn to-do, sao lưu/khôi phục (7.4s)
+  ✓  31 [webkit] › tests\e2e\settings.spec.ts:25:1 › Preview: chọn bố cục, cài đặt chung, sao lưu (6.8s)
+
+  32 passed (27.0s)

@@ -4,8 +4,9 @@ Nguồn sự thật: `docs/SPEC.md` (v1.3 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) · nối tiếp M2: T-2.15, T-2.16 (trước T-3.1) · M3: 0/4 · M4: 0/6
-- Đang làm: T-2.15 (sonnet, chỉ unit) ∥ T-2.16 (haiku, build + scripts) — không chung file
+- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 0/4 · M4: 0/6
+- Đang làm: (điểm dừng sạch — phiếu kế: T-3.1 ∥ T-3.2; e2e M3 dùng mock, chưa cần Client ID thật)
+- Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
 - Chờ Chủ dự án: đặt thử ảnh mẫu 1284×2778 (đã gửi 2026-09-13) — có đè đồng hồ/widget/nút không? (không chặn; cần trước T-2.3)
@@ -322,7 +323,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Tham khảo: `F:/LICH_NEN/lich-nen.html` L585–615 (`icsEscape`, `icsForEvent`) — cách gập dòng nếu có.
 - Tiêu chí: [ ] layout.test: 7 ngày × 2 sự kiện → hiện 12 sự kiện + tiêu đề + "+2", mọi op trong vùng an toàn; [ ] model.test: `notes` 2 ghim → 1 ghim (updated mới nhất); `events: "x"` → `[]`; [ ] ics.test: weekdays ngày CN 2026-09-13 → `DTSTART…20260914`; tiêu đề 200 ký tự tiếng Việt → mọi dòng ≤ 75 octet, bỏ gập (xóa CRLF+space) ra lại đúng chuỗi UTF-8; [ ] `npm run check` pass (kiem-thu chạy); [ ] Quản lý xem ảnh agenda 15 mục.
 - Lệnh kiểm tra (thợ): `npx tsc --noEmit; npm run test` (T-2.16 song song dùng build/cổng).
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (trần 12 dòng sự kiện; clampPinned + mảng; ics DTSTART weekdays + foldLine UTF-8; test khóa layout.test L113–144 sửa đúng khai báo; 139×2) → kiem-thu PASS (32 e2e) → ảnh agenda 15 mục bằng `scripts/mau-anh.cjs`: 12 sự kiện + "+3", co chữ khi có note, không chồng → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-2.16 — Công cụ ảnh mẫu + chụp webkit vào `scripts/` (D-012)
 - Nguồn: D-012 (công cụ review bằng mắt phải nằm trong repo). Bản nháp đang chạy tốt ở thư mục tạm của Quản lý: `C:/Users/HUY/AppData/Local/Temp/claude/E--DuAn-thu-nghiem/27403320-d85e-40f5-b985-ce5f41c1d16e/scratchpad/` — `mau-v13.cjs` (18 ảnh 1284×2778 + 3 tấm tổng hợp), `chup-v13.cjs` (tab Sự kiện, 6 ảnh), `chup-t29.cjs` + `chup-t214-en.cjs` (tab Preview, 3 ảnh), `crop.cjs` (cắt/phóng ảnh).
@@ -330,7 +332,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Yêu cầu: chép từ bản nháp, sửa cho dùng lại được: đường dẫn repo lấy từ `path.resolve(__dirname, '..')` (không cứng `E:/DuAn/...`); cổng preview tham số `--port` (mặc định 4190–4199 khác 4173); `mau-anh.cjs <thư-mục-ra>` sinh 18 PNG + `tong-month|agenda|todo.png`; `chup.cjs <events|preview> <thư-mục-ra> [--lang en]`; `cat-anh.cjs <vào.png> <ra.png> x y w h [phóng]`. Dữ liệu mẫu (sự kiện có HÔM NAY, lặp T2–T6, nhắc trước, việc quá hạn/hôm nay/có hạn, 2 ghi chú 1 ghim) giữ như bản nháp, ngày tính theo hôm nay. Luôn tắt server preview khi xong/lỗi. README ≤ 30 dòng: khi nào dùng, lệnh, cần `npm run build` trước.
 - Tiêu chí: [ ] `npm run build; node scripts/mau-anh.cjs <tmp>` → 21 PNG, mỗi ảnh mẫu đọc IHDR = 1284×2778; [ ] `node scripts/chup.cjs events <tmp>` → 6 PNG; `node scripts/chup.cjs preview <tmp> --lang en` → 3 PNG; [ ] không tiến trình `vite preview` nào còn sót (kiểm `Get-Process node` trước/sau hoặc cổng đã giải phóng); [ ] `git status` chỉ có file mới trong `scripts/`.
 - Lệnh kiểm tra: như tiêu chí (thợ được chạy `npm run build` — T-2.15 song song không build).
-- Model: haiku · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 PHẢN BIỆN 1: build fail do T-2.15 sửa dở `agenda.ts` → BÁC BỎ sửa src; thợ viết xong script + `node --check`, chờ T-2.15 xong mới chạy kiểm tra runtime. Bài học: phiếu song song mà một bên cần build thì bên kia làm dở sẽ phá build → lần sau xếp tuần tự, hoặc bên cần build chạy sau. Sau T-2.15: chạy runtime — 21 PNG IHDR 1284×2778, chup events 6 / preview en 3, cổng giải phóng → kiem-thu PASS (`node --check`) → commit.
+- Model: haiku · Lần thử: 0/3 · Trạng thái: DONE
 
 ---
 ## M3 — Google Calendar (OAuth thuần client, chỉ đọc)
