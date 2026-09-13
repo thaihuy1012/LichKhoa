@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.0, Chủ dự án duyệt 2026-09-13). H
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 2/6 · M2: 0/8 · M3: 0/4 · M4: 0/6
-- Đang làm: T-1.3 ∥ T-1.4 (tho-sonnet ×2)
+- M1: 4/6 · M2: 0/8 · M3: 0/4 · M4: 0/6
+- Đang làm: T-1.5 (tho-sonnet)
 - Chờ Chủ dự án: (không)
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
 
@@ -58,13 +58,14 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Mục tiêu: preset thiết bị, tự phát hiện, và bố cục Tháng dạng `DrawOp[]` thuần.
 - Phạm vi file: `src/render/devices.ts`, `src/render/layout/month.ts`, `src/render/layout/common.ts` (helper: khối nội dung theo `position`, vùng an toàn, cỡ chữ theo `scale`), `tests/unit/layout-month.test.ts`.
 - Giao diện / đầu vào có sẵn: `src/core/model.ts`, `src/core/calendar.ts` (T-1.2); SPEC mục 5 (`DrawOp`, `layoutMonth`, `DeviceSpec`).
-- Yêu cầu: `devices.ts` export `DEVICES: DeviceSpec[]` (iPhone 12→17 phổ biến, gồm 1179×2556, 1290×2796, 1170×2532, 1206×2622, 1320×2868), `detectDevice(screenW, screenH, dpr): DeviceSpec` (khớp preset gần nhất hoặc id 'auto'), `customDevice(w,h)`. `layoutMonth`: tiêu đề tháng, hàng thứ (theo `weekStart`), lưới ngày, tô hôm nay bằng `accentColor`, chấm sự kiện (`dot`) cho ngày có occurrence, hộp nền có `boxAlpha`; đặt khối theo `position`; mọi op trong `[safeTop·H, (1−safeBottom)·H]`. Nhãn thứ/tháng tạm thời hardcode VI (i18n làm ở M2), gom vào một chỗ trong `common.ts`.
+- Yêu cầu: `devices.ts` export `DEVICES: DeviceSpec[]` (iPhone 12→17 phổ biến, gồm 1179×2556, 1290×2796, 1170×2532, 1206×2622, 1320×2868), `detectDevice(screenW, screenH, dpr): DeviceSpec` (khớp preset gần nhất hoặc id 'auto'), `customDevice(w,h)`. `layoutMonth`: tiêu đề tháng, hàng thứ (theo `weekStart`), lưới ngày, tô hôm nay bằng `accentColor`, chấm sự kiện (`dot`) cho ngày có occurrence, hộp nền có `boxAlpha`; đặt khối theo `position`; mọi op trong `[safeTop·H, (1−safeBottom)·H]`. Nhãn thứ/tháng tạm thời hardcode VI (i18n làm ở M2), gom vào một chỗ trong `common.ts`. Ô hôm nay phải đọc được cả khi `accentColor === textColor` (mặc định đều `#ffffff`): nếu tô nền bằng accent thì số ngày dùng màu tương phản (vd. màu nền `bg.color`).
 - Tiêu chí nghiệm thu:
   [ ] ≥ 28 op text ngày cho tháng 2/2026; có op `rect` hoặc `dot` tô hôm nay với `fill === accentColor`.
   [ ] Mọi op (kể cả `y + h` của rect) nằm trong vùng an toàn, với cả 3 `position` và 2 thiết bị (1179×2556, 1320×2868).
   [ ] Ngày có occurrence có op `dot`.
 - Lệnh kiểm tra: `npx tsc --noEmit; npm run test`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Nhật ký: 2026-09-13 lượt 1: DONE, kiem-thu PASS (21×2). Review chưa đạt: số ngày lệch tâm vòng hôm nay (baseline alphabetic), chấm sự kiện chìm trong vòng hôm nay, nhãn preset 1170×2532 sai "13 mini" → trả thợ (Lần thử 1/3). Lượt 2: sửa đủ 3 điểm + test mới → kiem-thu PASS (22×2, 2 e2e) → review đạt → commit.
+- Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
 
 ### T-1.4 — paint + wallpaper (nền màu/gradient) + lưu trữ + store
 - Mục tiêu: biến `DrawOp[]` thành PNG; lưu/đọc state IndexedDB; reducer trạng thái.
@@ -75,7 +76,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   [ ] `store.test.ts`: reducer đổi device/design đúng, không mutate state cũ.
   [ ] `npx tsc --noEmit` sạch.
 - Lệnh kiểm tra: `npx tsc --noEmit; npm run test`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Nhật ký: 2026-09-13 lượt 1: DONE (14/14 × 2 TZ; tsc chỉ lỗi thiếu `./layout/month` của T-1.3). `DrawOp` khai trong `paint.ts` → Quản lý hợp nhất về `layout/common.ts` (D-005), tsc sạch → kiem-thu PASS → review đạt; Quản lý thêm guard `typeof OffscreenCanvas` trong `canvasToBlob` (1 dòng). kiem-thu lại PASS sau khi T-1.3 sửa → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-1.5 — Màn Preview + Lưu ảnh
 - Mục tiêu: UI dùng được: chọn thiết bị (preset / tự phát hiện / tùy chỉnh), xem ảnh preview, nút "Lưu ảnh".
@@ -86,7 +88,7 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   [ ] Chạy `npm run build; npm run preview` và mở trình duyệt: chọn 1179×2556 → preview đổi.
   [ ] `npx tsc --noEmit` sạch, `npm run check` pass (không làm vỡ smoke).
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ### T-1.END — Kiểm thử tích hợp M1
 - Mục tiêu: E2E luồng chính M1 theo SPEC mục 6.

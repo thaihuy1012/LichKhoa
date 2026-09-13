@@ -20,3 +20,7 @@
 ## D-004 — Phiên bản thực tế của khung T-1.1 (2026-09-13 · người quyết: Quản lý)
 - Bối cảnh: T-1.1 cài bản mới nhất; lệch nhỏ so với SPEC mục 4.
 - Quyết định: chấp nhận Playwright 1.63.0 (SPEC ghi 1.62), TypeScript 7.0.2, thêm devDep `@types/node` (cho `process.env` trong config), `cross-env`. vite-plugin-pwa 1.3.0 + Vitest 5.0.0 chạy tốt với Vite 8.3.0 → không cần phương án dự phòng rủi ro 5. Phiên bản ghim chính xác (không `^`).
+
+## D-005 — Nơi khai báo `DrawOp` (2026-09-13 · người quyết: Quản lý)
+- Bối cảnh: T-1.3 và T-1.4 chạy song song, mỗi bên tự khai `DrawOp` (month.ts, paint.ts).
+- Quyết định: khai một lần ở `src/render/layout/common.ts` (thuần, mọi layout dùng chung); `month.ts` và `paint.ts` chỉ re-export kiểu. Layout mới (agenda/todo/note) import từ `./common`. Quản lý tự sửa 3 chỗ (chỉ kiểu, không đổi logic).
