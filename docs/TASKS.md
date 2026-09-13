@@ -5,7 +5,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 6/8
-- Đang làm: T-4.END (DOING, phần tự động) ∥ T-4.0 CHỜ CHỦ DỰ ÁN (thử iPhone, dist `E:DuAnichkhoa-dist` @dfb8ab9). Duyệt M4 chờ cả hai.
+- Đang làm: T-4.END (DOING, phần tự động) ∥ T-4.0 CHỜ CHỦ DỰ ÁN (thử iPhone, dist `E:/DuAn/lichkhoa-dist` @dfb8ab9). Duyệt M4 chờ cả hai.
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
@@ -475,4 +475,5 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Tiêu chí: [ ] tải ảnh fixture → preview đổi, kích thước bằng thiết bị; blur=2, dim=0.4, position=bottom, font=serif → hash PNG khác sau mỗi bước; `__lastOps` trong vùng an toàn; [ ] chromium + `clipboard-write`: "Sao chép" ghi `image/png`; "Đặt hình nền" → `__lastNav` bắt đầu `shortcuts://run-shortcut?name=`; [ ] offline reload vẫn mở app (webkit: xem D-013 — thử cách khác trước khi skip); [ ] size < 150 KB; [ ] `npm run check` pass chromium + webkit; [ ] bài thử tay iPhone (HUONG-DAN) có bước Chế độ máy bay → mở icon → app mở, còn sự kiện Google cache (D-013).
 - Lệnh kiểm tra: `npm run check; node scripts/size.mjs`
 - Bổ sung (Quản lý 2026-09-14): chạy phần TỰ ĐỘNG ngay (song song việc Chủ dự án thử iPhone T-4.0); duyệt M4 chờ cả hai. `data-testid` có sẵn: Design (`bg-kind-*`, `bg-file`, `blur-0..3`, `dim`, `font-*`, `position-*`, …), Preview (`copy`, `set-wallpaper`, `shortcut-name`, `save`, `preview`). Offline webkit (D-013): thử (1) sau `serviceWorker.ready`, trong page `await caches.match('/')`/`caches.match('index.html')` phải có; (2) `context.setOffline(true)` + `page.goto(url)` (không `reload`) — nếu vẫn "internal error" thì `test.skip(webkit)` riêng bước reload có lý do + giữ khẳng định (1) cho webkit. Luôn `npm run build` trước khi chạy Playwright riêng lẻ (BAI-HOC). Không trùng lặp test đã có ở `design.spec`/`share.spec` — `m4-*` là LUỒNG ĐẦU-CUỐI: ảnh → tùy chỉnh → xuất/sao chép/đặt hình nền → offline mở lại.
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (m4-design, m4-export, m4-offline; webkit `caches.match` pass, offline goto vẫn lỗi engine → skip D-013; không sửa src; size 36,27 KB) → kiem-thu PASS (m4 ×3 12/6 skip; full ×2 104/12 skip/0 fail; test M1–M3 không đổi từ M3-ok) → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
