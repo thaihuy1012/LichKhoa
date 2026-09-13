@@ -50,4 +50,87 @@ describe('reducer', () => {
 
     expect(next).toEqual(loaded);
   });
+
+  it('addEvent/updateEvent/deleteEvent CRUD sự kiện, không mutate state cũ', () => {
+    const state = defaultState(device);
+    const ev = { id: 'e1', title: 'Họp', date: '2026-02-15', repeat: 'none' as const };
+    const s1 = reducer(state, { type: 'addEvent', event: ev });
+    expect(s1.events).toEqual([ev]);
+    expect(state.events).toEqual([]);
+
+    const ev2 = { ...ev, title: 'Họp sửa' };
+    const s2 = reducer(s1, { type: 'updateEvent', event: ev2 });
+    expect(s2.events).toEqual([ev2]);
+    expect(s1.events).toEqual([ev]);
+
+    const s3 = reducer(s2, { type: 'deleteEvent', id: 'e1' });
+    expect(s3.events).toEqual([]);
+  });
+
+  it('addTodo tạo id, done:false; toggleTodo/updateTodo/deleteTodo hoạt động, không mutate', () => {
+    const state = defaultState(device);
+    const s1 = reducer(state, { type: 'addTodo', text: 'Việc 1' });
+    expect(s1.todos.length).toBe(1);
+    expect(s1.todos[0].text).toBe('Việc 1');
+    expect(s1.todos[0].done).toBe(false);
+    expect(typeof s1.todos[0].id).toBe('string');
+    expect(state.todos).toEqual([]);
+
+    const id = s1.todos[0].id;
+    const s2 = reducer(s1, { type: 'toggleTodo', id });
+    expect(s2.todos[0].done).toBe(true);
+    expect(s1.todos[0].done).toBe(false);
+
+    const s3 = reducer(s2, { type: 'updateTodo', id, text: 'Việc 1 sửa' });
+    expect(s3.todos[0].text).toBe('Việc 1 sửa');
+
+    const s4 = reducer(s3, { type: 'deleteTodo', id });
+    expect(s4.todos).toEqual([]);
+  });
+
+  it('moveTodo đổi thứ tự, giữ nguyên ở biên', () => {
+    const state = defaultState(device);
+    const s1 = reducer(state, { type: 'addTodo', text: 'A' });
+    const s2 = reducer(s1, { type: 'addTodo', text: 'B' });
+    const [a, b] = s2.todos;
+
+    const s3 = reducer(s2, { type: 'moveTodo', id: b.id, dir: -1 });
+    const sorted3 = [...s3.todos].sort((x, y) => x.order - y.order);
+    expect(sorted3[0].id).toBe(b.id);
+    expect(sorted3[1].id).toBe(a.id);
+
+    const s4 = reducer(s3, { type: 'moveTodo', id: b.id, dir: -1 }); // đã ở đầu, giữ nguyên
+    expect(s4).toEqual(s3);
+
+    const s5 = reducer(s3, { type: 'moveTodo', id: a.id, dir: 1 }); // đã ở cuối, giữ nguyên
+    expect(s5).toEqual(s3);
+  });
+
+  it('setNote đổi noteText trong design, không mutate', () => {
+    const state = defaultState(device);
+    const next = reducer(state, { type: 'setNote', text: 'Ghi chú' });
+    expect(next.design.noteText).toBe('Ghi chú');
+    expect(state.design.noteText).toBe('');
+  });
+
+  it('replaceState hợp lệ thay toàn bộ state qua normalizeState; null giữ state cũ', () => {
+    const state = defaultState(device);
+    const raw = { version: 1, device: device2 };
+    const next = reducer(state, { type: 'replaceState', state: raw });
+    expect(next.device).toEqual(device2);
+
+    const same = reducer(state, { type: 'replaceState', state: null });
+    expect(same).toBe(state);
+
+    const invalid = reducer(state, { type: 'replaceState', state: { version: 2 } });
+    expect(invalid).toBe(state);
+  });
+
+  it('resetAll về defaultState nhưng giữ device', () => {
+    const state = defaultState(device);
+    const withData = reducer(state, { type: 'addTodo', text: 'X' });
+    const reset = reducer(withData, { type: 'resetAll' });
+    expect(reset).toEqual(defaultState(device));
+    expect(reset.device).toEqual(device);
+  });
 });

@@ -1,6 +1,10 @@
-import type { AppState, RenderData } from '../core/model';
+import type { AppState, ISODate } from '../core/model';
+import { collectRenderData } from '../core/collect';
 import { paint, type DrawOp } from './paint';
 import { layoutMonth } from './layout/month';
+import { layoutAgenda } from './layout/agenda';
+import { layoutTodo } from './layout/todo';
+import { layoutNote } from './layout/note';
 
 declare global {
   interface Window {
@@ -48,20 +52,26 @@ function paintBackground(ctx: CanvasRenderingContext2D, state: AppState): void {
   ctx.fillRect(0, 0, w, h);
 }
 
+/** Gom dữ liệu + dựng danh sách lệnh vẽ theo bố cục đã chọn (`design.layout`) + dải ghi chú. Hàm thuần, không cần canvas. */
+export function buildOps(state: AppState, today: ISODate): DrawOp[] {
+  const data = collectRenderData(state, today);
+  const { design, device } = state;
+
+  let ops: DrawOp[];
+  if (design.layout === 'agenda') ops = layoutAgenda(data, design, device);
+  else if (design.layout === 'todo') ops = layoutTodo(data, design, device);
+  else ops = layoutMonth(data, design, device);
+
+  return [...ops, ...layoutNote(data, design, device)];
+}
+
 /** Vẽ hình nền theo state; trả về Blob PNG đúng kích thước thiết bị. M1: bỏ qua ảnh nền (bg tham số), chỉ dùng state.design.bg solid/gradient. */
 export async function renderWallpaper(state: AppState, _bg: Blob | null, today: string): Promise<Blob> {
   const { canvas, ctx } = makeCanvas(state.device.width, state.device.height);
 
   paintBackground(ctx, state);
 
-  const renderData: RenderData = {
-    today,
-    occurrences: [],
-    todos: state.todos,
-    note: state.design.noteText,
-  };
-
-  const ops = layoutMonth(renderData, state.design, state.device);
+  const ops = buildOps(state, today);
   paint(ctx, ops);
 
   if (typeof window !== 'undefined' && window.location.search.includes('test=1')) {

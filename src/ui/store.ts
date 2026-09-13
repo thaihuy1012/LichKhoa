@@ -1,10 +1,27 @@
-import type { AppState, DesignConfig, DeviceSpec } from '../core/model';
+import type { AppState, DesignConfig, DeviceSpec, LocalEvent, Todo } from '../core/model';
+import { defaultState, normalizeState } from '../core/model';
 import { saveState } from '../storage/db';
 
 export type Action =
   | { type: 'setDevice'; device: DeviceSpec }
   | { type: 'setDesign'; partial: Partial<DesignConfig> }
-  | { type: 'load'; state: AppState };
+  | { type: 'load'; state: AppState }
+  | { type: 'addEvent'; event: LocalEvent }
+  | { type: 'updateEvent'; event: LocalEvent }
+  | { type: 'deleteEvent'; id: string }
+  | { type: 'addTodo'; text: string; id?: string }
+  | { type: 'toggleTodo'; id: string }
+  | { type: 'updateTodo'; id: string; text: string }
+  | { type: 'deleteTodo'; id: string }
+  | { type: 'moveTodo'; id: string; dir: -1 | 1 }
+  | { type: 'setNote'; text: string }
+  | { type: 'replaceState'; state: unknown }
+  | { type: 'resetAll' };
+
+function nextId(explicit?: string): string {
+  if (explicit) return explicit;
+  return typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `id-${Date.now()}-${Math.random()}`;
+}
 
 /** Reducer thuần: không mutate state cũ. */
 export function reducer(state: AppState, action: Action): AppState {
@@ -15,6 +32,45 @@ export function reducer(state: AppState, action: Action): AppState {
       return { ...state, design: { ...state.design, ...action.partial } };
     case 'load':
       return action.state;
+    case 'addEvent':
+      return { ...state, events: [...state.events, action.event] };
+    case 'updateEvent':
+      return { ...state, events: state.events.map((e) => (e.id === action.event.id ? action.event : e)) };
+    case 'deleteEvent':
+      return { ...state, events: state.events.filter((e) => e.id !== action.id) };
+    case 'addTodo': {
+      const order = state.todos.length > 0 ? Math.max(...state.todos.map((t) => t.order)) + 1 : 0;
+      const todo: Todo = { id: nextId(action.id), text: action.text, done: false, order };
+      return { ...state, todos: [...state.todos, todo] };
+    }
+    case 'toggleTodo':
+      return { ...state, todos: state.todos.map((t) => (t.id === action.id ? { ...t, done: !t.done } : t)) };
+    case 'updateTodo':
+      return { ...state, todos: state.todos.map((t) => (t.id === action.id ? { ...t, text: action.text } : t)) };
+    case 'deleteTodo':
+      return { ...state, todos: state.todos.filter((t) => t.id !== action.id) };
+    case 'moveTodo': {
+      const sorted = [...state.todos].sort((a, b) => a.order - b.order);
+      const idx = sorted.findIndex((t) => t.id === action.id);
+      if (idx < 0) return state;
+      const swapIdx = idx + action.dir;
+      if (swapIdx < 0 || swapIdx >= sorted.length) return state;
+      const a = sorted[idx];
+      const b = sorted[swapIdx];
+      const orders = new Map<string, number>([
+        [a.id, b.order],
+        [b.id, a.order],
+      ]);
+      return { ...state, todos: state.todos.map((t) => (orders.has(t.id) ? { ...t, order: orders.get(t.id)! } : t)) };
+    }
+    case 'setNote':
+      return { ...state, design: { ...state.design, noteText: action.text } };
+    case 'replaceState': {
+      const normalized = normalizeState(action.state);
+      return normalized ?? state;
+    }
+    case 'resetAll':
+      return defaultState(state.device);
     default:
       return state;
   }

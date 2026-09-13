@@ -1,6 +1,7 @@
 import type { DesignConfig, DeviceSpec, RenderData } from '../../core/model';
 import { monthGrid, parseISODate } from '../../core/calendar';
-import { blockStartY, fontSize, mainArea, weekdayLabels, LABELS_VI, lunarCellLabel, lunarTodayLine, type DrawOp } from './common';
+import { t } from '../../core/i18n';
+import { blockStartY, fontSize, mainArea, weekdayLabels, lunarCellLabel, lunarTodayLine, type DrawOp } from './common';
 
 export type { DrawOp };
 
@@ -44,7 +45,7 @@ export function layoutMonth(d: RenderData, c: DesignConfig, dev: DeviceSpec): Dr
     op: 'text',
     x: dev.width / 2,
     y: titleCenterY + titleSize * 0.35,
-    text: `${LABELS_VI.months[m0]} ${year}`,
+    text: `${t(`month.${m0}`, c.lang)} ${year}`,
     size: titleSize,
     weight: 700,
     color: c.textColor,
@@ -71,7 +72,7 @@ export function layoutMonth(d: RenderData, c: DesignConfig, dev: DeviceSpec): Dr
 
   // Hàng thứ
   const weekdaySize = fontSize(dev.width * 0.028, c.scale);
-  const labels = weekdayLabels(c.weekStart);
+  const labels = weekdayLabels(c.weekStart, c.lang);
   const weekdayCenterY = contentTop + titleH + lunarLineH + weekdayH / 2;
   const weekdayY = weekdayCenterY + weekdaySize * 0.35;
   for (let col = 0; col < 7; col++) {
@@ -112,19 +113,19 @@ export function layoutMonth(d: RenderData, c: DesignConfig, dev: DeviceSpec): Dr
       const lunarCellSize = daySize * 0.55;
       const lunarY = rowTop + rowH * 0.68;
 
+      let ringCenterY = rowCenterY;
+      let ringRadius = todayRadius;
       if (isToday) {
         if (c.showLunar) {
           // Dấu hôm nay phải bao trọn cả số dương lẫn số âm (bbox ước lượng: y-size*0.75 .. y+size*0.25).
           const pad = Math.min(colW, rowH) * 0.04;
           const ringTop = dayY - daySize * 0.75 - pad;
           const ringBottom = lunarY + lunarCellSize * 0.25 + pad;
-          const ringCenterY = (ringTop + ringBottom) / 2;
+          ringCenterY = (ringTop + ringBottom) / 2;
           const neededRadius = (ringBottom - ringTop) / 2;
-          const ringRadius = Math.max(todayRadius, neededRadius);
-          ops.push({ op: 'dot', x: cellCenterX, y: ringCenterY, r: ringRadius, fill: c.accentColor });
-        } else {
-          ops.push({ op: 'dot', x: cellCenterX, y: rowCenterY, r: todayRadius, fill: c.accentColor });
+          ringRadius = Math.max(todayRadius, neededRadius);
         }
+        ops.push({ op: 'dot', x: cellCenterX, y: ringCenterY, r: ringRadius, fill: c.accentColor });
       }
 
       ops.push({
@@ -154,17 +155,23 @@ export function layoutMonth(d: RenderData, c: DesignConfig, dev: DeviceSpec): Dr
       }
 
       if (occDates.has(date)) {
-        // Khi có ngày âm dưới ô, dời chấm sự kiện lên góc trên-phải để không đè lên chữ.
-        const dotX = c.showLunar ? cellCenterX + colW * 0.32 : cellCenterX;
-        const dotY = c.showLunar ? rowTop + rowH * 0.16 : rowCenterY + rowH * 0.3;
-        ops.push({
-          op: 'dot',
-          x: dotX,
-          y: dotY,
-          r: occRadius,
-          // Trên ô hôm nay nền đã tô accent: dùng màu tương phản để chấm không lẫn vào vòng tô.
-          fill: isToday ? todayTextColor : c.accentColor,
-        });
+        let dotX: number;
+        let dotY: number;
+        if (isToday) {
+          // Chấm sự kiện của ô hôm nay phải nằm HẲN ngoài vòng tô (đủ khoảng cách + occRadius),
+          // để luôn tương phản với nền (fill = accentColor) mà không lẫn vào vòng hay chữ.
+          const gap = occRadius * 0.6;
+          dotX = cellCenterX + colW * 0.32;
+          dotY = ringCenterY - ringRadius - occRadius - gap;
+        } else if (c.showLunar) {
+          // Khi có ngày âm dưới ô, dời chấm sự kiện lên góc trên-phải để không đè lên chữ.
+          dotX = cellCenterX + colW * 0.32;
+          dotY = rowTop + rowH * 0.16;
+        } else {
+          dotX = cellCenterX;
+          dotY = rowCenterY + rowH * 0.3;
+        }
+        ops.push({ op: 'dot', x: dotX, y: dotY, r: occRadius, fill: c.accentColor });
       }
     }
   }

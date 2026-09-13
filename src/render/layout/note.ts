@@ -13,24 +13,26 @@ export function layoutNote(d: RenderData, c: DesignConfig, dev: DeviceSpec): Dra
   const contentLeft = margin;
   const contentWidth = dev.width - 2 * margin;
 
+  const size = fontSize(dev.width * 0.032, c.scale);
+  const lines = wrapText(d.note, contentWidth, size, MAX_LINES);
+  const padding = fontSize(dev.width * 0.02, c.scale);
+  const lineH = size * 1.4;
+  const boxHeight = Math.min(contentHeight, lines.length * lineH + padding * 2);
+
   ops.push({
     op: 'rect',
     x: contentLeft - margin * 0.4,
     y: area.top,
     w: contentWidth + margin * 0.8,
-    h: contentHeight,
+    h: boxHeight,
     r: 20,
     fill: '#000000',
     alpha: c.boxAlpha,
   });
 
-  const size = fontSize(dev.width * 0.032, c.scale);
-  const lines = wrapText(d.note, contentWidth, size, MAX_LINES);
-  const rowH = contentHeight / Math.max(1, lines.length);
-
-  lines.forEach((line, i) => {
-    const rowTop = area.top + i * rowH;
-    const rowCenterY = rowTop + rowH / 2;
+  let y = area.top + padding;
+  for (const line of lines) {
+    const rowCenterY = y + lineH / 2;
     ops.push({
       op: 'text',
       x: contentLeft,
@@ -42,7 +44,8 @@ export function layoutNote(d: RenderData, c: DesignConfig, dev: DeviceSpec): Dra
       align: 'left',
       font: c.font,
     });
-  });
+    y += lineH;
+  }
 
   return ops;
 }

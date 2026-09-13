@@ -161,6 +161,38 @@ describe('layoutMonth âm lịch', () => {
   });
 });
 
+describe('layoutMonth chấm sự kiện ngày hôm nay luôn thấy được', () => {
+  function checkVisible(showLunar: boolean) {
+    const design: DesignConfig = { ...defaultDesign(), accentColor: '#ff8800', showLunar };
+    const d = renderData('2026-02-15', [
+      { id: 'o1', sourceId: 'e1', source: 'local', title: 'Họp', date: '2026-02-15', allDay: true },
+    ]);
+    const ops = layoutMonth(d, design, DEV_1179);
+    const ring = ops.find((op) => op.op === 'dot' && op.fill === design.accentColor && op.r > 5)!;
+    expect(ring.op).toBe('dot');
+    const dots = ops.filter((op) => op.op === 'dot' && op !== ring);
+    expect(dots.length).toBeGreaterThan(0);
+    if (ring.op !== 'dot') return;
+    for (const dot of dots) {
+      if (dot.op !== 'dot') continue;
+      const dist = Math.hypot(dot.x - ring.x, dot.y - ring.y);
+      const fullyInside = dist + dot.r <= ring.r + 0.01;
+      const fullyOutside = dist - dot.r >= ring.r - 0.01;
+      expect(fullyInside || fullyOutside).toBe(true);
+      if (fullyInside) expect(dot.fill).not.toBe(ring.fill);
+      if (fullyOutside) expect(dot.fill).toBe(design.accentColor);
+    }
+  }
+
+  it('showLunar=true: chấm sự kiện hôm nay nằm hẳn trong hoặc hẳn ngoài vòng, fill hợp lệ', () => {
+    checkVisible(true);
+  });
+
+  it('showLunar=false: chấm sự kiện hôm nay nằm hẳn trong hoặc hẳn ngoài vòng, fill hợp lệ', () => {
+    checkVisible(false);
+  });
+});
+
 describe('detectDevice', () => {
   it('khớp preset đúng kích thước vật lý', () => {
     const dev = detectDevice(393, 852, 3);

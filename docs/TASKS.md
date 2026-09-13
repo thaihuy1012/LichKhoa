@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.2 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 6/9 · M3: 0/4 · M4: 0/6
-- Đang làm: (không — điểm dừng sạch 2026-09-13; phiếu kế: T-2.6)
+- M1: 8/8 ✔ tag `M1-ok` · M2: 7/9 · M3: 0/4 · M4: 0/6
+- Đang làm: (không — T-2.6 đã commit; phiếu kế: T-2.7)
 - Chờ Chủ dự án: đặt thử ảnh mẫu 1284×2778 (đã gửi 2026-09-13) — có đè đồng hồ/widget/nút không? (không chặn; cần trước T-2.3)
 - Chuyển phiên: T-2.8 đã commit — điểm dừng sạch. Phiên mới (`claude --agent quan-ly`): đọc SU-CO → TASKS, giao T-2.6 (nhớ tiêu chí Quản lý dựng ảnh mẫu 3 bố cục xem bằng mắt). Ảnh mẫu mới nhất đã gửi Chủ dự án: có âm lịch (lichkhoa-amlich-r1.png).
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
@@ -199,11 +199,17 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
 
 ### T-2.6 — Nối dữ liệu vào render + store actions
-- Phạm vi file: `src/render/wallpaper.ts`, `src/ui/store.ts`, `tests/unit/store.test.ts`.
+- Phạm vi file: `src/render/wallpaper.ts`, `src/ui/store.ts`, `tests/unit/store.test.ts`, `src/render/layout/common.ts` + `src/render/layout/month.ts` (CHỈ đổi nhãn tháng/thứ sang i18n — bổ sung 2026-09-13), `tests/unit/wallpaper.test.ts` (mới, nếu cần test phần chọn layout thuần).
 - Mục tiêu: `renderWallpaper` dùng `collectRenderData` + chọn layout theo `design.layout` + `layoutNote` khi `showNote`; nhãn thứ/tháng qua i18n. Store thêm action: CRUD sự kiện, CRUD/tick/sắp xếp to-do, `setNote`, `replaceState` (nhập backup), `resetAll`.
-- Tiêu chí: [ ] reducer test cho mọi action mới; [ ] test M1 vẫn pass; [ ] Quản lý dựng ảnh mẫu 1284×2778 cho 3 bố cục (month/agenda/todo, có + không note, có 0/2/15 mục) và xem bằng mắt trước khi DONE (test không bắt được lỗi thẩm mỹ — xem T-2.3 lượt 1).
+- Giao diện / đầu vào có sẵn: `collectRenderData` (`src/core/collect.ts`, T-2.2); `layoutMonth/Agenda/Todo/Note` (`src/render/layout/*`, cùng chữ ký `(d, c, dev) => DrawOp[]`); `t(key, lang)` (`src/core/i18n.ts`, đã có khóa `month.0..11`, `weekday.short.0..6` ở cả vi/en); `normalizeState` (`model.ts`); SPEC mục 5.
+- Yêu cầu bổ sung (Quản lý):
+  - Tách hàm thuần `buildOps(state, today): DrawOp[]` (trong `wallpaper.ts`, export) = collect → layout chính theo `design.layout` → nối `layoutNote` khi `showNote`; `renderWallpaper` gọi nó; `window.__lastOps` = kết quả `buildOps`. Test `buildOps` không cần canvas.
+  - Nhãn: bỏ `LABELS_VI` cứng, `weekdayLabels(weekStart, lang)` + tiêu đề tháng qua `t('month.<m0>', lang)`. Với `lang='vi'` đầu ra phải GIỐNG HỆT hiện tại (test khóa `layout-month.test.ts` pass nguyên văn); nếu khóa vi của month/weekday lệch chữ hiện tại (vd. "Tháng 2" vs "tháng 2", "CN") → PHẢN BIỆN, không tự sửa json.
+  - Tên action (T-2.7 dùng đúng tên này): `addEvent(event)`, `updateEvent(event)`, `deleteEvent(id)`, `addTodo(text)` (tạo id, `done:false`), `toggleTodo(id)`, `updateTodo(id, text)`, `deleteTodo(id)`, `moveTodo(id, dir: -1|1)` (ở biên thì giữ nguyên), `setNote(text)`, `replaceState(state)` (qua `normalizeState`; null → giữ state cũ), `resetAll()` (về `defaultState(state.device)` — giữ thiết bị). Reducer thuần, không mutate; id sinh qua `crypto.randomUUID` hoặc tham số, test không phụ thuộc giá trị id cụ thể.
+- Tiêu chí: [ ] reducer test cho mọi action mới (gồm không mutate, moveTodo ở biên, replaceState null); [ ] `buildOps` test: `layout` month/agenda/todo gọi đúng bố cục (vd. agenda có nhãn "Hôm nay"), `showNote` true thêm op ghi chú, `lang='en'` → tiêu đề tháng tiếng Anh; [ ] test M1 + test khóa vẫn pass nguyên văn; [ ] Quản lý dựng ảnh mẫu 1284×2778 cho 3 bố cục (month/agenda/todo, có + không note, có 0/2/15 mục) và xem bằng mắt trước khi DONE (test không bắt được lỗi thẩm mỹ — xem T-2.3 lượt 1).
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Nhật ký: 2026-09-13 lượt 1: DONE (buildOps thuần, 11 action, nhãn tháng/thứ qua t(); 108×2 unit) → kiem-thu PASS. Quản lý dựng 18 ảnh mẫu (scratchpad `mau-t26.cjs`): 3 bố cục ổn, nhưng (1) chấm sự kiện ô hôm nay vô hình khi showLunar (ngoài vòng, tô bg.color), (2) note.ts giãn dòng theo chiều cao dải → trả thợ, mở phạm vi `month.ts` (chấm), `note.ts`, thêm test vào `layout*.test.ts` (Lần thử 1/3). Lượt 2: chấm hôm nay đặt hẳn ngoài vòng fill accent; note khoảng dòng 1,4×size, hộp ôm nội dung; +3 test (111×2) → kiem-thu PASS (test khóa chỉ thêm dòng) → Quản lý xem lại ảnh: đạt → commit.
+- Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
 
 ### T-2.7 — Màn Sự kiện + cài đặt chung + i18n toàn UI
 - Phạm vi file: `src/ui/screens/Events.tsx`, `src/ui/screens/Preview.tsx`, `src/ui/App.tsx`, `src/ui/styles.css`, `src/core/i18n/*.json` (thêm khóa, giữ 2 file khớp).

@@ -6,6 +6,7 @@ import { layoutMonth } from '../../src/render/layout/month';
 import { DEVICES } from '../../src/render/devices';
 import { defaultDesign } from '../../src/core/model';
 import type { RenderData, DesignConfig, DeviceSpec, Occurrence, Todo } from '../../src/core/model';
+import type { DrawOp } from '../../src/render/layout/common';
 
 const DEV_1179 = DEVICES.find((d) => d.width === 1179 && d.height === 2556)!;
 const DEV_1320 = DEVICES.find((d) => d.width === 1320 && d.height === 2868)!;
@@ -215,6 +216,29 @@ describe('layoutNote', () => {
     const ops = layoutNote(d, design, DEV_1179);
     const texts = ops.filter((o) => o.op === 'text');
     expect(texts.length).toBeGreaterThan(1);
+  });
+
+  it('khoảng cách dòng cố định <= 1,6x cỡ chữ; mọi op trong noteArea', () => {
+    const design: DesignConfig = { ...defaultDesign(), showNote: true };
+    const d = renderData({ note: 'Dòng một\nDòng hai' });
+    const ops = layoutNote(d, design, DEV_1179);
+    const texts = ops.filter((o) => o.op === 'text') as Extract<DrawOp, { op: 'text' }>[];
+    expect(texts.length).toBeGreaterThanOrEqual(2);
+    const gap = texts[1].y - texts[0].y;
+    expect(gap).toBeGreaterThan(0);
+    expect(gap).toBeLessThanOrEqual(texts[0].size * 1.6);
+
+    const top = DEV_1179.height * DEV_1179.safeTop;
+    const bottom = DEV_1179.height * (1 - DEV_1179.safeBottom);
+    for (const op of ops) {
+      if (op.op === 'rect') {
+        expect(op.y).toBeGreaterThanOrEqual(top - 0.01);
+        expect(op.y + op.h).toBeLessThanOrEqual(bottom + 0.01);
+      } else if (op.op === 'text') {
+        expect(op.y).toBeGreaterThanOrEqual(top - 0.01);
+        expect(op.y).toBeLessThanOrEqual(bottom + 0.01);
+      }
+    }
   });
 
   it('showNote=false hoặc note rỗng -> không có op', () => {

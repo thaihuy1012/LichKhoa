@@ -9,19 +9,10 @@ export type DrawOp =
   | { op: 'text'; x: number; y: number; text: string; size: number; weight: 400 | 600 | 700; color: string; align: 'left' | 'center' | 'right'; font: 'sans' | 'serif' | 'mono' }
   | { op: 'dot'; x: number; y: number; r: number; fill: string };
 
-/** Nhãn VI tạm thời (i18n đầy đủ ở M2). */
-export const LABELS_VI = {
-  weekdaysShort: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'] as const, // theo thứ tự weekStart=1
-  weekdaysShortSunFirst: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'] as const, // theo thứ tự weekStart=0
-  months: [
-    'Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
-    'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12',
-  ] as const,
-};
-
-/** Nhãn thứ theo weekStart, thứ tự khớp cột lưới của monthGrid. */
-export function weekdayLabels(weekStart: 0 | 1): readonly string[] {
-  return weekStart === 1 ? LABELS_VI.weekdaysShort : LABELS_VI.weekdaysShortSunFirst;
+/** Nhãn thứ theo weekStart và ngôn ngữ, thứ tự khớp cột lưới của monthGrid (0=CN..6=T7 xoay theo weekStart). */
+export function weekdayLabels(weekStart: 0 | 1, lang: 'vi' | 'en'): string[] {
+  const order = weekStart === 1 ? [1, 2, 3, 4, 5, 6, 0] : [0, 1, 2, 3, 4, 5, 6];
+  return order.map((dow) => t(`weekday.short.${dow}`, lang));
 }
 
 /** Vùng an toàn tuyệt đối (pixel) theo chiều dọc, dạng [top, bottom]. */
