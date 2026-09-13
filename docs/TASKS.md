@@ -4,14 +4,15 @@ Nguồn sự thật: `docs/SPEC.md` (v1.1 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` (còn: ảnh mẫu 1284×2778 cho Chủ dự án thử, trước T-2.3) · M2: 0/9 · M3: 0/4 · M4: 0/6
-- Đang làm: M2 — T-2.1 ∥ T-2.4 ∥ T-2.5
-- Chờ Chủ dự án: (không)
+- M1: 8/8 ✔ tag `M1-ok` · M2: 3/9 · M3: 0/4 · M4: 0/6
+- Đang làm: T-2.2 (tho-sonnet)
+- Chờ Chủ dự án: đặt thử ảnh mẫu 1284×2778 (đã gửi 2026-09-13) — có đè đồng hồ/widget/nút không? (không chặn; cần trước T-2.3)
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
 
 ## Tồn đọng (S4 — không chặn)
 - S4 · T-1.2 · mặc định `boxAlpha=1` (hộp nền đặc) sẽ che ảnh nền ở M4 — xem lại mặc định khi làm T-4.2.
 - S4 · T-1.7 · `normalizeState` chỉ kiểm `device.width/height`; device cũ thiếu `safeTop/safeBottom/id` sẽ lọt → nên bù mặc định khi làm T-2.5.
+- S4 · T-2.5 · `eventToIcs` chưa gập dòng > 75 byte (RFC 5545 §3.1); Lịch iPhone vẫn đọc được — làm nếu có phiếu chạm ics.
 
 ## Thứ tự & song song
 M1: 1.1 → 1.2 → (1.3 ∥ 1.4) → 1.5 → 1.END → (1.6 ∥ 1.7) → ảnh mẫu 1284×2778 cho Chủ dự án thử (xong trước T-2.3) → tag M1-ok
@@ -140,7 +141,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Mục tiêu: `expandOccurrences(events, from, to)` theo SPEC mục 5.
 - Tiêu chí: [ ] daily / weekly / monthly (ngày 31 bỏ qua tháng thiếu ngày) / yearly (29/02 chỉ năm nhuận) / `until` / không lặp; chặn đúng `[from, to]`; `Occurrence.id` duy nhất (`<eventId>@<date>`); pass cả 2 TZ.
 - Lệnh kiểm tra: `npm run test`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Nhật ký: 2026-09-13 lượt 1: DONE (port occursOn; 10 test; 42×2 unit) → kiem-thu PASS (61×2 unit, 6 e2e) → review đạt → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-2.2 — groupAgenda + collectRenderData
 - Phạm vi file: `src/core/calendar.ts` (thêm `groupAgenda`), `src/core/collect.ts`, `tests/unit/collect.test.ts`.
@@ -148,7 +150,7 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Mục tiêu: nhóm theo ngày, sắp xếp cả ngày trước rồi theo giờ; `collectRenderData` trộn local (đã expand trong [today, today+max(agendaDays, 42)]) + `google.cache.events` + todos + note.
 - Tiêu chí: [ ] agenda 7 ngày đúng thứ tự; ngày trống bị bỏ; [ ] cache Google null không lỗi; [ ] trộn 2 nguồn đúng.
 - Lệnh kiểm tra: `npm run test`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ### T-2.3 — layoutAgenda, layoutTodo, layoutNote
 - Phạm vi file: `src/render/layout/agenda.ts`, `todo.ts`, `note.ts`, `common.ts` (thêm helper bọc dòng ước lượng độ rộng theo `size`), `tests/unit/layout.test.ts`.
@@ -164,7 +166,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Mục tiêu: `t(key, lang, vars)` thay `{var}`; khóa thiếu → trả key; tên thứ/tháng dùng `Intl` hoặc bảng trong json; khóa cho mọi chuỗi UI hiện có + dự kiến (tabs, Preview, Events, Design, Sync, Guide, lỗi).
 - Tiêu chí: [ ] tập khóa vi = tập khóa en; [ ] thay biến đúng; [ ] khóa thiếu trả key.
 - Lệnh kiểm tra: `npm run test`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Nhật ký: 2026-09-13 lượt 1: DONE (t() + vi/en.json theo nhóm khóa; 56×2 unit) → kiem-thu PASS (61×2 unit, 6 e2e) → review đạt → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-2.5 — ics + backup
 - Phạm vi file: `src/export/ics.ts`, `src/storage/backup.ts`, `tests/unit/ics.test.ts`, `tests/unit/backup.test.ts`.
@@ -173,7 +176,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Mục tiêu: `eventToIcs` (VCALENDAR/VEVENT, DTSTART có giờ hoặc `VALUE=DATE`, RRULE FREQ + UNTIL, CRLF, escape `,;\`); `exportBackup/importBackup` `{version:1, state}`, version lạ → ném lỗi.
 - Tiêu chí: [ ] ics có VCALENDAR, VEVENT, DTSTART, RRULE đúng, CRLF; [ ] backup vòng tròn giống hệt; version 2 → throw.
 - Lệnh kiểm tra: `npm run test`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Nhật ký: 2026-09-13 lượt 1: DONE (eventToIcs(e, now?) + backup qua normalizeState; 61×2 unit) → kiem-thu PASS (61×2 unit, 6 e2e) → review đạt → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-2.8 — Âm lịch (SPEC v1.1, D-006)
 - Mục tiêu: `solarToLunar`, `lunarYearName` và hiển thị âm lịch trên bố cục Tháng + Agenda, bật/tắt bằng `showLunar`.
