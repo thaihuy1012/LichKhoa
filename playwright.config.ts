@@ -11,10 +11,13 @@ export default defineConfig({
   },
   use: {
     baseURL: 'http://localhost:4173',
-    viewport: { width: 390, height: 844 }
+    viewport: { width: 428, height: 926 }
   },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'], viewport: { width: 390, height: 844 } } },
-    { name: 'webkit', use: { ...devices['Desktop Safari'], viewport: { width: 390, height: 844 } } }
+    { name: 'chromium', use: { ...devices['Desktop Chrome'], viewport: { width: 428, height: 926 } } },
+    {
+      name: 'webkit',
+      use: { ...devices['iPhone 13 Pro Max'], viewport: { width: 428, height: 926 } }
+    }
   ]
 });

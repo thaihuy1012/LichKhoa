@@ -5,8 +5,9 @@ const SAFE_BOTTOM = 0.14;
 
 /** Preset thiết bị iPhone 12→17 phổ biến (kích thước pixel vật lý). */
 export const DEVICES: DeviceSpec[] = [
+  { id: 'iphone-1284x2778', label: 'iPhone 12/13 Pro Max', width: 1284, height: 2778, safeTop: SAFE_TOP, safeBottom: SAFE_BOTTOM },
   { id: 'iphone-1170x2532', label: 'iPhone 12/13/14, 12/13 Pro', width: 1170, height: 2532, safeTop: SAFE_TOP, safeBottom: SAFE_BOTTOM },
-  { id: 'iphone-1179x2556', label: 'iPhone 14/15/16', width: 1179, height: 2556, safeTop: SAFE_TOP, safeBottom: SAFE_BOTTOM },
+  { id: 'iphone-1179x2556', label: 'iPhone 14 Pro/15/16', width: 1179, height: 2556, safeTop: SAFE_TOP, safeBottom: SAFE_BOTTOM },
   { id: 'iphone-1206x2622', label: 'iPhone 16 Pro', width: 1206, height: 2622, safeTop: SAFE_TOP, safeBottom: SAFE_BOTTOM },
   { id: 'iphone-1290x2796', label: 'iPhone 14/15/16 Pro Max', width: 1290, height: 2796, safeTop: SAFE_TOP, safeBottom: SAFE_BOTTOM },
   { id: 'iphone-1320x2868', label: 'iPhone 16/17 Pro Max', width: 1320, height: 2868, safeTop: SAFE_TOP, safeBottom: SAFE_BOTTOM },

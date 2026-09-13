@@ -4,13 +4,14 @@ Nguồn sự thật: `docs/SPEC.md` (v1.1 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 6/8 (Kiến trúc sư: SỬA — làm T-1.6 ∥ T-1.7 rồi Quản lý tự gắn `M1-ok`, D-008) · M2: 0/9 · M3: 0/4 · M4: 0/6
-- Đang làm: T-1.6 ∥ T-1.7 (tho-sonnet ×2)
+- M1: 8/8 ✔ tag `M1-ok` (còn: ảnh mẫu 1284×2778 cho Chủ dự án thử, trước T-2.3) · M2: 0/9 · M3: 0/4 · M4: 0/6
+- Đang làm: M2 — T-2.1 ∥ T-2.4 ∥ T-2.5
 - Chờ Chủ dự án: (không)
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
 
 ## Tồn đọng (S4 — không chặn)
 - S4 · T-1.2 · mặc định `boxAlpha=1` (hộp nền đặc) sẽ che ảnh nền ở M4 — xem lại mặc định khi làm T-4.2.
+- S4 · T-1.7 · `normalizeState` chỉ kiểm `device.width/height`; device cũ thiếu `safeTop/safeBottom/id` sẽ lọt → nên bù mặc định khi làm T-2.5.
 
 ## Thứ tự & song song
 M1: 1.1 → 1.2 → (1.3 ∥ 1.4) → 1.5 → 1.END → (1.6 ∥ 1.7) → ảnh mẫu 1284×2778 cho Chủ dự án thử (xong trước T-2.3) → tag M1-ok
@@ -115,7 +116,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   [ ] `iphone13pm.spec.ts` (webkit mô phỏng 13 Pro Max): lần đầu mở (IndexedDB trống) → select = preset 1284×2778, preview naturalWidth 1284/naturalHeight 2778; nút "Lưu ảnh" và tab bar nằm trọn trong viewport không cần cuộn; `scrollWidth <= clientWidth`; `getComputedStyle(select).fontSize ≥ 16px`; mỗi nút tab cao ≥ 44px; `link[rel=apple-touch-icon]` tồn tại.
   [ ] `npm run check` pass (test cũ không bị sửa).
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-13 lượt 1: DONE (32×2 unit, 6 e2e; iphone13pm repeat-each=3 ổn định) → kiem-thu PASS → review đạt; Quản lý thêm `height: 100dvh` cho `.app` (Safari còn thanh công cụ), check lại pass → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-1.7 — normalizeState: nạp state cũ an toàn (phán quyết M1, D-008)
 - Mục tiêu: state trong IndexedDB (hoặc file sao lưu) thiếu trường mới / sai phiên bản không làm app hỏng hay kẹt "Đang tải…".
@@ -126,7 +128,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   [ ] `npm run check` pass (test khóa không đổi).
 - Ghi chú hợp đồng: T-2.5 `importBackup` PHẢI gọi `normalizeState`; T-2.8 chỉ cần thêm `showLunar` vào `defaultDesign()` là state cũ tự có mặc định.
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-13 lượt 1: DONE (normalizeState + loadState try/catch; model.test 6 test; 28×2 unit, check pass) → kiem-thu PASS → review đạt → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ---
 ## M2 — Sự kiện, to-do, ghi chú; Agenda / To-do / Note; sao lưu; i18n

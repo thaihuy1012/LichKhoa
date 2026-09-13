@@ -4,26 +4,40 @@ html, body {
   background: #0b0b0f;
   color: #f2f2f2;
   font-family: system-ui, sans-serif;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 .app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  max-width: 390px;
+  height: 100vh;
+  height: 100dvh; /* Safari iOS: 100vh cao hơn vùng thấy khi còn thanh công cụ */
+  max-width: 428px;
   margin: 0 auto;
+  overflow: hidden;
+  padding-top: env(safe-area-inset-top);
+  box-sizing: border-box;
 }
 
 .app-content {
   flex: 1;
   padding: 12px;
+  padding-left: max(12px, env(safe-area-inset-left));
+  padding-right: max(12px, env(safe-area-inset-right));
   box-sizing: border-box;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .preview-screen {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  flex: 1;
+  min-height: 0;
 }
 
 .field {
@@ -31,22 +45,39 @@ html, body {
   flex-direction: column;
   gap: 4px;
   font-size: 14px;
+  flex-shrink: 0;
+}
+
+.field select {
+  font-size: 16px;
+  min-height: 44px;
 }
 
 .custom-size {
   display: flex;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .custom-size input {
   flex: 1;
   min-width: 0;
+  font-size: 16px;
+  min-height: 44px;
+  box-sizing: border-box;
 }
 
 .preview-screen img {
-  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  object-fit: contain;
   border-radius: 8px;
   background: #000;
+  display: block;
+  margin: 0 auto;
 }
 
 .preview-screen button {
@@ -56,6 +87,8 @@ html, body {
   background: #4c6ef5;
   color: white;
   font-size: 16px;
+  min-height: 44px;
+  flex-shrink: 0;
 }
 
 .preview-screen button:disabled {
@@ -77,6 +110,8 @@ html, body {
 .tabbar {
   display: flex;
   border-top: 1px solid #222;
+  flex-shrink: 0;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .tab {
@@ -86,6 +121,7 @@ html, body {
   color: #ccc;
   padding: 10px 4px;
   font-size: 12px;
+  min-height: 44px;
 }
 
 .tab-active {

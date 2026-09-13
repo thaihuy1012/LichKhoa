@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import type { AppState } from '../core/model';
 import { defaultState } from '../core/model';
-import { detectDevice } from '../render/devices';
+import { DEVICES, detectDevice } from '../render/devices';
 import { loadState } from '../storage/db';
 import { createStore, type Store } from './store';
 import { Preview } from './screens/Preview';
@@ -19,7 +19,8 @@ type TabId = (typeof TABS)[number]['id'];
 async function loadInitialState(): Promise<AppState> {
   const saved = await loadState();
   if (saved) return saved;
-  const device = detectDevice(window.screen.width, window.screen.height, window.devicePixelRatio || 1);
+  const detected = detectDevice(window.screen.width, window.screen.height, window.devicePixelRatio || 1);
+  const device = detected.id === 'auto' ? DEVICES.find((d) => d.id === 'iphone-1284x2778')! : detected;
   return defaultState(device);
 }
 
