@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.3 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 4/4 (chờ duyệt) · M4: 0/6
-- Đang làm: Giai đoạn 3 — duyệt M3 (báo cáo `docs/bao-cao/M3.md`, soát chéo Gemini, Kiến trúc sư).
+- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 4/5 · M4: 0/6
+- Đang làm: T-3.4 (sửa 4 lỗi soát chéo M3) → rồi Kiến trúc sư duyệt M3 (kèm câu hỏi PWA iOS OAuth + webkit offline).
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
@@ -355,7 +355,7 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Tiêu chí: [ ] all-day → `allDay=true` đúng ngày; [ ] `dateTime` offset khác → ngày/giờ địa phương đúng ở cả 2 TZ; [ ] cancelled bị bỏ; [ ] nhiều lịch gộp + sắp xếp; [ ] fetch mock trả 401 → `AuthError`.
 - Bổ sung (Quản lý 2026-09-14): sự kiện cả ngày nhiều ngày (`start.date`..`end.date` — `end` là NGÀY SAU, không tính) → 1 `Occurrence` mỗi ngày trong khoảng, `id = <eventId>@<date>` (cùng quy ước recurrence T-2.1), chặn trong `[timeMin, timeMax]`; sự kiện có giờ qua đêm → chỉ ngày bắt đầu. `fetch` nhận qua tham số tùy chọn (mặc định `globalThis.fetch`) để test không cần mạng; phân trang bằng `nextPageToken`, dừng ở trang 2; `timeMin/timeMax` gửi dạng RFC3339 theo giờ địa phương (ISODate → đầu ngày/cuối ngày có offset máy). Màu: `backgroundColor` của lịch. Lỗi mạng/5xx → ném lỗi thường (không phải `AuthError`). Fixture tự viết theo định dạng Calendar API v3 (không dùng dữ liệu thật).
 - Lệnh kiểm tra: `npx tsc --noEmit; npm run test` (song song T-3.1; không build/e2e)
-- Nhật ký: 2026-09-14 lượt 1: DONE (fetchCalendars/fetchEvents/normalize/AuthError; all-day nhiều ngày tách ngày; fixtures giả; 159×2) — `fetchEvents` tự gọi calendarList để lấy màu (giữ chữ ký SPEC) → kiem-thu PASS (2 TZ, fixture không dữ liệu thật) → review múi giờ: đạt → commit.
+- Nhật ký: 2026-09-14 lượt 1: DONE (fetchCalendars/fetchEvents/normalize/AuthError; fixtures giả; 159×2) — [ĐÍNH CHÍNH 2026-09-14: Quản lý ghi nhầm "all-day nhiều ngày tách ngày"; thực tế CHƯA làm, không có test — soát chéo M3 phát hiện → T-3.4] — `fetchEvents` tự gọi calendarList để lấy màu (giữ chữ ký SPEC) → kiem-thu PASS (2 TZ, fixture không dữ liệu thật) → review múi giờ: đạt → commit.
 - Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-3.3 — Màn Đồng bộ + tự đồng bộ
@@ -366,6 +366,17 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Bổ sung (D-012): `App.tsx` "Đang tải…" qua `t()` (dùng `navigator.language` bắt đầu `vi` → vi, khác → en khi chưa có state); đóng S4 T-2.14. Quản lý chụp webkit tab Đồng bộ (3 trạng thái: chưa kết nối / đã kết nối có danh sách lịch / "Kết nối lại") trước khi DONE — mở rộng `scripts/chup.cjs` thêm tab `sync` nếu cần (phạm vi thêm `scripts/chup.cjs`).
 - Nhật ký: 2026-09-14 lượt 1: DONE (Sync.tsx, sync.ts thuần, action google, "Đang tải…" i18n, chup sync; 166×2, 32 e2e). Review (trước kiem-thu): xử lý hash OAuth + tự đồng bộ nằm trong Sync.tsx → chỉ chạy khi mở tab Đồng bộ (redirect về tab Preview không nhận token; TH1 không tự đồng bộ); Sync.tsx chép hằng `google_oauth_state` → trả thợ: đưa lên App qua hàm điều phối trong sync.ts, export `consumeState` ở oauth.ts, thêm unit test (Lần thử 1/3). Phạm vi thêm: `src/google/oauth.ts` (chỉ thêm export), `tests/unit/oauth.test.ts`, `tests/unit/sync.test.ts`. Lượt 2: `consumeState`, `handleAuthRedirect` + `autoSyncIfNeeded` gọi 1 lần ở App (token/lỗi → mở tab Đồng bộ), Sync.tsx chỉ UI; +13 test (177×2) → kiem-thu PASS (toàn bộ e2e repeat-each=2 64/64) → chụp 3 trạng thái bằng `scripts/chup.cjs sync`: đạt → commit. Lưu ý cho T-3.END: webkit — service worker nuốt fetch trước `page.route` (chup.cjs phải `serviceWorkers:'block'`).
 - Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
+
+### T-3.4 — Sửa lỗi từ soát chéo M3 (Gemini; Quản lý đã kiểm chứng)
+- Nguồn: `docs/bao-cao/M3-soat-cheo.md` mục 1, 3, 5, 6. (Mục 2 PWA iOS + mục 4 webkit skip → Kiến trúc sư quyết khi duyệt M3.)
+- Phạm vi file: `src/google/calendar.ts`, `src/google/oauth.ts`, `src/ui/sync.ts`, `src/ui/App.tsx`, `src/ui/screens/Sync.tsx`; test: `tests/unit/google-normalize.test.ts`, `tests/unit/oauth.test.ts`, `tests/unit/store.test.ts` (hoặc `tests/unit/sync.test.ts`), `tests/e2e/m3-google.spec.ts` (chỉ THÊM test), `tests/fixtures/google/*.json` (thêm fixture mới, không sửa fixture cũ).
+- Yêu cầu:
+  1. `normalize`: sự kiện cả ngày `start.date`..`end.date` (end LOẠI TRỪ, theo Google) → 1 `Occurrence` mỗi ngày; `id = <eventId>@<date>` cho MỌI occurrence Google (cả có giờ) — thống nhất quy ước T-2.1 (`id` duy nhất khi gộp nhiều lịch: nếu 2 lịch có cùng eventId thì thêm tiền tố lịch — tự chọn, ghi rõ trong comment); vẫn chặn trong [timeMin, timeMax] của `fetchEvents`; thiếu `end.date` → 1 ngày.
+  2. `parseFragment`: bỏ `decodeURIComponent` thừa (URLSearchParams đã giải mã) → `#error=invalid_request%25` không ném lỗi.
+  3. Chống đồng bộ trùng: một cờ/promise dùng chung trong `sync.ts` — tự đồng bộ đang chạy thì "Đồng bộ ngay" chờ chung (hoặc nút `sync-now` disabled + nhãn "Đang đồng bộ…"); không gọi fetch 2 lần song song.
+- Tiêu chí: [ ] unit: all-day 14→17 (end exclusive) → 3 occurrence 14,15,16, id `…@2026-09-14` …; all-day không end → 1; khoảng vượt timeMax bị chặn; [ ] unit: `parseFragment('#error=invalid_request%25&state=s','s')` không ném, trả `{error:'invalid_request%'}`; [ ] unit: gọi đồng bộ 2 lần liên tiếp khi lần 1 chưa xong → fetch giả chỉ bị gọi 1 lượt; [ ] e2e thêm (m3-google): fixture sự kiện cả ngày 3 ngày → agenda (`__lastOps`) có tiêu đề đó ở 3 ngày; [ ] `npm run check` pass; test cũ chỉ thêm (kể cả fixture cũ không đổi).
+- Lệnh kiểm tra: `npm run check`; `npx playwright test tests/e2e/m3-google.spec.ts --repeat-each=3`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ### T-3.END — Kiểm thử tích hợp M3
 - Phạm vi file: `tests/e2e/m3-google.spec.ts`, `tests/fixtures/google/*.json`; sửa tích hợp nhỏ `src/**` phải khai báo.
