@@ -1,0 +1,10 @@
+{
+  "items": [
+    {
+      "id": "ev4",
+      "summary": "Sinh nhat",
+      "start": { "dateTime": "2026-01-03T08:00:00+07:00" },
+      "end": { "dateTime": "2026-01-03T09:00:00+07:00" }
+    }
+  ]
+}

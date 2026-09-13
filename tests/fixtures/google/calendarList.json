@@ -1,0 +1,6 @@
+{
+  "items": [
+    { "id": "cal1@group.calendar.google.com", "summary": "Cong viec", "backgroundColor": "#4285F4" },
+    { "id": "cal2@group.calendar.google.com", "summary": "Ca nhan", "backgroundColor": "#0B8043" }
+  ]
+}

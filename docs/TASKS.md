@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.3 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 0/4 · M4: 0/6
-- Đang làm: T-3.1 ∥ T-3.2 (DOING, sonnet, chỉ unit — không build/e2e). e2e M3 dùng mock, chưa cần Client ID thật.
+- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 2/4 · M4: 0/6
+- Đang làm: T-3.3 (DOING, sonnet). T-3.1 ✔, T-3.2 ✔. e2e M3 dùng mock, chưa cần Client ID thật.
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
@@ -20,7 +20,8 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - ~~S4 · T-2.7 · `EventsTab.tsx` L93 durationMin ngầm 60~~ → đã sửa trong T-2.12.
 - ~~S4 · T-2.12 · ô todo-due trống không nhãn~~ → đã sửa T-2.14.
 - S4 · T-2.14 · `App.tsx` L52 "Đang tải…" cứng tiếng Việt (hiện trước khi nạp state — chưa biết ngôn ngữ); làm khi có phiếu chạm App.tsx.
-- S4 · T-2.5 · `eventToIcs` chưa gập dòng > 75 byte (RFC 5545 §3.1); Lịch iPhone vẫn đọc được — làm nếu có phiếu chạm ics.
+- S4 · T-3.1 · `parseFragment` giải mã `error` 2 lần (`URLSearchParams` đã giải mã) và trả `{error}` không kiểm `state` — vô hại với mã lỗi ASCII của Google; sửa nếu có phiếu chạm oauth.ts.
+- ~~S4 · T-2.5 · `eventToIcs` chưa gập dòng > 75 byte~~ → đã sửa T-2.15.
 
 ## Thứ tự & song song
 M1: 1.1 → 1.2 → (1.3 ∥ 1.4) → 1.5 → 1.END → (1.6 ∥ 1.7) → ảnh mẫu 1284×2778 cho Chủ dự án thử (xong trước T-2.3) → tag M1-ok
@@ -344,7 +345,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Tiêu chí: [ ] URL có `response_type=token`, `scope=https://www.googleapis.com/auth/calendar.readonly`, `state`, `redirect_uri`, `prompt` tùy chọn; [ ] `parseFragment` đúng state / sai state / `error` / rỗng.
 - Bổ sung (Quản lý 2026-09-14): Vitest chạy môi trường node (không có `localStorage`/`sessionStorage`) → hàm lưu/đọc token và state nhận tham số `storage: Pick<Storage,'getItem'|'setItem'|'removeItem'>` (mặc định `globalThis.localStorage`/`sessionStorage` khi có); test dùng Map giả. `parseFragment` giải mã `%xx`, chấp nhận hash có/không `#`; `expiresIn` là số; `expiresAt = now + expiresIn*1000 − 60 s` (trừ biên an toàn). Không log token. Hợp đồng chữ ký theo SPEC §5 (được thêm tham số tùy chọn ở cuối).
 - Lệnh kiểm tra: `npx tsc --noEmit; npm run test` (song song T-3.2; không build/e2e)
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (buildAuthUrl, parseFragment, newState, save/get/clearToken có storage tùy chọn; 152×2) → kiem-thu PASS (159×2, 32 e2e) → review: đạt; Quản lý sửa 1 dòng comment chứa chữ `client_secret` (tiêu chí T-3.END đòi `Select-String … client_secret` rỗng) → commit. Ghi chú cho T-3.3 (localStorage cho state, xóa state sau dùng).
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-3.2 — Google Calendar REST + normalize
 - Phạm vi file: `src/google/calendar.ts`, `tests/unit/google-normalize.test.ts`, `tests/fixtures/google/*.json`.
@@ -352,12 +354,14 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Tiêu chí: [ ] all-day → `allDay=true` đúng ngày; [ ] `dateTime` offset khác → ngày/giờ địa phương đúng ở cả 2 TZ; [ ] cancelled bị bỏ; [ ] nhiều lịch gộp + sắp xếp; [ ] fetch mock trả 401 → `AuthError`.
 - Bổ sung (Quản lý 2026-09-14): sự kiện cả ngày nhiều ngày (`start.date`..`end.date` — `end` là NGÀY SAU, không tính) → 1 `Occurrence` mỗi ngày trong khoảng, `id = <eventId>@<date>` (cùng quy ước recurrence T-2.1), chặn trong `[timeMin, timeMax]`; sự kiện có giờ qua đêm → chỉ ngày bắt đầu. `fetch` nhận qua tham số tùy chọn (mặc định `globalThis.fetch`) để test không cần mạng; phân trang bằng `nextPageToken`, dừng ở trang 2; `timeMin/timeMax` gửi dạng RFC3339 theo giờ địa phương (ISODate → đầu ngày/cuối ngày có offset máy). Màu: `backgroundColor` của lịch. Lỗi mạng/5xx → ném lỗi thường (không phải `AuthError`). Fixture tự viết theo định dạng Calendar API v3 (không dùng dữ liệu thật).
 - Lệnh kiểm tra: `npx tsc --noEmit; npm run test` (song song T-3.1; không build/e2e)
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (fetchCalendars/fetchEvents/normalize/AuthError; all-day nhiều ngày tách ngày; fixtures giả; 159×2) — `fetchEvents` tự gọi calendarList để lấy màu (giữ chữ ký SPEC) → kiem-thu PASS (2 TZ, fixture không dữ liệu thật) → review múi giờ: đạt → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-3.3 — Màn Đồng bộ + tự đồng bộ
 - Phạm vi file: `src/ui/screens/Sync.tsx`, `src/ui/App.tsx`, `src/ui/store.ts`, `src/ui/sync.ts` (điều phối), `src/core/i18n/*.json`, `tests/unit/store.test.ts`.
 - Mục tiêu: dán Client ID, Kết nối (redirect), xử lý hash khi khởi động (xóa bằng `replaceState`), danh sách lịch + chọn, Đồng bộ ngay, thời điểm đồng bộ, Ngắt kết nối; tự đồng bộ khi mở nếu token còn hạn và cache > 30 phút; 401 → trạng thái "Kết nối lại"; lỗi mạng → giữ cache.
 - Tiêu chí: [ ] `npm run check` pass; [ ] reducer test cho action google.
+- Bổ sung (Quản lý, review T-3.1): gọi `newState(localStorage)` (không dùng sessionStorage mặc định — PWA standalone iOS có thể mất sessionStorage qua redirect Google, SPEC §8 rủi ro 1); xóa `state` ngay sau khi `parseFragment` (dùng 1 lần, kể cả khi lỗi); `redirectUri` = `location.origin + location.pathname` (khớp `VITE_BASE`, có `/` cuối). 401 → `clearToken()` + trạng thái "Kết nối lại".
 - Bổ sung (D-012): `App.tsx` "Đang tải…" qua `t()` (dùng `navigator.language` bắt đầu `vi` → vi, khác → en khi chưa có state); đóng S4 T-2.14. Quản lý chụp webkit tab Đồng bộ (3 trạng thái: chưa kết nối / đã kết nối có danh sách lịch / "Kết nối lại") trước khi DONE — mở rộng `scripts/chup.cjs` thêm tab `sync` nếu cần (phạm vi thêm `scripts/chup.cjs`).
 - Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
 
