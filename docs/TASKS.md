@@ -417,8 +417,16 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Tham khảo (chép/port được, xem docs/tham-khao-LICH_NEN.md §6): `F:/LICH_NEN/lich-nen.html` L410–411 bảng màu `ACCENTS`, `EVENT_COLORS`; L184–237 các control Thiết kế (ảnh/màu/mờ/tối/font/vị trí — thêm `blur`); L66–68 `.seg` cho vị trí/font; L213–215 ô màu nhanh (swatches) + `<input type="color">`; L1396 `buildSwatches`. Số dòng do Gemini dẫn — thợ tự kiểm lại.
 - Mục tiêu: chọn nền (ảnh/màu/gradient + chọn ảnh → `saveBg`), blur 0–3, dim 0–0.8, màu chữ/nhấn, font, vị trí, scale, boxAlpha, agendaDays; `data-testid` đầy đủ.
 - Tiêu chí: [ ] `npm run check` pass; [ ] thao tác tay đổi từng tùy chọn → preview đổi.
-- Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Bổ sung (Quản lý 2026-09-14):
+  - `data-testid` (T-4.END dùng): `bg-kind-photo|solid|gradient` (segmented), `bg-file` (input file `accept="image/*"`), `bg-color`, `bg-color2`, `blur` (segmented 0–3: `blur-0..3`), `dim` (range 0–0.8 bước 0.1), `text-color`, `accent-color` (swatches `accent-<i>` + input color), `font-sans|serif|mono`, `position-top|middle|bottom`, `scale` (range), `box-alpha` (range 0–1), `agenda-days` (select 3/5/7/14).
+  - Ảnh: chọn file → `loadPhoto(file, device)` (T-4.1) → `saveBg(blob)` → `setDesign({bg:{kind:'photo',…}})`; Preview hiện chỉ `loadBg()` lúc mount → cần cơ chế báo Preview nạp lại ảnh (vd. số `bgRev` trong store — không lưu vào backup — hoặc sự kiện tùy chỉnh); ảnh lớn không làm treo UI (hiện "Đang xử lý ảnh…").
+  - `boxAlpha` (D-012): khi chuyển sang `photo` lần đầu mà `boxAlpha === 1` → đặt 0.35; màu đơn/gradient giữ nguyên. Kiểm hộp nền trong `layout/common.ts` dùng `boxAlpha` nhất quán cho mọi bố cục + dải note.
+  - Nợ gộp: (1) S4 D-015 — `App.tsx` sau redirect kết nối thành công ép đồng bộ ngay (bỏ điều kiện cache > 30′ khi `authResult.ok`); (2) S4 T-3.3 — nút `sync-connect`/`sync-now` kiểu nút chính (accent). Phạm vi thêm: `src/ui/screens/Sync.tsx` (chỉ class nút), `src/ui/sync.ts` (nếu cần cho (1)), `tests/unit/sync.test.ts` hoặc `store.test.ts` (chỉ thêm).
+  - Tham khảo: số dòng LICH_NEN do Gemini dẫn — thợ tự kiểm (grep `id="bg-`/`ACCENTS`/`.seg`/`swatch`) trước khi chép.
+  - Chụp: thêm tab `design` vào `scripts/chup.cjs` (phạm vi thêm) — 2 ảnh (đầu màn + cuộn cuối); Quản lý xem + dựng hình nền có ảnh trước khi DONE.
+  - e2e mới `tests/e2e/design.spec.ts`: đổi blur/dim/position/font → hash PNG preview đổi mỗi bước; tải `tests/fixtures/photo-4000x3000.jpg` → preview 1284×2778, `boxAlpha` thành 0.35.
+- Lệnh kiểm tra: `npm run check`; `npx playwright test tests/e2e/design.spec.ts --repeat-each=3`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ### T-4.3 — Sao chép + Đặt hình nền một chạm
 - Phạm vi file: `src/export/share.ts`, `src/ui/screens/Preview.tsx`, `src/core/i18n/*.json`.
