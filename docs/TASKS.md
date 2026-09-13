@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.1 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 5/6 · M2: 0/9 · M3: 0/4 · M4: 0/6
-- Đang làm: T-1.END (tho-sonnet)
+- M1: 6/6 (chờ Kiến trúc sư duyệt) · M2: 0/9 · M3: 0/4 · M4: 0/6
+- Đang làm: Giai đoạn 3 — duyệt M1 (kien-truc-su)
 - Chờ Chủ dự án: (không)
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
 
@@ -99,7 +99,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   [ ] Có `<link rel="manifest">`, `navigator.serviceWorker.ready` resolve (có thể giữ ở smoke.spec).
   [ ] `npm run check` pass toàn bộ.
 - Lệnh kiểm tra: `npx playwright test tests/e2e/m1-render.spec.ts; npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-13 lượt 1: DONE (10/10 × 5 lần lặp; check pass) nhưng né "flake" webkit bằng cách chờ preview trước khi chọn thiết bị. Quản lý: đó là bug app — `Preview.tsx` subscribe store trong useEffect (sau paint), dispatch sớm bị mất → trả thợ sửa src + test tái hiện (Lần thử 1/3). Lượt 2: tái hiện (code cũ 1/10 fail webkit) → sửa Preview.tsx 1 dòng → 20/20; check pass → kiem-thu PASS (repeat-each=5 0 fail; check 22×2 + 4 e2e) → review đạt → commit.
+- Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
 
 ---
 ## M2 — Sự kiện, to-do, ghi chú; Agenda / To-do / Note; sao lưu; i18n

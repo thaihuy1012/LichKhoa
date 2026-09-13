@@ -26,7 +26,13 @@ export function Preview({ store }: { store: Store }) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const renderTokenRef = useRef(0);
 
-  useEffect(() => store.subscribe(setState), [store]);
+  useEffect(() => {
+    // Đồng bộ ngay khi đăng ký: nếu dispatch xảy ra giữa lúc khởi tạo state cục bộ
+    // (useState(store.getState()) lúc render) và lúc effect này chạy (sau paint),
+    // store đã đổi nhưng Preview chưa nhận — cập nhật lại để không kẹt ở state cũ.
+    setState(store.getState());
+    return store.subscribe(setState);
+  }, [store]);
 
   useEffect(() => {
     setWidthText(String(state.device.width));
