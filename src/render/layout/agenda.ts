@@ -69,7 +69,7 @@ export function layoutAgenda(d: RenderData, c: DesignConfig, dev: DeviceSpec): D
         op: 'text',
         x: contentLeft,
         y: rowCenterY + sLabelSize * 0.35,
-        text: dayLabel(row.date, d.today, c.lang),
+        text: dayLabel(row.date, d.today, c.lang, c.showLunar),
         size: sLabelSize,
         weight: 700,
         color: c.textColor,

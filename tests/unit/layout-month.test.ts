@@ -100,6 +100,67 @@ describe('layoutMonth', () => {
   });
 });
 
+describe('layoutMonth âm lịch', () => {
+  it('showLunar=true: có op text "Âm lịch ..." và nhãn ngày âm trong ô', () => {
+    const design: DesignConfig = { ...defaultDesign(), showLunar: true };
+    const d = renderData('2026-02-17');
+    const ops = layoutMonth(d, design, DEV_1179);
+    const texts = ops.filter((o) => o.op === 'text').map((o) => (o as { text: string }).text);
+    expect(texts.some((t) => t.startsWith('Âm lịch'))).toBe(true);
+    expect(texts).toContain('1/1');
+  });
+
+  it('showLunar=false: không có op âm lịch nào', () => {
+    const design: DesignConfig = { ...defaultDesign(), showLunar: false };
+    const d = renderData('2026-02-17');
+    const ops = layoutMonth(d, design, DEV_1179);
+    const texts = ops.filter((o) => o.op === 'text').map((o) => (o as { text: string }).text);
+    expect(texts.some((t) => t.startsWith('Âm lịch'))).toBe(false);
+    expect(texts).not.toContain('1/1');
+  });
+
+  it('showLunar=true: dấu hôm nay bao trọn cả số dương lẫn số âm', () => {
+    const design: DesignConfig = { ...defaultDesign(), accentColor: '#ff8800', showLunar: true };
+    const d = renderData('2026-09-13');
+    const ops = layoutMonth(d, design, DEV_1179);
+
+    const ring = ops.find((op) => op.op === 'dot' && op.fill === design.accentColor)!;
+    expect(ring.op).toBe('dot');
+    const dayText = ops.find((op) => op.op === 'text' && op.text === '13' && op.weight === 700)!;
+    const lunarText = ops.find(
+      (op) => op.op === 'text' && op.weight === 400 && /^\d{1,2}(\/\d{1,2})?$/.test(op.text) && op.x === dayText.x && op.y > dayText.y
+    )!;
+    expect(dayText).toBeDefined();
+    expect(lunarText).toBeDefined();
+
+    if (ring.op === 'dot' && dayText.op === 'text' && lunarText.op === 'text') {
+      const dayBboxTop = dayText.y - dayText.size * 0.75;
+      const dayBboxBottom = dayText.y + dayText.size * 0.25;
+      const lunarBboxTop = lunarText.y - lunarText.size * 0.75;
+      const lunarBboxBottom = lunarText.y + lunarText.size * 0.25;
+      expect(dayBboxTop).toBeGreaterThanOrEqual(ring.y - ring.r - 0.01);
+      expect(dayBboxBottom).toBeLessThanOrEqual(ring.y + ring.r + 0.01);
+      expect(lunarBboxTop).toBeGreaterThanOrEqual(ring.y - ring.r - 0.01);
+      expect(lunarBboxBottom).toBeLessThanOrEqual(ring.y + ring.r + 0.01);
+    }
+  });
+
+  it('showLunar=true: vẫn nằm trong vùng an toàn với 3 position x 2 thiết bị', () => {
+    const positions: DesignConfig['position'][] = ['top', 'middle', 'bottom'];
+    const devices = [DEV_1179, DEV_1320];
+    for (const dev of devices) {
+      for (const position of positions) {
+        const design: DesignConfig = { ...defaultDesign(), position, showLunar: true };
+        const d = renderData('2026-02-17', [
+          { id: 'o1', sourceId: 'e1', source: 'local', title: 'Họp', date: '2026-02-17', allDay: true },
+        ]);
+        const ops = layoutMonth(d, design, dev);
+        assertAllOpsInSafeArea(ops, dev);
+      }
+    }
+  });
+});
+
 describe('detectDevice', () => {
   it('khớp preset đúng kích thước vật lý', () => {
     const dev = detectDevice(393, 852, 3);

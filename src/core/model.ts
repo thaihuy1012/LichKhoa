@@ -56,6 +56,7 @@ export interface DesignConfig {
   weekStart: 0 | 1;
   hour12: boolean;
   lang: 'vi' | 'en';
+  showLunar: boolean;
 }
 
 export interface AppState {
@@ -97,6 +98,7 @@ export function defaultDesign(): DesignConfig {
     weekStart: 1,
     hour12: false,
     lang: 'vi',
+    showLunar: true,
   };
 }
 

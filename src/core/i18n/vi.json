@@ -79,5 +79,9 @@
   "todo.empty": "Không có việc cần làm",
 
   "common.comingSoon": "Sắp có",
-  "sync.lastSync": "Đồng bộ lần cuối: {time}"
+  "sync.lastSync": "Đồng bộ lần cuối: {time}",
+
+  "lunar.leap": " nhuận",
+  "lunar.line": "Âm lịch {day}/{month}{leap} {yearName}",
+  "lunar.agenda": "{day}/{month}{leap} ÂL"
 }

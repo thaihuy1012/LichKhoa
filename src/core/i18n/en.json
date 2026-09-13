@@ -79,5 +79,9 @@
   "todo.empty": "No to-dos",
 
   "common.comingSoon": "Coming soon",
-  "sync.lastSync": "Last synced: {time}"
+  "sync.lastSync": "Last synced: {time}",
+
+  "lunar.leap": " leap",
+  "lunar.line": "Lunar {day}/{month}{leap} {yearName}",
+  "lunar.agenda": "{day}/{month}{leap} lunar"
 }

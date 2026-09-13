@@ -126,6 +126,24 @@ describe('layoutAgenda', () => {
   });
 });
 
+describe('layoutAgenda âm lịch', () => {
+  it('showLunar=true: nhãn ngày kèm ngày âm', () => {
+    const design: DesignConfig = { ...defaultDesign(), showLunar: true };
+    const d = renderData({ today: '2026-02-17', occurrences: [occ('2026-02-17', '09:00', 'X')] });
+    const ops = layoutAgenda(d, design, DEV_1179);
+    const texts = textOf(ops);
+    expect(texts.some((t) => t.includes('ÂL'))).toBe(true);
+  });
+
+  it('showLunar=false: không có ngày âm trong nhãn ngày', () => {
+    const design: DesignConfig = { ...defaultDesign(), showLunar: false };
+    const d = renderData({ today: '2026-02-17', occurrences: [occ('2026-02-17', '09:00', 'X')] });
+    const ops = layoutAgenda(d, design, DEV_1179);
+    const texts = textOf(ops);
+    expect(texts.some((t) => t.includes('ÂL'))).toBe(false);
+  });
+});
+
 describe('layoutTodo', () => {
   function todo(text: string, done = false, order = 0): Todo {
     return { id: text, text, done, order };

@@ -1,6 +1,7 @@
 import type { DeviceSpec, DesignConfig, ISODate } from '../../core/model';
 import { parseISODate } from '../../core/calendar';
 import { t } from '../../core/i18n';
+import { solarToLunar, lunarYearName } from '../../core/lunar';
 
 /** Lệnh vẽ dùng chung cho mọi layout và `paint` (hợp đồng SPEC mục 5). */
 export type DrawOp =
@@ -82,17 +83,43 @@ export function fmtTime(time: string | undefined, hour12: boolean): string {
   return `${hh}:${pad2(m)} ${h < 12 ? 'AM' : 'PM'}`;
 }
 
-/** Nhãn ngày cho Agenda: "Hôm nay" / "Ngày mai" / "T2 14/9" (i18n). */
-export function dayLabel(date: ISODate, today: ISODate, lang: 'vi' | 'en'): string {
-  if (date === today) return t('date.today', lang);
-  const p1 = parseISODate(today);
-  const d1 = new Date(p1.y, p1.m0, p1.d, 12);
-  const p2 = parseISODate(date);
-  const d2 = new Date(p2.y, p2.m0, p2.d, 12);
-  const diffDays = Math.round((d2.getTime() - d1.getTime()) / 86400000);
-  if (diffDays === 1) return t('date.tomorrow', lang);
-  const wd = t(`weekday.short.${d2.getDay()}`, lang);
-  return `${wd} ${p2.d}/${p2.m0 + 1}`;
+/** Nhãn ngày âm ngắn gọn cho Agenda, vd. "1/8 ÂL" hoặc "1/8 nhuận ÂL". */
+export function lunarAgendaLabel(date: ISODate, lang: 'vi' | 'en'): string {
+  const l = solarToLunar(date);
+  const leap = l.leap ? t('lunar.leap', lang) : '';
+  return t('lunar.agenda', lang, { day: l.day, month: l.month, leap });
+}
+
+/** Dòng âm lịch đầy đủ dưới tiêu đề tháng, vd. "Âm lịch 1/1 Bính Ngọ". */
+export function lunarTodayLine(date: ISODate, lang: 'vi' | 'en'): string {
+  const l = solarToLunar(date);
+  const leap = l.leap ? t('lunar.leap', lang) : '';
+  return t('lunar.line', lang, { day: l.day, month: l.month, leap, yearName: lunarYearName(l.year) });
+}
+
+/** Nhãn ngày trong ô lưới Tháng: "1/M" cho mùng 1 (kèm tháng âm), còn lại chỉ ngày âm. */
+export function lunarCellLabel(date: ISODate): string {
+  const l = solarToLunar(date);
+  return l.day === 1 ? `${l.day}/${l.month}` : `${l.day}`;
+}
+
+/** Nhãn ngày cho Agenda: "Hôm nay" / "Ngày mai" / "T2 14/9" (i18n); kèm ngày âm khi `showLunar`. */
+export function dayLabel(date: ISODate, today: ISODate, lang: 'vi' | 'en', showLunar = false): string {
+  let base: string;
+  if (date === today) base = t('date.today', lang);
+  else {
+    const p1 = parseISODate(today);
+    const d1 = new Date(p1.y, p1.m0, p1.d, 12);
+    const p2 = parseISODate(date);
+    const d2 = new Date(p2.y, p2.m0, p2.d, 12);
+    const diffDays = Math.round((d2.getTime() - d1.getTime()) / 86400000);
+    if (diffDays === 1) base = t('date.tomorrow', lang);
+    else {
+      const wd = t(`weekday.short.${d2.getDay()}`, lang);
+      base = `${wd} ${p2.d}/${p2.m0 + 1}`;
+    }
+  }
+  return showLunar ? `${base} · ${lunarAgendaLabel(date, lang)}` : base;
 }
 
 /** Ước lượng số dòng cần để hiển thị `text` trong bề rộng `width` với cỡ chữ `size`. */

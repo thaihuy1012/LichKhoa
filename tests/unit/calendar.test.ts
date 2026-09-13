@@ -60,6 +60,7 @@ describe('defaultDesign / defaultState', () => {
     expect(design.hour12).toBe(false);
     expect(design.lang).toBe('vi');
     expect(design.agendaDays).toBe(7);
+    expect(design.showLunar).toBe(true);
   });
 
   it('defaultState dùng device truyền vào và shortcutName mặc định', () => {

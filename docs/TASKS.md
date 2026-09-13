@@ -4,10 +4,10 @@ Nguồn sự thật: `docs/SPEC.md` (v1.2 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 5/9 · M3: 0/4 · M4: 0/6
-- Đang làm: T-2.8 Âm lịch (tho-sonnet)
+- M1: 8/8 ✔ tag `M1-ok` · M2: 6/9 · M3: 0/4 · M4: 0/6
+- Đang làm: (không — điểm dừng sạch 2026-09-13; phiếu kế: T-2.6)
 - Chờ Chủ dự án: đặt thử ảnh mẫu 1284×2778 (đã gửi 2026-09-13) — có đè đồng hồ/widget/nút không? (không chặn; cần trước T-2.3)
-- Chuyển phiên: Chủ dự án dừng kiem-thu T-2.8 lượt lại; T-2.8 ở REVIEW, CHƯA commit (thay đổi còn trong working tree). Phiên mới (`claude --agent quan-ly`): chạy lại kiem-thu T-2.8 → commit → T-2.6.
+- Chuyển phiên: T-2.8 đã commit — điểm dừng sạch. Phiên mới (`claude --agent quan-ly`): đọc SU-CO → TASKS, giao T-2.6 (nhớ tiêu chí Quản lý dựng ảnh mẫu 3 bố cục xem bằng mắt). Ảnh mẫu mới nhất đã gửi Chủ dự án: có âm lịch (lichkhoa-amlich-r1.png).
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
 
 ## Tồn đọng (S4 — không chặn)
@@ -194,8 +194,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   [ ] Layout Tháng/Agenda: `showLunar` true có op text âm lịch, false không có; test vùng an toàn cũ vẫn pass không nới.
   [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npm run check`
-- Nhật ký: 2026-09-13 lượt 1: DONE (lunar.ts tz=7; showLunar mặc định true; ô Tháng có ngày âm, chấm sự kiện dời góc trên-phải khi showLunar; Agenda nhãn kèm ÂL; calendar.test chỉ thêm 1 expect — đã khai; 96×2 unit, check pass) → kiem-thu PASS. Quản lý dựng ảnh 1284×2778 xem bằng mắt: vòng hôm nay tâm ở giữa hàng nhưng số dương bị đẩy lên → chữ bị cắt đôi → trả thợ (Lần thử 1/3). Lượt 2: vòng hôm nay tính lại tâm/bán kính bao cả số dương + âm (+1 test bbox; thợ báo 97×2 pass, check pass); Quản lý xem ảnh r1: đạt. kiem-thu lượt lại BỊ CHỦ DỰ ÁN DỪNG giữa chừng → CHƯA commit; phiên sau: chạy lại kiem-thu (test tổng + kiểm test khóa chỉ thêm) rồi commit.
-- Model: sonnet · Lần thử: 1/3 · Trạng thái: REVIEW
+- Nhật ký: 2026-09-13 lượt 1: DONE (lunar.ts tz=7; showLunar mặc định true; ô Tháng có ngày âm, chấm sự kiện dời góc trên-phải khi showLunar; Agenda nhãn kèm ÂL; calendar.test chỉ thêm 1 expect — đã khai; 96×2 unit, check pass) → kiem-thu PASS. Quản lý dựng ảnh 1284×2778 xem bằng mắt: vòng hôm nay tâm ở giữa hàng nhưng số dương bị đẩy lên → chữ bị cắt đôi → trả thợ (Lần thử 1/3). Lượt 2: vòng hôm nay tính lại tâm/bán kính bao cả số dương + âm (+1 test bbox; thợ báo 97×2 pass, check pass); Quản lý xem ảnh r1: đạt. kiem-thu lượt lại bị dừng, chạy lại theo yêu cầu Chủ dự án → PASS (97×2 unit, 6 e2e; test khóa chỉ thêm dòng) → commit.
+- Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
 
 ### T-2.6 — Nối dữ liệu vào render + store actions
 - Phạm vi file: `src/render/wallpaper.ts`, `src/ui/store.ts`, `tests/unit/store.test.ts`.
