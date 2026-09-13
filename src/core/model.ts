@@ -111,3 +111,35 @@ export function defaultState(device: DeviceSpec): AppState {
     shortcutName: 'DatHinhNen',
   };
 }
+
+function isPlainObject(v: unknown): v is Record<string, unknown> {
+  return typeof v === 'object' && v !== null && !Array.isArray(v);
+}
+
+/** Nạp state cũ/không rõ nguồn gốc an toàn: trả null nếu không hợp lệ, ngược lại bù các trường thiếu bằng mặc định. Không mutate `raw`. */
+export function normalizeState(raw: unknown): AppState | null {
+  if (!isPlainObject(raw)) return null;
+  if (raw['version'] !== 1) return null;
+
+  const rawDevice = raw['device'];
+  if (
+    !isPlainObject(rawDevice) ||
+    typeof rawDevice['width'] !== 'number' ||
+    typeof rawDevice['height'] !== 'number'
+  ) {
+    return null;
+  }
+  const device = rawDevice as unknown as DeviceSpec;
+
+  const rawDesign = isPlainObject(raw['design']) ? raw['design'] : {};
+  const rawGoogle = isPlainObject(raw['google']) ? raw['google'] : {};
+
+  const base = defaultState(device);
+
+  return {
+    ...base,
+    ...raw,
+    design: { ...defaultDesign(), ...rawDesign } as DesignConfig,
+    google: { ...base.google, ...rawGoogle } as AppState['google'],
+  } as AppState;
+}

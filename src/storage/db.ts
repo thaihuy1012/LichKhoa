@@ -1,12 +1,17 @@
 import { get, set } from 'idb-keyval';
 import type { AppState } from '../core/model';
+import { normalizeState } from '../core/model';
 
 const STATE_KEY = 'lichkhoa:state';
 const BG_KEY = 'lichkhoa:bg';
 
 export async function loadState(): Promise<AppState | null> {
-  const v = await get(STATE_KEY);
-  return (v as AppState) ?? null;
+  try {
+    const v = await get(STATE_KEY);
+    return normalizeState(v);
+  } catch {
+    return null;
+  }
 }
 
 export async function saveState(s: AppState): Promise<void> {
