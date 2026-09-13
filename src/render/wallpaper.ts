@@ -5,36 +5,12 @@ import { layoutMonth } from './layout/month';
 import { layoutAgenda } from './layout/agenda';
 import { layoutTodo } from './layout/todo';
 import { layoutNote } from './layout/note';
+import { decodeImage, drawBackground, makeCanvas, canvasToBlob } from './background';
 
 declare global {
   interface Window {
     __lastOps?: DrawOp[];
   }
-}
-
-function makeCanvas(w: number, h: number): { canvas: OffscreenCanvas | HTMLCanvasElement; ctx: CanvasRenderingContext2D } {
-  if (typeof OffscreenCanvas !== 'undefined') {
-    const canvas = new OffscreenCanvas(w, h);
-    const ctx = canvas.getContext('2d') as unknown as CanvasRenderingContext2D;
-    return { canvas, ctx };
-  }
-  const canvas = document.createElement('canvas');
-  canvas.width = w;
-  canvas.height = h;
-  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
-  return { canvas, ctx };
-}
-
-function canvasToBlob(canvas: OffscreenCanvas | HTMLCanvasElement): Promise<Blob> {
-  if (typeof OffscreenCanvas !== 'undefined' && canvas instanceof OffscreenCanvas) {
-    return canvas.convertToBlob({ type: 'image/png' });
-  }
-  return new Promise((resolve, reject) => {
-    (canvas as HTMLCanvasElement).toBlob((b) => {
-      if (b) resolve(b);
-      else reject(new Error('toBlob thất bại'));
-    }, 'image/png');
-  });
 }
 
 function paintBackground(ctx: CanvasRenderingContext2D, state: AppState): void {
@@ -65,11 +41,16 @@ export function buildOps(state: AppState, today: ISODate): DrawOp[] {
   return [...ops, ...layoutNote(data, design, device)];
 }
 
-/** Vẽ hình nền theo state; trả về Blob PNG đúng kích thước thiết bị. M1: bỏ qua ảnh nền (bg tham số), chỉ dùng state.design.bg solid/gradient. */
-export async function renderWallpaper(state: AppState, _bg: Blob | null, today: string): Promise<Blob> {
+/** Vẽ hình nền theo state; trả về Blob PNG đúng kích thước thiết bị. Ảnh nền dùng khi design.bg.kind==='photo' và `bg` khác null; null → rơi về màu bg.color. */
+export async function renderWallpaper(state: AppState, bg: Blob | null, today: string): Promise<Blob> {
   const { canvas, ctx } = makeCanvas(state.device.width, state.device.height);
 
-  paintBackground(ctx, state);
+  if (state.design.bg.kind === 'photo' && bg) {
+    const img = await decodeImage(bg);
+    drawBackground(ctx, img, state.design, state.device);
+  } else {
+    paintBackground(ctx, state);
+  }
 
   const ops = buildOps(state, today);
   paint(ctx, ops);
