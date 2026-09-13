@@ -110,19 +110,15 @@ describe('layoutAgenda', () => {
     expect(texts).toContain('Không có sự kiện sắp tới');
   });
 
-  it('cắt 12 dòng: không để tiêu đề ngày mồ côi (không có sự kiện bên dưới)', () => {
+  it('cắt 12 dòng SỰ KIỆN (D-012): tiêu đề ngày không tính vào trần, không để lại tiêu đề mồ côi', () => {
+    // 15 sự kiện: A(5)+B(5)+C(3)+D(2). Budget 12 sự kiện: A(5)+B(5)+C1,C2(2)=12 -> C3,D1,D2 ẩn.
+    // Ngày D không có sự kiện nào hiện -> tiêu đề D cũng phải bị bỏ hoàn toàn (không mồ côi).
     const design: DesignConfig = defaultDesign();
     const occs: Occurrence[] = [
-      occ('2026-02-15', '01:00', 'A1'),
-      occ('2026-02-15', '02:00', 'A2'),
-      occ('2026-02-15', '03:00', 'A3'),
-      occ('2026-02-16', '01:00', 'B1'),
-      occ('2026-02-16', '02:00', 'B2'),
-      occ('2026-02-16', '03:00', 'B3'),
-      occ('2026-02-17', '01:00', 'C1'),
-      occ('2026-02-17', '02:00', 'C2'),
-      occ('2026-02-18', '01:00', 'D1'),
-      occ('2026-02-18', '02:00', 'D2'),
+      ...Array.from({ length: 5 }, (_, i) => occ('2026-02-15', `0${i + 1}:00`, `A${i + 1}`)),
+      ...Array.from({ length: 5 }, (_, i) => occ('2026-02-16', `0${i + 1}:00`, `B${i + 1}`)),
+      ...Array.from({ length: 3 }, (_, i) => occ('2026-02-17', `0${i + 1}:00`, `C${i + 1}`)),
+      ...Array.from({ length: 2 }, (_, i) => occ('2026-02-18', `0${i + 1}:00`, `D${i + 1}`)),
     ];
     const d = renderData({ occurrences: occs });
     const ops = layoutAgenda(d, design, DEV_1179);
@@ -137,10 +133,13 @@ describe('layoutAgenda', () => {
     expect(prevOp.weight).not.toBe(700);
     // "+N" đếm đúng mọi sự kiện chưa hiện (kể cả ngày D bị bỏ tiêu đề hoàn toàn)
     const headerCount = textOps.filter((o) => o.weight === 700).length;
-    const itemTitles = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'D1', 'D2'];
+    const itemTitles = ['A1', 'A2', 'A3', 'A4', 'A5', 'B1', 'B2', 'B3', 'B4', 'B5', 'C1', 'C2', 'C3', 'D1', 'D2'];
     const shownItems = itemTitles.filter((title) => texts.includes(title)).length;
     expect(shownItems + moreCount).toBe(occs.length);
-    expect(headerCount + shownItems + 1).toBeLessThanOrEqual(12);
+    // Trần D-012: 12 dòng SỰ KIỆN, tiêu đề ngày không tính vào trần.
+    expect(shownItems).toBe(12);
+    expect(headerCount).toBe(3); // A, B, C — ngày D không có sự kiện hiện nên không có tiêu đề
+    expect(texts.includes('D1')).toBe(false);
   });
 
   it('tiêu đề 200 ký tự: cắt kèm "…" và độ rộng ước lượng <= bề rộng hộp', () => {

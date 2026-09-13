@@ -169,18 +169,32 @@ export function normalizeState(raw: unknown): AppState | null {
   delete mergedDesign['noteText'];
 
   const rawNotes = raw['notes'];
+  const notesFromLegacy: Note[] = legacyNoteText !== ''
+    ? [{ id: `note-${Date.now()}`, title: '', body: legacyNoteText, pinned: true, updated: Date.now() }]
+    : [];
   const notes: Note[] = Array.isArray(rawNotes)
-    ? (rawNotes as Note[])
-    : legacyNoteText !== ''
-      ? [{ id: `note-${Date.now()}`, title: '', body: legacyNoteText, pinned: true, updated: Date.now() }]
-      : [];
+    ? clampPinned((rawNotes as unknown[]).filter(isPlainObject) as unknown as Note[])
+    : notesFromLegacy;
+
+  const events: unknown[] = Array.isArray(raw['events']) ? (raw['events'] as unknown[]).filter(isPlainObject) : [];
+  const todos: unknown[] = Array.isArray(raw['todos']) ? (raw['todos'] as unknown[]).filter(isPlainObject) : [];
 
   return {
     ...base,
     ...raw,
     device,
+    events: events as AppState['events'],
+    todos: todos as AppState['todos'],
     notes,
     design: mergedDesign as unknown as DesignConfig,
     google: { ...base.google, ...rawGoogle } as AppState['google'],
   } as AppState;
+}
+
+/** Giữ tối đa 1 ghi chú `pinned`: nếu có > 1, chỉ giữ ghim cái `updated` lớn nhất, các cái còn lại bỏ ghim. Không mutate mảng gốc. */
+function clampPinned(notes: Note[]): Note[] {
+  const pinned = notes.filter((n) => n.pinned === true);
+  if (pinned.length <= 1) return notes;
+  const keepId = pinned.reduce((best, n) => ((n.updated ?? 0) > (best.updated ?? 0) ? n : best)).id;
+  return notes.map((n) => (n.pinned && n.id !== keepId ? { ...n, pinned: false } : n));
 }

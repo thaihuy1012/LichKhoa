@@ -27,6 +27,27 @@ function addDays(d: Date, n: number): Date {
   return r;
 }
 
+/** Gập 1 dòng nội dung .ics theo RFC 5545 §3.1: mỗi dòng vật lý ≤ 75 octet, tiếp theo CRLF + 1 dấu cách; không cắt giữa chuỗi byte UTF-8 (duyệt theo code point). */
+function foldLine(line: string): string {
+  const enc = new TextEncoder();
+  if (enc.encode(line).length <= 75) return line;
+  let out = '';
+  let seg = '';
+  let limit = 75;
+  for (const ch of line) {
+    const candidate = seg + ch;
+    if (enc.encode(candidate).length > limit) {
+      out += seg + '\r\n ';
+      seg = ch;
+      limit = 74; // dòng tiếp theo có 1 dấu cách chiếm 1 octet
+    } else {
+      seg = candidate;
+    }
+  }
+  out += seg;
+  return out;
+}
+
 const FREQ: Record<string, string> = {
   daily: 'FREQ=DAILY',
   weekdays: 'FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR',
@@ -49,7 +70,13 @@ export function eventToIcs(e: LocalEvent, now: Date = new Date()): string {
     'SUMMARY:' + icsEscape(e.title || 'Sự kiện'),
   ];
 
-  const d0 = parseYMD(e.date);
+  let d0 = parseYMD(e.date);
+  if (e.repeat === 'weekdays') {
+    // v1.3/D-012: DTSTART phải rơi vào T2-T6 để BYDAY=MO-FR không tạo lệch lần đầu trên Lịch iPhone.
+    const dow = d0.getDay();
+    if (dow === 6) d0 = addDays(d0, 2);
+    else if (dow === 0) d0 = addDays(d0, 1);
+  }
   if (e.time) {
     const [h, mi] = e.time.split(':').map(Number);
     const st = new Date(d0.getFullYear(), d0.getMonth(), d0.getDate(), h, mi || 0);
@@ -79,5 +106,5 @@ export function eventToIcs(e: LocalEvent, now: Date = new Date()): string {
   }
 
   lines.push('END:VEVENT', 'END:VCALENDAR');
-  return lines.join('\r\n') + '\r\n';
+  return lines.map(foldLine).join('\r\n') + '\r\n';
 }

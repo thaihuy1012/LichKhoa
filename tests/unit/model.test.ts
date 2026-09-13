@@ -105,6 +105,46 @@ describe('normalizeState', () => {
     expect(result!.device.safeBottom).toBeCloseTo(0.14);
   });
 
+  it('D-012: events/todos không phải mảng -> []', () => {
+    const raw = { version: 1 as const, events: 'x', todos: 42, design: defaultDesign(), device };
+    const result = normalizeState(raw);
+    expect(result!.events).toEqual([]);
+    expect(result!.todos).toEqual([]);
+  });
+
+  it('D-012: phần tử không phải object trong events/todos/notes bị bỏ', () => {
+    const raw = {
+      version: 1 as const,
+      events: [{ id: 'e1' }, 'bad', 42, null],
+      todos: [{ id: 't1' }, 'bad'],
+      notes: [{ id: 'n1', pinned: false, updated: 1 }, 'bad'],
+      design: defaultDesign(),
+      device,
+    };
+    const result = normalizeState(raw);
+    expect(result!.events.length).toBe(1);
+    expect(result!.todos.length).toBe(1);
+    expect(result!.notes.length).toBe(1);
+  });
+
+  it('D-012: notes có > 1 pinned -> chỉ giữ ghim cái updated lớn nhất', () => {
+    const raw = {
+      version: 1 as const,
+      events: [],
+      todos: [],
+      notes: [
+        { id: 'n1', title: '', body: 'cũ', pinned: true, updated: 100 },
+        { id: 'n2', title: '', body: 'mới', pinned: true, updated: 200 },
+      ],
+      design: defaultDesign(),
+      device,
+    };
+    const result = normalizeState(raw);
+    const pinned = result!.notes.filter((n) => n.pinned);
+    expect(pinned.length).toBe(1);
+    expect(pinned[0].id).toBe('n2');
+  });
+
   it('giữ nguyên giá trị có sẵn khi hợp lệ đầy đủ', () => {
     const full = defaultState(device);
     full.design.accentColor = '#abcdef';

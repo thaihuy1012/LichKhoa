@@ -100,6 +100,40 @@ describe('eventToIcs', () => {
     expect(withoutCrlf.includes('\n')).toBe(false);
   });
 
+  it('D-012: weekdays, ngày CN (2026-09-13) -> DTSTART dời tới T2 kế tiếp (2026-09-14), giữ giờ', () => {
+    const e: LocalEvent = { id: 'e13', title: 'Hop tuan', date: '2026-09-13', time: '08:00', repeat: 'weekdays' };
+    const ics = eventToIcs(e, now);
+    expect(ics).toContain('DTSTART:20260914T080000\r\n');
+  });
+
+  it('D-012: weekdays, ngày T7 (2026-09-12) -> DTSTART dời tới T2 (2026-09-14)', () => {
+    const e: LocalEvent = { id: 'e14', title: 'Hop tuan', date: '2026-09-12', time: '08:00', repeat: 'weekdays' };
+    const ics = eventToIcs(e, now);
+    expect(ics).toContain('DTSTART:20260914T080000\r\n');
+  });
+
+  it('D-012: weekdays, ngày đã là T2-T6 -> không đổi ngày', () => {
+    const e: LocalEvent = { id: 'e15', title: 'Hop tuan', date: '2026-09-14', time: '08:00', repeat: 'weekdays' };
+    const ics = eventToIcs(e, now);
+    expect(ics).toContain('DTSTART:20260914T080000\r\n');
+  });
+
+  it('D-012: tiêu đề 200 ký tự tiếng Việt -> mọi dòng vật lý <= 75 octet UTF-8, bỏ gập ra lại đúng chuỗi', () => {
+    const longTitle = 'Đầu tư dự án ăn uống '.repeat(10).slice(0, 200);
+    const e: LocalEvent = { id: 'e16', title: longTitle, date: '2026-01-05', repeat: 'none' };
+    const ics = eventToIcs(e, now);
+    const physicalLines = ics.split('\r\n');
+    const enc = new TextEncoder();
+    for (const line of physicalLines) {
+      if (line === '') continue;
+      expect(enc.encode(line).length).toBeLessThanOrEqual(75);
+    }
+    // Bỏ gập: nối "\r\n " (CRLF + 1 dấu cách) lại thành dòng gốc, rồi lấy lại icsEscape(longTitle)
+    const unfolded = ics.replace(/\r\n /g, '');
+    const summaryLine = unfolded.split('\r\n').find((l) => l.startsWith('SUMMARY:'))!;
+    expect(summaryLine.slice('SUMMARY:'.length)).toBe(longTitle);
+  });
+
   it('DTSTAMP dùng giờ UTC của `now`', () => {
     const e: LocalEvent = { id: 'e8', title: 'X', date: '2026-01-01', repeat: 'none' };
     const ics = eventToIcs(e, now);
