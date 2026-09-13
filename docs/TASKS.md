@@ -4,7 +4,7 @@ Nguồn sự thật: `docs/SPEC.md` (v1.3 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 6/8
+- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 7/9
 - Đang làm: T-4.END (DOING, phần tự động) ∥ T-4.0 CHỜ CHỦ DỰ ÁN (thử iPhone, dist `E:/DuAn/lichkhoa-dist` @dfb8ab9). Duyệt M4 chờ cả hai.
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
@@ -20,6 +20,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - ~~S4 · T-2.7 · `EventsTab.tsx` L93 durationMin ngầm 60~~ → đã sửa trong T-2.12.
 - ~~S4 · T-2.12 · ô todo-due trống không nhãn~~ → đã sửa T-2.14.
 - S4 · T-2.14 · `App.tsx` L52 "Đang tải…" cứng tiếng Việt (hiện trước khi nạp state — chưa biết ngôn ngữ); làm khi có phiếu chạm App.tsx.
+- S4 · soát chéo M4 #5 · nhập JSON (backup không kèm ảnh, SPEC §5) giữ ảnh nền cũ của máy nếu `design.bg.kind==='photo'` — chấp nhận (cùng máy thì đúng ý); nếu cần, hỏi Chủ dự án.
 - S4 · T-4.6 · webkit Windows: `input[type=color]` hiện chữ "#00000(" cạnh span hex → mã màu hiện 2 lần (iPhone có ô màu thật nên không bị). Làm nếu có phiếu chạm Design.tsx.
 - ~~S4 · D-015 · sau redirect kết nối thành công~~ → đã sửa T-4.2.
 - (cũ) S4 · D-015 · sau redirect kết nối thành công, `App.tsx` L72 chỉ tự đồng bộ khi cache > 30′ → ép đồng bộ ngay (cache = null khi `authResult.ok`); làm ở T-4.2 (App.tsx trong phạm vi).
@@ -469,6 +470,14 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Lệnh kiểm tra: `npm run check` (thợ duy nhất được build/e2e trong đợt T-4.4 ∥ T-4.6)
 - Nhật ký: 2026-09-14 lượt 1: DONE (rãnh range + nhãn giá trị, hex, swatch viền + aria-pressed) → kiem-thu PASS nhưng full ×2 có 1 fail webkit `design.spec.ts:26` (click tab-design timeout) → Quản lý chạy `design.spec --project webkit --repeat-each=10`: :26 10/10 pass, NHƯNG test mới :86 fail 1/10 (nhãn `dim-value` không đổi sau `fill`) → trả thợ tìm nguyên nhân gốc (Lần thử 1/3). Lượt 2: nguyên nhân gốc = `store.subscribe` trong `useEffect` (sau paint) → dispatch ngay sau mount bị mất (bug thật, lặp T-1.END); sửa `useLayoutEffect`. Quản lý rà mọi màn: Sync.tsx cùng lỗi → tự sửa (useLayoutEffect + đọc lại state). Thợ phát hiện test trước đó chạy trên dist cũ (BAI-HOC) → kiem-thu PASS (design webkit ×20 40/0; full ×2 96/0/8 skip) → commit.
 - Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
+
+### T-4.7 — Sửa lỗi từ soát chéo M4 (Gemini; Quản lý đã kiểm chứng)
+- Nguồn: `docs/bao-cao/M4-soat-cheo.md` mục 1, 4, 6, 10 (CÓ THẬT). Bác: #2 (build `VITE_BASE=/lichkhoa/` → manifest `scope/start_url` = `/lichkhoa/`, plugin tự lấy base), #7 (skip webkit hợp lệ D-013), #9 (giữ ảnh khi đổi sang màu là cố ý — đổi lại được). #3 (ClipboardItem cần Promise?) → máy thật T-4.0 xác nhận. #5 → S4. #8 → Quản lý sửa HUONG-DAN.
+- Phạm vi file: `.github/workflows/pages.yml`, `src/ui/screens/Preview.tsx` (luồng Xóa dữ liệu), `src/ui/store.ts` (nếu cần tín hiệu nạp lại ảnh), `src/render/background.ts`, `src/render/wallpaper.ts`; test: `tests/e2e/settings.spec.ts` hoặc `tests/e2e/design.spec.ts` (chỉ THÊM), `tests/unit/*.test.ts` (chỉ thêm, nếu có phần thuần).
+- Yêu cầu: (1) pages.yml `permissions` thêm `contents: read` (giữ `pages: write`, `id-token: write`); (2) "Xóa dữ liệu" (`wipe`) ngoài `resetAll` còn `saveBg(null)` và Preview thôi dùng ảnh cũ ngay (không cần reload); (3) `loadPhoto`/`drawBackground`: `ImageBitmap.close()` sau khi dùng xong; nhánh fallback `<img>` thu hồi `URL.createObjectURL` (`revokeObjectURL`); (4) `renderWallpaper` với ảnh: tô `bg.color` (hoặc đen nếu thiếu) trước khi vẽ ảnh → PNG trong suốt không lộ nền rỗng.
+- Tiêu chí: [ ] e2e: đặt ảnh nền → `wipe` (chấp nhận confirm) → IndexedDB `lichkhoa:bg` rỗng/null và preview không còn ảnh (hash giống nền màu mặc định); [ ] grep `close()` trong background.ts ở mọi nhánh dùng ImageBitmap; [ ] pages.yml có `contents: read`; [ ] `npm run check` pass; `npm run build` trước khi chạy Playwright riêng.
+- Lệnh kiểm tra: `npm run check`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ### T-4.END — Kiểm thử tích hợp M4
 - Phạm vi file: `tests/e2e/m4-design.spec.ts`, `tests/e2e/m4-export.spec.ts`, `tests/e2e/m4-offline.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.

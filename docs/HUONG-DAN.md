@@ -33,7 +33,7 @@ Nếu bạn không cần lịch Google, có thể bỏ qua phần này.
 2. Bấm dấu **+** để tạo Shortcut mới.
 3. Bấm **"Add Action"** (Thêm hành động), tìm và chọn **"Set Wallpaper"** (Đặt hình nền) — trên một số bản iOS mới, hành động này tên là **"Set Wallpaper Photo"** (Đặt ảnh hình nền).
 4. Trong hành động đó:
-   - **Image** (Ảnh): chọn **Shortcut Input**.
+   - **Image** (Ảnh): chọn **Shortcut Input** (Đầu vào phím tắt). Nếu không thấy mục này: bấm biểu tượng **(i)** / **Details** (Chi tiết) ở cuối màn hình soạn Shortcut → bật nhận đầu vào (**Receive … input**, chọn **Images** hoặc **Any**) rồi quay lại chọn Shortcut Input.
    - Chọn áp dụng cho **Lock Screen** (Màn hình khóa).
    - Tắt **"Show Preview"** (Hiện xem trước) để không phải bấm xác nhận mỗi lần.
 5. Đặt tên Shortcut đúng bằng tên hiển thị trong LichKhoa (mặc định là **`DatHinhNen`** — xem/đổi ở tab Xem trước, ô "Tên Shortcut").
