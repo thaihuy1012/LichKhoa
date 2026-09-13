@@ -5,7 +5,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 0/4 · M4: 0/6
-- Đang làm: (điểm dừng sạch — phiếu kế: T-3.1 ∥ T-3.2; e2e M3 dùng mock, chưa cần Client ID thật)
+- Đang làm: T-3.1 ∥ T-3.2 (DOING, sonnet, chỉ unit — không build/e2e). e2e M3 dùng mock, chưa cần Client ID thật.
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
@@ -342,21 +342,23 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Phạm vi file: `src/google/oauth.ts`, `tests/unit/oauth.test.ts`.
 - Mục tiêu: `buildAuthUrl`, `parseFragment`, `newState()` (crypto ngẫu nhiên, lưu sessionStorage), token store localStorage `{accessToken, expiresAt}`, `getToken()` null khi hết hạn (nhận `now` tham số để test).
 - Tiêu chí: [ ] URL có `response_type=token`, `scope=https://www.googleapis.com/auth/calendar.readonly`, `state`, `redirect_uri`, `prompt` tùy chọn; [ ] `parseFragment` đúng state / sai state / `error` / rỗng.
-- Lệnh kiểm tra: `npm run test`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Bổ sung (Quản lý 2026-09-14): Vitest chạy môi trường node (không có `localStorage`/`sessionStorage`) → hàm lưu/đọc token và state nhận tham số `storage: Pick<Storage,'getItem'|'setItem'|'removeItem'>` (mặc định `globalThis.localStorage`/`sessionStorage` khi có); test dùng Map giả. `parseFragment` giải mã `%xx`, chấp nhận hash có/không `#`; `expiresIn` là số; `expiresAt = now + expiresIn*1000 − 60 s` (trừ biên an toàn). Không log token. Hợp đồng chữ ký theo SPEC §5 (được thêm tham số tùy chọn ở cuối).
+- Lệnh kiểm tra: `npx tsc --noEmit; npm run test` (song song T-3.2; không build/e2e)
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ### T-3.2 — Google Calendar REST + normalize
 - Phạm vi file: `src/google/calendar.ts`, `tests/unit/google-normalize.test.ts`, `tests/fixtures/google/*.json`.
 - Mục tiêu: `fetchCalendars`, `fetchEvents` (fetch + Bearer, `singleEvents=true&orderBy=startTime&maxResults=250`, ≤ 2 trang/lịch), `normalize` thuần tách riêng; 401 → `AuthError`; bỏ `cancelled`; màu lịch.
 - Tiêu chí: [ ] all-day → `allDay=true` đúng ngày; [ ] `dateTime` offset khác → ngày/giờ địa phương đúng ở cả 2 TZ; [ ] cancelled bị bỏ; [ ] nhiều lịch gộp + sắp xếp; [ ] fetch mock trả 401 → `AuthError`.
-- Lệnh kiểm tra: `npm run test`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Bổ sung (Quản lý 2026-09-14): sự kiện cả ngày nhiều ngày (`start.date`..`end.date` — `end` là NGÀY SAU, không tính) → 1 `Occurrence` mỗi ngày trong khoảng, `id = <eventId>@<date>` (cùng quy ước recurrence T-2.1), chặn trong `[timeMin, timeMax]`; sự kiện có giờ qua đêm → chỉ ngày bắt đầu. `fetch` nhận qua tham số tùy chọn (mặc định `globalThis.fetch`) để test không cần mạng; phân trang bằng `nextPageToken`, dừng ở trang 2; `timeMin/timeMax` gửi dạng RFC3339 theo giờ địa phương (ISODate → đầu ngày/cuối ngày có offset máy). Màu: `backgroundColor` của lịch. Lỗi mạng/5xx → ném lỗi thường (không phải `AuthError`). Fixture tự viết theo định dạng Calendar API v3 (không dùng dữ liệu thật).
+- Lệnh kiểm tra: `npx tsc --noEmit; npm run test` (song song T-3.1; không build/e2e)
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ### T-3.3 — Màn Đồng bộ + tự đồng bộ
 - Phạm vi file: `src/ui/screens/Sync.tsx`, `src/ui/App.tsx`, `src/ui/store.ts`, `src/ui/sync.ts` (điều phối), `src/core/i18n/*.json`, `tests/unit/store.test.ts`.
 - Mục tiêu: dán Client ID, Kết nối (redirect), xử lý hash khi khởi động (xóa bằng `replaceState`), danh sách lịch + chọn, Đồng bộ ngay, thời điểm đồng bộ, Ngắt kết nối; tự đồng bộ khi mở nếu token còn hạn và cache > 30 phút; 401 → trạng thái "Kết nối lại"; lỗi mạng → giữ cache.
 - Tiêu chí: [ ] `npm run check` pass; [ ] reducer test cho action google.
-- Lệnh kiểm tra: `npm run check`
+- Bổ sung (D-012): `App.tsx` "Đang tải…" qua `t()` (dùng `navigator.language` bắt đầu `vi` → vi, khác → en khi chưa có state); đóng S4 T-2.14. Quản lý chụp webkit tab Đồng bộ (3 trạng thái: chưa kết nối / đã kết nối có danh sách lịch / "Kết nối lại") trước khi DONE — mở rộng `scripts/chup.cjs` thêm tab `sync` nếu cần (phạm vi thêm `scripts/chup.cjs`).
 - Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
 
 ### T-3.END — Kiểm thử tích hợp M3
