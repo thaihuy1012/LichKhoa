@@ -48,3 +48,8 @@
 - Sửa `scripts/agy-run.sh`: luôn `--add-dir <repo>`; làn `sinh`/`code` thêm `--mode accept-edits` (ghi file tự duyệt, shell vẫn bị từ chối — đã thử); kết quả rỗng → exit 3 (tính là 1 lần lỗi của làn).
 - Không dùng `--dangerously-skip-permissions` (sẽ cho Gemini chạy shell, trái LAN-GEMINI.md) và không sửa `~/.gemini/antigravity-cli/settings.json` (cấu hình ngoài repo).
 - Làn `code` chưa thử thật; phiếu `code` đầu tiên phải đi đủ cổng kiem-thu → review như thợ Claude.
+
+## D-010 — Tách T-2.7, theo hướng UI của LICH_NEN (2026-09-13 · người quyết: Quản lý)
+- Bối cảnh: Chủ dự án nhắc "tham khảo F:\LICH_NEN, cái nào dùng được thì lấy, tham khảo hướng đi". Gemini Pro đọc rộng → `docs/tham-khao-LICH_NEN.md` §6.
+- Quyết định: T-2.7 cũ quá lớn cho một lượt thợ → T-2.7 (tab Sự kiện: 3 phân đoạn Sự kiện/Việc/Ghi chú, lịch nhỏ + sheet trượt như LICH_NEN) và T-2.9 (Preview: bố cục, cài đặt chung, sao lưu — SPEC giữ 5 tab, không có tab Cài đặt, nên đặt dưới nút "Lưu ảnh" cạnh chọn thiết bị).
+- Chốt `data-testid` ngay trong phiếu để T-2.END dùng thống nhất. Tính năng LICH_NEN ngoài SPEC (lặp T2–T6, nhắc giờ, hạn to-do, nhiều ghi chú) KHÔNG thêm.

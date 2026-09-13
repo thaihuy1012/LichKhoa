@@ -78,6 +78,27 @@
 
 ---
 
+## 6. Giao diện (bổ sung 2026-09-13 — làn Gemini Pro đọc rộng, Quản lý kiểm số dòng phần T-2.7)
+Kết quả thô: `docs/gemini-out/tham-khao-lich-nen-ui.md`. Chủ dự án: "cái nào dùng được thì lấy, tham khảo hướng đi".
+
+| Phiếu | Nguồn `lich-nen.html` (trừ khi ghi khác) | Nội dung | Mức |
+|---|---|---|---|
+| T-2.7 | L144–162, L166–168, L706 | CSS sheet trượt, `.field`, toast | DÙNG THẲNG (CSS) |
+| T-2.7 | L341–375, L797–859 | Sheet sự kiện + open/read/save/delete/.ics | THAM KHẢO (port Preact) ✔ đã kiểm |
+| T-2.7 | L733–794 | Lịch tháng nhỏ trong app + danh sách ngày | THAM KHẢO ✔ |
+| T-2.7 | L275–286, L862–892 | To-do: thêm, tick, sửa, xóa, nhóm "Đã xong" | THAM KHẢO ✔ |
+| T-2.9 | L305–314, L971–990, L66–68 | Nhóm sao lưu/khôi phục/xóa + `.seg` | THAM KHẢO ✔ |
+| T-4.1 | `LichNen.js` L253–257 | Toán cover-fit | DÙNG THẲNG |
+| T-4.2 | L184–237, L213–215, L1396 | Control Thiết kế, swatches + input color | THAM KHẢO (chưa kiểm) |
+| T-4.3 | L1334–1360 | Luồng xuất ảnh | THAM KHẢO (chưa kiểm) |
+| T-4.4 | L320–325; `huong-dan-giai-doan-2.md` L61–68 | Trợ giúp + tạo Phím tắt (chỉ "Set Wallpaper") | THAM KHẢO (chưa kiểm) |
+
+Hướng đi áp dụng: sheet trượt cho form (không rời màn hình); segmented thay `<select>` khi ≤ 4 lựa chọn; swatches + ô màu tự chọn; toast cho thông báo/lỗi; ẩn/hiện việc đã xong; lịch trong app có âm lịch + chấm màu.
+Không dùng (OUT): widget/Scriptable, tự đổi hình nền không chạm, lặp T2–T6, VALARM, nhập .ics, `lichnen-config.json`, nhiều ghi chú/ghim, hạn to-do.
+Cảnh báo Gemini: L666 cộng tháng tràn ngày 31 — nằm trong `parseICS` (nhập .ics, OUT) → không ảnh hưởng; `recurrence.ts` (T-2.1) đã có test ngày 31.
+
+---
+
 ## Khuyến nghị tái sử dụng
 
 1. **DÙNG THẲNG**: Âm lịch, monthGrid, lặp, utility, ICS xuất, danh sách thiết bị, mặc định

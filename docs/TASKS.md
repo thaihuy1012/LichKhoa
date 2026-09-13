@@ -4,8 +4,9 @@ Nguồn sự thật: `docs/SPEC.md` (v1.2 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 7/9 · M3: 0/4 · M4: 0/6
-- Đang làm: (không — T-2.6 đã commit; phiếu kế: T-2.7)
+- M1: 8/8 ✔ tag `M1-ok` · M2: 7/10 · M3: 0/4 · M4: 0/6
+- Đang làm: T-2.7 (DOING, tho-sonnet lượt 1)
+- Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
 - Chờ Chủ dự án: đặt thử ảnh mẫu 1284×2778 (đã gửi 2026-09-13) — có đè đồng hồ/widget/nút không? (không chặn; cần trước T-2.3)
 - Chuyển phiên: T-2.8 đã commit — điểm dừng sạch. Phiên mới (`claude --agent quan-ly`): đọc SU-CO → TASKS, giao T-2.6 (nhớ tiêu chí Quản lý dựng ảnh mẫu 3 bố cục xem bằng mắt). Ảnh mẫu mới nhất đã gửi Chủ dự án: có âm lịch (lichkhoa-amlich-r1.png).
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
@@ -18,7 +19,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Thứ tự & song song
 M1: 1.1 → 1.2 → (1.3 ∥ 1.4) → 1.5 → 1.END → (1.6 ∥ 1.7) → ảnh mẫu 1284×2778 cho Chủ dự án thử (xong trước T-2.3) → tag M1-ok
-M2: (2.1 ∥ 2.4 ∥ 2.5) → 2.2 → 2.3 → 2.8 → 2.6 → 2.7 → 2.END
+M2: (2.1 ∥ 2.4 ∥ 2.5) → 2.2 → 2.3 → 2.8 → 2.6 → 2.7 → 2.9 → 2.END
 M3: (3.1 ∥ 3.2) → 3.3 → 3.END
 M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
@@ -211,10 +212,39 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Nhật ký: 2026-09-13 lượt 1: DONE (buildOps thuần, 11 action, nhãn tháng/thứ qua t(); 108×2 unit) → kiem-thu PASS. Quản lý dựng 18 ảnh mẫu (scratchpad `mau-t26.cjs`): 3 bố cục ổn, nhưng (1) chấm sự kiện ô hôm nay vô hình khi showLunar (ngoài vòng, tô bg.color), (2) note.ts giãn dòng theo chiều cao dải → trả thợ, mở phạm vi `month.ts` (chấm), `note.ts`, thêm test vào `layout*.test.ts` (Lần thử 1/3). Lượt 2: chấm hôm nay đặt hẳn ngoài vòng fill accent; note khoảng dòng 1,4×size, hộp ôm nội dung; +3 test (111×2) → kiem-thu PASS (test khóa chỉ thêm dòng) → Quản lý xem lại ảnh: đạt → commit.
 - Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
 
-### T-2.7 — Màn Sự kiện + cài đặt chung + i18n toàn UI
-- Phạm vi file: `src/ui/screens/Events.tsx`, `src/ui/screens/Preview.tsx`, `src/ui/App.tsx`, `src/ui/styles.css`, `src/core/i18n/*.json` (thêm khóa, giữ 2 file khớp).
-- Mục tiêu: form thêm/sửa/xóa sự kiện (tiêu đề, ngày, giờ hoặc cả ngày, lặp, until, màu); to-do (thêm, tick, xóa, lên/xuống); ghi chú + bật `showNote`; nút "Thêm vào Lịch iPhone" (tải `.ics`); chọn bố cục ở Preview; cài đặt ngôn ngữ, 12h/24h, tuần bắt đầu, bật/tắt âm lịch (`showLunar`, `data-testid="lunar"`); nút Xuất/Nhập JSON, Xóa dữ liệu (confirm). Mọi nhãn qua `t()`. `data-testid` cho mọi control dùng trong E2E.
-- Tiêu chí: [ ] `npm run check` pass; [ ] thao tác tay: thêm sự kiện → hiện trong Agenda.
+### T-2.7 — Màn Sự kiện: lịch + sự kiện, việc cần làm, ghi chú (tách 2026-09-13, D-010)
+- Mục tiêu: tab "Sự kiện" dùng được hằng ngày trên iPhone 13 Pro Max (428×926): quản lý sự kiện, to-do, ghi chú; mọi thay đổi qua action có sẵn trong `store.ts` (T-2.6) → preview tự vẽ lại.
+- Phạm vi file: `src/ui/screens/Events.tsx` (mới; được tách `src/ui/screens/events/*.tsx` nếu > ~250 dòng), `src/ui/components/Sheet.tsx` (mới), `src/ui/components/Toast.tsx` (mới), `src/ui/App.tsx` (gắn tab + `data-testid="tab-<id>"` cho 5 nút tab, nhãn tab qua `t()`), `src/ui/styles.css`, `src/core/i18n/vi.json`, `src/core/i18n/en.json` (thêm khóa, giữ 2 file khớp), `tests/e2e/events.spec.ts` (mới).
+- Giao diện / đầu vào có sẵn: action `addEvent/updateEvent/deleteEvent/addTodo/toggleTodo/updateTodo/deleteTodo/moveTodo/setNote` + `setDesign({showNote})` (`src/ui/store.ts`); `eventToIcs` (`src/export/ics.ts`); `savePng`-kiểu tải file trong `src/export/share.ts` (chỉ dùng, không sửa — cần hàm tải Blob chung thì viết trong Events); `expandOccurrences` (`recurrence.ts`), `monthGrid` (`calendar.ts`), `solarToLunar` (`lunar.ts`), `t()` (`i18n.ts`); kiểu `LocalEvent`, `Todo` (`model.ts`).
+- Tham khảo (chép/port được — đã kiểm số dòng, xem docs/tham-khao-LICH_NEN.md §6): `F:/LICH_NEN/lich-nen.html`
+  - L144–162 CSS sheet trượt + `.field` (ô nhập 16px, `env(safe-area-inset-bottom)`); L166–168 + L706 toast; L341–375 HTML sheet sự kiện (Hủy · tiêu đề · Lưu; switch Cả ngày; Ngày; Bắt đầu/Kết thúc; Lặp; Lặp đến; Màu; nút .ics; Xóa).
+  - L733–794 `renderCalendar/renderDayList`: lịch tháng nhỏ trong app (số dương + âm, chấm màu ≤ 3/ô, bấm ô → danh sách ngày đó, trạng thái rỗng "Chưa có sự kiện…").
+  - L797–859 `openEventSheet/readEventForm/saveEvent/deleteEvent/exportEventICS`: mặc định 09:00–10:00, tiêu đề trống → "(Không tiêu đề)", ẩn giờ khi Cả ngày, ẩn "Lặp đến" khi không lặp, confirm khi xóa, toast sau lưu/xóa, lưu xong nhảy về ngày của sự kiện.
+  - L275–286 + L862–892 to-do: ô "Việc mới…" + nút Thêm (Enter cũng thêm), hàng tick · tiêu đề (bấm để sửa) · × xóa, nhóm "Đã xong (n)" ẩn/hiện.
+  - Bỏ (OUT theo SPEC/D-006): lặp `weekdays`, "Nhắc trước"/VALARM, ghi chú riêng của sự kiện, hạn (due) của to-do, nhiều ghi chú/ghim, `prompt()` (thay bằng sửa tại chỗ). Map: `start` → `time`; `end` → `durationMin = end − start` (end ≤ start hoặc trống → bỏ `durationMin`).
+- Yêu cầu:
+  - Events.tsx có 3 phân đoạn (segmented, `data-testid="seg-events|seg-todos|seg-note"`): **Sự kiện** · **Việc** · **Ghi chú**.
+  - Sự kiện: lịch tháng (`cal-prev`, `cal-next`, ô `cal-cell-<ISO>`, theo `weekStart`, âm lịch khi `showLunar`, chấm theo occurrence của `expandOccurrences`), danh sách ngày đang chọn (`ev-item`), nút `add-event` mở Sheet; Sheet: `ev-title`, `ev-allday`, `ev-date`, `ev-start`, `ev-end`, `ev-repeat` (none/daily/weekly/monthly/yearly), `ev-until`, `ev-color-<i>` (bảng màu `EVENT_COLORS` lich-nen.html L411), `ev-save`, `ev-cancel`, `ev-delete` (chỉ khi sửa, confirm), `ev-ics` (tải `lichkhoa-<date>.ics` từ `eventToIcs`). Sự kiện lặp: bấm occurrence → sửa sự kiện gốc.
+  - Việc: `todo-input`, `todo-add`, hàng `todo-item` gồm `todo-toggle`, `todo-edit` (sửa tại chỗ), `todo-up`, `todo-down`, `todo-del`; sắp theo `order`; nhóm đã xong ẩn/hiện (`todo-done-toggle`).
+  - Ghi chú: `note-text` (textarea, lưu bằng `setNote` debounce hoặc khi blur), `note-show` (switch `showNote`), gợi ý "Ghi chú hiện ở cuối hình nền".
+  - Toast `data-testid="toast"`. Mọi nhãn qua `t()`; nhãn tab đổi theo `design.lang`. Vùng chạm ≥ 44px, ô nhập ≥ 16px, sheet chừa `env(safe-area-inset-bottom)`, không cuộn ngang ở 428px.
+- Tiêu chí nghiệm thu:
+  [ ] `events.spec.ts` (chromium + webkit): thêm sự kiện có giờ lặp tuần → xuất hiện trong danh sách ngày + chấm ở lịch; sửa tiêu đề → danh sách đổi; xóa (chấp nhận confirm) → mất; `ev-ics` tạo download `.ics` chứa `BEGIN:VEVENT`; thêm 2 việc → `todo-down` đổi thứ tự → `todo-toggle` → vào nhóm đã xong; nhập ghi chú + bật `note-show` → reload vẫn còn (IndexedDB).
+  [ ] Ở webkit 13 Pro Max (428×926): `scrollWidth <= clientWidth` trên tab Sự kiện và khi mở sheet; nút `ev-save` nằm trong viewport khi sheet mở.
+  [ ] `npm run check` pass; test khóa (smoke, m1-render, iphone13pm, unit) không sửa.
+  [ ] Quản lý xem ảnh chụp màn hình tab Sự kiện 428×926 (3 phân đoạn + sheet mở) trước khi DONE.
+- Lệnh kiểm tra: `npm run check`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+
+### T-2.9 — Preview: chọn bố cục, cài đặt chung, sao lưu (tách từ T-2.7, D-010)
+- Mục tiêu: trên tab Preview, dưới nút "Lưu ảnh": chọn bố cục; cài đặt ngôn ngữ / 12h / tuần bắt đầu / âm lịch; Xuất/Nhập JSON, Xóa dữ liệu.
+- Phạm vi file: `src/ui/screens/Preview.tsx`, `src/ui/styles.css`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `tests/e2e/settings.spec.ts` (mới). Sau T-2.7 (chung styles/i18n).
+- Giao diện / đầu vào có sẵn: `setDesign`, `replaceState`, `resetAll` (`store.ts`); `exportBackup/importBackup` (`src/storage/backup.ts`); `Toast` (T-2.7); `t()`.
+- Tham khảo: `F:/LICH_NEN/lich-nen.html` L305–314 nhóm cài đặt dạng hàng (nhãn + gợi ý): Sao lưu dữ liệu · Khôi phục từ file sao lưu (confirm "Thay toàn bộ dữ liệu hiện tại…") · Xóa toàn bộ dữ liệu (nút đỏ, confirm); JS L971–990 `backupData/restoreData/wipeData`; L66–68 `.seg` (segmented control) cho chọn bố cục. Bỏ: nhập .ics, mục Scriptable (L310, L315–317).
+- Yêu cầu: `layout` segmented (`data-testid="layout-month|layout-agenda|layout-todo"`); `lang` (select vi/en), `hour12` (switch), `weekstart` (select T2/CN), `lunar` (switch `showLunar`); `export-json` (tải `lichkhoa-backup-YYYY-MM-DD.json`), `import-json` (input file `.json` → confirm → `replaceState`; file hỏng / version lạ → toast lỗi, state giữ nguyên), `wipe` (confirm → `resetAll`, giữ thiết bị). Nút "Lưu ảnh" vẫn thấy không cần cuộn ở 428×926 (test khóa iphone13pm).
+- Tiêu chí nghiệm thu:
+  [ ] `settings.spec.ts`: chọn `layout-agenda` → `__lastOps` có nhãn "Hôm nay"; đổi `lang` en → nhãn tab tiếng Anh; bật `hour12` → `__lastOps` agenda chứa "AM"/"PM"; tắt `lunar` → không op "Âm lịch"; xuất JSON → `wipe` → nhập lại → sự kiện trở lại; nhập file hỏng → toast lỗi, dữ liệu còn.
+  [ ] `npm run check` pass, test khóa không sửa.
 - Lệnh kiểm tra: `npm run check`
 - Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
 
@@ -267,7 +297,7 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
 ### T-4.2 — Màn Thiết kế
 - Phạm vi file: `src/ui/screens/Design.tsx`, `src/ui/App.tsx`, `src/ui/styles.css`, `src/core/i18n/*.json`, `src/render/layout/common.ts` (nếu cần áp font/scale/boxAlpha đồng nhất).
-- Tham khảo (chép/port được, xem docs/tham-khao-LICH_NEN.md): `F:/LICH_NEN/lich-nen.html` L410–411 bảng màu `ACCENTS`, `EVENT_COLORS`.
+- Tham khảo (chép/port được, xem docs/tham-khao-LICH_NEN.md §6): `F:/LICH_NEN/lich-nen.html` L410–411 bảng màu `ACCENTS`, `EVENT_COLORS`; L184–237 các control Thiết kế (ảnh/màu/mờ/tối/font/vị trí — thêm `blur`); L66–68 `.seg` cho vị trí/font; L213–215 ô màu nhanh (swatches) + `<input type="color">`; L1396 `buildSwatches`. Số dòng do Gemini dẫn — thợ tự kiểm lại.
 - Mục tiêu: chọn nền (ảnh/màu/gradient + chọn ảnh → `saveBg`), blur 0–3, dim 0–0.8, màu chữ/nhấn, font, vị trí, scale, boxAlpha, agendaDays; `data-testid` đầy đủ.
 - Tiêu chí: [ ] `npm run check` pass; [ ] thao tác tay đổi từng tùy chọn → preview đổi.
 - Lệnh kiểm tra: `npm run check`
@@ -275,6 +305,7 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
 ### T-4.3 — Sao chép + Đặt hình nền một chạm
 - Phạm vi file: `src/export/share.ts`, `src/ui/screens/Preview.tsx`, `src/core/i18n/*.json`.
+- Tham khảo: `F:/LICH_NEN/lich-nen.html` L1334–1360 `buildExportBlob/saveWallpaper` (luồng lưu ảnh), toast (Toast.tsx của T-2.7) cho lỗi clipboard/Shortcut.
 - Mục tiêu: `copyPng` (ClipboardItem, trả false khi không hỗ trợ), `openShortcut(name)` → `shortcuts://run-shortcut?name=<enc>&input=clipboard` (khi `?test=1` ghi vào `window.__lastNav` thay vì điều hướng); nút "Sao chép", "Đặt hình nền" (copy → open), tên Shortcut cấu hình được; lỗi → thông báo + hướng dẫn thay thế.
 - Tiêu chí: [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npm run check`
@@ -282,6 +313,7 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
 ### T-4.4 — Màn Hướng dẫn + HUONG-DAN.md
 - Phạm vi file: `src/ui/screens/Guide.tsx`, `src/core/i18n/*.json`, `docs/HUONG-DAN.md`.
+- Tham khảo: `F:/LICH_NEN/lich-nen.html` L320–325 khối trợ giúp (đặt màn hình khóa qua Ảnh → Dùng làm hình nền, thêm vào MH chính, nhắc giờ qua .ics); `F:/LICH_NEN/huong-dan-giai-doan-2.md` L61–68 các bước tạo Phím tắt — CHỈ lấy action "Set Wallpaper"; bỏ mọi bước Scriptable/"Run Script"/iCloud (LichKhoa dùng `input=clipboard`, SPEC mục 10 C).
 - Mục tiêu: 4 phần (cài PWA, tạo Shortcut, Google OAuth Client ID, HTTPS/hosting) theo SPEC mục 10 + quy trình hằng ngày + giới hạn đã biết; VI (EN ngắn trong UI).
 - Tiêu chí: [ ] HUONG-DAN.md có đủ 4 phần; [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npm run check`
