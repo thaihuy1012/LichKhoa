@@ -75,6 +75,9 @@
   "date.today": "Today",
   "date.tomorrow": "Tomorrow",
 
+  "agenda.empty": "No upcoming events",
+  "todo.empty": "No to-dos",
+
   "common.comingSoon": "Coming soon",
   "sync.lastSync": "Last synced: {time}"
 }

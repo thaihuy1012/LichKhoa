@@ -1,11 +1,11 @@
 # TASKS — bảng giao việc
 (Quản lý duy trì. Trạng thái: TODO | DOING | REVIEW | DONE | BLOCKED. Ghi ngay sau mỗi bước.)
-Nguồn sự thật: `docs/SPEC.md` (v1.1 — v1.0 Chủ dự án duyệt 2026-09-13; v1.1 thêm Âm lịch, D-006). Hợp đồng TypeScript ở SPEC mục 5 — không đổi nếu không PHẢN BIỆN.
+Nguồn sự thật: `docs/SPEC.md` (v1.2 — v1.0 Chủ dự án duyệt 2026-09-13; v1.1 Âm lịch D-006; v1.2 iPhone 13 Pro Max D-007). Hợp đồng TypeScript ở SPEC mục 5 — không đổi nếu không PHẢN BIỆN.
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 4/9 · M3: 0/4 · M4: 0/6
-- Đang làm: T-2.3 (tho-sonnet)
+- M1: 8/8 ✔ tag `M1-ok` · M2: 5/9 · M3: 0/4 · M4: 0/6
+- Đang làm: T-2.8 Âm lịch (tho-sonnet)
 - Chờ Chủ dự án: đặt thử ảnh mẫu 1284×2778 (đã gửi 2026-09-13) — có đè đồng hồ/widget/nút không? (không chặn; cần trước T-2.3)
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
 
@@ -157,9 +157,11 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Phạm vi file: `src/render/layout/agenda.ts`, `todo.ts`, `note.ts`, `common.ts` (thêm helper bọc dòng ước lượng độ rộng theo `size`), `tests/unit/layout.test.ts`.
 - Tham khảo (chép/port được, xem docs/tham-khao-LICH_NEN.md): `F:/LICH_NEN/LichNen.js` L302–343 `drawAgenda`, L344–363 `drawTodo`, L364–377 `pinnedHeight/drawPinned`, L135 `estLines` (ước lượng bọc dòng), L133 `dayLabel`, L120 `fmtTime` — chỉ lấy logic, đầu ra phải là `DrawOp[]`.
 - Mục tiêu: 3 bố cục cùng chữ ký `layoutMonth`; giờ theo `hour12`; to-do ≤ 12 dòng có ký hiệu tick (☐/☑ hoặc rect); note bọc dòng; mọi op trong vùng an toàn.
-- Tiêu chí: [ ] agenda 7 ngày đúng thứ tự thời gian, `hour12` sinh "AM"/"PM"; [ ] to-do > 12 mục cắt còn 12 (+ dòng "+N"); [ ] note dài bọc thành nhiều op text; [ ] vùng an toàn cho cả 3.
-- Lệnh kiểm tra: `npm run test`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Bổ sung (Quản lý 2026-09-13): phạm vi thêm `src/render/layout/month.ts` (chỉ để nhường chỗ cho ghi chú). Khi `showNote` bật, `common.ts` chia vùng an toàn: khối chính (month/agenda/todo) và dải ghi chú KHÔNG chồng nhau (ghi chú tối đa ~4 dòng, nằm dưới khối chính; `position` áp cho khối chính trong phần còn lại). Agenda: nhãn ngày "Hôm nay"/"Ngày mai"/"T2 14/9" và AM/PM qua `t(key, c.lang)` (`src/core/i18n.ts` có sẵn, thêm khóa nếu thiếu → khi đó phạm vi gồm `src/core/i18n/*.json`, giữ 2 file khớp); tối đa 12 dòng (SPEC §9), vượt → dòng "+N"; chấm màu theo `occurrence.color` (không có → accent). Gom tạo nhãn ngày vào MỘT helper trong `common.ts` (T-2.8 sẽ thêm ngày âm vào đó). Test đã khóa `layout-month.test.ts` phải pass nguyên văn.
+- Tiêu chí: [ ] agenda 7 ngày đúng thứ tự thời gian, `hour12` sinh "AM"/"PM"; [ ] agenda > 12 dòng cắt + "+N"; [ ] to-do > 12 mục cắt còn 12 (+ dòng "+N"); [ ] note dài bọc thành nhiều op text; [ ] vùng an toàn cho cả 3 (3 position × 2 thiết bị gồm 1284×2778); [ ] mỗi bố cục + note (showNote=true): bbox khối chính và bbox dải note không giao nhau.
+- Lệnh kiểm tra: `npx tsc --noEmit; npm run test`
+- Nhật ký: 2026-09-13 lượt 1: DONE (common: mainArea/noteArea, dayLabel/fmtTime/wrapText; month dùng mainArea; agenda/todo/note mới; 79×2 unit) → kiem-thu PASS. Review chưa đạt: dòng agenda/todo giãn theo hộp cố định 82% (1–2 mục rải thưa), không có trạng thái rỗng, tiêu đề dài tràn mép → trả thợ (Lần thử 1/3). Lượt 2: hộp ôm nội dung + co chữ, trạng thái rỗng (khóa agenda.empty/todo.empty), `truncate` "…"; 85×2 unit → kiem-thu PASS (check: 85×2 + 6 e2e) → review đạt → commit.
+- Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
 
 ### T-2.4 — i18n
 - Phạm vi file: `src/core/i18n.ts`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `tests/unit/i18n.test.ts`.
@@ -191,12 +193,12 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   [ ] Layout Tháng/Agenda: `showLunar` true có op text âm lịch, false không có; test vùng an toàn cũ vẫn pass không nới.
   [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ### T-2.6 — Nối dữ liệu vào render + store actions
 - Phạm vi file: `src/render/wallpaper.ts`, `src/ui/store.ts`, `tests/unit/store.test.ts`.
 - Mục tiêu: `renderWallpaper` dùng `collectRenderData` + chọn layout theo `design.layout` + `layoutNote` khi `showNote`; nhãn thứ/tháng qua i18n. Store thêm action: CRUD sự kiện, CRUD/tick/sắp xếp to-do, `setNote`, `replaceState` (nhập backup), `resetAll`.
-- Tiêu chí: [ ] reducer test cho mọi action mới; [ ] test M1 vẫn pass.
+- Tiêu chí: [ ] reducer test cho mọi action mới; [ ] test M1 vẫn pass; [ ] Quản lý dựng ảnh mẫu 1284×2778 cho 3 bố cục (month/agenda/todo, có + không note, có 0/2/15 mục) và xem bằng mắt trước khi DONE (test không bắt được lỗi thẩm mỹ — xem T-2.3 lượt 1).
 - Lệnh kiểm tra: `npm run check`
 - Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
 

@@ -1,16 +1,16 @@
 import type { DesignConfig, DeviceSpec, RenderData } from '../../core/model';
 import { monthGrid, parseISODate } from '../../core/calendar';
-import { blockStartY, fontSize, safeArea, weekdayLabels, LABELS_VI, type DrawOp } from './common';
+import { blockStartY, fontSize, mainArea, weekdayLabels, LABELS_VI, type DrawOp } from './common';
 
 export type { DrawOp };
 
 /** Bố cục Tháng: tiêu đề, hàng thứ, lưới 6x7, tô hôm nay, chấm sự kiện. Hàm thuần. */
 export function layoutMonth(d: RenderData, c: DesignConfig, dev: DeviceSpec): DrawOp[] {
   const ops: DrawOp[] = [];
-  const { top, bottom } = safeArea(dev);
-  const usable = bottom - top;
+  const area = mainArea(dev, c);
+  const usable = area.bottom - area.top;
   const contentHeight = usable * 0.82;
-  const contentTop = blockStartY(dev, c.position, contentHeight);
+  const contentTop = blockStartY(area, c.position, contentHeight);
 
   const margin = dev.width * 0.05;
   const gridLeft = margin;

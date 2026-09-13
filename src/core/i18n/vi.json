@@ -75,6 +75,9 @@
   "date.today": "Hôm nay",
   "date.tomorrow": "Ngày mai",
 
+  "agenda.empty": "Không có sự kiện sắp tới",
+  "todo.empty": "Không có việc cần làm",
+
   "common.comingSoon": "Sắp có",
   "sync.lastSync": "Đồng bộ lần cuối: {time}"
 }
