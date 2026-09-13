@@ -113,3 +113,83 @@ test.describe('iPhone 13 Pro Max (428x926): không cuộn ngang, ev-save trong v
     expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height);
   });
 });
+
+test('Sự kiện: lặp Thứ Hai đến Thứ Sáu (v1.3)', async ({ page }) => {
+  await openEventsTab(page);
+
+  // Ngày 15 của tháng hiện tại + tuần chứa nó (luôn nằm trọn trong tháng, mọi tháng có >= 21 ngày).
+  const { day15, days } = await page.evaluate(() => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = now.getMonth();
+    const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const d15 = new Date(y, m, 15);
+    const diffToMonday = (d15.getDay() + 6) % 7;
+    const monday = new Date(y, m, 15 - diffToMonday);
+    const days: { date: string; dow: number }[] = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      days.push({ date: iso(d), dow: d.getDay() });
+    }
+    return { day15: iso(d15), days };
+  });
+
+  // Sự kiện bắt đầu từ Thứ Hai của tuần (occurrence chỉ mở rộng từ ngày bắt đầu trở đi).
+  void day15;
+  const monday = days[0].date;
+  await page.getByTestId(`cal-cell-${monday}`).click();
+  await page.getByTestId('add-event').click();
+  await page.getByTestId('ev-title').fill('Học tiếng Anh');
+  await page.getByTestId('ev-repeat').selectOption('weekdays');
+  await page.getByTestId('ev-save').click();
+
+  for (const d of days) {
+    const dotCount = d.dow === 0 || d.dow === 6 ? 0 : 1;
+    await expect(page.getByTestId(`cal-cell-${d.date}`).locator('.cal-dot')).toHaveCount(dotCount);
+  }
+});
+
+test('Sự kiện: Nhắc trước -> .ics có VALARM', async ({ page }) => {
+  await openEventsTab(page);
+
+  await page.getByTestId('add-event').click();
+  await page.getByTestId('ev-title').fill('Nhắc việc');
+  await page.getByTestId('ev-alarm').selectOption('15');
+  await page.getByTestId('ev-save').click();
+
+  await page.getByTestId('ev-item').filter({ hasText: 'Nhắc việc' }).click();
+  const [download] = await Promise.all([page.waitForEvent('download'), page.getByTestId('ev-ics').click()]);
+  const stream = await download.createReadStream();
+  const chunks: Buffer[] = [];
+  await new Promise<void>((resolve, reject) => {
+    stream.on('data', (c) => chunks.push(c as Buffer));
+    stream.on('end', () => resolve());
+    stream.on('error', reject);
+  });
+  expect(Buffer.concat(chunks).toString('utf-8')).toContain('TRIGGER:-PT15M');
+});
+
+test('Việc cần làm: hạn quá hạn hiện trước việc không hạn', async ({ page }) => {
+  await openEventsTab(page);
+
+  const yesterday = await page.evaluate(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  });
+
+  await page.getByTestId('seg-todos').click();
+  await page.getByTestId('todo-input').fill('Việc không hạn');
+  await page.getByTestId('todo-add').click();
+  await page.getByTestId('todo-input').fill('Việc trễ hạn');
+  await page.getByTestId('todo-due').fill(yesterday);
+  await page.getByTestId('todo-add').click();
+
+  const rows = page.getByTestId('todo-item');
+  await expect(rows).toHaveCount(2);
+  await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('Việc trễ hạn');
+  await expect(rows.nth(0).getByTestId('todo-due-label')).toHaveText('Quá hạn');
+  await expect(rows.nth(0).getByTestId('todo-due-label')).toHaveClass(/todo-due-overdue/);
+  await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('Việc không hạn');
+});

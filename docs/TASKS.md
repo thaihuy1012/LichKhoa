@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.2 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 9/13 · M3: 0/4 · M4: 0/6
-- Đang làm: T-2.11 ∥ T-2.12 (DOING, tho-sonnet lượt 1 mỗi phiếu; không chung file)
+- M1: 8/8 ✔ tag `M1-ok` · M2: 11/13 · M3: 0/4 · M4: 0/6
+- Đang làm: T-2.9 (DOING, tho-sonnet lượt 1)
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
 - Chờ Chủ dự án: đặt thử ảnh mẫu 1284×2778 (đã gửi 2026-09-13) — có đè đồng hồ/widget/nút không? (không chặn; cần trước T-2.3)
@@ -16,7 +16,8 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 ## Tồn đọng (S4 — không chặn)
 - S4 · T-1.2 · mặc định `boxAlpha=1` (hộp nền đặc) sẽ che ảnh nền ở M4 — xem lại mặc định khi làm T-4.2.
 - S4 · T-1.7 · `normalizeState` chỉ kiểm `device.width/height`; device cũ thiếu `safeTop/safeBottom/id` sẽ lọt → nên bù mặc định khi làm T-2.5.
-- S4 · T-2.7 · `EventsTab.tsx` L93: sửa sự kiện có `time` mà thiếu `durationMin` → ô Kết thúc mặc định +60 phút → lưu lại thành `durationMin: 60` (đổi dữ liệu ngầm). Làm trong T-2.12 (cùng file).
+- ~~S4 · T-2.7 · `EventsTab.tsx` L93 durationMin ngầm 60~~ → đã sửa trong T-2.12.
+- S4 · T-2.12 · ô ngày hạn `todo-due` khi trống không có nhãn/gợi ý (webkit hiện ô trống) → thêm nhãn "Hạn" nhỏ hoặc icon lịch khi có phiếu chạm TodosTab.
 - S4 · T-2.5 · `eventToIcs` chưa gập dòng > 75 byte (RFC 5545 §3.1); Lịch iPhone vẫn đọc được — làm nếu có phiếu chạm ics.
 
 ## Thứ tự & song song
@@ -267,7 +268,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Yêu cầu: to-do chưa xong có `due` → nhãn canh phải cùng dòng (tiêu đề cắt "…" để chừa chỗ); quá hạn → nhãn màu `accentColor`, chữ đậm; note: `noteTitle` khác rỗng → dòng tiêu đề đậm trước ≤ 4 dòng nội dung; ghi chú ghim CHỈ có tiêu đề (`note === ''`, `noteTitle` có) vẫn phải vẽ (hiện `layoutNote` trả [] khi `!d.note`) — `noteHeight` cũng tính theo đó; khối chính và dải note vẫn không giao nhau; mọi op trong vùng an toàn (3 position × 2 thiết bị).
 - Tiêu chí: [ ] test nhãn hạn 3 trường hợp + quá hạn tô accent; [ ] note có tiêu đề → op text đậm đứng trước nội dung; bbox không giao; [ ] `npm run check` pass (kiem-thu chạy); [ ] Quản lý dựng ảnh mẫu có dữ liệu (khuôn `mau-t26.cjs`) và xem trước khi DONE.
 - Lệnh kiểm tra (thợ): `npx tsc --noEmit; npm run test` — KHÔNG chạy build/e2e vì T-2.12 chạy song song (tránh tranh `dist/` + cổng 4173); `npm run check` do kiem-thu chạy sau.
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (todoDueLabel, nhãn hạn canh phải, note tiêu đề + chỉ-tiêu-đề; +6 test, 128×2) → kiem-thu chung với T-2.12 PASS → ảnh mẫu v1.3 (scratchpad `mau-v13.cjs`): đạt → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-2.12 — Màn Sự kiện v1.3: T2–T6, nhắc trước, hạn to-do, danh sách ghi chú
 - Phạm vi file: `src/ui/screens/Events.tsx`, `src/ui/screens/events/*`, `src/ui/styles.css`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `tests/e2e/events.spec.ts` (chỉ thêm test), `tests/e2e/notes.spec.ts` (mới). Sau T-2.7 + T-2.10; song song T-2.11.

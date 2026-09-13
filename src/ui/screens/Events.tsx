@@ -59,7 +59,7 @@ export function Events({ store }: { store: Store }) {
       <div class="events-body">
         {segment === 'events' && <EventsTab store={store} state={state} showToast={showToast} />}
         {segment === 'todos' && <TodosTab store={store} state={state} />}
-        {segment === 'note' && <NoteTab state={state} />}
+        {segment === 'note' && <NoteTab store={store} state={state} showToast={showToast} />}
       </div>
       <Toast message={toastMsg} />
     </div>

@@ -1,7 +1,21 @@
-/** Tiện ích dùng riêng cho màn Sự kiện (T-2.7). */
+/** Tiện ích dùng riêng cho màn Sự kiện (T-2.7, T-2.12). */
+
+import type { Todo } from '../../../core/model';
+import { cmpTodo } from '../../../core/collect';
+
+/** Nhãn hạn to-do: dùng chung với hình nền để app và hình nền không lệch nhau. */
+export { todoDueLabel } from '../../../render/layout/common';
 
 /** Bảng màu sự kiện: tông sáng, tương phản tốt trên nền tối (khác `EVENT_COLORS` gốc lich-nen.html L411 vốn dành cho nền sáng). */
 export const EVENT_COLORS = ['#4dabf7', '#ff6b6b', '#51cf66', '#fcc419', '#cc5de8', '#22b8cf'];
+
+/** Nhắc trước cho phép, theo SPEC v1.3 mục 5. */
+export const ALARM_MINUTES = [0, 5, 15, 30, 60, 1440] as const;
+
+/** Thứ tự hiển thị to-do trong app = đúng thứ tự trên hình nền (`cmpTodo` của `core/collect.ts`). */
+export function sortTodosForDisplay(todos: Todo[]): Todo[] {
+  return [...todos].sort(cmpTodo);
+}
 
 export function newId(): string {
   return typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `id-${Date.now()}-${Math.random()}`;

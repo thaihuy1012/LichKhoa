@@ -13,7 +13,7 @@ function cmpOccurrence(a: Occurrence, b: Occurrence): number {
 }
 
 /** v1.3: chưa xong có `due` (tăng dần) -> chưa xong không `due` (theo `order`) -> đã xong (theo `order`). */
-function cmpTodo(a: Todo, b: Todo): number {
+export function cmpTodo(a: Todo, b: Todo): number {
   if (a.done !== b.done) return a.done ? 1 : -1;
   if (!a.done) {
     const aHas = a.due != null;

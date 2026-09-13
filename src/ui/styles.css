@@ -321,6 +321,27 @@ select option {
   white-space: nowrap;
 }
 
+.ev-item-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ev-item-meta {
+  font-size: 11px;
+  color: #999;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hint {
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+}
+
 .empty {
   color: #888;
   font-size: 13px;
@@ -419,11 +440,21 @@ select option {
   min-height: 44px;
 }
 
-.field-between {
+/* Hai lớp .field (specificity 0-2-0, flex-direction: column) nên cần .field.field-between
+   (cũng 0-2-0, đứng sau trong file) để thắng — nếu không "Cả ngày"/"Ghim"/"Hiện trên hình nền"
+   vẫn xếp dọc dù có class này (S4, T-2.7 -> sửa ở T-2.12). */
+.field.field-between {
+  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   min-height: 44px;
+  gap: 10px;
+}
+
+.field.field-between label {
+  font-size: 15px;
+  color: #f2f2f2;
 }
 
 /* Công tắc kiểu iOS, port lich-nen.html L72-75 (`.switch`), tông tối. */
@@ -546,6 +577,44 @@ select option {
   padding: 0 14px;
 }
 
+.addrow input[type='date'] {
+  flex: none;
+  width: 128px;
+}
+
+/* `.todo-item button` (0-1-1) tô lại font-size/màu chung cho các nút trong hàng; cần
+   `.todo-item .todo-due-*` (0-2-0 hoặc hơn) để nhãn hạn không bị đè. */
+.todo-item .todo-due-label,
+.todo-item .todo-due-add {
+  flex: none;
+  width: auto;
+  min-height: 44px;
+  min-width: 44px;
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 12px;
+  padding: 0 4px;
+}
+
+.todo-item .todo-due-overdue {
+  color: #ff6b6b;
+  font-weight: 700;
+}
+
+.todo-due-input {
+  flex: none;
+  width: 128px;
+  min-height: 44px;
+  font-size: 14px;
+  box-sizing: border-box;
+  padding: 4px 6px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #0b0b0f;
+  color: #f2f2f2;
+}
+
 .todo-list,
 .todo-done-list {
   display: flex;
@@ -640,7 +709,7 @@ select option {
   font-size: 14px;
 }
 
-/* ---- ghi chú ---- */
+/* ---- ghi chú (port lich-nen.html L895-932) ---- */
 
 .note-tab {
   display: flex;
@@ -648,17 +717,50 @@ select option {
   gap: 10px;
 }
 
-.note-tab textarea {
+.note-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.note-item {
+  display: block;
   width: 100%;
-  min-height: 120px;
-  font-size: 16px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid #333;
-  background: #0b0b0f;
+  min-height: 44px;
+  background: #1b1b22;
+  border: none;
+  border-radius: 8px;
   color: #f2f2f2;
+  padding: 8px 10px;
+  text-align: left;
   box-sizing: border-box;
-  resize: vertical;
+}
+
+.note-item-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.note-item-pin {
+  font-size: 11px;
+  font-weight: 700;
+  color: #111;
+  background: #ffd43b;
+  border-radius: 6px;
+  padding: 1px 6px;
+  flex: none;
+}
+
+.note-item-body {
+  font-size: 13px;
+  color: #aaa;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 2px;
 }
 
 /* ---- toast (port lich-nen.html L166-168/L706) ---- */

@@ -1,29 +1,82 @@
 import { useState } from 'preact/hooks';
 import type { Store } from '../../store';
-import type { AppState, Todo } from '../../../core/model';
+import type { AppState, ISODate, Todo } from '../../../core/model';
 import { t } from '../../../core/i18n';
+import { toISODate } from '../../../core/calendar';
+import { sortTodosForDisplay, todoDueLabel } from './util';
 
 interface Props {
   store: Store;
   state: AppState;
 }
 
+function DueBadge({
+  todo,
+  today,
+  lang,
+  onChange,
+}: {
+  todo: Todo;
+  today: ISODate;
+  lang: 'vi' | 'en';
+  onChange: (due: string | null) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  if (editing) {
+    return (
+      <input
+        type="date"
+        class="todo-due-input"
+        data-testid="todo-due-edit"
+        value={todo.due ?? ''}
+        onChange={(e) => {
+          const v = (e.target as HTMLInputElement).value;
+          onChange(v || null);
+          setEditing(false);
+        }}
+        onBlur={() => setEditing(false)}
+      />
+    );
+  }
+  if (!todo.due) {
+    return (
+      <button type="button" class="todo-due-add" data-testid="todo-due-label" onClick={() => setEditing(true)}>
+        + {t('events.todoDue', lang)}
+      </button>
+    );
+  }
+  const label = todoDueLabel(todo.due, today, lang);
+  return (
+    <button
+      type="button"
+      class={label.overdue ? 'todo-due-label todo-due-overdue' : 'todo-due-label'}
+      data-testid="todo-due-label"
+      onClick={() => setEditing(true)}
+    >
+      {label.text}
+    </button>
+  );
+}
+
 export function TodosTab({ store, state }: Props) {
   const lang = state.design.lang;
+  const today = toISODate(new Date());
   const [inputText, setInputText] = useState('');
+  const [inputDue, setInputDue] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState('');
   const [showDone, setShowDone] = useState(false);
 
-  const sorted = [...state.todos].sort((a, b) => a.order - b.order);
+  const sorted = sortTodosForDisplay(state.todos);
   const open = sorted.filter((x) => !x.done);
   const done = sorted.filter((x) => x.done);
 
   function add() {
     const text = inputText.trim();
     if (!text) return;
-    store.dispatch({ type: 'addTodo', text });
+    store.dispatch({ type: 'addTodo', text, due: inputDue || undefined });
     setInputText('');
+    setInputDue('');
   }
 
   function startEdit(todo: Todo) {
@@ -68,6 +121,12 @@ export function TodosTab({ store, state }: Props) {
             {todo.text}
           </button>
         )}
+        <DueBadge
+          todo={todo}
+          today={today}
+          lang={lang}
+          onChange={(due) => store.dispatch({ type: 'setTodoDue', id: todo.id, due })}
+        />
         <button
           type="button"
           data-testid="todo-up"
@@ -104,6 +163,13 @@ export function TodosTab({ store, state }: Props) {
           onKeyDown={(e) => {
             if (e.key === 'Enter') add();
           }}
+        />
+        <input
+          type="date"
+          data-testid="todo-due"
+          aria-label={t('events.todoDue', lang)}
+          value={inputDue}
+          onInput={(e) => setInputDue((e.target as HTMLInputElement).value)}
         />
         <button type="button" data-testid="todo-add" onClick={add}>
           {t('events.todoAdd', lang)}

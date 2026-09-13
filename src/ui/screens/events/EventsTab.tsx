@@ -7,7 +7,7 @@ import { solarToLunar } from '../../../core/lunar';
 import { eventToIcs } from '../../../export/ics';
 import { t } from '../../../core/i18n';
 import { Sheet } from '../../components/Sheet';
-import { EVENT_COLORS, addMinutesToTime, downloadBlob, minutesBetween, newId } from './util';
+import { ALARM_MINUTES, EVENT_COLORS, addMinutesToTime, downloadBlob, minutesBetween, newId } from './util';
 
 interface Props {
   store: Store;
@@ -23,6 +23,14 @@ function lastDayOfMonth(y: number, m0: number): number {
 function lunarCellText(date: string): string {
   const l = solarToLunar(date);
   return l.day === 1 ? `${l.day}/${l.month}` : `${l.day}`;
+}
+
+/** Dòng meta dưới tiêu đề sự kiện: "Hằng tuần, Nhắc trước 15 phút" (port lich-nen.html L783-788). */
+function eventMeta(ev: LocalEvent, lang: 'vi' | 'en'): string {
+  const parts: string[] = [];
+  if (ev.repeat && ev.repeat !== 'none') parts.push(t(`repeat.${ev.repeat}`, lang));
+  if (ev.alarmMin) parts.push(t('events.alarmMeta', lang, { label: t(`alarm.${ev.alarmMin}`, lang) }));
+  return parts.join(', ');
 }
 
 export function EventsTab({ store, state, showToast }: Props) {
@@ -43,6 +51,7 @@ export function EventsTab({ store, state, showToast }: Props) {
   const [repeat, setRepeat] = useState<LocalEvent['repeat']>('none');
   const [until, setUntil] = useState('');
   const [color, setColor] = useState(EVENT_COLORS[0]);
+  const [alarmMin, setAlarmMin] = useState(0);
 
   const grid = monthGrid(ym.y, ym.m0, state.design.weekStart);
   const monthFrom = `${ym.y}-${String(ym.m0 + 1).padStart(2, '0')}-01`;
@@ -81,6 +90,7 @@ export function EventsTab({ store, state, showToast }: Props) {
     setRepeat('none');
     setUntil('');
     setColor(EVENT_COLORS[0]);
+    setAlarmMin(0);
     setSheetOpen(true);
   }
 
@@ -90,10 +100,12 @@ export function EventsTab({ store, state, showToast }: Props) {
     setAllDay(!ev.time);
     setDate(ev.date);
     setStart(ev.time ?? '09:00');
-    setEnd(ev.time ? addMinutesToTime(ev.time, ev.durationMin ?? 60) : '10:00');
+    // S4 (T-2.7 L93): time có nhưng thiếu durationMin -> ô Kết thúc để trống (không mặc định +60).
+    setEnd(!ev.time ? '10:00' : ev.durationMin != null ? addMinutesToTime(ev.time, ev.durationMin) : '');
     setRepeat(ev.repeat);
     setUntil(ev.until ?? '');
     setColor(ev.color || EVENT_COLORS[0]);
+    setAlarmMin(ev.alarmMin ?? 0);
     setSheetOpen(true);
   }
 
@@ -101,8 +113,9 @@ export function EventsTab({ store, state, showToast }: Props) {
     const trimmedTitle = title.trim() || t('events.untitled', lang);
     const time = allDay ? undefined : start || '09:00';
     let durationMin: number | undefined;
-    if (!allDay) {
-      const mins = minutesBetween(start || '09:00', end || '10:00');
+    // S4 (T-2.7 L93): Kết thúc trống -> không có durationMin (không mặc định +60).
+    if (!allDay && end.trim()) {
+      const mins = minutesBetween(start || '09:00', end);
       durationMin = mins > 0 ? mins : undefined;
     }
     const untilVal = repeat !== 'none' && until ? until : undefined;
@@ -115,6 +128,7 @@ export function EventsTab({ store, state, showToast }: Props) {
       repeat,
       until: untilVal,
       color,
+      alarmMin: alarmMin || undefined,
     };
   }
 
@@ -203,13 +217,20 @@ export function EventsTab({ store, state, showToast }: Props) {
           {t('events.add', lang)}
         </button>
         {dayOcc.length === 0 && <p class="empty">{t('events.dayEmpty', lang)}</p>}
-        {dayOcc.map((o) => (
-          <button key={o.id} type="button" data-testid="ev-item" class="ev-item" onClick={() => onOccClick(o)}>
-            <span class="ev-item-bar" style={{ background: o.color || EVENT_COLORS[0] }} />
-            <span class="ev-item-time">{o.allDay ? t('events.allDay', lang) : o.time}</span>
-            <span class="ev-item-title">{o.title}</span>
-          </button>
-        ))}
+        {dayOcc.map((o) => {
+          const src = o.source === 'local' ? state.events.find((e) => e.id === o.sourceId) : undefined;
+          const meta = src ? eventMeta(src, lang) : '';
+          return (
+            <button key={o.id} type="button" data-testid="ev-item" class="ev-item" onClick={() => onOccClick(o)}>
+              <span class="ev-item-bar" style={{ background: o.color || EVENT_COLORS[0] }} />
+              <span class="ev-item-time">{o.allDay ? t('events.allDay', lang) : o.time}</span>
+              <span class="ev-item-body">
+                <span class="ev-item-title">{o.title}</span>
+                {meta && <span class="ev-item-meta">{meta}</span>}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       <Sheet open={sheetOpen} onClose={() => setSheetOpen(false)}>
@@ -287,6 +308,7 @@ export function EventsTab({ store, state, showToast }: Props) {
           >
             <option value="none">{t('repeat.none', lang)}</option>
             <option value="daily">{t('repeat.daily', lang)}</option>
+            <option value="weekdays">{t('repeat.weekdays', lang)}</option>
             <option value="weekly">{t('repeat.weekly', lang)}</option>
             <option value="monthly">{t('repeat.monthly', lang)}</option>
             <option value="yearly">{t('repeat.yearly', lang)}</option>
@@ -304,6 +326,22 @@ export function EventsTab({ store, state, showToast }: Props) {
             />
           </div>
         )}
+        <div class="field">
+          <label for="ev-alarm">{t('events.alarm', lang)}</label>
+          <select
+            id="ev-alarm"
+            data-testid="ev-alarm"
+            value={String(alarmMin)}
+            onChange={(e) => setAlarmMin(Number((e.target as HTMLSelectElement).value))}
+          >
+            {ALARM_MINUTES.map((m) => (
+              <option key={m} value={m}>
+                {t(`alarm.${m}`, lang)}
+              </option>
+            ))}
+          </select>
+          <p class="hint">{t('events.alarmHint', lang)}</p>
+        </div>
         <div class="field">
           <label>{t('events.color', lang)}</label>
           <div class="swatches">
