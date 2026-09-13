@@ -4,7 +4,7 @@ Nguồn sự thật: `docs/SPEC.md` (v1.1 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 6/6 (chờ Kiến trúc sư duyệt) · M2: 0/9 · M3: 0/4 · M4: 0/6
+- M1: 6/7 (T-1.6 mới — D-007; Kiến trúc sư đang duyệt) · M2: 0/9 · M3: 0/4 · M4: 0/6
 - Đang làm: Giai đoạn 3 — duyệt M1 (kien-truc-su)
 - Chờ Chủ dự án: (không)
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
@@ -13,7 +13,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - S4 · T-1.2 · mặc định `boxAlpha=1` (hộp nền đặc) sẽ che ảnh nền ở M4 — xem lại mặc định khi làm T-4.2.
 
 ## Thứ tự & song song
-M1: 1.1 → 1.2 → (1.3 ∥ 1.4) → 1.5 → 1.END
+M1: 1.1 → 1.2 → (1.3 ∥ 1.4) → 1.5 → 1.END → 1.6 (thêm sau, D-007)
 M2: (2.1 ∥ 2.4 ∥ 2.5) → 2.2 → 2.3 → 2.8 → 2.6 → 2.7 → 2.END
 M3: (3.1 ∥ 3.2) → 3.3 → 3.END
 M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
@@ -101,6 +101,21 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Lệnh kiểm tra: `npx playwright test tests/e2e/m1-render.spec.ts; npm run check`
 - Nhật ký: 2026-09-13 lượt 1: DONE (10/10 × 5 lần lặp; check pass) nhưng né "flake" webkit bằng cách chờ preview trước khi chọn thiết bị. Quản lý: đó là bug app — `Preview.tsx` subscribe store trong useEffect (sau paint), dispatch sớm bị mất → trả thợ sửa src + test tái hiện (Lần thử 1/3). Lượt 2: tái hiện (code cũ 1/10 fail webkit) → sửa Preview.tsx 1 dòng → 20/20; check pass → kiem-thu PASS (repeat-each=5 0 fail; check 22×2 + 4 e2e) → review đạt → commit.
 - Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
+
+### T-1.6 — Tối ưu cho iPhone 13 Pro Max (D-007)
+- Mục tiêu: app và hình nền tối ưu cho máy duy nhất của Chủ dự án: iPhone 13 Pro Max (1284×2778 px, 428×926 pt, DPR 3, tai thỏ).
+- Phạm vi file: `src/render/devices.ts`, `src/ui/App.tsx`, `src/ui/styles.css`, `src/ui/screens/Preview.tsx` (chỉ bố cục/khả dụng), `index.html`, `vite.config.ts` (manifest), `public/apple-touch-icon.png` (mới, 180×180, tự sinh), `playwright.config.ts`, `tests/e2e/iphone13pm.spec.ts` (mới), `tests/unit/devices.test.ts` (mới). Không sửa test đã khóa.
+- Yêu cầu:
+  - `DEVICES` thêm preset `iphone-1284x2778` "iPhone 12/13 Pro Max" (đặt đầu danh sách); `detectDevice(428, 926, 3)` → preset này. Lần đầu mở app mà `detectDevice` trả `'auto'` (không khớp preset) → dùng preset 1284×2778.
+  - `index.html`: `apple-touch-icon`, `apple-mobile-web-app-capable`, `apple-mobile-web-app-status-bar-style` (black-translucent), `apple-mobile-web-app-title` "LichKhoa", `theme-color`.
+  - CSS thiết kế cho 428×926: `env(safe-area-inset-top/bottom)` (tai thỏ + thanh home), tab bar cố định đáy phía trên thanh home; `select/input` `font-size ≥ 16px` (tránh Safari tự phóng to); vùng chạm ≥ 44px; `-webkit-text-size-adjust: 100%`; không có cuộn ngang; ảnh preview co vừa để thấy trọn ảnh + nút "Lưu ảnh" không cần cuộn (428×926).
+  - `playwright.config.ts`: chromium viewport 428×926; webkit dùng `devices['iPhone 13 Pro Max']` (isMobile, hasTouch, DPR 3) với viewport 428×926. Test khóa (`smoke`, `m1-render`) phải vẫn pass nguyên văn.
+- Tiêu chí nghiệm thu:
+  [ ] `devices.test.ts`: `detectDevice(428,926,3).id === 'iphone-1284x2778'`, preset có width 1284/height 2778; các preset cũ vẫn khớp.
+  [ ] `iphone13pm.spec.ts` (webkit mô phỏng 13 Pro Max): lần đầu mở (IndexedDB trống) → select = preset 1284×2778, preview naturalWidth 1284/naturalHeight 2778; nút "Lưu ảnh" và tab bar nằm trọn trong viewport không cần cuộn; `scrollWidth <= clientWidth`; `getComputedStyle(select).fontSize ≥ 16px`; mỗi nút tab cao ≥ 44px; `link[rel=apple-touch-icon]` tồn tại.
+  [ ] `npm run check` pass (test cũ không bị sửa).
+- Lệnh kiểm tra: `npm run check`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO (chờ phán quyết M1 để gộp việc nếu Kiến trúc sư trả SỬA)
 
 ---
 ## M2 — Sự kiện, to-do, ghi chú; Agenda / To-do / Note; sao lưu; i18n

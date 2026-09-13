@@ -30,3 +30,8 @@
 - Hỏi Chủ dự án 4 tính năng ngoài SPEC (âm lịch, lặp T2–T6, VALARM trong .ics, nhập .ics) → chỉ chọn **Âm lịch**. Ba cái còn lại vẫn OUT.
 - Quyết định: SPEC 1.1 thêm IN mục 9 + `DesignConfig.showLunar` (mặc định true) + `core/lunar.ts` (`solarToLunar`, `lunarYearName`), port thuật toán Hồ Ngọc Đức từ `lich-nen.html` L434–513. Phiếu mới T-2.8 (sau T-2.3, trước T-2.6). Sửa `model.ts`/`month.ts` (đã khóa ở M1) được phép trong T-2.8, phải khai báo; test M1 chỉ được sửa đúng chỗ `defaultDesign` thêm `showLunar`.
 - Phần code tham khảo khác (occursOn, ics, layout, nhãn) ghi vào mục "Tham khảo" của từng phiếu M2/M4.
+
+## D-007 — Thiết bị đích: iPhone 13 Pro Max (2026-09-13 · người quyết: Chủ dự án)
+- Chủ dự án: "tôi sử dụng hoàn toàn trên điện thoại iPhone 13 Pro Max, hãy tối ưu trên giao diện này tốt nhất".
+- Thông số: 1284×2778 px, 428×926 pt, DPR 3, tai thỏ (không Dynamic Island), iOS 17+.
+- Quyết định (không đổi phạm vi IN/OUT, chỉ thu hẹp đích tối ưu): thêm preset 1284×2778 và dùng làm mặc định khi không nhận ra máy; UI thiết kế cho 428×926 (thay 390 px); PWA iOS (apple-touch-icon, meta standalone, `env(safe-area-inset-*)`, chữ ô nhập ≥ 16px, vùng chạm ≥ 44pt); E2E đổi viewport 428×926 và project webkit mô phỏng `devices['iPhone 13 Pro Max']`. Phiếu T-1.6 (thêm vào M1, trước khi gắn tag M1-ok).
