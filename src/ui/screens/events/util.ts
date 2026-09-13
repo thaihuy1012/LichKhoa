@@ -42,9 +42,10 @@ export function addMinutesToTime(time: string, minutes: number): string {
   return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
 }
 
-/** Số phút giữa hai giờ 'HH:mm' cùng ngày (có thể âm hoặc 0). */
+/** Số phút giữa hai giờ 'HH:mm'; Kết thúc < Bắt đầu -> qua đêm (+1440), bằng nhau -> 0. */
 export function minutesBetween(start: string, end: string): number {
   const [h1, m1] = start.split(':').map(Number);
   const [h2, m2] = end.split(':').map(Number);
-  return h2 * 60 + m2 - (h1 * 60 + m1);
+  const diff = h2 * 60 + m2 - (h1 * 60 + m1);
+  return diff < 0 ? diff + 1440 : diff;
 }

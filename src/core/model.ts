@@ -1,3 +1,5 @@
+import { DEVICES } from '../render/devices';
+
 export type ISODate = string; // 'YYYY-MM-DD' theo giờ địa phương
 export type Repeat = 'none' | 'daily' | 'weekdays' /* v1.3: T2-T6 */ | 'weekly' | 'monthly' | 'yearly';
 
@@ -142,7 +144,19 @@ export function normalizeState(raw: unknown): AppState | null {
   ) {
     return null;
   }
-  const device = rawDevice as unknown as DeviceSpec;
+  // T-2.14: bù các trường thiếu (safeTop/safeBottom/id/label) từ preset trùng kích thước nếu có,
+  // ngược lại mặc định 0.30/0.14, id 'custom' (tránh NaN khi render, S4 tồn đọng T-1.7).
+  const width = rawDevice['width'] as number;
+  const height = rawDevice['height'] as number;
+  const preset = DEVICES.find((d) => d.width === width && d.height === height);
+  const device: DeviceSpec = {
+    id: typeof rawDevice['id'] === 'string' ? (rawDevice['id'] as string) : (preset?.id ?? 'custom'),
+    label: typeof rawDevice['label'] === 'string' ? (rawDevice['label'] as string) : (preset?.label ?? `Tùy chỉnh ${width}×${height}`),
+    width,
+    height,
+    safeTop: typeof rawDevice['safeTop'] === 'number' ? (rawDevice['safeTop'] as number) : (preset?.safeTop ?? 0.3),
+    safeBottom: typeof rawDevice['safeBottom'] === 'number' ? (rawDevice['safeBottom'] as number) : (preset?.safeBottom ?? 0.14),
+  };
 
   const rawDesign = isPlainObject(raw['design']) ? raw['design'] : {};
   const rawGoogle = isPlainObject(raw['google']) ? raw['google'] : {};
@@ -164,6 +178,7 @@ export function normalizeState(raw: unknown): AppState | null {
   return {
     ...base,
     ...raw,
+    device,
     notes,
     design: mergedDesign as unknown as DesignConfig,
     google: { ...base.google, ...rawGoogle } as AppState['google'],

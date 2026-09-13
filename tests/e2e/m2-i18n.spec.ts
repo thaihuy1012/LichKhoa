@@ -51,3 +51,21 @@ test('i18n: đổi ngôn ngữ đổi nhãn tab; 12h -> AM/PM trong agenda; tắ
     .poll(async () => opsTexts(page), { timeout: 5000 })
     .not.toEqual(expect.arrayContaining([expect.stringContaining('Âm lịch')]));
 });
+
+test('T-2.14: đổi en -> nhãn "Thiết bị"/"Tự phát hiện"/"Tùy chỉnh"/"Lưu ảnh" trên Preview đổi theo', async ({ page }) => {
+  await page.goto('/?test=1');
+  await page.getByTestId('tab-preview').click();
+
+  await expect(page.getByTestId('save')).toHaveText('Lưu ảnh');
+  const deviceLabel = page.locator('label.field', { hasText: 'Thiết bị' });
+  await expect(deviceLabel).toHaveCount(1);
+  await expect(page.getByTestId('device').getByRole('option', { name: 'Tự phát hiện' })).toHaveCount(1);
+  await expect(page.getByTestId('device').getByRole('option', { name: 'Tùy chỉnh' })).toHaveCount(1);
+
+  await page.getByTestId('lang').selectOption('en');
+
+  await expect(page.getByTestId('save')).toHaveText('Save image');
+  await expect(page.locator('label.field', { hasText: 'Device' })).toHaveCount(1);
+  await expect(page.getByTestId('device').getByRole('option', { name: 'Auto-detect' })).toHaveCount(1);
+  await expect(page.getByTestId('device').getByRole('option', { name: 'Custom' })).toHaveCount(1);
+});

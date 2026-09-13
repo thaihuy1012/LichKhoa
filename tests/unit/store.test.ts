@@ -106,6 +106,35 @@ describe('reducer', () => {
     expect(s5).toEqual(s3);
   });
 
+  it('T-2.14: moveTodo chỉ hoán đổi trong cùng nhóm (done/due) theo thứ tự hiển thị cmpTodo, không mutate', () => {
+    const state = defaultState(device);
+    const loaded = {
+      ...defaultState(device),
+      todos: [
+        { id: 't1', text: 't1', done: false, order: 0 }, // không hạn
+        { id: 't2', text: 't2', done: false, order: 1 }, // không hạn
+        { id: 't3', text: 't3', done: true, order: 2 }, // đã xong
+        { id: 't4', text: 't4', done: false, order: 3, due: '2099-01-01' }, // có hạn
+      ],
+    };
+    const s0 = reducer(state, { type: 'load', state: loaded });
+    // Thứ tự hiển thị (cmpTodo): t4 (có hạn) -> t1, t2 (không hạn) -> t3 (đã xong).
+
+    // Cùng nhóm "không hạn": t1 <-> t2 hoán đổi được.
+    const s1 = reducer(s0, { type: 'moveTodo', id: 't1', dir: 1 });
+    expect(s1.todos.find((t) => t.id === 't1')!.order).toBe(1);
+    expect(s1.todos.find((t) => t.id === 't2')!.order).toBe(0);
+    expect(loaded.todos.find((t) => t.id === 't1')!.order).toBe(0); // không mutate state cũ
+
+    // Khác nhóm (t1 "không hạn" kề t4 "có hạn" trong thứ tự hiển thị) -> giữ nguyên.
+    const s2 = reducer(s0, { type: 'moveTodo', id: 't1', dir: -1 });
+    expect(s2).toEqual(s0);
+
+    // Khác nhóm (t2 "không hạn" kề t3 "đã xong") -> giữ nguyên.
+    const s3 = reducer(s0, { type: 'moveTodo', id: 't2', dir: 1 });
+    expect(s3).toEqual(s0);
+  });
+
   it('addNote/updateNote/deleteNote CRUD ghi chú, không mutate state cũ', () => {
     const state = defaultState(device);
     const note = { id: 'n1', title: 'T', body: 'B', pinned: false, updated: 1 };

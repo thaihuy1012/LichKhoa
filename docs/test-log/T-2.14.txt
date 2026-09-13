@@ -1,0 +1,6 @@
+npm run check: tsc OK, vitest 132 pass (TZ Asia/Ho_Chi_Minh + UTC), build OK, playwright 32/32 pass.
+npx playwright test events.spec.ts m2-i18n.spec.ts m2-events.spec.ts --repeat-each=3: 66/66 pass, 0 fail.
+git status --porcelain: only files in scope + docs/TASKS.md modified.
+git diff -U0 tests/: only additions (+) in model.test.ts, store.test.ts, events.spec.ts, m2-i18n.spec.ts.
+git diff M1-ok -- smoke/m1-render/iphone13pm: empty.
+No .skip/.only/waitForTimeout found in test diffs.

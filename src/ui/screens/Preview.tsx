@@ -79,7 +79,7 @@ export function Preview({ store }: { store: Store }) {
         })
         .catch((err: unknown) => {
           if (token !== renderTokenRef.current) return;
-          setError(err instanceof Error ? err.message : 'Không dựng được ảnh xem trước');
+          setError(err instanceof Error ? err.message : t('preview.renderError', state.design.lang));
         });
     }, RENDER_DEBOUNCE_MS);
     return () => {
@@ -181,7 +181,7 @@ export function Preview({ store }: { store: Store }) {
     <div class="preview-screen">
       <div class="preview-core">
         <label class="field">
-          Thiết bị
+          {t('preview.device', lang)}
           <select
             data-testid="device"
             value={selectValue}
@@ -192,30 +192,30 @@ export function Preview({ store }: { store: Store }) {
                 {d.label}
               </option>
             ))}
-            <option value="auto">Tự phát hiện</option>
-            <option value="custom">Tùy chỉnh</option>
+            <option value="auto">{t('preview.deviceAuto', lang)}</option>
+            <option value="custom">{t('preview.deviceCustom', lang)}</option>
           </select>
         </label>
         {selectValue === 'custom' && (
           <div class="custom-size">
             <input
               type="number"
-              aria-label="Chiều rộng"
+              aria-label={t('preview.width', lang)}
               value={widthText}
               onInput={(e) => onWidthInput((e.target as HTMLInputElement).value)}
             />
             <input
               type="number"
-              aria-label="Chiều cao"
+              aria-label={t('preview.height', lang)}
               value={heightText}
               onInput={(e) => onHeightInput((e.target as HTMLInputElement).value)}
             />
           </div>
         )}
         {error && <p class="error">{error}</p>}
-        {imgUrl && <img data-testid="preview" src={imgUrl} alt="Xem trước hình nền" />}
+        {imgUrl && <img data-testid="preview" src={imgUrl} alt={t('preview.previewAlt', lang)} />}
         <button data-testid="save" onClick={() => void onSave()} disabled={!blob}>
-          Lưu ảnh
+          {t('preview.save', lang)}
         </button>
       </div>
 

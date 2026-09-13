@@ -170,6 +170,42 @@ test('Sự kiện: Nhắc trước -> .ics có VALARM', async ({ page }) => {
   expect(Buffer.concat(chunks).toString('utf-8')).toContain('TRIGGER:-PT15M');
 });
 
+test('Sự kiện qua đêm: Kết thúc < Bắt đầu -> mở lại vẫn giữ giờ Kết thúc (T-2.14)', async ({ page }) => {
+  await openEventsTab(page);
+
+  await page.getByTestId('add-event').click();
+  await page.getByTestId('ev-title').fill('Trực đêm');
+  await page.getByTestId('ev-start').fill('23:00');
+  await page.getByTestId('ev-end').fill('01:00');
+  await page.getByTestId('ev-save').click();
+
+  await page.getByTestId('ev-item').filter({ hasText: 'Trực đêm' }).click();
+  await expect(page.getByTestId('ev-end')).toHaveValue('01:00');
+});
+
+test('Việc cần làm: todo-down tắt (disabled) khi việc kề bên khác nhóm (T-2.14)', async ({ page }) => {
+  await openEventsTab(page);
+
+  const tomorrow = await page.evaluate(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  });
+
+  await page.getByTestId('seg-todos').click();
+  await page.getByTestId('todo-input').fill('Có hạn');
+  await page.getByTestId('todo-due').fill(tomorrow);
+  await page.getByTestId('todo-add').click();
+  await page.getByTestId('todo-input').fill('Không hạn');
+  await page.getByTestId('todo-add').click();
+
+  const rows = page.getByTestId('todo-item');
+  await expect(rows).toHaveCount(2);
+  // Nhóm "có hạn" (hàng 0) và nhóm "không hạn" (hàng 1) khác nhau -> không hoán đổi được.
+  await expect(rows.nth(0).getByTestId('todo-down')).toBeDisabled();
+  await expect(rows.nth(1).getByTestId('todo-up')).toBeDisabled();
+});
+
 test('Việc cần làm: hạn quá hạn hiện trước việc không hạn', async ({ page }) => {
   await openEventsTab(page);
 

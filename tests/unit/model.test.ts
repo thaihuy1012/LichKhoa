@@ -85,6 +85,26 @@ describe('normalizeState', () => {
     expect(result!.notes).toEqual([]);
   });
 
+  it('T-2.14: device có width/height hợp lệ nhưng thiếu safeTop/safeBottom/id/label -> bù mặc định (khớp preset theo kích thước, không NaN)', () => {
+    const raw = { version: 1 as const, events: [], todos: [], design: defaultDesign(), device: { width: 1284, height: 2778 } };
+    const result = normalizeState(raw);
+    expect(result).not.toBeNull();
+    expect(result!.device.id).toBe('iphone-1284x2778');
+    expect(Number.isFinite(result!.device.safeTop)).toBe(true);
+    expect(Number.isFinite(result!.device.safeBottom)).toBe(true);
+    expect(result!.device.safeTop).toBeGreaterThan(0);
+    expect(result!.device.safeBottom).toBeGreaterThan(0);
+  });
+
+  it('T-2.14: device kích thước không khớp preset nào, thiếu safe*/id -> mặc định 0.30/0.14, id custom', () => {
+    const raw = { version: 1 as const, events: [], todos: [], design: defaultDesign(), device: { width: 999, height: 1999 } };
+    const result = normalizeState(raw);
+    expect(result).not.toBeNull();
+    expect(result!.device.id).toBe('custom');
+    expect(result!.device.safeTop).toBeCloseTo(0.3);
+    expect(result!.device.safeBottom).toBeCloseTo(0.14);
+  });
+
   it('giữ nguyên giá trị có sẵn khi hợp lệ đầy đủ', () => {
     const full = defaultState(device);
     full.design.accentColor = '#abcdef';

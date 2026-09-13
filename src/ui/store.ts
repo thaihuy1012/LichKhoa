@@ -1,6 +1,19 @@
 import type { AppState, DesignConfig, DeviceSpec, ISODate, LocalEvent, Note, Todo } from '../core/model';
 import { defaultState, normalizeState } from '../core/model';
+import { cmpTodo } from '../core/collect';
 import { saveState } from '../storage/db';
+
+/** Cùng nhóm hiển thị theo `cmpTodo`: cùng `done`; nếu chưa xong thì cùng có/không `due`,
+ * và nếu có `due` thì cùng ngày. Dùng để `moveTodo` chỉ hoán đổi trong nhóm (T-2.14). */
+export function sameTodoGroup(a: Todo, b: Todo): boolean {
+  if (a.done !== b.done) return false;
+  if (a.done) return true;
+  const aHas = a.due != null;
+  const bHas = b.due != null;
+  if (aHas !== bHas) return false;
+  if (aHas && a.due !== b.due) return false;
+  return true;
+}
 
 export type Action =
   | { type: 'setDevice'; device: DeviceSpec }
@@ -54,13 +67,16 @@ export function reducer(state: AppState, action: Action): AppState {
     case 'deleteTodo':
       return { ...state, todos: state.todos.filter((t) => t.id !== action.id) };
     case 'moveTodo': {
-      const sorted = [...state.todos].sort((a, b) => a.order - b.order);
+      // Hoán đổi theo đúng thứ tự hiển thị (cmpTodo, khớp `sortTodosForDisplay` trong app),
+      // chỉ khi việc kề bên cùng nhóm (cùng done, cùng có/không due, cùng ngày due) (T-2.14).
+      const sorted = [...state.todos].sort(cmpTodo);
       const idx = sorted.findIndex((t) => t.id === action.id);
       if (idx < 0) return state;
       const swapIdx = idx + action.dir;
       if (swapIdx < 0 || swapIdx >= sorted.length) return state;
       const a = sorted[idx];
       const b = sorted[swapIdx];
+      if (!sameTodoGroup(a, b)) return state;
       const orders = new Map<string, number>([
         [a.id, b.order],
         [b.id, a.order],

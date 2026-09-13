@@ -3,6 +3,7 @@ import type { Store } from '../../store';
 import type { AppState, ISODate, Todo } from '../../../core/model';
 import { t } from '../../../core/i18n';
 import { toISODate } from '../../../core/calendar';
+import { sameTodoGroup } from '../../store';
 import { sortTodosForDisplay, todoDueLabel } from './util';
 
 interface Props {
@@ -130,7 +131,7 @@ export function TodosTab({ store, state }: Props) {
         <button
           type="button"
           data-testid="todo-up"
-          disabled={idx <= 0}
+          disabled={idx <= 0 || !sameTodoGroup(todo, list[idx - 1])}
           onClick={() => store.dispatch({ type: 'moveTodo', id: todo.id, dir: -1 })}
         >
           ↑
@@ -138,7 +139,7 @@ export function TodosTab({ store, state }: Props) {
         <button
           type="button"
           data-testid="todo-down"
-          disabled={idx >= list.length - 1}
+          disabled={idx >= list.length - 1 || !sameTodoGroup(todo, list[idx + 1])}
           onClick={() => store.dispatch({ type: 'moveTodo', id: todo.id, dir: 1 })}
         >
           ↓
@@ -164,13 +165,16 @@ export function TodosTab({ store, state }: Props) {
             if (e.key === 'Enter') add();
           }}
         />
-        <input
-          type="date"
-          data-testid="todo-due"
-          aria-label={t('events.todoDue', lang)}
-          value={inputDue}
-          onInput={(e) => setInputDue((e.target as HTMLInputElement).value)}
-        />
+        <label class="todo-due-hint">
+          {t('events.todoDue', lang)}
+          <input
+            type="date"
+            data-testid="todo-due"
+            aria-label={t('events.todoDue', lang)}
+            value={inputDue}
+            onInput={(e) => setInputDue((e.target as HTMLInputElement).value)}
+          />
+        </label>
         <button type="button" data-testid="todo-add" onClick={add}>
           {t('events.todoAdd', lang)}
         </button>
