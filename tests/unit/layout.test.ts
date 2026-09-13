@@ -110,6 +110,39 @@ describe('layoutAgenda', () => {
     expect(texts).toContain('Không có sự kiện sắp tới');
   });
 
+  it('cắt 12 dòng: không để tiêu đề ngày mồ côi (không có sự kiện bên dưới)', () => {
+    const design: DesignConfig = defaultDesign();
+    const occs: Occurrence[] = [
+      occ('2026-02-15', '01:00', 'A1'),
+      occ('2026-02-15', '02:00', 'A2'),
+      occ('2026-02-15', '03:00', 'A3'),
+      occ('2026-02-16', '01:00', 'B1'),
+      occ('2026-02-16', '02:00', 'B2'),
+      occ('2026-02-16', '03:00', 'B3'),
+      occ('2026-02-17', '01:00', 'C1'),
+      occ('2026-02-17', '02:00', 'C2'),
+      occ('2026-02-18', '01:00', 'D1'),
+      occ('2026-02-18', '02:00', 'D2'),
+    ];
+    const d = renderData({ occurrences: occs });
+    const ops = layoutAgenda(d, design, DEV_1179);
+    const texts = textOf(ops);
+    const moreIdx = texts.findIndex((t) => /^\+\d+$/.test(t));
+    expect(moreIdx).toBeGreaterThan(0);
+    const moreCount = Number(texts[moreIdx].slice(1));
+    // op ngay trước "+N" không được là tiêu đề ngày (weight 700)
+    const textOps = ops.filter((o) => o.op === 'text') as Extract<DrawOp, { op: 'text' }>[];
+    const moreOpIdx = textOps.findIndex((o) => o.text === texts[moreIdx]);
+    const prevOp = textOps[moreOpIdx - 1];
+    expect(prevOp.weight).not.toBe(700);
+    // "+N" đếm đúng mọi sự kiện chưa hiện (kể cả ngày D bị bỏ tiêu đề hoàn toàn)
+    const headerCount = textOps.filter((o) => o.weight === 700).length;
+    const itemTitles = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3', 'C1', 'C2', 'D1', 'D2'];
+    const shownItems = itemTitles.filter((title) => texts.includes(title)).length;
+    expect(shownItems + moreCount).toBe(occs.length);
+    expect(headerCount + shownItems + 1).toBeLessThanOrEqual(12);
+  });
+
   it('tiêu đề 200 ký tự: cắt kèm "…" và độ rộng ước lượng <= bề rộng hộp', () => {
     const design: DesignConfig = defaultDesign();
     const longTitle = 'A'.repeat(200);

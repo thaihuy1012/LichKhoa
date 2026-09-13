@@ -19,13 +19,46 @@ export function layoutAgenda(d: RenderData, c: DesignConfig, dev: DeviceSpec): D
   const contentWidth = dev.width - 2 * margin;
 
   const groups = groupAgenda(d.occurrences, d.today, c.agendaDays);
-  const built: Row[] = [];
-  for (const g of groups) {
-    built.push({ kind: 'header', date: g.date });
-    for (const occ of g.items) built.push({ kind: 'item', occ });
+  const totalEvents = groups.reduce((n, g) => n + g.items.length, 0);
+  const totalLines = groups.reduce((n, g) => n + 1 + g.items.length, 0);
+
+  /**
+   * Xây danh sách dòng trong giới hạn `budget` dòng, không để lại tiêu đề ngày
+   * mồ côi: chỉ vẽ tiêu đề nếu còn chỗ cho ≥ 1 sự kiện của ngày đó; nếu không,
+   * dừng trước tiêu đề đó (và mọi ngày sau).
+   */
+  const buildWithBudget = (budget: number): { visible: Row[]; shown: number } => {
+    const visible: Row[] = [];
+    let lines = 0;
+    let shown = 0;
+    for (const g of groups) {
+      if (lines + 2 > budget) break; // không đủ chỗ cho tiêu đề + ≥1 sự kiện
+      visible.push({ kind: 'header', date: g.date });
+      lines += 1;
+      for (const occ of g.items) {
+        if (lines + 1 > budget) break;
+        visible.push({ kind: 'item', occ });
+        lines += 1;
+        shown += 1;
+      }
+      if (lines >= budget) break;
+    }
+    return { visible, shown };
+  };
+
+  let visible: Row[];
+  let hidden: number;
+  if (groups.length === 0) {
+    visible = [{ kind: 'empty' }];
+    hidden = 0;
+  } else if (totalLines <= MAX_LINES) {
+    visible = buildWithBudget(MAX_LINES).visible;
+    hidden = 0;
+  } else {
+    const built = buildWithBudget(MAX_LINES - 1);
+    visible = built.visible;
+    hidden = totalEvents - built.shown;
   }
-  const visible = built.length > 0 ? built.slice(0, MAX_LINES) : [{ kind: 'empty' } as Row];
-  const hidden = built.length - visible.length;
   const rows: Row[] = hidden > 0 ? [...visible, { kind: 'more', count: hidden }] : visible;
 
   const padding = fontSize(dev.width * 0.02, c.scale);
