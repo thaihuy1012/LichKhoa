@@ -24,3 +24,9 @@
 ## D-005 — Nơi khai báo `DrawOp` (2026-09-13 · người quyết: Quản lý)
 - Bối cảnh: T-1.3 và T-1.4 chạy song song, mỗi bên tự khai `DrawOp` (month.ts, paint.ts).
 - Quyết định: khai một lần ở `src/render/layout/common.ts` (thuần, mọi layout dùng chung); `month.ts` và `paint.ts` chỉ re-export kiểu. Layout mới (agenda/todo/note) import từ `./common`. Quản lý tự sửa 3 chỗ (chỉ kiểu, không đổi logic).
+
+## D-006 — Thêm Âm lịch vào phạm vi, SPEC v1.1 (2026-09-13 · người quyết: Chủ dự án)
+- Bối cảnh: Chủ dự án đưa tài liệu tham khảo `F:\LICH_NEN` (web app + script Scriptable tự viết), yêu cầu "cái nào dùng được thì lấy dùng luôn". Khảo sát: `docs/tham-khao-LICH_NEN.md`.
+- Hỏi Chủ dự án 4 tính năng ngoài SPEC (âm lịch, lặp T2–T6, VALARM trong .ics, nhập .ics) → chỉ chọn **Âm lịch**. Ba cái còn lại vẫn OUT.
+- Quyết định: SPEC 1.1 thêm IN mục 9 + `DesignConfig.showLunar` (mặc định true) + `core/lunar.ts` (`solarToLunar`, `lunarYearName`), port thuật toán Hồ Ngọc Đức từ `lich-nen.html` L434–513. Phiếu mới T-2.8 (sau T-2.3, trước T-2.6). Sửa `model.ts`/`month.ts` (đã khóa ở M1) được phép trong T-2.8, phải khai báo; test M1 chỉ được sửa đúng chỗ `defaultDesign` thêm `showLunar`.
+- Phần code tham khảo khác (occursOn, ics, layout, nhãn) ghi vào mục "Tham khảo" của từng phiếu M2/M4.

@@ -1,7 +1,7 @@
 # SPEC — LichKhoa (tái tạo tính năng "Ink: Lockscreen Calendar, Note" dưới dạng PWA)
 (Kiến trúc sư điền ở Giai đoạn 0. Đây là nguồn sự thật; mọi thay đổi phạm vi phải qua Chủ dự án.)
 
-Phiên bản SPEC: 1.0 — 2026-09-13. App gốc đối chiếu: "Ink: Lockscreen Calendar, Note" (SilverAI JSC, App Store id6769250805, bản 1.2.14). Tính năng gốc đã tra cứu: hình nền màn hình khóa có lịch / agenda / to-do chồng lên ảnh cá nhân; đồng bộ Google Calendar và Apple Calendar; tạo sự kiện lặp có nhắc; tùy chỉnh ảnh, màu, độ mờ, ngôn ngữ; widget lịch và ghi chú; dữ liệu xử lý trên máy. Tên làm việc "LichKhoa" — không dùng tên, logo, ảnh, font của app gốc; chỉ tái tạo tính năng và luồng dùng.
+Phiên bản SPEC: 1.1 — 2026-09-13 (v1.0 + bổ sung Âm lịch, D-006). App gốc đối chiếu: "Ink: Lockscreen Calendar, Note" (SilverAI JSC, App Store id6769250805, bản 1.2.14). Tính năng gốc đã tra cứu: hình nền màn hình khóa có lịch / agenda / to-do chồng lên ảnh cá nhân; đồng bộ Google Calendar và Apple Calendar; tạo sự kiện lặp có nhắc; tùy chỉnh ảnh, màu, độ mờ, ngôn ngữ; widget lịch và ghi chú; dữ liệu xử lý trên máy. Tên làm việc "LichKhoa" — không dùng tên, logo, ảnh, font của app gốc; chỉ tái tạo tính năng và luồng dùng.
 
 ## 1. Mục tiêu
 Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Chủ dự án: (a) dựng ảnh hình nền màn hình khóa đúng kích thước pixel máy, có lịch tháng / agenda / to-do / ghi chú chồng lên ảnh nền tự chọn; (b) trộn sự kiện Google Calendar (chỉ đọc, OAuth thuần client, không backend) với sự kiện lặp và to-do nhập tại chỗ; (c) đặt làm hình nền khóa bằng ≤ 3 chạm mỗi ngày qua Shortcut. Dùng cá nhân, không đăng nhập, dữ liệu nằm trên máy.
@@ -23,6 +23,7 @@ Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Ch�
   6. Xuất: "Lưu ảnh" (Web Share files → fallback tải PNG); "Đặt hình nền" = sao chép PNG vào clipboard rồi mở `shortcuts://run-shortcut?name=<tên>&input=clipboard`; xuất sự kiện `.ics` (Lịch iPhone tự nhắc).
   7. PWA: manifest, service worker (offline app shell), cài Màn hình chính; dữ liệu trong IndexedDB; sao lưu / khôi phục JSON.
   8. Giao diện VI/EN; 12h/24h; tuần bắt đầu T2/CN.
+  9. **Âm lịch** (v1.1, D-006): ngày âm nhỏ dưới mỗi ô bố cục Tháng + dòng "Âm lịch d/m [nhuận] <Can Chi năm>" cho hôm nay (Tháng) và nhãn ngày (Agenda); bật/tắt bằng `DesignConfig.showLunar` (mặc định bật). Thuật toán Hồ Ngọc Đức, múi giờ +7, port từ `F:/LICH_NEN/lich-nen.html` L434–513.
 - OUT (không làm trong bản này):
   - Đồng bộ Apple Calendar / Reminders (không có API web; cần backend CalDAV); nhập file .ics.
   - Widget Màn hình chính iOS; thông báo đẩy / nhắc cục bộ (PWA iOS không lập lịch nhắc offline được); tự đổi hình nền hằng ngày mà không cần chạm.
@@ -75,7 +76,7 @@ interface LocalEvent { id: string; title: string; date: ISODate; time?: string /
 interface Todo { id: string; text: string; done: boolean; order: number }
 interface Occurrence { id: string; sourceId: string; source: 'local'|'google'; title: string; date: ISODate; time?: string; allDay: boolean; color?: string }
 interface DeviceSpec { id: string; label: string; width: number; height: number; safeTop: number; safeBottom: number } // safe* là tỉ lệ 0..1 của height
-interface DesignConfig { layout: 'month'|'agenda'|'todo'; showNote: boolean; noteText: string;
+interface DesignConfig { layout: 'month'|'agenda'|'todo'; showNote: boolean; noteText: string; showLunar: boolean /* v1.1 */;
   bg: { kind: 'photo'|'solid'|'gradient'; color: string; color2?: string }; blur: 0|1|2|3; dim: number;
   textColor: string; accentColor: string; font: 'sans'|'serif'|'mono'; position: 'top'|'middle'|'bottom';
   scale: number; boxAlpha: number; agendaDays: number; weekStart: 0|1; hour12: boolean; lang: 'vi'|'en' }
@@ -87,6 +88,8 @@ expandOccurrences(events: LocalEvent[], from: ISODate, to: ISODate): Occurrence[
 monthGrid(year: number, month0: number, weekStart: 0|1): (ISODate|null)[][]          // luôn 6 hàng × 7 cột
 groupAgenda(occ: Occurrence[], from: ISODate, days: number): { date: ISODate; items: Occurrence[] }[]
 collectRenderData(state: AppState, today: ISODate): RenderData
+solarToLunar(iso: ISODate): { day: number; month: number; year: number; leap: boolean }   // v1.1, core/lunar.ts, múi giờ +7
+lunarYearName(year: number): string                                                   // "Bính Ngọ"
 t(key: string, lang: 'vi'|'en', vars?: Record<string,string|number>): string
 // render
 type DrawOp = { op:'rect'; x:number; y:number; w:number; h:number; r?:number; fill:string; alpha?:number }
@@ -133,6 +136,7 @@ Nội dung: `oauth.ts` (redirect implicit, `state` ngẫu nhiên chống CSRF, t
   - [ ] Unit `oauth.test.ts`: `buildAuthUrl` chứa `response_type=token`, `scope=…calendar.readonly`, `state`, `redirect_uri` đúng; `parseFragment` đúng state / sai state / có `error` / hash rỗng. `google-normalize.test.ts`: fixture all-day (`start.date`) → `allDay=true`, đúng ngày; `dateTime` có offset khác múi giờ máy → ngày/giờ địa phương đúng khi chạy với `TZ=Asia/Ho_Chi_Minh` và `TZ=UTC` (Vitest chạy 2 lần bằng biến môi trường trong script `test`); sự kiện `status=cancelled` bị bỏ; nhiều lịch gộp và sắp xếp.
   - [ ] E2E `m3-google.spec.ts` — **T-3.END**: `page.route` chặn `https://accounts.google.com/**` và trả 302 về `/#access_token=test&token_type=Bearer&expires_in=3600&state=<lấy từ query của request>`; mock `**/calendar/v3/**` bằng fixtures → dán clientId → Kết nối → danh sách lịch hiện → chọn 1 lịch → Đồng bộ → agenda hiện sự kiện fixture → `context.setOffline(true)` + reload → vẫn hiện từ cache → mock 401 → hiện "Kết nối lại".
   - [ ] Không có secret trong repo: `Select-String -Path src -Pattern client_secret -Recurse` trả rỗng.
+  - [ ] (v1.1) `lunar.test.ts`: 17/02/2026 → 1/1 Bính Ngọ; 29/01/2025 → 1/1 Ất Tỵ; 10/02/2024 → 1/1 Giáp Thìn; 22/03/2023 → 1/2 nhuận; 25/07/2025 → 1/6 nhuận; pass cả 2 TZ. `showLunar=true` → `__lastOps` bố cục Tháng có op text ngày âm; `false` → không có.
   - [ ] `npm run check` pass; test M1–M2 không bị sửa/skip.
 
 ### M4 — Ảnh nền & tùy biến, đặt hình nền một chạm, hướng dẫn, hoàn thiện iPhone

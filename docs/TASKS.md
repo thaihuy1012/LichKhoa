@@ -1,10 +1,10 @@
 # TASKS — bảng giao việc
 (Quản lý duy trì. Trạng thái: TODO | DOING | REVIEW | DONE | BLOCKED. Ghi ngay sau mỗi bước.)
-Nguồn sự thật: `docs/SPEC.md` (v1.0, Chủ dự án duyệt 2026-09-13). Hợp đồng TypeScript ở SPEC mục 5 — không đổi nếu không PHẢN BIỆN.
+Nguồn sự thật: `docs/SPEC.md` (v1.1 — v1.0 Chủ dự án duyệt 2026-09-13; v1.1 thêm Âm lịch, D-006). Hợp đồng TypeScript ở SPEC mục 5 — không đổi nếu không PHẢN BIỆN.
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 5/6 · M2: 0/8 · M3: 0/4 · M4: 0/6
+- M1: 5/6 · M2: 0/9 · M3: 0/4 · M4: 0/6
 - Đang làm: T-1.END (tho-sonnet)
 - Chờ Chủ dự án: (không)
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
@@ -14,7 +14,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Thứ tự & song song
 M1: 1.1 → 1.2 → (1.3 ∥ 1.4) → 1.5 → 1.END
-M2: (2.1 ∥ 2.4 ∥ 2.5) → 2.2 → 2.3 → 2.6 → 2.7 → 2.END
+M2: (2.1 ∥ 2.4 ∥ 2.5) → 2.2 → 2.3 → 2.8 → 2.6 → 2.7 → 2.END
 M3: (3.1 ∥ 3.2) → 3.3 → 3.END
 M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
@@ -106,6 +106,7 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
 ### T-2.1 — recurrence
 - Phạm vi file: `src/core/recurrence.ts`, `tests/unit/recurrence.test.ts`.
+- Tham khảo (chép/port được, xem docs/tham-khao-LICH_NEN.md): `F:/LICH_NEN/lich-nen.html` L545–559 `occursOn` (bỏ 'weekdays'; bọc thành `expandOccurrences` duyệt từng ngày trong [from,to]; đã đúng quy tắc ngày 31 / 29-02).
 - Mục tiêu: `expandOccurrences(events, from, to)` theo SPEC mục 5.
 - Tiêu chí: [ ] daily / weekly / monthly (ngày 31 bỏ qua tháng thiếu ngày) / yearly (29/02 chỉ năm nhuận) / `until` / không lặp; chặn đúng `[from, to]`; `Occurrence.id` duy nhất (`<eventId>@<date>`); pass cả 2 TZ.
 - Lệnh kiểm tra: `npm run test`
@@ -113,6 +114,7 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
 ### T-2.2 — groupAgenda + collectRenderData
 - Phạm vi file: `src/core/calendar.ts` (thêm `groupAgenda`), `src/core/collect.ts`, `tests/unit/collect.test.ts`.
+- Tham khảo (chép/port được, xem docs/tham-khao-LICH_NEN.md): `F:/LICH_NEN/lich-nen.html` L560–572 `cmpEvent`, `buildAgenda` (cả ngày trước, rồi giờ, rồi tiêu đề).
 - Mục tiêu: nhóm theo ngày, sắp xếp cả ngày trước rồi theo giờ; `collectRenderData` trộn local (đã expand trong [today, today+max(agendaDays, 42)]) + `google.cache.events` + todos + note.
 - Tiêu chí: [ ] agenda 7 ngày đúng thứ tự; ngày trống bị bỏ; [ ] cache Google null không lỗi; [ ] trộn 2 nguồn đúng.
 - Lệnh kiểm tra: `npm run test`
@@ -120,6 +122,7 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
 ### T-2.3 — layoutAgenda, layoutTodo, layoutNote
 - Phạm vi file: `src/render/layout/agenda.ts`, `todo.ts`, `note.ts`, `common.ts` (thêm helper bọc dòng ước lượng độ rộng theo `size`), `tests/unit/layout.test.ts`.
+- Tham khảo (chép/port được, xem docs/tham-khao-LICH_NEN.md): `F:/LICH_NEN/LichNen.js` L302–343 `drawAgenda`, L344–363 `drawTodo`, L364–377 `pinnedHeight/drawPinned`, L135 `estLines` (ước lượng bọc dòng), L133 `dayLabel`, L120 `fmtTime` — chỉ lấy logic, đầu ra phải là `DrawOp[]`.
 - Mục tiêu: 3 bố cục cùng chữ ký `layoutMonth`; giờ theo `hour12`; to-do ≤ 12 dòng có ký hiệu tick (☐/☑ hoặc rect); note bọc dòng; mọi op trong vùng an toàn.
 - Tiêu chí: [ ] agenda 7 ngày đúng thứ tự thời gian, `hour12` sinh "AM"/"PM"; [ ] to-do > 12 mục cắt còn 12 (+ dòng "+N"); [ ] note dài bọc thành nhiều op text; [ ] vùng an toàn cho cả 3.
 - Lệnh kiểm tra: `npm run test`
@@ -127,6 +130,7 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
 ### T-2.4 — i18n
 - Phạm vi file: `src/core/i18n.ts`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `tests/unit/i18n.test.ts`.
+- Tham khảo (chép/port được, xem docs/tham-khao-LICH_NEN.md): `F:/LICH_NEN/lich-nen.html` L405–409 `WD_SHORT`, `WD_LONG`, `REPEAT_LABEL` (bỏ 'weekdays').
 - Mục tiêu: `t(key, lang, vars)` thay `{var}`; khóa thiếu → trả key; tên thứ/tháng dùng `Intl` hoặc bảng trong json; khóa cho mọi chuỗi UI hiện có + dự kiến (tabs, Preview, Events, Design, Sync, Guide, lỗi).
 - Tiêu chí: [ ] tập khóa vi = tập khóa en; [ ] thay biến đúng; [ ] khóa thiếu trả key.
 - Lệnh kiểm tra: `npm run test`
@@ -134,9 +138,23 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
 ### T-2.5 — ics + backup
 - Phạm vi file: `src/export/ics.ts`, `src/storage/backup.ts`, `tests/unit/ics.test.ts`, `tests/unit/backup.test.ts`.
+- Tham khảo (chép/port được, xem docs/tham-khao-LICH_NEN.md): `F:/LICH_NEN/lich-nen.html` L585–615 `icsEscape`, `icsForEvent` (map `time`+`durationMin` → DTSTART/DTEND; không có `time` → `VALUE=DATE`; bỏ VALARM/DESCRIPTION vì `LocalEvent` không có), L685 `validBackup` (ý tưởng).
 - Mục tiêu: `eventToIcs` (VCALENDAR/VEVENT, DTSTART có giờ hoặc `VALUE=DATE`, RRULE FREQ + UNTIL, CRLF, escape `,;\`); `exportBackup/importBackup` `{version:1, state}`, version lạ → ném lỗi.
 - Tiêu chí: [ ] ics có VCALENDAR, VEVENT, DTSTART, RRULE đúng, CRLF; [ ] backup vòng tròn giống hệt; version 2 → throw.
 - Lệnh kiểm tra: `npm run test`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+
+### T-2.8 — Âm lịch (SPEC v1.1, D-006)
+- Mục tiêu: `solarToLunar`, `lunarYearName` và hiển thị âm lịch trên bố cục Tháng + Agenda, bật/tắt bằng `showLunar`.
+- Phạm vi file: `src/core/lunar.ts` (mới), `tests/unit/lunar.test.ts` (mới), `src/core/model.ts` (thêm `showLunar: boolean` vào `DesignConfig`, mặc định `true`), `src/render/layout/month.ts`, `src/render/layout/agenda.ts`, `src/render/layout/common.ts`, `tests/unit/layout-month.test.ts`, `tests/unit/layout.test.ts`, `tests/unit/calendar.test.ts` (CHỈ chỗ kiểm `defaultDesign` thêm `showLunar` — khai báo trong báo cáo).
+- Tham khảo (chép/port được, xem docs/tham-khao-LICH_NEN.md): `F:/LICH_NEN/lich-nen.html` L405–406 `CAN`, `CHI`; L434–513 thuật toán Hồ Ngọc Đức (`jdFromDate`…`solarToLunar`, `lunarYearName`, `lunarText`), múi giờ cố định +7 (không phụ thuộc TZ máy).
+- Giao diện / đầu vào có sẵn: SPEC v1.1 mục 3 IN-9, mục 5 (`solarToLunar(iso)`, `lunarYearName(year)`); `layoutMonth` (T-1.3), `layoutAgenda` (T-2.3).
+- Yêu cầu: `showLunar=true` → bố cục Tháng: số ngày âm nhỏ (vd. "1/1" ngày mùng 1, còn lại chỉ ngày) dưới số ngày dương mỗi ô, không đè chấm sự kiện/vòng hôm nay; một dòng "Âm lịch d/m [nhuận] <Can Chi>" cho hôm nay dưới tiêu đề tháng. Agenda: nhãn ngày kèm ngày âm. `false` → không có op âm lịch nào. Mọi op vẫn trong vùng an toàn.
+- Tiêu chí nghiệm thu:
+  [ ] `lunar.test.ts` (2 TZ): 2026-02-17 → 1/1 năm Bính Ngọ; 2025-01-29 → 1/1 Ất Tỵ; 2024-02-10 → 1/1 Giáp Thìn; 2023-03-22 → 1/2 nhuận; 2025-07-25 → 1/6 nhuận; 2026-02-16 → 29/12 năm Ất Tỵ (tháng Chạp thiếu, không có 30 Tết).
+  [ ] Layout Tháng/Agenda: `showLunar` true có op text âm lịch, false không có; test vùng an toàn cũ vẫn pass không nới.
+  [ ] `npm run check` pass.
+- Lệnh kiểm tra: `npm run check`
 - Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
 
 ### T-2.6 — Nối dữ liệu vào render + store actions
@@ -148,14 +166,14 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
 ### T-2.7 — Màn Sự kiện + cài đặt chung + i18n toàn UI
 - Phạm vi file: `src/ui/screens/Events.tsx`, `src/ui/screens/Preview.tsx`, `src/ui/App.tsx`, `src/ui/styles.css`, `src/core/i18n/*.json` (thêm khóa, giữ 2 file khớp).
-- Mục tiêu: form thêm/sửa/xóa sự kiện (tiêu đề, ngày, giờ hoặc cả ngày, lặp, until, màu); to-do (thêm, tick, xóa, lên/xuống); ghi chú + bật `showNote`; nút "Thêm vào Lịch iPhone" (tải `.ics`); chọn bố cục ở Preview; cài đặt ngôn ngữ, 12h/24h, tuần bắt đầu; nút Xuất/Nhập JSON, Xóa dữ liệu (confirm). Mọi nhãn qua `t()`. `data-testid` cho mọi control dùng trong E2E.
+- Mục tiêu: form thêm/sửa/xóa sự kiện (tiêu đề, ngày, giờ hoặc cả ngày, lặp, until, màu); to-do (thêm, tick, xóa, lên/xuống); ghi chú + bật `showNote`; nút "Thêm vào Lịch iPhone" (tải `.ics`); chọn bố cục ở Preview; cài đặt ngôn ngữ, 12h/24h, tuần bắt đầu, bật/tắt âm lịch (`showLunar`, `data-testid="lunar"`); nút Xuất/Nhập JSON, Xóa dữ liệu (confirm). Mọi nhãn qua `t()`. `data-testid` cho mọi control dùng trong E2E.
 - Tiêu chí: [ ] `npm run check` pass; [ ] thao tác tay: thêm sự kiện → hiện trong Agenda.
 - Lệnh kiểm tra: `npm run check`
 - Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
 
 ### T-2.END — Kiểm thử tích hợp M2
 - Phạm vi file: `tests/e2e/m2-events.spec.ts`, `tests/e2e/m2-i18n.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.
-- Tiêu chí: [ ] thêm sự kiện lặp tuần → chuyển Agenda → hash PNG preview đổi → reload còn sự kiện → xuất JSON → xóa dữ liệu → nhập JSON → sự kiện trở lại; [ ] đổi `en` → nhãn tab đổi; bật 12h → agenda (qua `window.__lastOps`) chứa "AM"/"PM"; [ ] `npm run check` pass, test M1 không bị sửa/skip.
+- Tiêu chí: [ ] thêm sự kiện lặp tuần → chuyển Agenda → hash PNG preview đổi → reload còn sự kiện → xuất JSON → xóa dữ liệu → nhập JSON → sự kiện trở lại; [ ] đổi `en` → nhãn tab đổi; bật 12h → agenda (qua `window.__lastOps`) chứa "AM"/"PM"; tắt âm lịch → `__lastOps` không còn op "Âm lịch"; [ ] `npm run check` pass, test M1 không bị sửa/skip.
 - Lệnh kiểm tra: `npm run check`
 - Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
 
@@ -194,6 +212,7 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
 ### T-4.1 — Ảnh nền: nạp, EXIF, thu nhỏ, cover-fit, mờ, tối
 - Phạm vi file: `src/render/background.ts` (mới: `loadPhoto(file, dev): Promise<Blob>`, `drawBackground(ctx, bg, design, dev)`), `src/render/wallpaper.ts`, `tests/unit/background.test.ts` (phần toán cover-fit thuần), `tests/fixtures/photo-4000x3000.jpg`.
+- Tham khảo (chép/port được, xem docs/tham-khao-LICH_NEN.md): `F:/LICH_NEN/LichNen.js` L253–262 `drawCover`, `drawBackground` (toán cover-fit).
 - Mục tiêu: `createImageBitmap(file,{imageOrientation:'from-image'})` fallback `<img>`; thu nhỏ ≤ 2× thiết bị; cover-fit; blur bằng hạ/tăng mẫu (không `ctx.filter`); dim bằng rect đen alpha.
 - Tiêu chí: [ ] test cover-fit (tỉ lệ ngang/dọc); [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npm run check`
@@ -201,6 +220,7 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 
 ### T-4.2 — Màn Thiết kế
 - Phạm vi file: `src/ui/screens/Design.tsx`, `src/ui/App.tsx`, `src/ui/styles.css`, `src/core/i18n/*.json`, `src/render/layout/common.ts` (nếu cần áp font/scale/boxAlpha đồng nhất).
+- Tham khảo (chép/port được, xem docs/tham-khao-LICH_NEN.md): `F:/LICH_NEN/lich-nen.html` L410–411 bảng màu `ACCENTS`, `EVENT_COLORS`.
 - Mục tiêu: chọn nền (ảnh/màu/gradient + chọn ảnh → `saveBg`), blur 0–3, dim 0–0.8, màu chữ/nhấn, font, vị trí, scale, boxAlpha, agendaDays; `data-testid` đầy đủ.
 - Tiêu chí: [ ] `npm run check` pass; [ ] thao tác tay đổi từng tùy chọn → preview đổi.
 - Lệnh kiểm tra: `npm run check`
