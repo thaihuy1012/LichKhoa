@@ -1,14 +1,14 @@
 # SPEC — LichKhoa (tái tạo tính năng "Ink: Lockscreen Calendar, Note" dưới dạng PWA)
 (Kiến trúc sư điền ở Giai đoạn 0. Đây là nguồn sự thật; mọi thay đổi phạm vi phải qua Chủ dự án.)
 
-Phiên bản SPEC: 1.4 — 2026-09-14 (v1.4, D-018: bố cục Tháng có danh sách sự kiện + to-do bên dưới `monthList`; tab Sự kiện hiện sự kiện Google chỉ xem). Trước đó 1.3 — 2026-09-13 (v1.0 + Âm lịch D-006 + thiết bị đích iPhone 13 Pro Max D-007 + lặp T2–T6, nhắc giờ qua .ics, hạn chót to-do, nhiều ghi chú D-011). Kiến trúc sư soát v1.3 ngày 2026-09-14 (D-012): chỉ chỉnh chữ §3 (thứ tự IN-10), §5 (cây thư mục, thêm `cmpTodo`/`buildOps`), §9 (trần dòng agenda); không đổi phạm vi. Duyệt M3 (D-015, 2026-09-14): chỉ chỉnh chữ §8 rủi ro 1. App gốc đối chiếu: "Ink: Lockscreen Calendar, Note" (SilverAI JSC, App Store id6769250805, bản 1.2.14). Tính năng gốc đã tra cứu: hình nền màn hình khóa có lịch / agenda / to-do chồng lên ảnh cá nhân; đồng bộ Google Calendar và Apple Calendar; tạo sự kiện lặp có nhắc; tùy chỉnh ảnh, màu, độ mờ, ngôn ngữ; widget lịch và ghi chú; dữ liệu xử lý trên máy. Tên làm việc "LichKhoa" — không dùng tên, logo, ảnh, font của app gốc; chỉ tái tạo tính năng và luồng dùng.
+Phiên bản SPEC: 1.4 — 2026-09-14 (v1.4, D-018: bố cục Tháng có danh sách sự kiện + to-do bên dưới `monthList`; tab Sự kiện hiện sự kiện Google chỉ xem). Trước đó 1.3 — 2026-09-13 (v1.0 + Âm lịch D-006 + thiết bị đích iPhone 13 Pro Max D-007 + lặp T2–T6, nhắc giờ qua .ics, hạn chót to-do, nhiều ghi chú D-011). Kiến trúc sư soát v1.3 ngày 2026-09-14 (D-012): chỉ chỉnh chữ §3 (thứ tự IN-10), §5 (cây thư mục, thêm `cmpTodo`/`buildOps`), §9 (trần dòng agenda); không đổi phạm vi. Duyệt M3 (D-015, 2026-09-14): chỉ chỉnh chữ §8 rủi ro 1. Nghiệm thu cuối (D-021, 2026-09-14): Kiến trúc sư soát v1.4 — chỉ chỉnh chữ §2 TH1, §3 IN-10 (D-020), §5 (background.ts, ui/sync.ts, pages.yml, ảnh nền D-017), §6 M4 (tiêu chí v1.4/D-020), §8 rủi ro 3, §9 hosting thực tế (D-019); không đổi phạm vi. App gốc đối chiếu: "Ink: Lockscreen Calendar, Note" (SilverAI JSC, App Store id6769250805, bản 1.2.14). Tính năng gốc đã tra cứu: hình nền màn hình khóa có lịch / agenda / to-do chồng lên ảnh cá nhân; đồng bộ Google Calendar và Apple Calendar; tạo sự kiện lặp có nhắc; tùy chỉnh ảnh, màu, độ mờ, ngôn ngữ; widget lịch và ghi chú; dữ liệu xử lý trên máy. Tên làm việc "LichKhoa" — không dùng tên, logo, ảnh, font của app gốc; chỉ tái tạo tính năng và luồng dùng.
 
 ## 1. Mục tiêu
 Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Chủ dự án: (a) dựng ảnh hình nền màn hình khóa đúng kích thước pixel máy, có lịch tháng / agenda / to-do / ghi chú chồng lên ảnh nền tự chọn; (b) trộn sự kiện Google Calendar (chỉ đọc, OAuth thuần client, không backend) với sự kiện lặp và to-do nhập tại chỗ; (c) đặt làm hình nền khóa bằng ≤ 3 chạm mỗi ngày qua Shortcut. Dùng cá nhân, không đăng nhập, dữ liệu nằm trên máy.
 
 ## 2. Người dùng & tình huống dùng
 - Một người dùng (Chủ dự án), **iPhone 13 Pro Max** (1284×2778 px, 428×926 pt, DPR 3, tai thỏ — v1.2, D-007), iOS 17+, Safari, dùng dạng PWA Màn hình chính; mọi UI và hình nền tối ưu cho máy này trước; máy dev Windows 10 (Chrome dùng để chỉnh thiết kế, không bắt buộc).
-- TH1 hằng ngày: mở icon → app tự đồng bộ Google nếu token còn hạn → hiện hình nền hôm nay → chạm "Đặt hình nền" → Shortcut đặt hình nền khóa.
+- TH1 hằng ngày: mở icon → app tự đồng bộ Google nếu token còn hạn → hiện hình nền hôm nay → chạm "Đặt hình nền" → Shortcut đặt hình nền khóa. (Token Google sống 1 giờ, không gia hạn ngầm — §8.1: mở app sau > 1 giờ thì thêm bước "Kết nối lại" ở tab Đồng bộ trước khi có sự kiện mới; cache cũ vẫn dùng được.)
 - TH2: thêm/sửa sự kiện lặp, to-do, ghi chú; xuất .ics để Lịch iPhone nhắc giờ.
 - TH3 thi thoảng: đổi ảnh nền / bố cục / màu / vị trí; kết nối lại Google khi token hết hạn.
 - TH4: sao lưu / khôi phục dữ liệu bằng file JSON.
@@ -24,7 +24,7 @@ Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Ch�
   7. PWA: manifest, service worker (offline app shell), cài Màn hình chính; dữ liệu trong IndexedDB; sao lưu / khôi phục JSON.
   8. Giao diện VI/EN; 12h/24h; tuần bắt đầu T2/CN.
   9. **Âm lịch** (v1.1, D-006): ngày âm nhỏ dưới mỗi ô bố cục Tháng + dòng "Âm lịch d/m [nhuận] <Can Chi năm>" cho hôm nay (Tháng) và nhãn ngày (Agenda); bật/tắt bằng `DesignConfig.showLunar` (mặc định bật). Thuật toán Hồ Ngọc Đức, múi giờ +7, port từ `F:/LICH_NEN/lich-nen.html` L434–513.
-  10. (v1.3, D-011 — theo `F:/LICH_NEN`) **Lặp T2–T6** (`repeat: 'weekdays'`; .ics `FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR`; sự kiện tạo vào T7/CN bắt đầu từ T2 kế tiếp — cả app lẫn .ics). **Nhắc giờ** = trường "Nhắc trước" (`alarmMin`: 5/15/30/60/1440 phút) xuất thành `VALARM` trong .ics — Lịch iPhone nhắc; app KHÔNG tự gửi thông báo. **Hạn chót to-do** (`due`): việc chưa xong có hạn xếp trước theo hạn tăng dần, việc không hạn xếp sau theo `order` (lên/xuống tay, chỉ trong cùng nhóm hiển thị); nhãn "Quá hạn" / "Hôm nay" / "d/m" trong app và trên hình nền (quá hạn tô `accentColor`). **Nhiều ghi chú** (tiêu đề + nội dung) trong app; ghim đúng 1 ghi chú (ghim cái mới → bỏ ghim cái cũ; `normalizeState` cũng ép ≤ 1 ghim khi nhập JSON); hình nền hiện ghi chú ghim (tiêu đề + ≤ 4 dòng) khi `showNote`; `noteText` cũ tự thành ghi chú ghim.
+  10. (v1.3, D-011 — theo `F:/LICH_NEN`) **Lặp T2–T6** (`repeat: 'weekdays'`; .ics `FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR`; sự kiện tạo vào T7/CN bắt đầu từ T2 kế tiếp — cả app lẫn .ics). **Nhắc giờ** = trường "Nhắc trước" (`alarmMin`: 5/15/30/60/1440 phút) xuất thành `VALARM` trong .ics — Lịch iPhone nhắc; app KHÔNG tự gửi thông báo. **Hạn chót to-do** (`due`): việc chưa xong có hạn xếp trước theo hạn tăng dần, việc không hạn xếp sau theo `order` (lên/xuống tay, chỉ trong cùng nhóm hiển thị); nhãn "Quá hạn" / "Hôm nay" / "d/m" trong app và trên hình nền (quá hạn tô `accentColor`). **Nhiều ghi chú** (tiêu đề + nội dung) trong app; ghim đúng 1 ghi chú (ghim cái mới → bỏ ghim cái cũ; `normalizeState` cũng ép ≤ 1 ghim khi nhập JSON); hình nền hiện ghi chú ghim (tiêu đề + ≤ 4 dòng) khi `showNote`; (v1.4, D-020) ghim một ghi chú → `showNote` tự bật, bỏ ghim không tự tắt, công tắc vẫn tắt được; `noteText` cũ tự thành ghi chú ghim.
 - OUT (không làm trong bản này):
   - Đồng bộ Apple Calendar / Reminders (không có API web; cần backend CalDAV); nhập file .ics.
   - Widget Màn hình chính iOS; thông báo đẩy / nhắc cục bộ do app gửi (PWA iOS không lập lịch nhắc offline được — nhắc giờ chỉ qua VALARM trong .ics, IN-10); tự đổi hình nền hằng ngày mà không cần chạm.
@@ -47,15 +47,16 @@ Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Ch�
 ```
 src/
   core/     model.ts (kiểu + normalizeState) · calendar.ts (monthGrid, groupAgenda) · recurrence.ts · lunar.ts (v1.1) · i18n.ts (+ i18n/vi.json, en.json) · collect.ts (collectRenderData, cmpTodo)
-  render/   devices.ts · layout/common.ts (DrawOp, vùng an toàn, nhãn) · layout/{month,agenda,todo,note}.ts (→ DrawOp[]) · paint.ts (DrawOp[] → canvas) · wallpaper.ts (buildOps; nền, mờ, tối → Blob PNG)
+  render/   devices.ts · background.ts (M4: coverFit/fitDownscale/blurDownsampleRatio thuần · loadPhoto, drawBackground) · layout/common.ts (DrawOp, vùng an toàn, nhãn) · layout/{month,agenda,todo,note}.ts (→ DrawOp[]) · paint.ts (DrawOp[] → canvas) · wallpaper.ts (buildOps; nền, mờ, tối → Blob PNG)
   storage/  db.ts (idb-keyval: state + Blob ảnh) · backup.ts (JSON xuất/nhập, kiểm tra version)
   google/   oauth.ts (buildAuthUrl, parseFragment, token store) · calendar.ts (fetchCalendars, fetchEvents, normalize)
   export/   share.ts (savePng, copyPng, openShortcut) · ics.ts (eventToIcs)
-  ui/       App.tsx · store.ts (reducer, persist debounce 300 ms) · components/{Sheet,Toast}.tsx · screens/{Preview,Events,Design,Sync,Guide}.tsx · screens/events/{EventsTab,TodosTab,NoteTab,util}.tsx
+  ui/       App.tsx · store.ts (reducer, persist debounce 300 ms) · sync.ts (autoSyncIfNeeded, performSyncShared) · components/{Sheet,Toast}.tsx · screens/{Preview,Events,Design,Sync,Guide}.tsx · screens/events/{EventsTab,TodosTab,NoteTab,util}.tsx
 public/     icon-192.png, icon-512.png (manifest do plugin sinh)
 tests/      unit/*.test.ts · e2e/*.spec.ts · fixtures/google/*.json · fixtures/photo-4000x3000.jpg
 scripts/    size.mjs · agy-run.sh (làn Gemini, D-009) · mau-anh-*.cjs / chup-*.cjs (ảnh mẫu có dữ liệu + chụp webkit để review bằng mắt — D-012)
 docs/       HUONG-DAN.md (M4)
+.github/    workflows/pages.yml (D-019: push `main` → build `VITE_BASE=/<repo>/` → deploy GitHub Pages)
 ```
 - Module & trách nhiệm:
   - `core/*`: kiểu dữ liệu và toán lịch thuần (không DOM). `collectRenderData(state, today)` trộn sự kiện cục bộ (đã expand) + cache Google + todos + note thành `RenderData`.
@@ -67,7 +68,7 @@ docs/       HUONG-DAN.md (M4)
 - Luồng dữ liệu:
   - UI → `dispatch(action)` → `AppState` (bộ nhớ) → `db.ts` (persist) → `collectRenderData` → `layout*` → `DrawOp[]` → `paint` → canvas → PNG Blob → `<img>` preview / `savePng` / `copyPng` → Shortcut.
   - Google: Sync → `buildAuthUrl` → `location.href = url` → Google → quay về `/#access_token=…&state=…` → `parseFragment` (kiểm state, xóa hash bằng `history.replaceState`) → token store → `fetchCalendars` / `fetchEvents` → `state.google.cache = {events, fetchedAt}` → persist → render.
-  - Ảnh nền: `<input type=file accept=image/*>` → `createImageBitmap(file, {imageOrientation:'from-image'})` (fallback decode qua `<img>`) → thu nhỏ về ≤ 2× kích thước thiết bị → Blob lưu IndexedDB (`bg`) → dùng khi render.
+  - Ảnh nền: `<input type=file accept=image/*>` → `createImageBitmap(file, {imageOrientation:'from-image'})` (fallback decode qua `<img>`) → thu nhỏ về ≤ 2× kích thước thiết bị (PNG nếu nguồn png/webp/gif, còn lại JPEG 0.9 — T-4.7) → lưu IndexedDB (`bg`, dạng `{buf: ArrayBuffer, type}` — D-017; `saveBg`/`loadBg` vẫn nhận/trả `Blob`) → `ImageBitmap.close()` sau khi vẽ → dùng khi render.
 - Giao diện giữa các module (chữ ký TypeScript, là hợp đồng — thợ không đổi nếu không PHẢN BIỆN):
 ```ts
 // core/model.ts
@@ -157,6 +158,8 @@ Nội dung: ảnh nền từ Thư viện (EXIF, cover-fit, thu nhỏ), mờ bằ
   - [ ] Offline: sau lần tải đầu, `context.setOffline(true)` → reload vẫn mở được app (service worker).
   - [ ] `npm run build` rồi `node scripts/size.mjs`: tổng JS gzip < 150 KB.
   - [ ] `npm run check` pass trên chromium + webkit; `docs/HUONG-DAN.md` có đủ 4 phần (cài PWA, Shortcut, Google OAuth, HTTPS/hosting).
+  - [ ] (v1.4, D-018) Unit `layout-month-list.test.ts`: 20 sự kiện + 10 to-do → số dòng danh sách ≤ trần L, có "+N sự kiện" và "+N việc", (đã hiện + N) = tổng; to-do đã xong không hiện; mọi op trong `mainArea` với 1284×2778 và 1179×2556 × `showNote` × `showLunar` × `position`; `monthList=false` → op lưới không đổi. `model.test.ts`: state thiếu `monthList` → `true`. E2E `events.spec.ts`: state có `google.cache` → ô ngày có chấm, mục `ev-item-google` hiện tiêu đề + "Google", bấm không mở sheet; mục cục bộ vẫn mở sheet.
+  - [ ] (D-020) Unit `store.test.ts`: `pinNote(id, true)` khi `showNote=false` → `showNote=true`; bỏ ghim không đổi `showNote`. E2E `notes.spec.ts`: ghim ghi chú → công tắc `note-show` bật và `__lastOps` chứa tiêu đề ghi chú.
   - [ ] Thử tay trên iPhone của Chủ dự án theo HUONG-DAN.md; kết quả ghi vào `docs/bao-cao/M4.md` (không chặn nghiệm thu bằng lệnh, nhưng là điều kiện để đóng dự án).
 
 ## 7. Chiến lược test
@@ -170,7 +173,7 @@ Nội dung: ảnh nền từ Thư viện (EXIF, cover-fit, thu nhỏ), mờ bằ
 ## 8. Rủi ro & cách giảm
 1. OAuth redirect trong PWA standalone iOS (sửa D-015): iOS ≥ 12.2 mở URL ngoài scope trong trình duyệt trong-app và trả điều hướng về PWA khi URL quay lại nằm trong `scope` (manifest `scope`/`start_url` = `base`; `redirect_uri = origin + pathname`). Không kiểm được bằng Playwright → thử máy thật sớm (T-4.0). Token implicit sống 1 giờ và KHÔNG gia hạn ngầm được trên iOS (Safari chặn cookie bên thứ ba → iframe `prompt=none` luôn `login_required`) → hằng ngày người dùng bấm "Kết nối lại" (Google tự chuyển hướng nếu phiên trong-app còn); cache sự kiện dùng offline. Nếu standalone không nhận token: dùng app trong Safari (bookmark) — storage Safari và PWA tách biệt, phải chọn một ngữ cảnh dùng xuyên suốt.
 2. Clipboard ảnh / Web Share files / `shortcuts://` khác nhau giữa trình duyệt → chuỗi fallback: share → tải; copy thất bại → hướng dẫn "Lưu ảnh" + Shortcut dùng "Get Latest Photos".
-3. Shortcut "Set Wallpaper" yêu cầu iOS 17+ và hình nền hiện tại ở chế độ Ảnh (không Photo Shuffle) → nêu trong Guide. Không thể tự đổi hằng ngày không chạm → giới hạn đã biết.
+3. Shortcut "Set Wallpaper" yêu cầu iOS 17+ và hình nền hiện tại ở chế độ Ảnh (không Photo Shuffle) → nêu trong Guide. Không thể tự đổi hằng ngày không chạm → giới hạn đã biết. Lỗi iOS đã biết (D-018, máy thật 2026-09-14): thỉnh thoảng báo `com.apple.extensionKit.errorDomain error 2` → bấm "Đặt hình nền" lại là được; không sửa được bằng mã, Guide + HUONG-DAN hướng dẫn.
 4. Safari xóa IndexedDB sau 7 ngày không dùng với web thường; PWA cài Màn hình chính không bị → khuyến nghị cài + sao lưu JSON.
 5. Vitest 5 (mới 10 ngày) / vite-plugin-pwa 1.3 với Vite 8 có thể lệch → nếu lỗi: ghim Vitest 4.x hoặc SW viết tay; ghi DECISIONS.md, không đổi SPEC.
 6. `ctx.filter` blur không đồng nhất trên Safari → blur bằng hạ/tăng mẫu canvas.
@@ -182,7 +185,7 @@ Nội dung: ảnh nền từ Thư viện (EXIF, cover-fit, thu nhỏ), mờ bằ
 - Tên làm việc "LichKhoa"; icon tự vẽ đơn giản; Chủ dự án có thể đổi tên sau.
 - iPhone chạy iOS 17+; hình nền hiện tại ở chế độ Ảnh.
 - Google scope chỉ `https://www.googleapis.com/auth/calendar.readonly`; Client ID dán trong UI, lưu localStorage, không commit vào repo.
-- Hosting HTTPS: GitHub Pages là phương án chính (Vite `base` đọc từ biến `VITE_BASE`, mặc định `/`); Netlify Drop dự phòng; cloudflared quick tunnel cho thử nhanh. Deploy/push chỉ do Quản lý sau khi Chủ dự án đồng ý.
+- Hosting HTTPS (thực tế từ 2026-09-14, D-019): repo public `github.com/thaihuy1012/LichKhoa`, GitHub Pages `https://thaihuy1012.github.io/LichKhoa/`; workflow `.github/workflows/pages.yml` build `VITE_BASE=/LichKhoa/` khi push `main` (Vite `base` đọc `VITE_BASE`, mặc định `/`; manifest `scope`/`start_url` theo base). Netlify Drop dự phòng; cloudflared quick tunnel cho thử nhanh. `git push` do Chủ dự án tự chạy (`.claude/settings.json` chặn Quản lý push) — mỗi lần deploy = 1 lệnh push của Chủ dự án. Client ID Google đăng ký origin `https://thaihuy1012.github.io` và redirect `https://thaihuy1012.github.io/LichKhoa/`.
 - Mặc định: ngôn ngữ VI, tuần bắt đầu T2, 24h, bố cục Tháng, agenda 7 ngày (tối đa 12 **dòng sự kiện**, tiêu đề ngày không tính — D-012, làm ở T-2.15; không để tiêu đề ngày mồ côi; vượt thì "+N"; hộp tự co nếu tràn vùng an toàn), to-do tối đa 12 dòng, vùng an toàn `safeTop=0.30`, `safeBottom=0.14`, tên Shortcut `DatHinhNen`. Mật độ chữ trên ảnh nền thật xem lại ở M4 (T-4.2) cùng mặc định `boxAlpha`.
 - Khoảng đồng bộ Google cố định [hôm nay − 1, + 60 ngày]; sự kiện Google không chỉnh sửa được trong app.
 - Không tối ưu iPad/Android/desktop; không hỗ trợ nhiều người dùng.
