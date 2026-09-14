@@ -5,7 +5,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 9/9 (T-4.0 có kết quả 2026-09-14)
-- Đang làm: CHỜ CHỦ DỰ ÁN thử T-4.10 trên iPhone (ghim ghi chú → hiện trên hình nền). Deploy lần đầu OK 2026-09-14: Chủ dự án `git push -u origin main` (3396ec7..fcf6bdc, không force) → Actions run 34867029741 build + deploy success → `https://thaihuy1012.github.io/LichKhoa/` 200, manifest scope `/LichKhoa/`. Nhánh `main` theo dõi `origin/main`; Quản lý không push được (`.claude/settings.json` deny) → mỗi lần cần deploy, Chủ dự án chạy `! git push`. Sau đó → Kiến trúc sư duyệt M4 → nghiệm thu cuối.
+- Đang làm: Kiến trúc sư duyệt M4 + nghiệm thu cuối (gói `docs/bao-cao/M4.md` lần gửi 2). Thử máy thật lần 3: T-4.10 ✔ "Ghi chú hiện đúng" → mọi hạng mục thử tay M4 đạt. Deploy lần đầu OK 2026-09-14: Chủ dự án `git push -u origin main` (3396ec7..fcf6bdc, không force) → Actions run 34867029741 build + deploy success → `https://thaihuy1012.github.io/LichKhoa/` 200, manifest scope `/LichKhoa/`. Nhánh `main` theo dõi `origin/main`; Quản lý không push được (`.claude/settings.json` deny) → mỗi lần cần deploy, Chủ dự án chạy `! git push`. Sau đó → Kiến trúc sư duyệt M4 → nghiệm thu cuối.
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.

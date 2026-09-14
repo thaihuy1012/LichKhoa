@@ -1,9 +1,9 @@
 diff --git a/.github/workflows/pages.yml b/.github/workflows/pages.yml
 new file mode 100644
-index 0000000..cc73f48
+index 0000000..ebb3a27
 --- /dev/null
 +++ b/.github/workflows/pages.yml
-@@ -0,0 +1,50 @@
+@@ -0,0 +1,51 @@
 +name: Build and Deploy to Pages
 +
 +# Triggers
@@ -15,6 +15,7 @@ index 0000000..cc73f48
 +
 +# Permissions for GitHub Pages
 +permissions:
++  contents: read
 +  pages: write
 +  id-token: write
 +
@@ -54,248 +55,6 @@ index 0000000..cc73f48
 +      - name: Deploy to Pages
 +        id: deployment
 +        uses: actions/deploy-pages@v4
-diff --git a/docs/BAI-HOC.md b/docs/BAI-HOC.md
-index 0bb7869..197fd44 100644
---- a/docs/BAI-HOC.md
-+++ b/docs/BAI-HOC.md
-@@ -5,6 +5,8 @@
- - 2026-09-13 · T-1.1 · (môi trường) · subagent không có shell vì `tools:` chỉ khai `Bash` mà phiên chỉ có `PowerShell`; sửa `tools` phải mở lại Claude Code mới hiệu lực (SC-001) → đầu dự án cho `khao-sat` chạy thử 1 lệnh shell trước khi giao phiếu; khai cả `Bash, PowerShell`.
- - 2026-09-13 · T-1.END · sonnet · thợ gặp "flake" webkit, né trong test (chờ preview trước khi chọn) thay vì báo bug; thực ra là race subscribe-sau-paint trong `Preview.tsx` → quy tắc: E2E không được thêm chờ/né để qua; thấy hành vi lạ ở app thì phải tái hiện + báo, và Quản lý đọc kỹ mục "Lưu ý" có chữ flake/race.
- - 2026-09-13 · T-2.3, T-2.8 · sonnet · test hình học (vùng an toàn, số op) đều PASS nhưng ảnh thật lỗi thẩm mỹ (dòng giãn, chữ tràn, vòng hôm nay cắt chữ) → quy tắc: mọi phiếu layout, Quản lý dựng ảnh 1284×2778 bằng `node scripts/mau-anh-1284.cjs <ra.png>` (sau `npm run build`) và XEM trước khi commit.
-+- 2026-09-14 · T-4.6 (lặp lại T-1.END) · sonnet · màn Preact đăng ký `store.subscribe` trong `useEffect` (chạy sau paint) mà không đọc lại state → dispatch ngay sau mount bị mất (range kéo nhanh không cập nhật; flake webkit 1/10). Design.tsx và Sync.tsx mắc lại lỗi đã sửa ở Preview (T-1.END) → quy tắc: màn mới dùng `useLayoutEffect(() => { setState(store.getState()); return store.subscribe(setState); }, [store])`; review phiếu UI grep `store.subscribe` kiểm mẫu này. (Nên có hook chung `useStoreState` khi có phiếu refactor.)
-+- 2026-09-14 · T-4.6 · sonnet · chạy `npx playwright test` sau khi sửa src mà KHÔNG `npm run build` → `webServer` (reuseExistingServer) phục vụ `dist/` cũ → kết quả test giả (thợ tưởng sửa chưa ăn) → quy tắc: sau mọi thay đổi `src/` phải `npm run build` trước khi chạy Playwright riêng lẻ (hoặc dùng `npm run check`); ghi rõ trong mọi prompt e2e.
- - 2026-09-14 · T-3.2 · sonnet + Quản lý · phiếu có mục "Bổ sung" (all-day nhiều ngày tách ngày) nhưng thợ không làm, không báo; Quản lý review chỉ soi phần múi giờ và ghi nhầm nhật ký "đã tách"; kiem-thu không được giao danh sách tiêu chí bổ sung → soát chéo Gemini mới bắt được → quy tắc: (1) mỗi gạch "Bổ sung"/"Yêu cầu" của phiếu phải có test tương ứng, thợ liệt kê "yêu cầu → test" trong báo cáo; (2) prompt kiem-thu chép nguyên danh sách tiêu chí + bổ sung; (3) Quản lý chỉ ghi nhật ký điều đã tự thấy trong mã/test.
- - 2026-09-14 · (Quản lý) · `sed -i "${m}s/.*/…/"` với biến `m` rỗng → sed thay MỌI dòng, TASKS.md bị ghi đè; khôi phục bằng `git checkout -- docs/TASKS.md` (bản commit trước còn nguyên) → quy tắc: sửa sổ sách bằng Edit, không dùng sed có địa chỉ dòng tính động; commit sổ sách sau mỗi bước để luôn có bản lùi.
- - 2026-09-14 · T-2.13 ∥ T-2.END · sonnet · thợ T-2.13 dùng `git stash` để chứng minh test fail trên code cũ trong khi thợ T-2.END đang sửa cùng cây làm việc (lần này không mất gì vì T-2.END chưa sửa file tracked) → quy tắc: phiếu chạy song song thì ghi rõ trong prompt "KHÔNG `git stash`/`checkout`/`reset`; muốn chạy code cũ thì `git show HEAD:<file> > <scratch>` hoặc tạm đảo logic bằng tay rồi khôi phục". Song song thì chỉ một thợ được chạy build/e2e (cổng 4173 + `dist/`).
-diff --git a/docs/DECISIONS.md b/docs/DECISIONS.md
-index c8b4b39..458c823 100644
---- a/docs/DECISIONS.md
-+++ b/docs/DECISIONS.md
-@@ -70,6 +70,14 @@
- - Điểm 1: không thêm kiểm tra webkit; `dist/sw.js` có `NavigationRoute(createHandlerBoundToURL("index.html"))` → (D) là phép thử quyết định. Điểm 2: chấp nhận localStorage (readonly, 1 giờ, không script ngoài) → giới hạn đã biết. Điểm 3: giữ chữ ký `fetchEvents`; +1 request/lượt là rẻ. Điểm 4: T-4.2. Điểm 5: gộp vào T-4.0.
- - S4 mới (Tồn đọng): sau redirect kết nối thành công, `App.tsx` L72 chỉ tự đồng bộ khi cache > 30′ → nên ép đồng bộ ngay (truyền cache = null khi `authResult.ok`); làm ở phiếu M4 chạm `App.tsx`.
- 
-+## D-017 — Ảnh nền lưu IndexedDB dạng ArrayBuffer (2026-09-14 · người quyết: Quản lý, chấp nhận khai báo ngoài phạm vi của T-4.2)
-+- WebKit (Playwright) abort transaction khi structured-clone Blob vào IndexedDB → `saveBg` lưu `{buf: ArrayBuffer, type}`; `loadBg` đọc cả dạng mới lẫn Blob cũ. Chữ ký SPEC §5 (`Blob|null`) giữ nguyên. Safari cũ cũng từng lỗi Blob-in-IDB → an toàn hơn cho iPhone.
-+
-+## D-016 — Chủ dự án dời thử máy thật T-4.0 về cuối M4 (2026-09-14 · người quyết: Chủ dự án)
-+- Hỏi theo D-015 (thử OAuth PWA iOS sớm) → Chủ dự án chọn "Để cuối M4". Ảnh mẫu đặt thử hình nền khóa: "Chưa thử" → gộp vào bài thử máy thật.
-+- Hệ quả: T-4.4 (Guide/HUONG-DAN) viết theo thiết kế hiện tại (PWA standalone) + nhánh dự phòng "dùng trong Safari" (D-015), đánh dấu phần OAuth "chờ xác nhận máy thật"; T-4.0 chạy sau T-4.4, trước T-4.END; kết quả T-4.0 có thể sinh phiếu sửa Guide. `dist` cho Netlify build lại ngay trước T-4.0 (bản `E:\DuAn\lichkhoa-dist` hiện tại là HEAD `095e2cc`, sẽ cũ).
-+- Rủi ro chấp nhận: nếu OAuth trong PWA không chạy thì phát hiện muộn; theo D-015 phương án dự phòng không đổi mã.
-+
- ## D-013 — T-3.END: mock OAuth bằng trang HTML chuyển hướng; webkit bỏ bước offline+reload (2026-09-14 · người quyết: Quản lý)
- - Webkit (Playwright, Windows) không cho `route.fulfill` trả 302 → mock `accounts.google.com` bằng trang HTML tự `location.replace('<app>/#access_token=…&state=<từ query>')` — tương đương 302 về mặt luồng app.
- - `context.setOffline(true)` + `reload()` trên webkit → "WebKit encountered an internal error" (kiem-thu tái hiện độc lập: app thật lỗi; `data:` URL không lỗi; chromium không lỗi — `docs/test-log/webkit-offline.txt`). Chưa loại trừ được khả năng SW của app không phục vụ navigation trên WebKit → chấp nhận `test.skip(webkit)` riêng bước này ở T-3.END (chromium kiểm đủ), NHƯNG: T-4.END phải thử lại (cách khác: `serviceWorker` state + `caches.match('/index.html')` trong page trên webkit), và bài thử tay trên iPhone M4 phải có bước "bật Chế độ máy bay → mở icon → app mở, còn sự kiện Google đã cache".
-diff --git a/docs/HUONG-DAN.md b/docs/HUONG-DAN.md
-new file mode 100644
-index 0000000..8a1be5e
---- /dev/null
-+++ b/docs/HUONG-DAN.md
-@@ -0,0 +1,80 @@
-+# HƯỚNG DẪN DÙNG LichKhoa TRÊN IPHONE
-+
-+Tài liệu này viết cho người không rành kỹ thuật. Làm đúng theo từng bước, không cần hiểu code.
-+
-+## A. Cài đặt LichKhoa (PWA) vào Màn hình chính
-+
-+1. Mở Safari trên iPhone, vào đúng địa chỉ (URL) của LichKhoa (do người quản lý đưa cho bạn).
-+2. Bấm nút **Chia sẻ** (Share — hình vuông có mũi tên đi lên) ở thanh dưới cùng Safari.
-+3. Cuộn xuống, chọn **"Thêm vào MH chính"** (Add to Home Screen).
-+4. Bấm **"Thêm"** (Add) ở góc trên.
-+5. Về Màn hình chính, mở app bằng đúng biểu tượng vừa thêm (không mở lại bằng Safari) — đây gọi là chế độ **standalone**.
-+
-+## B. Tạo Google OAuth Client ID (để đồng bộ Google Calendar — không bắt buộc)
-+
-+Nếu bạn không cần lịch Google, có thể bỏ qua phần này.
-+
-+1. Vào https://console.cloud.google.com bằng máy tính hoặc điện thoại → bấm **tạo dự án mới** (New Project), đặt tên (ví dụ "LichKhoa").
-+2. Vào **APIs & Services → Library**, tìm **"Google Calendar API"** → bấm **Enable**.
-+3. Vào **Google Auth Platform → Branding**: điền tên ứng dụng + email hỗ trợ. Ở **Audience** chọn **External**, giữ trạng thái **Testing**. Ở **Test users**, thêm đúng địa chỉ Gmail bạn sẽ dùng để đăng nhập.
-+4. Vào **Clients → Create client → Web application**.
-+   - **Authorized JavaScript origins**: dán đúng gốc URL của LichKhoa (ví dụ `https://ten-cua-ban.netlify.app`), không có dấu `/` ở cuối.
-+   - **Authorized redirect URIs**: dán đúng URL đầy đủ mở app, có dấu `/` ở cuối (ví dụ `https://ten-cua-ban.netlify.app/`).
-+5. Sao chép **Client ID** (chuỗi kết thúc bằng `.apps.googleusercontent.com`).
-+6. Mở LichKhoa → tab **Đồng bộ** → dán Client ID vào ô → bấm **Kết nối**. Không cần "client secret".
-+
-+**Lưu ý bảo mật**: Client ID chỉ lưu trên máy bạn (localStorage), không gửi lên đâu khác, không đưa vào code.
-+
-+**Về đăng nhập trong app đã cài (standalone)**: theo thiết kế, Google sẽ mở màn đăng nhập trong một cửa sổ trình duyệt nhỏ rồi tự đưa bạn quay lại app. *Đang chờ xác nhận trên máy thật (xem mục "Bài thử trên iPhone" bên dưới).* Nếu sau khi đăng nhập app không quay lại được (bị kẹt ở cửa sổ trình duyệt, hoặc báo lỗi): hãy mở LichKhoa bằng **Safari thường** (lưu địa chỉ này làm Bookmark để lần sau vào nhanh) và dùng Google từ đó thay vì từ app đã cài. Lưu ý: dữ liệu lưu ở Safari và dữ liệu lưu ở app cài trên Màn hình chính là **hai nơi tách biệt** — hãy chọn một nơi và dùng xuyên suốt.
-+
-+## C. Tạo Shortcut "Đặt hình nền" (làm một lần duy nhất)
-+
-+1. Mở app **Shortcuts** (Phím tắt) có sẵn trên iPhone.
-+2. Bấm dấu **+** để tạo Shortcut mới.
-+3. Bấm **"Add Action"** (Thêm hành động), tìm và chọn **"Set Wallpaper"** (Đặt hình nền) — trên một số bản iOS mới, hành động này tên là **"Set Wallpaper Photo"** (Đặt ảnh hình nền).
-+4. Trong hành động đó:
-+   - **Image** (Ảnh): chọn **Shortcut Input**.
-+   - Chọn áp dụng cho **Lock Screen** (Màn hình khóa).
-+   - Tắt **"Show Preview"** (Hiện xem trước) để không phải bấm xác nhận mỗi lần.
-+5. Đặt tên Shortcut đúng bằng tên hiển thị trong LichKhoa (mặc định là **`DatHinhNen`** — xem/đổi ở tab Xem trước, ô "Tên Shortcut").
-+6. Lưu lại.
-+
-+Ghi chú: chỉ dùng hành động **"Set Wallpaper"**, không cần và không dùng "Run Script"/Scriptable/iCloud — LichKhoa tự sao chép ảnh vào clipboard và mở Shortcut với `input=clipboard`.
-+
-+## D. HTTPS để thử trên iPhone (dành cho người quản lý dự án dựng bản chạy)
-+
-+- **GitHub Pages** (chính, cần repo public): `https://<tên-người-dùng>.github.io/<tên-repo>/`.
-+- **Netlify Drop** (không cần tài khoản GitHub): kéo thả thư mục build vào https://app.netlify.com/drop → có ngay `https://<tên>.netlify.app`.
-+- **Thử nhanh trong mạng nội bộ**: dùng `cloudflared` tạo đường hầm tạm — không dùng để test Google (địa chỉ đổi mỗi lần chạy).
-+
-+---
-+
-+## Quy trình dùng hằng ngày (≤ 3 chạm)
-+
-+1. Mở LichKhoa từ biểu tượng trên Màn hình chính.
-+2. (Tuỳ chọn) Tab Đồng bộ → **"Đồng bộ ngay"** nếu muốn cập nhật lịch Google mới nhất.
-+3. Tab Xem trước → bấm **"Đặt hình nền"**. Ảnh được sao chép, Shortcut tự mở và đặt làm hình nền khóa. Lần đầu tiên, iOS sẽ hỏi cho phép Shortcut chạy — bấm **Cho phép**.
-+
-+## Giới hạn đã biết
-+
-+- Phiên đăng nhập Google chỉ sống **1 giờ** và **không tự gia hạn** được trên iPhone (Safari chặn cookie bên thứ ba) → mở app sau hơn 1 giờ kể từ lần kết nối trước thì cần bấm **"Kết nối lại"** (tab Đồng bộ) trước khi đồng bộ; sự kiện đã tải trước đó vẫn hiện bình thường.
-+- LichKhoa **không tự đổi hình nền** khi bạn không mở app và bấm nút — không có tính năng chạy nền tự động.
-+- Hành động "Set Wallpaper" cần **iOS 17 trở lên** và hình nền khóa hiện tại phải đang ở chế độ **Ảnh tĩnh** (không phải "Photo Shuffle").
-+- Nếu chỉ mở bằng Safari thường (chưa "Thêm vào MH chính"), Safari có thể tự xóa dữ liệu đã lưu sau **7 ngày không dùng**. Cài vào Màn hình chính để tránh mất dữ liệu; nên thỉnh thoảng **Xuất JSON** để sao lưu (tab Xem trước → cuộn xuống phần cài đặt).
-+- Muốn Lịch iPhone **nhắc giờ** một sự kiện: mở sự kiện đó trong LichKhoa → bấm **"Thêm vào Lịch iPhone"** → mở file `.ics` tải về. Phải làm cho **từng sự kiện**, không tự động hàng loạt.
-+- Sự kiện lấy từ Google Calendar chỉ để xem, **không sửa được** trong LichKhoa.
-+
-+## Bài thử trên iPhone (làm khi có bản chạy thật — T-4.0)
-+
-+1. Có URL HTTPS thật (GitHub Pages hoặc Netlify Drop).
-+2. Tạo Google Client ID (mục B) với đúng origin/redirect URI của URL đó.
-+3. Trên iPhone: Safari mở URL → "Thêm vào MH chính" → mở từ biểu tượng.
-+4. Tab Đồng bộ → dán Client ID → **Kết nối** → quan sát:
-+   - (A) Google mở trong cửa sổ trong-app (có nút Done) hay bị đẩy ra hẳn Safari?
-+   - (B) Sau khi đăng nhập, app có quay lại và hiện "Đã kết nối" + danh sách lịch không, hay bị kẹt/báo lỗi `invalid_state`?
-+   - (C) Chọn một lịch → **Đồng bộ ngay** → tab Xem trước/Sự kiện có hiện đúng sự kiện thật từ Google không?
-+5. Tab Xem trước → **"Đặt hình nền"** → Shortcut chạy xong, kiểm tra màn hình khóa: chữ có bị đồng hồ, widget, hay các nút che mất không?
-+6. Bật **Chế độ máy bay** → đóng hẳn app (vuốt lên xóa khỏi danh sách app đang chạy) → mở lại từ biểu tượng → app có mở được và vẫn còn sự kiện Google đã lưu trước đó không?
-+7. Chờ hơn 1 giờ, quay lại app → bấm **"Kết nối lại"** → có phải đăng nhập Google lại từ đầu (nhập mật khẩu) hay chỉ xác nhận nhanh?
-+
-+Ghi kết quả các bước trên vào báo cáo milestone của người quản lý dự án.
-diff --git a/docs/TASKS.md b/docs/TASKS.md
-index 91d5be4..3606f9b 100644
---- a/docs/TASKS.md
-+++ b/docs/TASKS.md
-@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.3 — v1.0 Chủ dự án duyệt 2026-0
- Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
- 
- ## Tiến độ
--- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 (chờ Kiến trúc sư) · M4: 0/6
--- Đang làm: Giai đoạn 3 — Kiến trúc sư duyệt M3 (`docs/bao-cao/M3.md` + `M3-soat-cheo.md`; câu hỏi nặng: OAuth redirect trong PWA iOS standalone).
-+- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 6/8
-+- Đang làm: T-4.END (DOING, phần tự động) ∥ T-4.0 CHỜ CHỦ DỰ ÁN (thử iPhone, dist `E:/DuAn/lichkhoa-dist` @dfb8ab9). Duyệt M4 chờ cả hai.
- - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
- - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
- - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
-@@ -20,6 +20,9 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
- - ~~S4 · T-2.7 · `EventsTab.tsx` L93 durationMin ngầm 60~~ → đã sửa trong T-2.12.
- - ~~S4 · T-2.12 · ô todo-due trống không nhãn~~ → đã sửa T-2.14.
- - S4 · T-2.14 · `App.tsx` L52 "Đang tải…" cứng tiếng Việt (hiện trước khi nạp state — chưa biết ngôn ngữ); làm khi có phiếu chạm App.tsx.
-+- S4 · T-4.6 · webkit Windows: `input[type=color]` hiện chữ "#00000(" cạnh span hex → mã màu hiện 2 lần (iPhone có ô màu thật nên không bị). Làm nếu có phiếu chạm Design.tsx.
-+- ~~S4 · D-015 · sau redirect kết nối thành công~~ → đã sửa T-4.2.
-+- (cũ) S4 · D-015 · sau redirect kết nối thành công, `App.tsx` L72 chỉ tự đồng bộ khi cache > 30′ → ép đồng bộ ngay (cache = null khi `authResult.ok`); làm ở T-4.2 (App.tsx trong phạm vi).
- - S4 · T-3.3 · nút `sync-connect` / `sync-now` dùng kiểu nút phụ (xám) dù là thao tác chính → kiểu accent như "Lưu ảnh"; làm ở T-4.2 (styles).
- - S4 · T-3.1 · `parseFragment` giải mã `error` 2 lần (`URLSearchParams` đã giải mã) và trả `{error}` không kiểm `state` — vô hại với mã lỗi ASCII của Google; sửa nếu có phiếu chạm oauth.ts.
- - ~~S4 · T-2.5 · `eventToIcs` chưa gập dòng > 75 byte~~ → đã sửa T-2.15.
-@@ -391,47 +394,86 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
- ---
- ## M4 — Ảnh nền & tùy biến, một chạm Shortcut, hướng dẫn
- 
-+### T-4.0 — Thử kết nối Google trên iPhone thật (D-015) — cần Chủ dự án
-+- Mục tiêu: xác nhận luồng OAuth redirect trong PWA standalone iOS + offline trên máy thật trước khi viết Guide (T-4.4) và T-4.END.
-+- Người làm: Chủ dự án (thao tác trên iPhone + tài khoản Google/Netlify) · Quản lý (build `dist`, hướng dẫn từng bước, ghi kết quả). Không push git.
-+- Các bước: (1) Quản lý `npm run build` (VITE_BASE mặc định `/`) → thư mục `dist`. (2) Chủ dự án kéo thả `dist` vào https://app.netlify.com/drop (đăng nhập tài khoản free để site không bị xóa sau 1 giờ) → nhận URL `https://<tên>.netlify.app`. (3) Tạo Client ID theo SPEC §10A với origin `https://<tên>.netlify.app` và redirect `https://<tên>.netlify.app/`. (4) iPhone: Safari mở URL → Chia sẻ → Thêm vào MH chính → mở icon → Đồng bộ → dán Client ID → Kết nối.
-+- Quan sát (D-015): (A) Google mở trong-app (có nút Xong/Done) hay văng sang Safari; (B) quay về PWA + "Đã kết nối" + danh sách lịch, hay kẹt trong-app / báo lỗi state; (C) chọn lịch → Đồng bộ → Agenda có sự kiện thật; (D) Chế độ máy bay → đóng hẳn app → mở icon → app mở, còn sự kiện; (E) sau > 1 giờ: "Kết nối lại" có phải đăng nhập lại không.
-+- Kết quả ghi vào `docs/bao-cao/M4.md` mục "Thử máy thật". (B) thất bại → không đổi mã, Guide hướng dẫn dùng trong Safari (D-015). (D) thất bại → S2 tại T-4.END. Google chặn implicit → đổi SPEC, hỏi Chủ dự án.
-+- Không chặn T-4.1/4.3/4.5; T-4.4 và T-4.END chờ kết quả.
-+- 2026-09-14: Chủ dự án chọn "Để cuối M4" (D-016) → chạy sau T-4.4, trước T-4.END; gộp thêm bước đặt ảnh hình nền khóa thật (có đè đồng hồ/widget/nút?). Build lại `dist` ngay trước khi thử.
-+- 2026-09-14: `dist` mới (HEAD `dfb8ab9`) ở `E:\DuAn\lichkhoa-dist`; đã gửi Chủ dự án hướng dẫn từng bước (theo `docs/HUONG-DAN.md` mục "Bài thử trên iPhone").
-+- Trạng thái: CHỜ CHỦ DỰ ÁN
-+
- ### T-4.1 — Ảnh nền: nạp, EXIF, thu nhỏ, cover-fit, mờ, tối
- - Phạm vi file: `src/render/background.ts` (mới: `loadPhoto(file, dev): Promise<Blob>`, `drawBackground(ctx, bg, design, dev)`), `src/render/wallpaper.ts`, `tests/unit/background.test.ts` (phần toán cover-fit thuần), `tests/fixtures/photo-4000x3000.jpg`.
- - Tham khảo (chép/port được, xem docs/tham-khao-LICH_NEN.md): `F:/LICH_NEN/LichNen.js` L253–262 `drawCover`, `drawBackground` (toán cover-fit).
- - Mục tiêu: `createImageBitmap(file,{imageOrientation:'from-image'})` fallback `<img>`; thu nhỏ ≤ 2× thiết bị; cover-fit; blur bằng hạ/tăng mẫu (không `ctx.filter`); dim bằng rect đen alpha.
--- Tiêu chí: [ ] test cover-fit (tỉ lệ ngang/dọc); [ ] `npm run check` pass.
--- Lệnh kiểm tra: `npm run check`
--- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
-+- Tiêu chí: [ ] test cover-fit (tỉ lệ ngang/dọc); [ ] `npm run check` pass (kiem-thu chạy).
-+- Bổ sung (Quản lý 2026-09-14): `renderWallpaper(state, bg, today)` dùng `bg` khi `design.bg.kind==='photo'` và `bg` khác null (null → rơi về màu `bg.color`); thứ tự vẽ: ảnh (cover-fit) → mờ → tối → `buildOps`/paint. Toán cover-fit + tính kích thước thu nhỏ (≤ 2× thiết bị, giữ tỉ lệ) + bán kính/tỉ lệ hạ mẫu cho blur 0–3 tách thành hàm THUẦN để unit test; phần canvas giữ mỏng. `loadPhoto` trả Blob JPEG/PNG đã thu nhỏ. Fixture `photo-4000x3000.jpg` tự sinh (Playwright/canvas, ảnh gradient + chữ "TOP" ở mép trên để e2e kiểm hướng), dung lượng ≤ 1,5 MB. Mỗi yêu cầu → test; liệt kê trong báo cáo.
-+- Lệnh kiểm tra (thợ): `npx tsc --noEmit; npm run test` — KHÔNG build/e2e (T-4.3 song song dùng build + cổng). Được chạy Playwright chỉ để sinh fixture (không `vite preview`).
-+- Nhật ký: 2026-09-14 lượt 1: DONE (coverFit/fitDownscale/blurDownsampleRatio thuần + loadPhoto/drawBackground; fixture 78 KB có "TOP") → kiem-thu PASS (không `ctx.filter`; wallpaper.ts:48 dùng ảnh) → Quản lý dựng 4 ảnh có ảnh nền (scratchpad `mau-anh-nen.cjs`): cover-fit đúng hướng, blur/dim đúng; hộp đen `boxAlpha=1` che ảnh → T-4.2 (D-012) → commit.
-+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
- 
- ### T-4.2 — Màn Thiết kế
- - Phạm vi file: `src/ui/screens/Design.tsx`, `src/ui/App.tsx`, `src/ui/styles.css`, `src/core/i18n/*.json`, `src/render/layout/common.ts` (nếu cần áp font/scale/boxAlpha đồng nhất).
- - Tham khảo (chép/port được, xem docs/tham-khao-LICH_NEN.md §6): `F:/LICH_NEN/lich-nen.html` L410–411 bảng màu `ACCENTS`, `EVENT_COLORS`; L184–237 các control Thiết kế (ảnh/màu/mờ/tối/font/vị trí — thêm `blur`); L66–68 `.seg` cho vị trí/font; L213–215 ô màu nhanh (swatches) + `<input type="color">`; L1396 `buildSwatches`. Số dòng do Gemini dẫn — thợ tự kiểm lại.
- - Mục tiêu: chọn nền (ảnh/màu/gradient + chọn ảnh → `saveBg`), blur 0–3, dim 0–0.8, màu chữ/nhấn, font, vị trí, scale, boxAlpha, agendaDays; `data-testid` đầy đủ.
- - Tiêu chí: [ ] `npm run check` pass; [ ] thao tác tay đổi từng tùy chọn → preview đổi.
--- Lệnh kiểm tra: `npm run check`
--- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
-+- Bổ sung (Quản lý 2026-09-14):
-+  - `data-testid` (T-4.END dùng): `bg-kind-photo|solid|gradient` (segmented), `bg-file` (input file `accept="image/*"`), `bg-color`, `bg-color2`, `blur` (segmented 0–3: `blur-0..3`), `dim` (range 0–0.8 bước 0.1), `text-color`, `accent-color` (swatches `accent-<i>` + input color), `font-sans|serif|mono`, `position-top|middle|bottom`, `scale` (range), `box-alpha` (range 0–1), `agenda-days` (select 3/5/7/14).
-+  - Ảnh: chọn file → `loadPhoto(file, device)` (T-4.1) → `saveBg(blob)` → `setDesign({bg:{kind:'photo',…}})`; Preview hiện chỉ `loadBg()` lúc mount → cần cơ chế báo Preview nạp lại ảnh (vd. số `bgRev` trong store — không lưu vào backup — hoặc sự kiện tùy chỉnh); ảnh lớn không làm treo UI (hiện "Đang xử lý ảnh…").
-+  - `boxAlpha` (D-012): khi chuyển sang `photo` lần đầu mà `boxAlpha === 1` → đặt 0.35; màu đơn/gradient giữ nguyên. Kiểm hộp nền trong `layout/common.ts` dùng `boxAlpha` nhất quán cho mọi bố cục + dải note.
-+  - Nợ gộp: (1) S4 D-015 — `App.tsx` sau redirect kết nối thành công ép đồng bộ ngay (bỏ điều kiện cache > 30′ khi `authResult.ok`); (2) S4 T-3.3 — nút `sync-connect`/`sync-now` kiểu nút chính (accent). Phạm vi thêm: `src/ui/screens/Sync.tsx` (chỉ class nút), `src/ui/sync.ts` (nếu cần cho (1)), `tests/unit/sync.test.ts` hoặc `store.test.ts` (chỉ thêm).
-+  - Tham khảo: số dòng LICH_NEN do Gemini dẫn — thợ tự kiểm (grep `id="bg-`/`ACCENTS`/`.seg`/`swatch`) trước khi chép.
-+  - Chụp: thêm tab `design` vào `scripts/chup.cjs` (phạm vi thêm) — 2 ảnh (đầu màn + cuộn cuối); Quản lý xem + dựng hình nền có ảnh trước khi DONE.
-+  - e2e mới `tests/e2e/design.spec.ts`: đổi blur/dim/position/font → hash PNG preview đổi mỗi bước; tải `tests/fixtures/photo-4000x3000.jpg` → preview 1284×2778, `boxAlpha` thành 0.35.
-+- Lệnh kiểm tra: `npm run check`; `npx playwright test tests/e2e/design.spec.ts --repeat-each=3`
-+- Nhật ký: 2026-09-14 lượt 1: chạm trần 100 lượt → nhắc 1 lần → DONE (Design.tsx, force sync D-015, nút sync accent, chup design; ngoài phạm vi đã khai: `db.ts` lưu ArrayBuffer — D-017) → kiem-thu PASS (full e2e ×2 92 pass/8 skip) → chụp: đạt chức năng, hộp 0.35 trên ảnh đẹp; 3 điểm giao diện (rãnh range vô hình, input color webkit bị cắt, swatch chọn không viền) → tách T-4.6 → commit.
-+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
- 
- ### T-4.3 — Sao chép + Đặt hình nền một chạm
- - Phạm vi file: `src/export/share.ts`, `src/ui/screens/Preview.tsx`, `src/core/i18n/*.json`.
- - Tham khảo: `F:/LICH_NEN/lich-nen.html` L1334–1360 `buildExportBlob/saveWallpaper` (luồng lưu ảnh), toast (Toast.tsx của T-2.7) cho lỗi clipboard/Shortcut.
- - Mục tiêu: `copyPng` (ClipboardItem, trả false khi không hỗ trợ), `openShortcut(name)` → `shortcuts://run-shortcut?name=<enc>&input=clipboard` (khi `?test=1` ghi vào `window.__lastNav` thay vì điều hướng); nút "Sao chép", "Đặt hình nền" (copy → open), tên Shortcut cấu hình được; lỗi → thông báo + hướng dẫn thay thế.
- - Tiêu chí: [ ] `npm run check` pass.
--- Lệnh kiểm tra: `npm run check`
--- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
-+- Bổ sung (Quản lý 2026-09-14): `shortcutName` đã có trong `AppState` (mặc định `DatHinhNen`, SPEC §9) — ô cấu hình `shortcut-name` + nút `copy` ("Sao chép"), `set-wallpaper` ("Đặt hình nền") trên Preview, cạnh "Lưu ảnh"; nút "Đặt hình nền" là nút chính (accent), vẫn thấy không cần cuộn ở 428×926 cùng "Lưu ảnh" (test khóa `iphone13pm`). `copyPng` phải gọi `navigator.clipboard.write` ĐỒNG BỘ trong sự kiện chạm (Safari yêu cầu user activation — truyền `ClipboardItem({'image/png': promiseBlob})` nếu blob chưa sẵn). copy thất bại → toast + hướng dẫn "Lưu ảnh rồi dùng Shortcut với Get Latest Photos" (SPEC §8 rủi ro 2), không mở Shortcut. e2e (spec mới `tests/e2e/share.spec.ts`): chromium + `clipboard-write` → copy ghi `image/png`; `?test=1` → `__lastNav` bắt đầu `shortcuts://run-shortcut?name=DatHinhNen&input=clipboard`; tên Shortcut có dấu cách/tiếng Việt được encode. Phạm vi thêm `tests/e2e/share.spec.ts`, `src/ui/styles.css`.
-+- Lệnh kiểm tra: `npm run check` (chỉ phiếu này được build/e2e trong đợt song song T-4.1 ∥ T-4.3 ∥ T-4.5)
-+- Nhật ký: 2026-09-14 lượt 1: DONE (copyPng giữ user-activation, openShortcut + `__lastNav`, nút copy/set-wallpaper + shortcut-name; ngoài phạm vi đã khai: `store.ts` thêm `setShortcutName`; share.spec 4 test, webkit skip vì không cấp clipboard-write) → kiem-thu PASS (repeat-each=3 15/0/9 skip) → commit. Chưa chụp UI Preview mới — gộp vào ảnh chụp T-4.2.
-+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
- 
- ### T-4.4 — Màn Hướng dẫn + HUONG-DAN.md
- - Phạm vi file: `src/ui/screens/Guide.tsx`, `src/core/i18n/*.json`, `docs/HUONG-DAN.md`.
- - Tham khảo: `F:/LICH_NEN/lich-nen.html` L320–325 khối trợ giúp (đặt màn hình khóa qua Ảnh → Dùng làm hình nền, thêm vào MH chính, nhắc giờ qua .ics); `F:/LICH_NEN/huong-dan-giai-doan-2.md` L61–68 các bước tạo Phím tắt — CHỈ lấy action "Set Wallpaper"; bỏ mọi bước Scriptable/"Run Script"/iCloud (LichKhoa dùng `input=clipboard`, SPEC mục 10 C).
- - Mục tiêu: 4 phần (cài PWA, tạo Shortcut, Google OAuth Client ID, HTTPS/hosting) theo SPEC mục 10 + quy trình hằng ngày + giới hạn đã biết; VI (EN ngắn trong UI).
- - Tiêu chí: [ ] HUONG-DAN.md có đủ 4 phần; [ ] `npm run check` pass.
--- Lệnh kiểm tra: `npm run check`
--- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
-+- Bổ sung (Quản lý 2026-09-14, D-015/D-016): phần Google OAuth viết theo luồng PWA standalone (redirect trong scope) + khung "Nếu kết nối trong app Màn hình chính không quay về được: mở LichKhoa trong Safari (bookmark) để dùng Google — dữ liệu hai nơi tách nhau" và ghi chú "(chờ xác nhận trên máy thật — T-4.0)". Thêm mục **"Bài thử trên iPhone"** (checklist cho T-4.0/M4): (1) Netlify Drop hoặc GitHub Pages → URL; (2) tạo Client ID với đúng origin/redirect của URL đó; (3) Thêm vào MH chính → mở icon; (4) Đồng bộ → Kết nối → quan sát A–E (D-015); (5) "Đặt hình nền" → Shortcut chạy → hình nền khóa; kiểm lịch có bị đồng hồ/widget/nút đè; (6) Chế độ máy bay → đóng hẳn app → mở icon → app mở, còn sự kiện. Quy trình hằng ngày ≤ 3 chạm (SPEC §1c). "Giới hạn đã biết": token 1 giờ không tự gia hạn (D-015), không tự đổi hình nền không chạm, Safari xóa dữ liệu web thường sau 7 ngày không dùng nếu không cài PWA (SPEC §8.4), `.ics` nhắc giờ phải thêm từng sự kiện. Màn Guide trong app: 4–6 thẻ ngắn (VI đầy đủ, EN rút gọn) + nút mở nhanh tab Đồng bộ/Thiết kế nếu tiện; `data-testid="guide"`.
-+- Lệnh kiểm tra (thợ): `npx tsc --noEmit; npm run test` — KHÔNG build/e2e (T-4.6 song song). kiem-thu chạy `npm run check` sau.
-+- Nhật ký: 2026-09-14 lượt 1: DONE (Guide.tsx 6 thẻ + nút mở tab; HUONG-DAN.md A–D + hằng ngày + giới hạn + bài thử iPhone) → Quản lý sửa 3 câu HUONG-DAN + chuỗi `guide.googleBody` (trỏ "mục A HUONG-DAN.md" sai mục, người dùng không có file) → kiem-thu PASS (chung T-4.6) → commit 008eefd.
-+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
- 
- ### T-4.5 — size.mjs + workflow GitHub Pages
- - Phạm vi file: `scripts/size.mjs`, `.github/workflows/pages.yml`, `package.json` (thêm script `size`).
- - Mục tiêu: `size.mjs` gzip từng file `dist/**/*.js`, in tổng, exit 1 nếu ≥ 150 KB. Workflow build với `VITE_BASE=/${{ github.event.repository.name }}/` và deploy Pages (không push — chỉ tạo file).
- - Tiêu chí: [ ] `npm run build; node scripts/size.mjs` in tổng và exit 0.
--- Lệnh kiểm tra: `npm run build; node scripts/size.mjs`
--- Model: haiku · Lần thử: 0/3 · Trạng thái: TODO
-+- Bổ sung (Quản lý 2026-09-14): `size.mjs [thư-mục]` (mặc định `dist`) — để thợ kiểm được trên bản sao. Workflow: `actions/checkout`, `actions/setup-node` (Node 22, cache npm), `npm ci`, `npm run build` với `VITE_BASE`, `actions/upload-pages-artifact` (path `dist`), `actions/deploy-pages`; `permissions: pages: write, id-token: write`; chỉ chạy `workflow_dispatch` + push nhánh `main` (repo đang ở `master` → workflow không tự chạy; ghi chú trong file). KHÔNG chạy e2e trong workflow.
-+- Lệnh kiểm tra (thợ): KHÔNG `npm run build` (T-4.3 song song đang build) — sao chép `dist` hiện có ra thư mục tạm rồi `node scripts/size.mjs <tạm>` → in tổng + exit 0; thử thêm 1 thư mục giả > 150 KB → exit 1. Kiểm cú pháp YAML bằng `node -e` đọc file (không cần thư viện) hoặc mắt thường. kiem-thu chạy `npm run build; node scripts/size.mjs` sau.
-+- Nhật ký: 2026-09-14 lượt 1: DONE (size.mjs [dir], pages.yml workflow_dispatch + push main, script `size`) → kiem-thu PASS (build + size 32,86 KB exit 0; package.json chỉ thêm 1 script) → commit.
-+- Model: haiku · Lần thử: 0/3 · Trạng thái: DONE
-+
-+### T-4.6 — Hoàn thiện giao diện màn Thiết kế (review ảnh chụp T-4.2)
-+- Nguồn: Quản lý chụp webkit 13 Pro Max (`scripts/chup.cjs design`) sau T-4.2.
-+- Phạm vi file: `src/ui/styles.css`, `src/ui/screens/Design.tsx`, `tests/e2e/design.spec.ts` (chỉ THÊM test). Không đổi `data-testid` đã có.
-+- Yêu cầu: (1) mọi `input[type=range]` (dim, scale, box-alpha): rãnh nhìn thấy được (màu rãnh tương phản nền, ví dụ #3a3a44; phần đã chọn = accent), thumb ≥ 28px, kèm nhãn giá trị hiện tại cạnh tiêu đề (dim "0.4", scale "1.0×", box-alpha "35%"); (2) `input[type=color]` (bg-color, bg-color2, text-color, accent-color): hiển thị ô màu ≥ 44×44px + mã hex bên cạnh; trên trình duyệt không hỗ trợ color (webkit Windows hiện thành ô chữ) vẫn đọc được trọn mã hex, không bị cắt; (3) swatch màu nhấn đang chọn có vòng viền rõ (kể cả swatch trắng trên nền tối — viền accent/ngoài 2px), `aria-pressed`.
-+- Tiêu chí: [ ] e2e: range có `getComputedStyle` rãnh khác màu nền (hoặc pseudo-element kiểm được); nhãn giá trị đổi khi kéo `dim` → "0.4"; swatch đang chọn có `aria-pressed="true"`; [ ] 428×926 không cuộn ngang; [ ] `npm run check` pass; [ ] Quản lý chụp lại `chup.cjs design`.
-+- Lệnh kiểm tra: `npm run check` (thợ duy nhất được build/e2e trong đợt T-4.4 ∥ T-4.6)
-+- Nhật ký: 2026-09-14 lượt 1: DONE (rãnh range + nhãn giá trị, hex, swatch viền + aria-pressed) → kiem-thu PASS nhưng full ×2 có 1 fail webkit `design.spec.ts:26` (click tab-design timeout) → Quản lý chạy `design.spec --project webkit --repeat-each=10`: :26 10/10 pass, NHƯNG test mới :86 fail 1/10 (nhãn `dim-value` không đổi sau `fill`) → trả thợ tìm nguyên nhân gốc (Lần thử 1/3). Lượt 2: nguyên nhân gốc = `store.subscribe` trong `useEffect` (sau paint) → dispatch ngay sau mount bị mất (bug thật, lặp T-1.END); sửa `useLayoutEffect`. Quản lý rà mọi màn: Sync.tsx cùng lỗi → tự sửa (useLayoutEffect + đọc lại state). Thợ phát hiện test trước đó chạy trên dist cũ (BAI-HOC) → kiem-thu PASS (design webkit ×20 40/0; full ×2 96/0/8 skip) → commit.
-+- Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
- 
- ### T-4.END — Kiểm thử tích hợp M4
- - Phạm vi file: `tests/e2e/m4-design.spec.ts`, `tests/e2e/m4-export.spec.ts`, `tests/e2e/m4-offline.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.
- - Tiêu chí: [ ] tải ảnh fixture → preview đổi, kích thước bằng thiết bị; blur=2, dim=0.4, position=bottom, font=serif → hash PNG khác sau mỗi bước; `__lastOps` trong vùng an toàn; [ ] chromium + `clipboard-write`: "Sao chép" ghi `image/png`; "Đặt hình nền" → `__lastNav` bắt đầu `shortcuts://run-shortcut?name=`; [ ] offline reload vẫn mở app (webkit: xem D-013 — thử cách khác trước khi skip); [ ] size < 150 KB; [ ] `npm run check` pass chromium + webkit; [ ] bài thử tay iPhone (HUONG-DAN) có bước Chế độ máy bay → mở icon → app mở, còn sự kiện Google cache (D-013).
- - Lệnh kiểm tra: `npm run check; node scripts/size.mjs`
--- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
-+- Bổ sung (Quản lý 2026-09-14): chạy phần TỰ ĐỘNG ngay (song song việc Chủ dự án thử iPhone T-4.0); duyệt M4 chờ cả hai. `data-testid` có sẵn: Design (`bg-kind-*`, `bg-file`, `blur-0..3`, `dim`, `font-*`, `position-*`, …), Preview (`copy`, `set-wallpaper`, `shortcut-name`, `save`, `preview`). Offline webkit (D-013): thử (1) sau `serviceWorker.ready`, trong page `await caches.match('/')`/`caches.match('index.html')` phải có; (2) `context.setOffline(true)` + `page.goto(url)` (không `reload`) — nếu vẫn "internal error" thì `test.skip(webkit)` riêng bước reload có lý do + giữ khẳng định (1) cho webkit. Luôn `npm run build` trước khi chạy Playwright riêng lẻ (BAI-HOC). Không trùng lặp test đã có ở `design.spec`/`share.spec` — `m4-*` là LUỒNG ĐẦU-CUỐI: ảnh → tùy chỉnh → xuất/sao chép/đặt hình nền → offline mở lại.
-+- Nhật ký: 2026-09-14 lượt 1: DONE (m4-design, m4-export, m4-offline; webkit `caches.match` pass, offline goto vẫn lỗi engine → skip D-013; không sửa src; size 36,27 KB) → kiem-thu PASS (m4 ×3 12/6 skip; full ×2 104/12 skip/0 fail; test M1–M3 không đổi từ M3-ok) → commit.
-+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 diff --git a/package.json b/package.json
 index c48aa66..9fbdd11 100644
 --- a/package.json
@@ -440,8 +199,21 @@ index 0000000..71959fa
 +}
 +
 +main();
+diff --git a/src/core/collect.ts b/src/core/collect.ts
+index 77275da..154cb20 100644
+--- a/src/core/collect.ts
++++ b/src/core/collect.ts
+@@ -2,7 +2,7 @@ import type { AppState, Occurrence, RenderData, ISODate, Todo } from './model';
+ import { parseISODate, toISODate } from './calendar';
+ import { expandOccurrences } from './recurrence';
+ 
+-function cmpOccurrence(a: Occurrence, b: Occurrence): number {
++export function cmpOccurrence(a: Occurrence, b: Occurrence): number {
+   if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+   if (a.allDay !== b.allDay) return a.allDay ? -1 : 1;
+   const ta = a.time ?? '';
 diff --git a/src/core/i18n/en.json b/src/core/i18n/en.json
-index 424f0c6..61be724 100644
+index 424f0c6..7f2115c 100644
 --- a/src/core/i18n/en.json
 +++ b/src/core/i18n/en.json
 @@ -11,6 +11,12 @@
@@ -457,7 +229,18 @@ index 424f0c6..61be724 100644
    "preview.renderError": "Render error",
    "preview.loading": "Loading…",
    "preview.previewAlt": "Wallpaper preview",
-@@ -169,5 +175,45 @@
+@@ -145,6 +151,10 @@
+   "todo.empty": "No to-dos",
+   "todo.overdue": "Overdue",
+ 
++  "month.moreEvents": "+{n} more events",
++  "month.moreTodos": "+{n} more to-dos",
++  "preview.monthList": "List under month",
++
+   "common.comingSoon": "Coming soon",
+   "sync.lastSync": "Last synced: {time}",
+   "sync.neverSynced": "Never synced yet",
+@@ -169,5 +179,45 @@
  
    "lunar.leap": " leap",
    "lunar.line": "Lunar {day}/{month}{leap} {yearName}",
@@ -494,18 +277,18 @@ index 424f0c6..61be724 100644
 +  "guide.googleTitle": "2. Connect Google Calendar (optional)",
 +  "guide.googleBody": "Tab Sync: paste your Google Client ID, tap Connect. No Client ID yet? Create one free at console.cloud.google.com (about 10 minutes) — steps in section B of the included guide.",
 +  "guide.shortcutTitle": "3. Create the wallpaper Shortcut (once)",
-+  "guide.shortcutBody": "In Shortcuts app, add a \"Set Wallpaper\" action: Image = Shortcut Input, Lock Screen, \"Show Preview\" off. Name it to match the app's Shortcut name.",
++  "guide.shortcutBody": "In Shortcuts app, add a \"Set Wallpaper\" action: Image = Shortcut Input, Lock Screen, \"Show Preview\" off. Name it to match the app's Shortcut name. If it fails with \"extensionKit… error 2\" (an iOS bug), tap \"Set wallpaper\" again.",
 +  "guide.dailyTitle": "4. Daily use (≤ 3 taps)",
 +  "guide.dailyBody": "Open the app → Preview tab → tap \"Set wallpaper\". It copies the image and runs the Shortcut. Allow the Shortcut permission the first time.",
 +  "guide.fallbackTitle": "5. If Google sign-in doesn't return to the app",
-+  "guide.fallbackBody": "Pending confirmation on a real device. If it happens: use LichKhoa in Safari (bookmark it) for Google instead — its data is separate from the installed app.",
++  "guide.fallbackBody": "Confirmed working on iPhone 13 Pro Max. If another device gets stuck after sign-in: use LichKhoa in Safari (bookmark it) for Google instead — its data is separate from the installed app.",
 +  "guide.limitsTitle": "6. Known limits",
 +  "guide.limitsBody": "Google session lasts 1 hour, tap \"Reconnect\" after. No automatic wallpaper changes. Data may be cleared after 7 days if not installed. For reminders, add each event to iPhone Calendar.",
 +  "guide.goToSync": "Open Sync tab",
 +  "guide.goToDesign": "Open Design tab"
  }
 diff --git a/src/core/i18n/vi.json b/src/core/i18n/vi.json
-index ee8baab..c8fedfe 100644
+index ee8baab..d9e13a5 100644
 --- a/src/core/i18n/vi.json
 +++ b/src/core/i18n/vi.json
 @@ -11,6 +11,12 @@
@@ -521,7 +304,18 @@ index ee8baab..c8fedfe 100644
    "preview.renderError": "Lỗi dựng ảnh",
    "preview.loading": "Đang tải…",
    "preview.previewAlt": "Xem trước hình nền",
-@@ -169,5 +175,45 @@
+@@ -145,6 +151,10 @@
+   "todo.empty": "Không có việc cần làm",
+   "todo.overdue": "Quá hạn",
+ 
++  "month.moreEvents": "+{n} sự kiện nữa",
++  "month.moreTodos": "+{n} việc nữa",
++  "preview.monthList": "Danh sách dưới lịch tháng",
++
+   "common.comingSoon": "Sắp có",
+   "sync.lastSync": "Đồng bộ lần cuối: {time}",
+   "sync.neverSynced": "Chưa đồng bộ lần nào",
+@@ -169,5 +179,45 @@
  
    "lunar.leap": " nhuận",
    "lunar.line": "Âm lịch {day}/{month}{leap} {yearName}",
@@ -558,16 +352,36 @@ index ee8baab..c8fedfe 100644
 +  "guide.googleTitle": "2. Kết nối Google Calendar (tùy chọn)",
 +  "guide.googleBody": "Vào tab Đồng bộ, dán Google Client ID rồi bấm Kết nối. Chưa có Client ID? Tạo miễn phí tại console.cloud.google.com (khoảng 10 phút, không cần thẻ) — các bước ở mục B tài liệu Hướng dẫn đi kèm.",
 +  "guide.shortcutTitle": "3. Tạo Shortcut đặt hình nền (làm 1 lần)",
-+  "guide.shortcutBody": "Mở app Shortcuts → dấu + → thêm hành động \"Set Wallpaper\" (Đặt hình nền): Image = Shortcut Input, chọn Lock Screen, tắt \"Show Preview\". Đặt tên Shortcut trùng tên trong app (mặc định \"DatHinhNen\").",
++  "guide.shortcutBody": "Mở app Shortcuts → dấu + → thêm hành động \"Set Wallpaper\" (Đặt hình nền): Image = Shortcut Input, chọn Lock Screen, tắt \"Show Preview\". Đặt tên Shortcut trùng tên trong app (mặc định \"DatHinhNen\"). Nếu Shortcut báo \"extensionKit… error 2\": lỗi của iOS, bấm \"Đặt hình nền\" thêm lần nữa.",
 +  "guide.dailyTitle": "4. Dùng hằng ngày (≤ 3 chạm)",
 +  "guide.dailyBody": "Mở app → tab Xem trước → bấm \"Đặt hình nền\". Ảnh được sao chép và Shortcut tự mở để đặt làm hình nền khóa. Lần đầu iOS sẽ hỏi quyền cho Shortcut — hãy cho phép.",
 +  "guide.fallbackTitle": "5. Nếu kết nối Google không quay lại app được",
-+  "guide.fallbackBody": "Đang chờ xác nhận trên máy thật. Nếu gặp: mở LichKhoa bằng Safari thường (lưu làm Bookmark) để dùng Google — dữ liệu ở Safari và ở app cài trên Màn hình chính tách riêng nhau, hãy chọn một nơi dùng xuyên suốt.",
++  "guide.fallbackBody": "Trên iPhone 13 Pro Max đã chạy tốt. Nếu máy khác bị kẹt sau khi đăng nhập: mở LichKhoa bằng Safari thường (lưu làm Bookmark) để dùng Google — dữ liệu ở Safari và ở app cài trên Màn hình chính tách riêng nhau, hãy chọn một nơi dùng xuyên suốt.",
 +  "guide.limitsTitle": "6. Giới hạn đã biết",
 +  "guide.limitsBody": "Phiên Google chỉ sống 1 giờ, hết hạn bấm \"Kết nối lại\" (không tự làm mới trên iPhone được). App không tự đổi hình nền khi không chạm máy. Nếu không cài vào Màn hình chính, Safari có thể xóa dữ liệu sau 7 ngày không dùng. Muốn Lịch iPhone nhắc giờ: bấm \"Thêm vào Lịch iPhone\" cho từng sự kiện.",
 +  "guide.goToSync": "Mở tab Đồng bộ",
 +  "guide.goToDesign": "Mở tab Thiết kế"
  }
+diff --git a/src/core/model.ts b/src/core/model.ts
+index bf6bc9b..553ba5d 100644
+--- a/src/core/model.ts
++++ b/src/core/model.ts
+@@ -68,6 +68,7 @@ export interface DesignConfig {
+   hour12: boolean;
+   lang: 'vi' | 'en';
+   showLunar: boolean;
++  monthList: boolean; // v1.4 (D-018): bố cục Tháng có danh sách sự kiện/to-do bên dưới lưới
+ }
+ 
+ export interface AppState {
+@@ -111,6 +112,7 @@ export function defaultDesign(): DesignConfig {
+     hour12: false,
+     lang: 'vi',
+     showLunar: true,
++    monthList: true,
+   };
+ }
+ 
 diff --git a/src/export/share.ts b/src/export/share.ts
 index 5f8c4a4..2bc0064 100644
 --- a/src/export/share.ts
@@ -610,10 +424,10 @@ index 5f8c4a4..2bc0064 100644
 +}
 diff --git a/src/render/background.ts b/src/render/background.ts
 new file mode 100644
-index 0000000..21d4415
+index 0000000..5f1d7e8
 --- /dev/null
 +++ b/src/render/background.ts
-@@ -0,0 +1,148 @@
+@@ -0,0 +1,169 @@
 +import type { DesignConfig, DeviceSpec } from '../core/model';
 +
 +export interface CoverFit {
@@ -668,16 +482,28 @@ index 0000000..21d4415
 +  return { canvas, ctx };
 +}
 +
-+function canvasToBlob(canvas: CanvasLike, type = 'image/png'): Promise<Blob> {
++function canvasToBlob(canvas: CanvasLike, type = 'image/png', quality?: number): Promise<Blob> {
 +  if (typeof OffscreenCanvas !== 'undefined' && canvas instanceof OffscreenCanvas) {
-+    return canvas.convertToBlob({ type });
++    return canvas.convertToBlob({ type, quality });
 +  }
 +  return new Promise((resolve, reject) => {
-+    (canvas as HTMLCanvasElement).toBlob((b) => {
-+      if (b) resolve(b);
-+      else reject(new Error('toBlob thất bại'));
-+    }, type);
++    (canvas as HTMLCanvasElement).toBlob(
++      (b) => {
++        if (b) resolve(b);
++        else reject(new Error('toBlob thất bại'));
++      },
++      type,
++      quality,
++    );
 +  });
++}
++
++/** Định dạng lưu ảnh nền theo nguồn (T-4.7 review): nguồn có thể có alpha (PNG/WEBP/GIF) → giữ PNG;
++ * còn lại (JPEG/HEIC/…) → JPEG chất lượng cao — tránh PNG khổng lồ cho ảnh chụp thường (SPEC §8 rủi ro 9). */
++export function outputTypeFor(sourceType: string): 'image/png' | 'image/jpeg' {
++  return sourceType === 'image/png' || sourceType === 'image/webp' || sourceType === 'image/gif'
++    ? 'image/png'
++    : 'image/jpeg';
 +}
 +
 +/** Giải mã ảnh, ưu tiên `createImageBitmap` (tôn trọng EXIF orientation), fallback qua thẻ `<img>`. */
@@ -710,14 +536,23 @@ index 0000000..21d4415
 +    : { w: img.width, h: img.height };
 +}
 +
-+/** Nạp ảnh từ Thư viện: đọc EXIF orientation, thu nhỏ ≤ 2× kích thước thiết bị, trả Blob JPEG để lưu IndexedDB. */
++/** Giải phóng bộ nhớ GPU của `ImageBitmap` sau khi dùng xong (T-4.7 #6 — rò rỉ trên iOS); `<img>` không cần (đã revoke ở `decodeImage`). */
++export function closeImage(img: ImageBitmap | HTMLImageElement): void {
++  if (typeof ImageBitmap !== 'undefined' && img instanceof ImageBitmap) img.close();
++}
++
++/** Nạp ảnh từ Thư viện: đọc EXIF orientation, thu nhỏ ≤ 2× kích thước thiết bị, trả Blob để lưu IndexedDB.
++ * Định dạng theo nguồn (`outputTypeFor`): PNG/WEBP/GIF (có thể có alpha, T-4.7 #10) → PNG; JPEG/HEIC/… → JPEG 0.9
++ * (PNG cho mọi ảnh chụp thường sẽ quá nặng — SPEC §8 rủi ro 9). */
 +export async function loadPhoto(file: Blob, dev: DeviceSpec): Promise<Blob> {
 +  const img = await decodeImage(file);
 +  const { w: iw, h: ih } = sourceSize(img);
 +  const { w, h } = fitDownscale(iw, ih, dev.width, dev.height, 2);
 +  const { canvas, ctx } = makeCanvas(w, h);
 +  ctx.drawImage(img as CanvasImageSource, 0, 0, w, h);
-+  return canvasToBlob(canvas, 'image/jpeg');
++  closeImage(img);
++  const type = outputTypeFor(file.type);
++  return canvasToBlob(canvas, type, type === 'image/jpeg' ? 0.9 : undefined);
 +}
 +
 +/** Vẽ ảnh nền (cover-fit) + mờ (hạ/tăng mẫu canvas, KHÔNG `ctx.filter`) + tối lên `ctx` kích thước thiết bị. */
@@ -762,15 +597,342 @@ index 0000000..21d4415
 +}
 +
 +export { decodeImage, makeCanvas, canvasToBlob };
+diff --git a/src/render/layout/month.ts b/src/render/layout/month.ts
+index c6fa022..e15bb8b 100644
+--- a/src/render/layout/month.ts
++++ b/src/render/layout/month.ts
+@@ -1,23 +1,37 @@
+-import type { DesignConfig, DeviceSpec, RenderData } from '../../core/model';
++import type { DesignConfig, DeviceSpec, ISODate, Occurrence, RenderData, Todo } from '../../core/model';
+ import { monthGrid, parseISODate } from '../../core/calendar';
++import { groupAgenda } from '../../core/calendar';
+ import { t } from '../../core/i18n';
+-import { blockStartY, fontSize, mainArea, weekdayLabels, lunarCellLabel, lunarTodayLine, type DrawOp } from './common';
++import {
++  blockStartY,
++  dayLabel,
++  fmtTime,
++  fontSize,
++  mainArea,
++  truncate,
++  todoDueLabel,
++  weekdayLabels,
++  lunarCellLabel,
++  lunarTodayLine,
++  type DrawOp,
++} from './common';
+ 
+ export type { DrawOp };
+ 
+-/** Bố cục Tháng: tiêu đề, hàng thứ, lưới 6x7, tô hôm nay, chấm sự kiện. Hàm thuần. */
+-export function layoutMonth(d: RenderData, c: DesignConfig, dev: DeviceSpec): DrawOp[] {
+-  const ops: DrawOp[] = [];
+-  const area = mainArea(dev, c);
+-  const usable = area.bottom - area.top;
+-  const contentHeight = usable * 0.82;
+-  const contentTop = blockStartY(area, c.position, contentHeight);
+-
+-  const margin = dev.width * 0.05;
+-  const gridLeft = margin;
+-  const gridWidth = dev.width - 2 * margin;
+-  const colW = gridWidth / 7;
++/** Tỉ lệ chiều cao lưới Tháng trong khối nội dung khi `monthList` bật (D-018/T-4.8). */
++const GRID_RATIO = 0.62;
+ 
++/** Vẽ tiêu đề tháng, dòng âm lịch, hàng thứ, lưới 6x7 (tô hôm nay, chấm sự kiện) vào `ops`. Hàm thuần, không vẽ hộp nền. */
++function drawGrid(
++  ops: DrawOp[],
++  d: RenderData,
++  c: DesignConfig,
++  dev: DeviceSpec,
++  contentTop: number,
++  contentHeight: number,
++  gridLeft: number,
++  colW: number
++): void {
+   const titleH = contentHeight * 0.1;
+   const lunarLineH = c.showLunar ? contentHeight * 0.045 : 0;
+   const weekdayH = contentHeight * 0.06;
+@@ -26,18 +40,6 @@ export function layoutMonth(d: RenderData, c: DesignConfig, dev: DeviceSpec): Dr
+ 
+   const { y: year, m0 } = parseISODate(d.today);
+ 
+-  // Hộp nền mờ cho cả khối
+-  ops.push({
+-    op: 'rect',
+-    x: gridLeft - margin * 0.4,
+-    y: contentTop,
+-    w: gridWidth + margin * 0.8,
+-    h: contentHeight,
+-    r: 24,
+-    fill: '#000000',
+-    alpha: c.boxAlpha,
+-  });
+-
+   // Tiêu đề tháng (y theo baseline chữ: tâm dải + 0.35*size để căn giữa theo mắt)
+   const titleSize = fontSize(dev.width * 0.045, c.scale);
+   const titleCenterY = contentTop + titleH / 2;
+@@ -175,6 +177,251 @@ export function layoutMonth(d: RenderData, c: DesignConfig, dev: DeviceSpec): Dr
+       }
+     }
+   }
++}
++
++type ListRow =
++  | { kind: 'event'; date: ISODate; occ: Occurrence }
++  | { kind: 'todo'; todo: Todo }
++  | { kind: 'moreEvents'; count: number }
++  | { kind: 'moreTodos'; count: number }
++  | { kind: 'empty' };
++
++/** Phân bổ `total` mục vào `budget` dòng, dành 1 dòng cho "+N" nếu không đủ chỗ. */
++function allocate(total: number, budget: number): { shown: number; more: number } {
++  if (budget <= 0) return { shown: 0, more: 0 };
++  if (total <= budget) return { shown: total, more: 0 };
++  const shown = Math.max(0, budget - 1);
++  return { shown, more: total - shown };
++}
++
++/** Xây danh sách sự kiện (từ hôm nay, `agendaDays` ngày, gồm Google) + to-do chưa xong, cắt theo `maxLines`. */
++function buildListRows(d: RenderData, c: DesignConfig, maxLines: number): ListRow[] {
++  const groups = groupAgenda(d.occurrences, d.today, c.agendaDays);
++  const events: { date: ISODate; occ: Occurrence }[] = [];
++  for (const g of groups) for (const occ of g.items) events.push({ date: g.date, occ });
++  const todos = d.todos.filter((t) => !t.done);
++
++  if (events.length === 0 && todos.length === 0) return [{ kind: 'empty' }];
++
++  const L = Math.max(1, maxLines);
++  let eventBudget = Math.ceil(L / 2);
++  let todoBudget = L - eventBudget;
++
++  let evAlloc = allocate(events.length, eventBudget);
++  let evUsedLines = evAlloc.shown + (evAlloc.more > 0 ? 1 : 0);
++  let unusedFromEvents = eventBudget - evUsedLines;
++  if (unusedFromEvents > 0) todoBudget += unusedFromEvents;
++
++  const toAlloc = allocate(todos.length, todoBudget);
++  const toUsedLines = toAlloc.shown + (toAlloc.more > 0 ? 1 : 0);
++  const unusedFromTodos = todoBudget - toUsedLines;
++  if (unusedFromTodos > 0) {
++    eventBudget += unusedFromTodos;
++    evAlloc = allocate(events.length, eventBudget);
++  }
++
++  const rows: ListRow[] = [];
++  for (let i = 0; i < evAlloc.shown; i++) rows.push({ kind: 'event', date: events[i].date, occ: events[i].occ });
++  if (evAlloc.more > 0) rows.push({ kind: 'moreEvents', count: evAlloc.more });
++  for (let i = 0; i < toAlloc.shown; i++) rows.push({ kind: 'todo', todo: todos[i] });
++  if (toAlloc.more > 0) rows.push({ kind: 'moreTodos', count: toAlloc.more });
++
++  return rows.length > 0 ? rows : [{ kind: 'empty' }];
++}
++
++function drawList(
++  ops: DrawOp[],
++  d: RenderData,
++  c: DesignConfig,
++  rows: ListRow[],
++  listTop: number,
++  contentLeft: number,
++  contentWidth: number,
++  lineSize: number,
++  lineH: number
++): void {
++  let y = listTop;
++  for (const row of rows) {
++    const rowCenterY = y + lineH / 2;
++
++    if (row.kind === 'empty') {
++      ops.push({
++        op: 'text',
++        x: contentLeft,
++        y: rowCenterY + lineSize * 0.35,
++        text: t('agenda.empty', c.lang),
++        size: lineSize,
++        weight: 400,
++        color: c.textColor,
++        align: 'left',
++        font: c.font,
++      });
++    } else if (row.kind === 'moreEvents') {
++      ops.push({
++        op: 'text',
++        x: contentLeft,
++        y: rowCenterY + lineSize * 0.35,
++        text: t('month.moreEvents', c.lang, { n: row.count }),
++        size: lineSize,
++        weight: 400,
++        color: c.textColor,
++        align: 'left',
++        font: c.font,
++      });
++    } else if (row.kind === 'moreTodos') {
++      ops.push({
++        op: 'text',
++        x: contentLeft,
++        y: rowCenterY + lineSize * 0.35,
++        text: t('month.moreTodos', c.lang, { n: row.count }),
++        size: lineSize,
++        weight: 400,
++        color: c.textColor,
++        align: 'left',
++        font: c.font,
++      });
++    } else if (row.kind === 'event') {
++      const occ = row.occ;
++      const dotColor = occ.color ?? c.accentColor;
++      const dotX = contentLeft + lineSize * 0.3;
++      ops.push({ op: 'dot', x: dotX, y: rowCenterY, r: Math.max(2, lineSize * 0.18), fill: dotColor });
++
++      const dateLabel = dayLabel(row.date, d.today, c.lang, false);
++      const timeLabel = occ.allDay ? t('events.allDay', c.lang) : fmtTime(occ.time, c.hour12);
++      const prefix = timeLabel ? `${dateLabel} · ${timeLabel}` : dateLabel;
++      const prefixWidth = prefix.length * lineSize * 0.5 + lineSize * 0.6;
++      ops.push({
++        op: 'text',
++        x: contentLeft + lineSize * 1.2,
++        y: rowCenterY + lineSize * 0.35,
++        text: prefix,
++        size: lineSize,
++        weight: 400,
++        color: c.textColor,
++        align: 'left',
++        font: c.font,
++      });
++      const titleLeft = contentLeft + lineSize * 1.2 + prefixWidth;
++      const titleAvailWidth = Math.max(1, contentLeft + contentWidth - titleLeft);
++      ops.push({
++        op: 'text',
++        x: titleLeft,
++        y: rowCenterY + lineSize * 0.35,
++        text: truncate(occ.title, titleAvailWidth, lineSize),
++        size: lineSize,
++        weight: 600,
++        color: c.textColor,
++        align: 'left',
++        font: c.font,
++      });
++    } else {
++      const todo = row.todo;
++      ops.push({
++        op: 'text',
++        x: contentLeft,
++        y: rowCenterY + lineSize * 0.35,
++        text: '☐',
++        size: lineSize * 1.1,
++        weight: 600,
++        color: c.textColor,
++        align: 'left',
++        font: c.font,
++      });
++      const textLeft = contentLeft + lineSize * 1.4;
++      let availWidth = Math.max(1, contentLeft + contentWidth - textLeft);
++
++      const due = todo.due ? todoDueLabel(todo.due, d.today, c.lang) : null;
++      if (due) {
++        const labelSize = lineSize * 0.85;
++        const labelWidth = due.text.length * labelSize * 0.5 + lineSize * 0.6;
++        availWidth = Math.max(1, availWidth - labelWidth);
++        ops.push({
++          op: 'text',
++          x: contentLeft + contentWidth,
++          y: rowCenterY + lineSize * 0.35,
++          text: due.text,
++          size: labelSize,
++          weight: due.overdue ? 700 : 600,
++          color: due.overdue ? c.accentColor : c.textColor,
++          align: 'right',
++          font: c.font,
++        });
++      }
++
++      ops.push({
++        op: 'text',
++        x: textLeft,
++        y: rowCenterY + lineSize * 0.35,
++        text: truncate(todo.text, availWidth, lineSize),
++        size: lineSize,
++        weight: 400,
++        color: c.textColor,
++        align: 'left',
++        font: c.font,
++      });
++    }
++
++    y += lineH;
++  }
++}
++
++/** Bố cục Tháng: tiêu đề, hàng thứ, lưới 6x7, tô hôm nay, chấm sự kiện; nếu `monthList` bật,
++ * lưới thu lại còn ~`GRID_RATIO` chiều cao khối, phần còn lại là danh sách sự kiện + to-do (D-018/T-4.8). Hàm thuần. */
++export function layoutMonth(d: RenderData, c: DesignConfig, dev: DeviceSpec): DrawOp[] {
++  const ops: DrawOp[] = [];
++  const area = mainArea(dev, c);
++  const usable = area.bottom - area.top;
++
++  const margin = dev.width * 0.05;
++  const gridLeft = margin;
++  const gridWidth = dev.width - 2 * margin;
++  const colW = gridWidth / 7;
++
++  if (!c.monthList) {
++    const contentHeight = usable * 0.82;
++    const contentTop = blockStartY(area, c.position, contentHeight);
++
++    ops.push({
++      op: 'rect',
++      x: gridLeft - margin * 0.4,
++      y: contentTop,
++      w: gridWidth + margin * 0.8,
++      h: contentHeight,
++      r: 24,
++      fill: '#000000',
++      alpha: c.boxAlpha,
++    });
++
++    drawGrid(ops, d, c, dev, contentTop, contentHeight, gridLeft, colW);
++    return ops;
++  }
++
++  const gridContentHeight = usable * GRID_RATIO;
++  const listMaxH = usable - gridContentHeight;
++
++  const lineSize = fontSize(dev.width * 0.032, c.scale);
++  const lineH = lineSize * 1.6;
++  const maxLines = Math.max(1, Math.floor(listMaxH / lineH));
++
++  const rows = buildListRows(d, c, maxLines);
++  const listHeight = Math.min(listMaxH, rows.length * lineH);
++
++  const contentHeight = gridContentHeight + listHeight;
++  const contentTop = blockStartY(area, c.position, contentHeight);
++
++  ops.push({
++    op: 'rect',
++    x: gridLeft - margin * 0.4,
++    y: contentTop,
++    w: gridWidth + margin * 0.8,
++    h: contentHeight,
++    r: 24,
++    fill: '#000000',
++    alpha: c.boxAlpha,
++  });
++
++  drawGrid(ops, d, c, dev, contentTop, gridContentHeight, gridLeft, colW);
++  drawList(ops, d, c, rows, contentTop + gridContentHeight, gridLeft, gridWidth, lineSize, lineH);
+ 
+   return ops;
+ }
 diff --git a/src/render/wallpaper.ts b/src/render/wallpaper.ts
-index 984843d..42357bd 100644
+index 984843d..13d65e3 100644
 --- a/src/render/wallpaper.ts
 +++ b/src/render/wallpaper.ts
 @@ -5,6 +5,7 @@ import { layoutMonth } from './layout/month';
  import { layoutAgenda } from './layout/agenda';
  import { layoutTodo } from './layout/todo';
  import { layoutNote } from './layout/note';
-+import { decodeImage, drawBackground, makeCanvas, canvasToBlob } from './background';
++import { decodeImage, drawBackground, makeCanvas, canvasToBlob, closeImage } from './background';
  
  declare global {
    interface Window {
@@ -806,7 +968,7 @@ index 984843d..42357bd 100644
  function paintBackground(ctx: CanvasRenderingContext2D, state: AppState): void {
    const { bg } = state.design;
    const w = state.device.width;
-@@ -65,11 +41,16 @@ export function buildOps(state: AppState, today: ISODate): DrawOp[] {
+@@ -65,11 +41,20 @@ export function buildOps(state: AppState, today: ISODate): DrawOp[] {
    return [...ops, ...layoutNote(data, design, device)];
  }
  
@@ -818,8 +980,12 @@ index 984843d..42357bd 100644
  
 -  paintBackground(ctx, state);
 +  if (state.design.bg.kind === 'photo' && bg) {
++    // Tô màu nền trước (T-4.7 #10): ảnh (đặc biệt PNG trong suốt) có thể để lộ canvas
++    // rỗng nếu vẽ trực tiếp lên nền chưa tô — vùng trong suốt phải thấy màu/gradient nền.
++    paintBackground(ctx, state);
 +    const img = await decodeImage(bg);
 +    drawBackground(ctx, img, state.design, state.device);
++    closeImage(img);
 +  } else {
 +    paintBackground(ctx, state);
 +  }
@@ -1312,12 +1478,15 @@ index 0000000..27eecc2
 +  );
 +}
 diff --git a/src/ui/screens/Preview.tsx b/src/ui/screens/Preview.tsx
-index 23c5446..f1b4417 100644
+index 23c5446..6df0c5c 100644
 --- a/src/ui/screens/Preview.tsx
 +++ b/src/ui/screens/Preview.tsx
-@@ -5,7 +5,7 @@ import { DEVICES, customDevice, detectDevice } from '../../render/devices';
+@@ -3,9 +3,9 @@ import type { Store } from '../store';
+ import type { DesignConfig } from '../../core/model';
+ import { DEVICES, customDevice, detectDevice } from '../../render/devices';
  import { renderWallpaper } from '../../render/wallpaper';
- import { loadBg } from '../../storage/db';
+-import { loadBg } from '../../storage/db';
++import { loadBg, saveBg } from '../../storage/db';
  import { toISODate } from '../../core/calendar';
 -import { savePng } from '../../export/share';
 +import { savePng, copyPng, openShortcut } from '../../export/share';
@@ -1343,7 +1512,22 @@ index 23c5446..f1b4417 100644
    useEffect(() => {
      loadBg().then((b) => {
        bgRef.current = b;
-@@ -177,6 +182,31 @@ export function Preview({ store }: { store: Store }) {
+@@ -130,9 +135,13 @@ export function Preview({ store }: { store: Store }) {
+     }
+   }
+ 
+-  function onWipe() {
++  async function onWipe() {
+     if (!window.confirm(t('settings.clearDataConfirm', lang))) return;
+     store.dispatch({ type: 'resetAll' });
++    // T-4.7 #4: resetAll chỉ đổi state chữ; ảnh nền lưu riêng ở IndexedDB (BG_KEY) phải dọn
++    // ngay để lần sau chọn lại nền Ảnh không hiện ảnh cũ của lượt trước.
++    bgRef.current = null;
++    await saveBg(null);
+     showToast(t('settings.wipeOk', lang));
+   }
+ 
+@@ -177,6 +186,31 @@ export function Preview({ store }: { store: Store }) {
      await savePng(blob, `lichkhoa-${today}.png`);
    }
  
@@ -1375,7 +1559,7 @@ index 23c5446..f1b4417 100644
    return (
      <div class="preview-screen">
        <div class="preview-core">
-@@ -214,9 +244,31 @@ export function Preview({ store }: { store: Store }) {
+@@ -214,9 +248,31 @@ export function Preview({ store }: { store: Store }) {
          )}
          {error && <p class="error">{error}</p>}
          {imgUrl && <img data-testid="preview" src={imgUrl} alt={t('preview.previewAlt', lang)} />}
@@ -1410,6 +1594,34 @@ index 23c5446..f1b4417 100644
        </div>
  
        <div class="settings-section">
+@@ -288,6 +344,18 @@ export function Preview({ store }: { store: Store }) {
+           />
+         </div>
+ 
++        <div class="field field-between">
++          <label for="month-list">{t('preview.monthList', lang)}</label>
++          <input
++            type="checkbox"
++            id="month-list"
++            class="switch"
++            data-testid="month-list"
++            checked={state.design.monthList}
++            onChange={(e) => setDesign({ monthList: (e.target as HTMLInputElement).checked })}
++          />
++        </div>
++
+         <button type="button" class="btn block" data-testid="export-json" onClick={onExportJson}>
+           {t('settings.exportJson', lang)}
+         </button>
+@@ -306,7 +374,7 @@ export function Preview({ store }: { store: Store }) {
+         />
+         <p class="hint">{t('settings.importHint', lang)}</p>
+ 
+-        <button type="button" class="btn danger block" data-testid="wipe" onClick={onWipe}>
++        <button type="button" class="btn danger block" data-testid="wipe" onClick={() => void onWipe()}>
+           {t('settings.clearData', lang)}
+         </button>
+       </div>
 diff --git a/src/ui/screens/Sync.tsx b/src/ui/screens/Sync.tsx
 index 1ef94af..06a6af8 100644
 --- a/src/ui/screens/Sync.tsx
@@ -1460,8 +1672,52 @@ index 1ef94af..06a6af8 100644
              {syncing ? t('sync.syncing', lang) : t('sync.syncNow', lang)}
            </button>
  
+diff --git a/src/ui/screens/events/EventsTab.tsx b/src/ui/screens/events/EventsTab.tsx
+index 7d09c17..fe1b367 100644
+--- a/src/ui/screens/events/EventsTab.tsx
++++ b/src/ui/screens/events/EventsTab.tsx
+@@ -3,6 +3,7 @@ import type { Store } from '../../store';
+ import type { AppState, LocalEvent, Occurrence } from '../../../core/model';
+ import { monthGrid, parseISODate, toISODate } from '../../../core/calendar';
+ import { expandOccurrences } from '../../../core/recurrence';
++import { cmpOccurrence } from '../../../core/collect';
+ import { solarToLunar } from '../../../core/lunar';
+ import { eventToIcs } from '../../../export/ics';
+ import { t } from '../../../core/i18n';
+@@ -56,7 +57,9 @@ export function EventsTab({ store, state, showToast }: Props) {
+   const grid = monthGrid(ym.y, ym.m0, state.design.weekStart);
+   const monthFrom = `${ym.y}-${String(ym.m0 + 1).padStart(2, '0')}-01`;
+   const monthTo = toISODate(new Date(ym.y, ym.m0, lastDayOfMonth(ym.y, ym.m0), 12));
+-  const monthOcc = expandOccurrences(state.events, monthFrom, monthTo);
++  const localOcc = expandOccurrences(state.events, monthFrom, monthTo);
++  const googleOcc = (state.google.cache?.events ?? []).filter((o) => o.date >= monthFrom && o.date <= monthTo);
++  const monthOcc = [...localOcc, ...googleOcc].sort(cmpOccurrence);
+   const occByDate = new Map<string, Occurrence[]>();
+   for (const o of monthOcc) {
+     const list = occByDate.get(o.date);
+@@ -218,7 +221,19 @@ export function EventsTab({ store, state, showToast }: Props) {
+         </button>
+         {dayOcc.length === 0 && <p class="empty">{t('events.dayEmpty', lang)}</p>}
+         {dayOcc.map((o) => {
+-          const src = o.source === 'local' ? state.events.find((e) => e.id === o.sourceId) : undefined;
++          if (o.source === 'google') {
++            return (
++              <div key={o.id} data-testid="ev-item-google" class="ev-item ev-item-google">
++                <span class="ev-item-bar" style={{ background: o.color || EVENT_COLORS[0] }} />
++                <span class="ev-item-time">{o.allDay ? t('events.allDay', lang) : o.time}</span>
++                <span class="ev-item-body">
++                  <span class="ev-item-title">{o.title}</span>
++                </span>
++                <span class="ev-tag-google">Google</span>
++              </div>
++            );
++          }
++          const src = state.events.find((e) => e.id === o.sourceId);
+           const meta = src ? eventMeta(src, lang) : '';
+           return (
+             <button key={o.id} type="button" data-testid="ev-item" class="ev-item" onClick={() => onOccClick(o)}>
 diff --git a/src/ui/store.ts b/src/ui/store.ts
-index 3b5497b..deeb9bb 100644
+index 3b5497b..c43e876 100644
 --- a/src/ui/store.ts
 +++ b/src/ui/store.ts
 @@ -37,7 +37,8 @@ export type Action =
@@ -1474,7 +1730,19 @@ index 3b5497b..deeb9bb 100644
  
  function nextId(explicit?: string): string {
    if (explicit) return explicit;
-@@ -128,6 +129,8 @@ export function reducer(state: AppState, action: Action): AppState {
+@@ -112,7 +113,10 @@ export function reducer(state: AppState, action: Action): AppState {
+         if (action.pinned && n.pinned) return { ...n, pinned: false };
+         return n;
+       });
+-      return { ...state, notes };
++      const design = action.pinned && !state.design.showNote
++        ? { ...state.design, showNote: true }
++        : state.design;
++      return { ...state, notes, design };
+     }
+     case 'replaceState': {
+       const normalized = normalizeState(action.state);
+@@ -128,6 +132,8 @@ export function reducer(state: AppState, action: Action): AppState {
        return { ...state, google: { ...state.google, cache: action.cache } };
      case 'disconnectGoogle':
        return { ...state, google: { ...state.google, calendarIds: [], cache: null } };
@@ -1484,7 +1752,7 @@ index 3b5497b..deeb9bb 100644
        return state;
    }
 diff --git a/src/ui/styles.css b/src/ui/styles.css
-index 9d7d39e..405f218 100644
+index 9d7d39e..fa4bb70 100644
 --- a/src/ui/styles.css
 +++ b/src/ui/styles.css
 @@ -143,23 +143,51 @@ select option {
@@ -1542,7 +1810,27 @@ index 9d7d39e..405f218 100644
  .error {
    color: #ff6b6b;
    font-size: 13px;
-@@ -571,6 +599,12 @@ select option {
+@@ -379,6 +407,19 @@ select option {
+   white-space: nowrap;
+ }
+ 
++.ev-item-google {
++  opacity: 0.85;
++}
++
++.ev-tag-google {
++  font-size: 10px;
++  color: #9ab8ff;
++  border: 1px solid #3a4a7a;
++  border-radius: 4px;
++  padding: 1px 5px;
++  flex-shrink: 0;
++}
++
+ .hint {
+   font-size: 12px;
+   color: #888;
+@@ -571,6 +612,12 @@ select option {
    color: #fff;
  }
  
@@ -1555,7 +1843,7 @@ index 9d7d39e..405f218 100644
  .swatches {
    display: flex;
    gap: 8px;
-@@ -584,8 +618,11 @@ select option {
+@@ -584,8 +631,11 @@ select option {
    border: 2px solid transparent;
  }
  
@@ -1567,7 +1855,7 @@ index 9d7d39e..405f218 100644
  }
  
  /* ---- việc cần làm (port lich-nen.html L275-286/L862-892) ---- */
-@@ -840,6 +877,105 @@ select option {
+@@ -840,6 +890,105 @@ select option {
    overflow-y: auto;
  }
  
@@ -1706,10 +1994,10 @@ index c0b6122..e19aa87 100644
  }
 diff --git a/tests/e2e/design.spec.ts b/tests/e2e/design.spec.ts
 new file mode 100644
-index 0000000..a73744f
+index 0000000..9783ca5
 --- /dev/null
 +++ b/tests/e2e/design.spec.ts
-@@ -0,0 +1,109 @@
+@@ -0,0 +1,171 @@
 +import { test, expect, type Page } from '@playwright/test';
 +import path from 'path';
 +import { fileURLToPath } from 'url';
@@ -1819,6 +2107,236 @@ index 0000000..a73744f
 +  await expect(page.getByTestId('accent-0')).toHaveAttribute('aria-pressed', 'true');
 +  await expect(page.getByTestId('accent-5')).toHaveAttribute('aria-pressed', 'false');
 +});
++
++test('T-4.7 #10: PNG trong suốt không lộ nền đen — vẽ trên màu nền đã chọn', async ({ page }) => {
++  await page.goto('/?test=1');
++  await page.getByTestId('tab-design').click();
++
++  // Đặt màu nền (còn hiện khi kind != photo) thành đỏ trước khi chọn ảnh trong suốt.
++  await page.getByTestId('bg-kind-solid').click();
++  await page.getByTestId('bg-color').fill('#ff0000');
++
++  await page.getByTestId('bg-file').setInputFiles(path.join(__dirname, '..', 'fixtures', 'transparent-10x10.png'));
++  await expect(page.getByTestId('bg-kind-photo')).toHaveAttribute('aria-selected', 'true');
++
++  await page.getByTestId('tab-preview').click();
++  await waitPreview1284(page);
++
++  // Ảnh hoàn toàn trong suốt (cover-fit phủ kín khung) -> điểm giữa preview phải ra màu nền đỏ,
++  // không phải đen (canvas rỗng chưa tô trước khi vẽ ảnh).
++  const centerColor = await page.evaluate(async () => {
++    const img = document.querySelector('[data-testid="preview"]') as HTMLImageElement;
++    const res = await fetch(img.src);
++    const bitmap = await createImageBitmap(await res.blob());
++    const canvas = document.createElement('canvas');
++    canvas.width = bitmap.width;
++    canvas.height = bitmap.height;
++    const ctx = canvas.getContext('2d')!;
++    ctx.drawImage(bitmap, 0, 0);
++    const { data } = ctx.getImageData(Math.floor(bitmap.width / 2), Math.floor(bitmap.height / 2), 1, 1);
++    return Array.from(data);
++  });
++  expect(centerColor[0]).toBeGreaterThan(150); // kênh đỏ cao
++  expect(centerColor[1]).toBeLessThan(80); // kênh xanh lá thấp
++});
++
++/** Đọc `{buf, type}` mà `saveBg` lưu ở IndexedDB `keyval-store`/`keyval` khóa `lichkhoa:bg`. */
++async function readBgType(page: Page): Promise<string | undefined> {
++  return page.evaluate(
++    () =>
++      new Promise<string | undefined>((resolve, reject) => {
++        const req = indexedDB.open('keyval-store');
++        req.onerror = () => reject(req.error);
++        req.onsuccess = () => {
++          const db = req.result;
++          const tx = db.transaction('keyval', 'readonly');
++          const getReq = tx.objectStore('keyval').get('lichkhoa:bg');
++          getReq.onsuccess = () => resolve((getReq.result as { type?: string } | undefined)?.type);
++          getReq.onerror = () => reject(getReq.error);
++        };
++      }),
++  );
++}
++
++test('T-4.7 review: định dạng lưu ảnh nền theo nguồn — JPEG giữ JPEG, PNG giữ PNG', async ({ page }) => {
++  await page.goto('/?test=1');
++  await page.getByTestId('tab-design').click();
++
++  await page.getByTestId('bg-file').setInputFiles(path.join(__dirname, '..', 'fixtures', 'photo-4000x3000.jpg'));
++  await expect(page.getByTestId('bg-kind-photo')).toHaveAttribute('aria-selected', 'true');
++  await expect.poll(() => readBgType(page)).toBe('image/jpeg');
++
++  await page.getByTestId('bg-file').setInputFiles(path.join(__dirname, '..', 'fixtures', 'transparent-10x10.png'));
++  await expect.poll(() => readBgType(page)).toBe('image/png');
++});
+diff --git a/tests/e2e/events.spec.ts b/tests/e2e/events.spec.ts
+index 3d34854..9001588 100644
+--- a/tests/e2e/events.spec.ts
++++ b/tests/e2e/events.spec.ts
+@@ -5,6 +5,42 @@ async function openEventsTab(page: import('@playwright/test').Page) {
+   await page.getByTestId('tab-events').click();
+ }
+ 
++const SEED_DEVICE = { id: 'iphone-13-pro-max', label: 'iPhone 13 Pro Max', width: 428, height: 926, safeTop: 0.3, safeBottom: 0.14 };
++
++/** Ghi thẳng `lichkhoa:state` vào IndexedDB (`keyval-store`/`keyval`), hợp nhất trên state đã có (T-4.9, port m3-google.spec.ts). */
++async function seedState(page: import('@playwright/test').Page, patch: Record<string, unknown>): Promise<void> {
++  await page.evaluate(
++    ({ patch, device }) =>
++      new Promise<void>((resolve, reject) => {
++        const req = indexedDB.open('keyval-store');
++        req.onupgradeneeded = () => req.result.createObjectStore('keyval');
++        req.onerror = () => reject(req.error);
++        req.onsuccess = () => {
++          const tx = req.result.transaction('keyval', 'readonly');
++          const getReq = tx.objectStore('keyval').get('lichkhoa:state');
++          getReq.onerror = () => reject(getReq.error);
++          getReq.onsuccess = () => {
++            const cur = (getReq.result ?? { version: 1, device }) as Record<string, unknown>;
++            const next = { ...cur, ...patch };
++            const tx2 = req.result.transaction('keyval', 'readwrite');
++            tx2.objectStore('keyval').put(next, 'lichkhoa:state');
++            tx2.oncomplete = () => {
++              req.result.close();
++              resolve();
++            };
++            tx2.onerror = () => reject(tx2.error);
++          };
++        };
++      }),
++    { patch, device: SEED_DEVICE },
++  );
++}
++
++function isoDate(d: Date): string {
++  const p = (n: number) => String(n).padStart(2, '0');
++  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
++}
++
+ test('Sự kiện: thêm/sửa/xóa, xuất .ics, việc cần làm, ghi chú', async ({ page }) => {
+   page.on('dialog', (d) => d.accept());
+   await openEventsTab(page);
+@@ -229,3 +265,107 @@ test('Việc cần làm: hạn quá hạn hiện trước việc không hạn',
+   await expect(rows.nth(0).getByTestId('todo-due-label')).toHaveClass(/todo-due-overdue/);
+   await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('Việc không hạn');
+ });
++
++test('Sự kiện: tab Sự kiện hiện sự kiện Google (chỉ xem, T-4.9)', async ({ page }) => {
++  await page.goto('/');
++  const today = new Date();
++  const plus3 = new Date(today);
++  plus3.setDate(plus3.getDate() + 3);
++  const todayIso = isoDate(today);
++  const plus3Iso = isoDate(plus3);
++
++  await seedState(page, {
++    google: {
++      clientId: 'test-client',
++      calendarIds: ['cal1'],
++      cache: {
++        fetchedAt: Date.now(),
++        events: [
++          {
++            id: 'google-ev-today',
++            sourceId: 'google-ev-today',
++            source: 'google',
++            title: 'Họp Google hôm nay',
++            date: todayIso,
++            time: '14:00',
++            allDay: false,
++            color: '#4285F4',
++          },
++          {
++            id: 'google-ev-plus3',
++            sourceId: 'google-ev-plus3',
++            source: 'google',
++            title: 'Hội thảo Google',
++            date: plus3Iso,
++            allDay: true,
++            color: '#4285F4',
++          },
++        ],
++      },
++    },
++  });
++  await page.reload();
++  await page.getByTestId('tab-events').click();
++
++  await expect(page.getByTestId(`cal-cell-${todayIso}`).locator('.cal-dot')).toHaveCount(1);
++  const gItem = page.getByTestId('ev-item-google').filter({ hasText: 'Họp Google hôm nay' });
++  await expect(gItem).toBeVisible();
++  await expect(gItem).toContainText('Google');
++
++  // Bấm vào mục Google không mở sheet sửa.
++  await gItem.click();
++  await expect(page.getByTestId('ev-cancel')).not.toBeVisible();
++
++  // Chọn ngày +3 -> hiện sự kiện cả ngày.
++  await page.getByTestId(`cal-cell-${plus3Iso}`).click();
++  const gAllDay = page.getByTestId('ev-item-google').filter({ hasText: 'Hội thảo Google' });
++  await expect(gAllDay).toBeVisible();
++  await expect(gAllDay).toContainText('Cả ngày');
++
++  // Thêm sự kiện cục bộ cùng ngày +3 -> cả hai cùng hiện, mục cục bộ vẫn mở sheet.
++  await page.getByTestId('add-event').click();
++  await page.getByTestId('ev-title').fill('Việc cục bộ +3');
++  await page.getByTestId('ev-save').click();
++
++  await expect(page.getByTestId('ev-item-google').filter({ hasText: 'Hội thảo Google' })).toBeVisible();
++  const localItem = page.getByTestId('ev-item').filter({ hasText: 'Việc cục bộ +3' });
++  await expect(localItem).toBeVisible();
++  await localItem.click();
++  await expect(page.getByTestId('ev-cancel')).toBeVisible();
++});
++
++test('428x926: tab Sự kiện với sự kiện Google không cuộn ngang', async ({ page }) => {
++  await page.goto('/');
++  const todayIso = isoDate(new Date());
++  await seedState(page, {
++    google: {
++      clientId: 'test-client',
++      calendarIds: ['cal1'],
++      cache: {
++        fetchedAt: Date.now(),
++        events: [
++          {
++            id: 'google-ev-today',
++            sourceId: 'google-ev-today',
++            source: 'google',
++            title: 'Sự kiện Google có tiêu đề khá dài để kiểm tra tràn',
++            date: todayIso,
++            time: '14:00',
++            allDay: false,
++            color: '#4285F4',
++          },
++        ],
++      },
++    },
++  });
++  await page.setViewportSize({ width: 428, height: 926 });
++  await page.reload();
++  await page.getByTestId('tab-events').click();
++  await expect(page.getByTestId('ev-item-google')).toBeVisible();
++
++  const scroll = await page.evaluate(() => ({
++    scrollWidth: document.documentElement.scrollWidth,
++    clientWidth: document.documentElement.clientWidth,
++  }));
++  expect(scroll.scrollWidth).toBeLessThanOrEqual(scroll.clientWidth);
++});
+diff --git a/tests/e2e/m2-events.spec.ts b/tests/e2e/m2-events.spec.ts
+index 1f3e708..e16e50d 100644
+--- a/tests/e2e/m2-events.spec.ts
++++ b/tests/e2e/m2-events.spec.ts
+@@ -69,7 +69,7 @@ test('M2 luồng chính: sự kiện lặp tuần + nhắc trước, agenda đ
+   await page.getByTestId('nt-pin').click();
+   await page.getByTestId('nt-save').click();
+   await expect(page.getByTestId('note-item')).toHaveCount(2);
+-  await page.getByTestId('note-show').click();
++  await page.getByTestId('note-show').check();
+ 
+   await page.getByTestId('tab-preview').click();
+   await expect(page.getByTestId('preview')).toBeVisible();
 diff --git a/tests/e2e/m4-design.spec.ts b/tests/e2e/m4-design.spec.ts
 new file mode 100644
 index 0000000..f63786a
@@ -2038,6 +2556,133 @@ index 0000000..9b101ea
 +  await expect(page.locator('body')).toBeVisible();
 +  await expect(page.getByTestId('tab-preview')).toBeVisible();
 +});
+diff --git a/tests/e2e/notes.spec.ts b/tests/e2e/notes.spec.ts
+index aebe9e8..4c80a91 100644
+--- a/tests/e2e/notes.spec.ts
++++ b/tests/e2e/notes.spec.ts
+@@ -30,7 +30,7 @@ test('Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn q
+   await expect(page.getByTestId('note-item').nth(0).locator('.note-item-pin')).toBeVisible();
+ 
+   // Hiện trên hình nền.
+-  await page.getByTestId('note-show').click();
++  await page.getByTestId('note-show').check();
+ 
+   // Dựng hình nền qua tab Xem trước để đọc window.__lastOps.
+   await page.getByTestId('tab-preview').click();
+@@ -54,3 +54,26 @@ test('Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn q
+   await page.getByTestId('seg-note').click();
+   await expect(page.getByTestId('note-item')).toHaveCount(2);
+ });
++
++test('T-4.10: ghim ghi chú (nt-pin) tự bật công tắc hiện trên hình nền', async ({ page }) => {
++  await openNoteTab(page);
++  await expect(page.getByTestId('note-show')).not.toBeChecked();
++
++  await page.getByTestId('add-note').click();
++  await page.getByTestId('nt-title').fill('Ghi chú ghim');
++  await page.getByTestId('nt-body').fill('Nội dung ghim');
++  await page.getByTestId('nt-pin').click();
++  await page.getByTestId('nt-save').click();
++
++  await expect(page.getByTestId('note-show')).toBeChecked();
++
++  await page.getByTestId('tab-preview').click();
++  await expect(page.getByTestId('preview')).toBeVisible();
++  await page.waitForFunction(() => (window as unknown as { __lastOps?: unknown[] }).__lastOps);
++  const opsTexts = await page.evaluate(() =>
++    ((window as unknown as { __lastOps?: { text?: string }[] }).__lastOps ?? [])
++      .map((o) => o.text)
++      .filter((t): t is string => !!t),
++  );
++  expect(opsTexts.some((tx) => tx.includes('Ghi chú ghim') || tx.includes('Nội dung ghim'))).toBe(true);
++});
+diff --git a/tests/e2e/settings.spec.ts b/tests/e2e/settings.spec.ts
+index 0b1c21f..98f8c58 100644
+--- a/tests/e2e/settings.spec.ts
++++ b/tests/e2e/settings.spec.ts
+@@ -2,6 +2,40 @@ import { test, expect } from '@playwright/test';
+ import { writeFileSync, mkdtempSync } from 'fs';
+ import { tmpdir } from 'os';
+ import { join } from 'path';
++import path from 'path';
++import { fileURLToPath } from 'url';
++
++const __dirname = path.dirname(fileURLToPath(import.meta.url));
++
++async function previewHash(page: import('@playwright/test').Page): Promise<string> {
++  return page.evaluate(async () => {
++    const img = document.querySelector('[data-testid="preview"]') as HTMLImageElement;
++    const res = await fetch(img.src);
++    const buf = await res.arrayBuffer();
++    const digest = await crypto.subtle.digest('SHA-256', buf);
++    return Array.from(new Uint8Array(digest))
++      .map((b) => b.toString(16).padStart(2, '0'))
++      .join('');
++  });
++}
++
++/** IndexedDB `keyval-store`/`keyval` (idb-keyval mặc định) — nơi `saveBg`/`loadBg` lưu ảnh nền. */
++async function readBgKey(page: import('@playwright/test').Page): Promise<unknown> {
++  return page.evaluate(
++    () =>
++      new Promise((resolve, reject) => {
++        const req = indexedDB.open('keyval-store');
++        req.onerror = () => reject(req.error);
++        req.onsuccess = () => {
++          const db = req.result;
++          const tx = db.transaction('keyval', 'readonly');
++          const getReq = tx.objectStore('keyval').get('lichkhoa:bg');
++          getReq.onsuccess = () => resolve(getReq.result);
++          getReq.onerror = () => reject(getReq.error);
++        };
++      }),
++  );
++}
+ 
+ async function readDownload(download: import('@playwright/test').Download): Promise<Buffer> {
+   const stream = await download.createReadStream();
+@@ -133,3 +167,41 @@ test('Preview: chọn bố cục, cài đặt chung, sao lưu', async ({ page })
+   await page.getByTestId('seg-note').click();
+   await expect(page.getByTestId('note-item')).toHaveCount(1);
+ });
++
++test('T-4.7 #4: Xóa dữ liệu dọn ảnh nền — chọn lại Ảnh sau đó không hiện ảnh cũ', async ({ page }) => {
++  page.on('dialog', (d) => d.accept());
++  await page.goto('/?test=1');
++  await page.getByTestId('tab-preview').click();
++  await expect(page.getByTestId('preview')).toBeVisible();
++  await expect.poll(() => readBgKey(page)).toBe(undefined);
++
++  // Chọn ảnh nền -> IndexedDB có bg, preview đổi.
++  await page.getByTestId('tab-design').click();
++  await page.getByTestId('bg-file').setInputFiles(path.join(__dirname, '..', 'fixtures', 'photo-4000x3000.jpg'));
++  await expect(page.getByTestId('bg-kind-photo')).toHaveAttribute('aria-selected', 'true');
++  await expect.poll(() => readBgKey(page)).not.toBe(undefined);
++
++  // Xóa dữ liệu -> BG_KEY rỗng/null.
++  await page.getByTestId('tab-preview').click();
++  await page.getByTestId('wipe').click();
++  await expect.poll(() => readBgKey(page)).toBeFalsy();
++
++  // Chọn lại nền Ảnh (không tải file mới) -> không được hiện ảnh cũ (preview giống hệt lúc
++  // vừa chọn "Ảnh" trên trạng thái mặc định, không có bg).
++  await page.getByTestId('tab-design').click();
++  await page.getByTestId('bg-kind-photo').click();
++  await page.getByTestId('tab-preview').click();
++  await expect(page.getByTestId('preview')).toBeVisible();
++  const hashAfterWipe = await previewHash(page);
++
++  await page.reload();
++  await page.getByTestId('tab-preview').click();
++  await expect(page.getByTestId('preview')).toBeVisible();
++  await page.getByTestId('tab-design').click();
++  await page.getByTestId('bg-kind-photo').click();
++  await page.getByTestId('tab-preview').click();
++  await expect(page.getByTestId('preview')).toBeVisible();
++  const hashFreshNoPhoto = await previewHash(page);
++
++  expect(hashAfterWipe).toBe(hashFreshNoPhoto);
++});
 diff --git a/tests/e2e/share.spec.ts b/tests/e2e/share.spec.ts
 new file mode 100644
 index 0000000..76e4cd0
@@ -2119,12 +2764,12 @@ index 0000000..76e4cd0
 +});
 diff --git a/tests/unit/background.test.ts b/tests/unit/background.test.ts
 new file mode 100644
-index 0000000..4ca370f
+index 0000000..277e4b1
 --- /dev/null
 +++ b/tests/unit/background.test.ts
-@@ -0,0 +1,75 @@
+@@ -0,0 +1,89 @@
 +import { describe, it, expect } from 'vitest';
-+import { coverFit, fitDownscale, blurDownsampleRatio } from '../../src/render/background';
++import { coverFit, fitDownscale, blurDownsampleRatio, outputTypeFor } from '../../src/render/background';
 +
 +describe('coverFit', () => {
 +  it('ảnh ngang (rộng hơn) vào khung dọc: khớp chiều cao, tràn ngang, canh giữa', () => {
@@ -2183,6 +2828,20 @@ index 0000000..4ca370f
 +  });
 +});
 +
++describe('outputTypeFor', () => {
++  it('nguồn có thể có alpha (PNG/WEBP/GIF) -> giữ PNG', () => {
++    expect(outputTypeFor('image/png')).toBe('image/png');
++    expect(outputTypeFor('image/webp')).toBe('image/png');
++    expect(outputTypeFor('image/gif')).toBe('image/png');
++  });
++
++  it('nguồn khác (JPEG/HEIC/…) -> JPEG (tránh PNG khổng lồ cho ảnh chụp thường)', () => {
++    expect(outputTypeFor('image/jpeg')).toBe('image/jpeg');
++    expect(outputTypeFor('image/heic')).toBe('image/jpeg');
++    expect(outputTypeFor('')).toBe('image/jpeg');
++  });
++});
++
 +describe('blurDownsampleRatio', () => {
 +  it('blur=0 → không hạ mẫu (tỉ lệ 1)', () => {
 +    expect(blurDownsampleRatio(0)).toBe(1);
@@ -2198,6 +2857,346 @@ index 0000000..4ca370f
 +    expect(r3).toBeGreaterThan(0);
 +  });
 +});
+diff --git a/tests/unit/layout-month-list.test.ts b/tests/unit/layout-month-list.test.ts
+new file mode 100644
+index 0000000..d352dbd
+--- /dev/null
++++ b/tests/unit/layout-month-list.test.ts
+@@ -0,0 +1,186 @@
++import { describe, it, expect } from 'vitest';
++import { layoutMonth } from '../../src/render/layout/month';
++import { DEVICES } from '../../src/render/devices';
++import { defaultDesign } from '../../src/core/model';
++import type { RenderData, DesignConfig, DeviceSpec, Occurrence, Todo } from '../../src/core/model';
++
++const DEV_1284 = DEVICES.find((d) => d.width === 1284 && d.height === 2778)!; // iPhone 12/13 Pro Max
++const DEV_1179 = DEVICES.find((d) => d.width === 1179 && d.height === 2556)!;
++
++function makeOccs(n: number, today: string): Occurrence[] {
++  const dayOffsets = [0, 1, 2, 3, 4, 5, 6];
++  return Array.from({ length: n }, (_, i) => {
++    const offset = dayOffsets[i % dayOffsets.length];
++    const [y, m, d] = today.split('-').map(Number);
++    const date = new Date(y, m - 1, d + offset, 12);
++    const iso = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
++    return { id: `o${i}`, sourceId: `e${i}`, source: 'local', title: `Sự kiện ${i}`, date: iso, allDay: true } as Occurrence;
++  });
++}
++
++function makeTodos(n: number, due?: string): Todo[] {
++  return Array.from({ length: n }, (_, i) => ({ id: `t${i}`, text: `Việc ${i}`, done: false, order: i, due }));
++}
++
++function renderData(today: string, occurrences: Occurrence[] = [], todos: Todo[] = []): RenderData {
++  return { today, occurrences, todos, note: '' };
++}
++
++function textOps(ops: ReturnType<typeof layoutMonth>): string[] {
++  return ops.filter((o) => o.op === 'text').map((o) => (o as { text: string }).text);
++}
++
++function assertAllOpsInSafeArea(ops: ReturnType<typeof layoutMonth>, dev: DeviceSpec, design: DesignConfig) {
++  const top = dev.height * dev.safeTop;
++  // Vùng an toàn trừ dải ghi chú nếu bật (khớp mainArea trong common.ts).
++  let bottom = dev.height * (1 - dev.safeBottom);
++  if (design.showNote) {
++    const size = dev.width * 0.032 * design.scale;
++    const titleLineH = size * 1.4;
++    bottom -= size * 1.35 * 4 + titleLineH + dev.height * 0.02;
++  }
++  for (const op of ops) {
++    if (op.op === 'rect') {
++      expect(op.y).toBeGreaterThanOrEqual(top - 0.01);
++      expect(op.y + op.h).toBeLessThanOrEqual(bottom + 0.01);
++    } else if (op.op === 'dot') {
++      expect(op.y - op.r).toBeGreaterThanOrEqual(top - 0.01);
++      expect(op.y + op.r).toBeLessThanOrEqual(bottom + 0.01);
++    } else if (op.op === 'text') {
++      expect(op.y).toBeGreaterThanOrEqual(top - 0.01);
++      expect(op.y).toBeLessThanOrEqual(bottom + 0.01);
++    }
++  }
++}
++
++describe('layoutMonth: danh sách khi monthList=true (T-4.8)', () => {
++  it('20 sự kiện + 10 to-do: có cả "+N sự kiện" và "+N việc", (đã hiện + N) = tổng', () => {
++    const design: DesignConfig = { ...defaultDesign(), monthList: true };
++    const today = '2026-02-15';
++    const d = renderData(today, makeOccs(20, today), makeTodos(10));
++    const ops = layoutMonth(d, design, DEV_1179);
++    const texts = textOps(ops);
++
++    const moreEvents = texts.find((t) => /sự kiện nữa$/.test(t));
++    const moreTodos = texts.find((t) => /việc nữa$/.test(t));
++    expect(moreEvents).toBeDefined();
++    expect(moreTodos).toBeDefined();
++
++    const shownEvents = texts.filter((t) => t.startsWith('Sự kiện ')).length;
++    const shownTodos = texts.filter((t) => t.startsWith('Việc ')).length;
++    const nMoreEvents = Number(moreEvents!.match(/^\+(\d+)/)![1]);
++    const nMoreTodos = Number(moreTodos!.match(/^\+(\d+)/)![1]);
++    expect(shownEvents + nMoreEvents).toBe(20);
++    expect(shownTodos + nMoreTodos).toBe(10);
++  });
++
++  it('0 to-do: sự kiện dùng hết trần L (không có "+N việc", danh sách toàn sự kiện)', () => {
++    const design: DesignConfig = { ...defaultDesign(), monthList: true };
++    const today = '2026-02-15';
++    const d = renderData(today, makeOccs(20, today), []);
++    const ops = layoutMonth(d, design, DEV_1179);
++    const texts = textOps(ops);
++    expect(texts.some((t) => /việc nữa$/.test(t))).toBe(false);
++    const shownEvents = texts.filter((t) => t.startsWith('Sự kiện ')).length;
++    expect(shownEvents).toBeGreaterThan(2); // được cấp nhiều hơn ⌈L/2⌉ mặc định vì không có to-do
++  });
++
++  it('0 sự kiện + 3 to-do: hiện đủ 3 to-do', () => {
++    const design: DesignConfig = { ...defaultDesign(), monthList: true };
++    const today = '2026-02-15';
++    const d = renderData(today, [], makeTodos(3));
++    const ops = layoutMonth(d, design, DEV_1179);
++    const texts = textOps(ops);
++    const shownTodos = texts.filter((t) => t.startsWith('Việc ')).length;
++    expect(shownTodos).toBe(3);
++    expect(texts.some((t) => /việc nữa$/.test(t))).toBe(false);
++  });
++
++  it('to-do đã xong không vào danh sách: 3 chưa xong + 5 đã xong -> chỉ 3 to-do, không "+N việc"', () => {
++    const design: DesignConfig = { ...defaultDesign(), monthList: true };
++    const today = '2026-02-15';
++    const undone = makeTodos(3);
++    const done = makeTodos(5).map((t, i) => ({ ...t, id: `done${i}`, text: `Xong ${i}`, done: true }));
++    const d = renderData(today, [], [...undone, ...done]);
++    const ops = layoutMonth(d, design, DEV_1179);
++    const texts = textOps(ops);
++    const shownTodos = texts.filter((t) => t.startsWith('Việc ')).length;
++    expect(shownTodos).toBe(3);
++    expect(texts.some((t) => t.startsWith('Xong '))).toBe(false);
++    expect(texts.some((t) => /việc nữa$/.test(t))).toBe(false);
++  });
++
++  it('0 chưa xong + 2 đã xong + 0 sự kiện -> agenda.empty', () => {
++    const design: DesignConfig = { ...defaultDesign(), monthList: true };
++    const today = '2026-02-15';
++    const done = makeTodos(2).map((t, i) => ({ ...t, id: `done${i}`, done: true }));
++    const d = renderData(today, [], done);
++    const ops = layoutMonth(d, design, DEV_1179);
++    const texts = textOps(ops);
++    expect(texts).toContain('Không có sự kiện sắp tới');
++  });
++
++  it('to-do quá hạn có nhãn màu accentColor', () => {
++    const design: DesignConfig = { ...defaultDesign(), monthList: true, accentColor: '#ff8800' };
++    const today = '2026-02-15';
++    const d = renderData(today, [], makeTodos(1, '2026-02-10'));
++    const ops = layoutMonth(d, design, DEV_1179);
++    const overdueLabel = ops.find((o) => o.op === 'text' && o.text === 'Quá hạn');
++    expect(overdueLabel).toBeDefined();
++    if (overdueLabel && overdueLabel.op === 'text') expect(overdueLabel.color).toBe('#ff8800');
++  });
++
++  it('không có sự kiện lẫn to-do: hiện text agenda.empty', () => {
++    const design: DesignConfig = { ...defaultDesign(), monthList: true };
++    const d = renderData('2026-02-15', [], []);
++    const ops = layoutMonth(d, design, DEV_1179);
++    const texts = textOps(ops);
++    expect(texts).toContain('Không có sự kiện sắp tới');
++  });
++
++  it('monthList=false: không có text sự kiện/to-do nào', () => {
++    const design: DesignConfig = { ...defaultDesign(), monthList: false };
++    const today = '2026-02-15';
++    const d = renderData(today, makeOccs(5, today), makeTodos(5));
++    const ops = layoutMonth(d, design, DEV_1179);
++    const texts = textOps(ops);
++    expect(texts.some((t) => t.startsWith('Sự kiện ') || t.startsWith('Việc '))).toBe(false);
++  });
++
++  it('mọi op nằm trong mainArea: 2 thiết bị x showNote x showLunar x position', () => {
++    const devices = [DEV_1179, DEV_1284];
++    const positions: DesignConfig['position'][] = ['top', 'middle', 'bottom'];
++    for (const dev of devices) {
++      for (const showNote of [true, false]) {
++        for (const showLunar of [true, false]) {
++          for (const position of positions) {
++            const design: DesignConfig = { ...defaultDesign(), monthList: true, showNote, showLunar, position };
++            const today = '2026-02-15';
++            const d = renderData(today, makeOccs(10, today), makeTodos(5));
++            const ops = layoutMonth(d, design, dev);
++            assertAllOpsInSafeArea(ops, dev, design);
++          }
++        }
++      }
++    }
++  });
++
++  it('cỡ chữ số ngày khi có danh sách >= dev.width*0.028: 2 thiết bị x showNote x showLunar', () => {
++    const devices = [DEV_1179, DEV_1284];
++    for (const dev of devices) {
++      for (const showNote of [true, false]) {
++        for (const showLunar of [true, false]) {
++          const design: DesignConfig = { ...defaultDesign(), monthList: true, showNote, showLunar };
++          const today = '2026-02-15';
++          const d = renderData(today, [], []);
++          const ops = layoutMonth(d, design, dev);
++          const dayText = ops.find((o) => o.op === 'text' && o.text === '15' && o.weight === 700);
++          expect(dayText).toBeDefined();
++          if (dayText && dayText.op === 'text') {
++            expect(dayText.size).toBeGreaterThanOrEqual(dev.width * 0.028 - 0.01);
++          }
++        }
++      }
++    }
++  });
++});
+diff --git a/tests/unit/layout-month.test.ts b/tests/unit/layout-month.test.ts
+index 0b93bab..974e715 100644
+--- a/tests/unit/layout-month.test.ts
++++ b/tests/unit/layout-month.test.ts
+@@ -30,7 +30,7 @@ function assertAllOpsInSafeArea(ops: ReturnType<typeof layoutMonth>, dev: Device
+ 
+ describe('layoutMonth', () => {
+   it('tháng 2/2026: >= 28 op text ngày; có op tô hôm nay fill === accentColor', () => {
+-    const design: DesignConfig = { ...defaultDesign(), accentColor: '#ff8800' };
++    const design: DesignConfig = { ...defaultDesign(), monthList: false, accentColor: '#ff8800' };
+     const d = renderData('2026-02-15');
+     const ops = layoutMonth(d, design, DEV_1179);
+ 
+@@ -44,7 +44,7 @@ describe('layoutMonth', () => {
+   });
+ 
+   it('ô hôm nay đọc được khi accentColor === textColor', () => {
+-    const design: DesignConfig = { ...defaultDesign(), accentColor: '#ffffff', textColor: '#ffffff' };
++    const design: DesignConfig = { ...defaultDesign(), monthList: false, accentColor: '#ffffff', textColor: '#ffffff' };
+     const d = renderData('2026-02-15');
+     const ops = layoutMonth(d, design, DEV_1179);
+     const todayText = ops.find(
+@@ -58,7 +58,7 @@ describe('layoutMonth', () => {
+   });
+ 
+   it('ngày có occurrence có op dot', () => {
+-    const design: DesignConfig = defaultDesign();
++    const design: DesignConfig = { ...defaultDesign(), monthList: false };
+     const d = renderData('2026-02-01', [
+       { id: 'o1', sourceId: 'e1', source: 'local', title: 'Họp', date: '2026-02-10', allDay: true },
+     ]);
+@@ -68,7 +68,7 @@ describe('layoutMonth', () => {
+   });
+ 
+   it('hôm nay có occurrence: chấm occurrence không lẫn vào vòng tô hôm nay (fill khác accentColor)', () => {
+-    const design: DesignConfig = { ...defaultDesign(), accentColor: '#ff8800' };
++    const design: DesignConfig = { ...defaultDesign(), monthList: false, accentColor: '#ff8800' };
+     const d = renderData('2026-02-15', [
+       { id: 'o1', sourceId: 'e1', source: 'local', title: 'Họp', date: '2026-02-15', allDay: true },
+     ]);
+@@ -89,7 +89,7 @@ describe('layoutMonth', () => {
+     const devices = [DEV_1179, DEV_1320];
+     for (const dev of devices) {
+       for (const position of positions) {
+-        const design: DesignConfig = { ...defaultDesign(), position };
++        const design: DesignConfig = { ...defaultDesign(), monthList: false, position };
+         const d = renderData('2026-02-15', [
+           { id: 'o1', sourceId: 'e1', source: 'local', title: 'Họp', date: '2026-02-28', allDay: true },
+         ]);
+@@ -102,7 +102,7 @@ describe('layoutMonth', () => {
+ 
+ describe('layoutMonth âm lịch', () => {
+   it('showLunar=true: có op text "Âm lịch ..." và nhãn ngày âm trong ô', () => {
+-    const design: DesignConfig = { ...defaultDesign(), showLunar: true };
++    const design: DesignConfig = { ...defaultDesign(), monthList: false, showLunar: true };
+     const d = renderData('2026-02-17');
+     const ops = layoutMonth(d, design, DEV_1179);
+     const texts = ops.filter((o) => o.op === 'text').map((o) => (o as { text: string }).text);
+@@ -111,7 +111,7 @@ describe('layoutMonth âm lịch', () => {
+   });
+ 
+   it('showLunar=false: không có op âm lịch nào', () => {
+-    const design: DesignConfig = { ...defaultDesign(), showLunar: false };
++    const design: DesignConfig = { ...defaultDesign(), monthList: false, showLunar: false };
+     const d = renderData('2026-02-17');
+     const ops = layoutMonth(d, design, DEV_1179);
+     const texts = ops.filter((o) => o.op === 'text').map((o) => (o as { text: string }).text);
+@@ -120,7 +120,7 @@ describe('layoutMonth âm lịch', () => {
+   });
+ 
+   it('showLunar=true: dấu hôm nay bao trọn cả số dương lẫn số âm', () => {
+-    const design: DesignConfig = { ...defaultDesign(), accentColor: '#ff8800', showLunar: true };
++    const design: DesignConfig = { ...defaultDesign(), monthList: false, accentColor: '#ff8800', showLunar: true };
+     const d = renderData('2026-09-13');
+     const ops = layoutMonth(d, design, DEV_1179);
+ 
+@@ -150,7 +150,7 @@ describe('layoutMonth âm lịch', () => {
+     const devices = [DEV_1179, DEV_1320];
+     for (const dev of devices) {
+       for (const position of positions) {
+-        const design: DesignConfig = { ...defaultDesign(), position, showLunar: true };
++        const design: DesignConfig = { ...defaultDesign(), monthList: false, position, showLunar: true };
+         const d = renderData('2026-02-17', [
+           { id: 'o1', sourceId: 'e1', source: 'local', title: 'Họp', date: '2026-02-17', allDay: true },
+         ]);
+@@ -163,7 +163,7 @@ describe('layoutMonth âm lịch', () => {
+ 
+ describe('layoutMonth chấm sự kiện ngày hôm nay luôn thấy được', () => {
+   function checkVisible(showLunar: boolean) {
+-    const design: DesignConfig = { ...defaultDesign(), accentColor: '#ff8800', showLunar };
++    const design: DesignConfig = { ...defaultDesign(), monthList: false, accentColor: '#ff8800', showLunar };
+     const d = renderData('2026-02-15', [
+       { id: 'o1', sourceId: 'e1', source: 'local', title: 'Họp', date: '2026-02-15', allDay: true },
+     ]);
+diff --git a/tests/unit/model.test.ts b/tests/unit/model.test.ts
+index e53aa02..4585a43 100644
+--- a/tests/unit/model.test.ts
++++ b/tests/unit/model.test.ts
+@@ -30,6 +30,20 @@ describe('normalizeState', () => {
+     expect(result!.shortcutName).toBe('DatHinhNen');
+   });
+ 
++  it('design thiếu monthList (T-4.8) → normalizeState bù true', () => {
++    const raw = {
++      version: 1,
++      events: [],
++      todos: [],
++      design: { ...defaultDesign() },
++      device,
++    };
++    delete (raw.design as Record<string, unknown>)['monthList'];
++    const result = normalizeState(raw);
++    expect(result).not.toBeNull();
++    expect(result!.design.monthList).toBe(true);
++  });
++
+   it('version khác 1 → null', () => {
+     const raw = { ...defaultState(device), version: 2 };
+     expect(normalizeState(raw)).toBeNull();
+diff --git a/tests/unit/store.test.ts b/tests/unit/store.test.ts
+index a65ee2e..21bacf5 100644
+--- a/tests/unit/store.test.ts
++++ b/tests/unit/store.test.ts
+@@ -164,6 +164,24 @@ describe('reducer', () => {
+     expect(s1.notes).toEqual([a, b]); // không mutate
+   });
+ 
++  it('pinNote(true) tự bật design.showNote; pinNote(false) giữ nguyên; đã bật thì không đổi gì khác', () => {
++    const state = defaultState(device);
++    expect(state.design.showNote).toBe(false);
++    const a = { id: 'a', title: '', body: 'A', pinned: false, updated: 1 };
++    const s0 = { ...state, notes: [a] };
++
++    const s1 = reducer(s0, { type: 'pinNote', id: 'a', pinned: true });
++    expect(s1.design.showNote).toBe(true);
++    expect(s1.notes.find((n) => n.id === 'a')!.pinned).toBe(true);
++
++    const s2 = reducer(s1, { type: 'pinNote', id: 'a', pinned: false });
++    expect(s2.design.showNote).toBe(true); // không tự tắt
++
++    const s3 = { ...s2, design: { ...s2.design, showNote: true } };
++    const s4 = reducer(s3, { type: 'pinNote', id: 'a', pinned: true });
++    expect(s4.design).toBe(s3.design); // đã bật sẵn thì không đổi
++  });
++
+   it('replaceState hợp lệ thay toàn bộ state qua normalizeState; null giữ state cũ', () => {
+     const state = defaultState(device);
+     const raw = { version: 1, device: device2 };
 diff --git a/tests/unit/sync.test.ts b/tests/unit/sync.test.ts
 index c0c9410..c7c1720 100644
 --- a/tests/unit/sync.test.ts
