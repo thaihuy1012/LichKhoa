@@ -78,6 +78,9 @@
 - Băn khoăn M4.md §7: (2) `useStoreState` là phiếu bảo trì tùy chọn sau khi đóng, kèm unit test chặn `store.subscribe` ngoài hook (nguyên nhân gốc là mẫu `useEffect`+subscribe, đã lặp 2 lần); (3) chấp nhận Chủ dự án tự push — đúng CLAUDE.md; bỏ bản `E:/DuAn/lichkhoa-dist`; (4) đồng ý: lỗi iOS, không sửa mã; (6) gộp duyệt M4 + nghiệm thu cuối: DUYỆT cả hai.
 - Hỏi Chủ dự án (không chặn duyệt): (a) đóng dự án ngay hay làm một đợt bảo trì nhỏ (`useStoreState` + nhập JSON xóa ảnh nền cũ); (b) giữ quy trình "Chủ dự án tự `git push` mỗi lần deploy" hay mở quyền push cho Quản lý trong `.claude/settings.json`.
 
+## D-022 — Đóng dự án; giữ Chủ dự án tự push (2026-09-14 · người quyết: Chủ dự án)
+- Sau D-021 (DUYỆT M4 + nghiệm thu cuối), hỏi 2 câu → Chủ dự án chọn: (a) **đóng dự án**, không làm đợt bảo trì (S4 còn lại + hook `useStoreState` để ngỏ); (b) **giữ Chủ dự án tự `git push`** — `.claude/settings.json` giữ `deny: Bash(git push *)`; Quản lý chuẩn bị commit/tag, Chủ dự án chạy `! git push --follow-tags`.
+
 ## D-020 — T-4.10 PHẢN BIỆN lượt 1: CHẤP NHẬN sửa 1 dòng test khóa `notes.spec.ts` (2026-09-14 · người quyết: Quản lý)
 - Ghim → tự bật `showNote` (T-4.10, Chủ dự án xác nhận chưa bật công tắc "Hiện trên hình nền") làm test cũ `notes.spec.ts:10` fail: dòng 33 `note-show.click()` sau khi ghim giờ TẮT công tắc.
 - Quyết định: đổi đúng dòng đó thành `.check()` (đảm bảo bật — idempotent), giữ nguyên mọi assertion và mục đích test. Khai báo trong báo cáo; kiem-thu kiểm diff test khóa chỉ có dòng này.
