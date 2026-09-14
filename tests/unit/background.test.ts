@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { coverFit, fitDownscale, blurDownsampleRatio } from '../../src/render/background';
+import { coverFit, fitDownscale, blurDownsampleRatio, outputTypeFor } from '../../src/render/background';
 
 describe('coverFit', () => {
   it('ảnh ngang (rộng hơn) vào khung dọc: khớp chiều cao, tràn ngang, canh giữa', () => {
@@ -55,6 +55,20 @@ describe('fitDownscale', () => {
     const r = fitDownscale(10000, 10000, 1000, 1000);
     expect(r.w).toBe(2000);
     expect(r.h).toBe(2000);
+  });
+});
+
+describe('outputTypeFor', () => {
+  it('nguồn có thể có alpha (PNG/WEBP/GIF) -> giữ PNG', () => {
+    expect(outputTypeFor('image/png')).toBe('image/png');
+    expect(outputTypeFor('image/webp')).toBe('image/png');
+    expect(outputTypeFor('image/gif')).toBe('image/png');
+  });
+
+  it('nguồn khác (JPEG/HEIC/…) -> JPEG (tránh PNG khổng lồ cho ảnh chụp thường)', () => {
+    expect(outputTypeFor('image/jpeg')).toBe('image/jpeg');
+    expect(outputTypeFor('image/heic')).toBe('image/jpeg');
+    expect(outputTypeFor('')).toBe('image/jpeg');
   });
 });
 

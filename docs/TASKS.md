@@ -4,7 +4,7 @@ Nguồn sự thật: `docs/SPEC.md` (v1.3 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 7/9
+- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 8/9 (chờ T-4.0)
 - Đang làm: T-4.END (DOING, phần tự động) ∥ T-4.0 CHỜ CHỦ DỰ ÁN (thử iPhone, dist `E:/DuAn/lichkhoa-dist` @dfb8ab9). Duyệt M4 chờ cả hai.
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
@@ -477,7 +477,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Yêu cầu: (1) pages.yml `permissions` thêm `contents: read` (giữ `pages: write`, `id-token: write`); (2) "Xóa dữ liệu" (`wipe`) ngoài `resetAll` còn `saveBg(null)` và Preview thôi dùng ảnh cũ ngay (không cần reload); (3) `loadPhoto`/`drawBackground`: `ImageBitmap.close()` sau khi dùng xong; nhánh fallback `<img>` thu hồi `URL.createObjectURL` (`revokeObjectURL`); (4) `renderWallpaper` với ảnh: tô `bg.color` (hoặc đen nếu thiếu) trước khi vẽ ảnh → PNG trong suốt không lộ nền rỗng.
 - Tiêu chí: [ ] e2e: đặt ảnh nền → `wipe` (chấp nhận confirm) → IndexedDB `lichkhoa:bg` rỗng/null và preview không còn ảnh (hash giống nền màu mặc định); [ ] grep `close()` trong background.ts ở mọi nhánh dùng ImageBitmap; [ ] pages.yml có `contents: read`; [ ] `npm run check` pass; `npm run build` trước khi chạy Playwright riêng.
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (pages.yml contents:read; closeImage; paintBackground trước ảnh; wipe → saveBg(null) + bgRef null; test #4 settings.spec:171 và #10 design.spec:111 fail trước) nhưng `loadPhoto` đổi MỌI ảnh sang PNG (ảnh chụp 2568×5556 → PNG hàng chục MB, SPEC §8.9) → trả thợ: PNG chỉ khi nguồn png/webp/gif, còn lại JPEG 0.9 (Lần thử 1/3). Lượt 2: `outputTypeFor` + quality 0.9, unit + e2e → kiem-thu PASS (full ×2 116/12 skip/0 fail; size 36,40 KB) → commit.
+- Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
 
 ### T-4.END — Kiểm thử tích hợp M4
 - Phạm vi file: `tests/e2e/m4-design.spec.ts`, `tests/e2e/m4-export.spec.ts`, `tests/e2e/m4-offline.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.

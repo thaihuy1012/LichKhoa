@@ -2,6 +2,40 @@ import { test, expect } from '@playwright/test';
 import { writeFileSync, mkdtempSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+async function previewHash(page: import('@playwright/test').Page): Promise<string> {
+  return page.evaluate(async () => {
+    const img = document.querySelector('[data-testid="preview"]') as HTMLImageElement;
+    const res = await fetch(img.src);
+    const buf = await res.arrayBuffer();
+    const digest = await crypto.subtle.digest('SHA-256', buf);
+    return Array.from(new Uint8Array(digest))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  });
+}
+
+/** IndexedDB `keyval-store`/`keyval` (idb-keyval mặc định) — nơi `saveBg`/`loadBg` lưu ảnh nền. */
+async function readBgKey(page: import('@playwright/test').Page): Promise<unknown> {
+  return page.evaluate(
+    () =>
+      new Promise((resolve, reject) => {
+        const req = indexedDB.open('keyval-store');
+        req.onerror = () => reject(req.error);
+        req.onsuccess = () => {
+          const db = req.result;
+          const tx = db.transaction('keyval', 'readonly');
+          const getReq = tx.objectStore('keyval').get('lichkhoa:bg');
+          getReq.onsuccess = () => resolve(getReq.result);
+          getReq.onerror = () => reject(getReq.error);
+        };
+      }),
+  );
+}
 
 async function readDownload(download: import('@playwright/test').Download): Promise<Buffer> {
   const stream = await download.createReadStream();
@@ -132,4 +166,42 @@ test('Preview: chọn bố cục, cài đặt chung, sao lưu', async ({ page })
   await expect(page.getByTestId('todo-item')).toHaveCount(1);
   await page.getByTestId('seg-note').click();
   await expect(page.getByTestId('note-item')).toHaveCount(1);
+});
+
+test('T-4.7 #4: Xóa dữ liệu dọn ảnh nền — chọn lại Ảnh sau đó không hiện ảnh cũ', async ({ page }) => {
+  page.on('dialog', (d) => d.accept());
+  await page.goto('/?test=1');
+  await page.getByTestId('tab-preview').click();
+  await expect(page.getByTestId('preview')).toBeVisible();
+  await expect.poll(() => readBgKey(page)).toBe(undefined);
+
+  // Chọn ảnh nền -> IndexedDB có bg, preview đổi.
+  await page.getByTestId('tab-design').click();
+  await page.getByTestId('bg-file').setInputFiles(path.join(__dirname, '..', 'fixtures', 'photo-4000x3000.jpg'));
+  await expect(page.getByTestId('bg-kind-photo')).toHaveAttribute('aria-selected', 'true');
+  await expect.poll(() => readBgKey(page)).not.toBe(undefined);
+
+  // Xóa dữ liệu -> BG_KEY rỗng/null.
+  await page.getByTestId('tab-preview').click();
+  await page.getByTestId('wipe').click();
+  await expect.poll(() => readBgKey(page)).toBeFalsy();
+
+  // Chọn lại nền Ảnh (không tải file mới) -> không được hiện ảnh cũ (preview giống hệt lúc
+  // vừa chọn "Ảnh" trên trạng thái mặc định, không có bg).
+  await page.getByTestId('tab-design').click();
+  await page.getByTestId('bg-kind-photo').click();
+  await page.getByTestId('tab-preview').click();
+  await expect(page.getByTestId('preview')).toBeVisible();
+  const hashAfterWipe = await previewHash(page);
+
+  await page.reload();
+  await page.getByTestId('tab-preview').click();
+  await expect(page.getByTestId('preview')).toBeVisible();
+  await page.getByTestId('tab-design').click();
+  await page.getByTestId('bg-kind-photo').click();
+  await page.getByTestId('tab-preview').click();
+  await expect(page.getByTestId('preview')).toBeVisible();
+  const hashFreshNoPhoto = await previewHash(page);
+
+  expect(hashAfterWipe).toBe(hashFreshNoPhoto);
 });

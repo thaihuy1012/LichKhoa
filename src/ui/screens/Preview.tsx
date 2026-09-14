@@ -3,7 +3,7 @@ import type { Store } from '../store';
 import type { DesignConfig } from '../../core/model';
 import { DEVICES, customDevice, detectDevice } from '../../render/devices';
 import { renderWallpaper } from '../../render/wallpaper';
-import { loadBg } from '../../storage/db';
+import { loadBg, saveBg } from '../../storage/db';
 import { toISODate } from '../../core/calendar';
 import { savePng, copyPng, openShortcut } from '../../export/share';
 import { exportBackup, importBackup } from '../../storage/backup';
@@ -135,9 +135,13 @@ export function Preview({ store }: { store: Store }) {
     }
   }
 
-  function onWipe() {
+  async function onWipe() {
     if (!window.confirm(t('settings.clearDataConfirm', lang))) return;
     store.dispatch({ type: 'resetAll' });
+    // T-4.7 #4: resetAll chỉ đổi state chữ; ảnh nền lưu riêng ở IndexedDB (BG_KEY) phải dọn
+    // ngay để lần sau chọn lại nền Ảnh không hiện ảnh cũ của lượt trước.
+    bgRef.current = null;
+    await saveBg(null);
     showToast(t('settings.wipeOk', lang));
   }
 
@@ -358,7 +362,7 @@ export function Preview({ store }: { store: Store }) {
         />
         <p class="hint">{t('settings.importHint', lang)}</p>
 
-        <button type="button" class="btn danger block" data-testid="wipe" onClick={onWipe}>
+        <button type="button" class="btn danger block" data-testid="wipe" onClick={() => void onWipe()}>
           {t('settings.clearData', lang)}
         </button>
       </div>

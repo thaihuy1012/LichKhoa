@@ -52,16 +52,28 @@ function makeCanvas(w: number, h: number): { canvas: CanvasLike; ctx: CanvasRend
   return { canvas, ctx };
 }
 
-function canvasToBlob(canvas: CanvasLike, type = 'image/png'): Promise<Blob> {
+function canvasToBlob(canvas: CanvasLike, type = 'image/png', quality?: number): Promise<Blob> {
   if (typeof OffscreenCanvas !== 'undefined' && canvas instanceof OffscreenCanvas) {
-    return canvas.convertToBlob({ type });
+    return canvas.convertToBlob({ type, quality });
   }
   return new Promise((resolve, reject) => {
-    (canvas as HTMLCanvasElement).toBlob((b) => {
-      if (b) resolve(b);
-      else reject(new Error('toBlob thất bại'));
-    }, type);
+    (canvas as HTMLCanvasElement).toBlob(
+      (b) => {
+        if (b) resolve(b);
+        else reject(new Error('toBlob thất bại'));
+      },
+      type,
+      quality,
+    );
   });
+}
+
+/** Định dạng lưu ảnh nền theo nguồn (T-4.7 review): nguồn có thể có alpha (PNG/WEBP/GIF) → giữ PNG;
+ * còn lại (JPEG/HEIC/…) → JPEG chất lượng cao — tránh PNG khổng lồ cho ảnh chụp thường (SPEC §8 rủi ro 9). */
+export function outputTypeFor(sourceType: string): 'image/png' | 'image/jpeg' {
+  return sourceType === 'image/png' || sourceType === 'image/webp' || sourceType === 'image/gif'
+    ? 'image/png'
+    : 'image/jpeg';
 }
 
 /** Giải mã ảnh, ưu tiên `createImageBitmap` (tôn trọng EXIF orientation), fallback qua thẻ `<img>`. */
@@ -94,14 +106,23 @@ function sourceSize(img: ImageBitmap | HTMLImageElement): { w: number; h: number
     : { w: img.width, h: img.height };
 }
 
-/** Nạp ảnh từ Thư viện: đọc EXIF orientation, thu nhỏ ≤ 2× kích thước thiết bị, trả Blob JPEG để lưu IndexedDB. */
+/** Giải phóng bộ nhớ GPU của `ImageBitmap` sau khi dùng xong (T-4.7 #6 — rò rỉ trên iOS); `<img>` không cần (đã revoke ở `decodeImage`). */
+export function closeImage(img: ImageBitmap | HTMLImageElement): void {
+  if (typeof ImageBitmap !== 'undefined' && img instanceof ImageBitmap) img.close();
+}
+
+/** Nạp ảnh từ Thư viện: đọc EXIF orientation, thu nhỏ ≤ 2× kích thước thiết bị, trả Blob để lưu IndexedDB.
+ * Định dạng theo nguồn (`outputTypeFor`): PNG/WEBP/GIF (có thể có alpha, T-4.7 #10) → PNG; JPEG/HEIC/… → JPEG 0.9
+ * (PNG cho mọi ảnh chụp thường sẽ quá nặng — SPEC §8 rủi ro 9). */
 export async function loadPhoto(file: Blob, dev: DeviceSpec): Promise<Blob> {
   const img = await decodeImage(file);
   const { w: iw, h: ih } = sourceSize(img);
   const { w, h } = fitDownscale(iw, ih, dev.width, dev.height, 2);
   const { canvas, ctx } = makeCanvas(w, h);
   ctx.drawImage(img as CanvasImageSource, 0, 0, w, h);
-  return canvasToBlob(canvas, 'image/jpeg');
+  closeImage(img);
+  const type = outputTypeFor(file.type);
+  return canvasToBlob(canvas, type, type === 'image/jpeg' ? 0.9 : undefined);
 }
 
 /** Vẽ ảnh nền (cover-fit) + mờ (hạ/tăng mẫu canvas, KHÔNG `ctx.filter`) + tối lên `ctx` kích thước thiết bị. */

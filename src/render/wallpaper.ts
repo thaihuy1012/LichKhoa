@@ -5,7 +5,7 @@ import { layoutMonth } from './layout/month';
 import { layoutAgenda } from './layout/agenda';
 import { layoutTodo } from './layout/todo';
 import { layoutNote } from './layout/note';
-import { decodeImage, drawBackground, makeCanvas, canvasToBlob } from './background';
+import { decodeImage, drawBackground, makeCanvas, canvasToBlob, closeImage } from './background';
 
 declare global {
   interface Window {
@@ -46,8 +46,12 @@ export async function renderWallpaper(state: AppState, bg: Blob | null, today: s
   const { canvas, ctx } = makeCanvas(state.device.width, state.device.height);
 
   if (state.design.bg.kind === 'photo' && bg) {
+    // Tô màu nền trước (T-4.7 #10): ảnh (đặc biệt PNG trong suốt) có thể để lộ canvas
+    // rỗng nếu vẽ trực tiếp lên nền chưa tô — vùng trong suốt phải thấy màu/gradient nền.
+    paintBackground(ctx, state);
     const img = await decodeImage(bg);
     drawBackground(ctx, img, state.design, state.device);
+    closeImage(img);
   } else {
     paintBackground(ctx, state);
   }

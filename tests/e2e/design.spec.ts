@@ -107,3 +107,65 @@ test('T-4.6: rãnh trượt có màu + nhãn giá trị, mã hex đọc trọn v
   await expect(page.getByTestId('accent-0')).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByTestId('accent-5')).toHaveAttribute('aria-pressed', 'false');
 });
+
+test('T-4.7 #10: PNG trong suốt không lộ nền đen — vẽ trên màu nền đã chọn', async ({ page }) => {
+  await page.goto('/?test=1');
+  await page.getByTestId('tab-design').click();
+
+  // Đặt màu nền (còn hiện khi kind != photo) thành đỏ trước khi chọn ảnh trong suốt.
+  await page.getByTestId('bg-kind-solid').click();
+  await page.getByTestId('bg-color').fill('#ff0000');
+
+  await page.getByTestId('bg-file').setInputFiles(path.join(__dirname, '..', 'fixtures', 'transparent-10x10.png'));
+  await expect(page.getByTestId('bg-kind-photo')).toHaveAttribute('aria-selected', 'true');
+
+  await page.getByTestId('tab-preview').click();
+  await waitPreview1284(page);
+
+  // Ảnh hoàn toàn trong suốt (cover-fit phủ kín khung) -> điểm giữa preview phải ra màu nền đỏ,
+  // không phải đen (canvas rỗng chưa tô trước khi vẽ ảnh).
+  const centerColor = await page.evaluate(async () => {
+    const img = document.querySelector('[data-testid="preview"]') as HTMLImageElement;
+    const res = await fetch(img.src);
+    const bitmap = await createImageBitmap(await res.blob());
+    const canvas = document.createElement('canvas');
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    const ctx = canvas.getContext('2d')!;
+    ctx.drawImage(bitmap, 0, 0);
+    const { data } = ctx.getImageData(Math.floor(bitmap.width / 2), Math.floor(bitmap.height / 2), 1, 1);
+    return Array.from(data);
+  });
+  expect(centerColor[0]).toBeGreaterThan(150); // kênh đỏ cao
+  expect(centerColor[1]).toBeLessThan(80); // kênh xanh lá thấp
+});
+
+/** Đọc `{buf, type}` mà `saveBg` lưu ở IndexedDB `keyval-store`/`keyval` khóa `lichkhoa:bg`. */
+async function readBgType(page: Page): Promise<string | undefined> {
+  return page.evaluate(
+    () =>
+      new Promise<string | undefined>((resolve, reject) => {
+        const req = indexedDB.open('keyval-store');
+        req.onerror = () => reject(req.error);
+        req.onsuccess = () => {
+          const db = req.result;
+          const tx = db.transaction('keyval', 'readonly');
+          const getReq = tx.objectStore('keyval').get('lichkhoa:bg');
+          getReq.onsuccess = () => resolve((getReq.result as { type?: string } | undefined)?.type);
+          getReq.onerror = () => reject(getReq.error);
+        };
+      }),
+  );
+}
+
+test('T-4.7 review: định dạng lưu ảnh nền theo nguồn — JPEG giữ JPEG, PNG giữ PNG', async ({ page }) => {
+  await page.goto('/?test=1');
+  await page.getByTestId('tab-design').click();
+
+  await page.getByTestId('bg-file').setInputFiles(path.join(__dirname, '..', 'fixtures', 'photo-4000x3000.jpg'));
+  await expect(page.getByTestId('bg-kind-photo')).toHaveAttribute('aria-selected', 'true');
+  await expect.poll(() => readBgType(page)).toBe('image/jpeg');
+
+  await page.getByTestId('bg-file').setInputFiles(path.join(__dirname, '..', 'fixtures', 'transparent-10x10.png'));
+  await expect.poll(() => readBgType(page)).toBe('image/png');
+});
