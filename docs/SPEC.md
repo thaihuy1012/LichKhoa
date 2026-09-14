@@ -1,7 +1,7 @@
 # SPEC — LichKhoa (tái tạo tính năng "Ink: Lockscreen Calendar, Note" dưới dạng PWA)
 (Kiến trúc sư điền ở Giai đoạn 0. Đây là nguồn sự thật; mọi thay đổi phạm vi phải qua Chủ dự án.)
 
-Phiên bản SPEC: 1.3 — 2026-09-13 (v1.0 + Âm lịch D-006 + thiết bị đích iPhone 13 Pro Max D-007 + lặp T2–T6, nhắc giờ qua .ics, hạn chót to-do, nhiều ghi chú D-011). Kiến trúc sư soát v1.3 ngày 2026-09-14 (D-012): chỉ chỉnh chữ §3 (thứ tự IN-10), §5 (cây thư mục, thêm `cmpTodo`/`buildOps`), §9 (trần dòng agenda); không đổi phạm vi. Duyệt M3 (D-015, 2026-09-14): chỉ chỉnh chữ §8 rủi ro 1. App gốc đối chiếu: "Ink: Lockscreen Calendar, Note" (SilverAI JSC, App Store id6769250805, bản 1.2.14). Tính năng gốc đã tra cứu: hình nền màn hình khóa có lịch / agenda / to-do chồng lên ảnh cá nhân; đồng bộ Google Calendar và Apple Calendar; tạo sự kiện lặp có nhắc; tùy chỉnh ảnh, màu, độ mờ, ngôn ngữ; widget lịch và ghi chú; dữ liệu xử lý trên máy. Tên làm việc "LichKhoa" — không dùng tên, logo, ảnh, font của app gốc; chỉ tái tạo tính năng và luồng dùng.
+Phiên bản SPEC: 1.4 — 2026-09-14 (v1.4, D-018: bố cục Tháng có danh sách sự kiện + to-do bên dưới `monthList`; tab Sự kiện hiện sự kiện Google chỉ xem). Trước đó 1.3 — 2026-09-13 (v1.0 + Âm lịch D-006 + thiết bị đích iPhone 13 Pro Max D-007 + lặp T2–T6, nhắc giờ qua .ics, hạn chót to-do, nhiều ghi chú D-011). Kiến trúc sư soát v1.3 ngày 2026-09-14 (D-012): chỉ chỉnh chữ §3 (thứ tự IN-10), §5 (cây thư mục, thêm `cmpTodo`/`buildOps`), §9 (trần dòng agenda); không đổi phạm vi. Duyệt M3 (D-015, 2026-09-14): chỉ chỉnh chữ §8 rủi ro 1. App gốc đối chiếu: "Ink: Lockscreen Calendar, Note" (SilverAI JSC, App Store id6769250805, bản 1.2.14). Tính năng gốc đã tra cứu: hình nền màn hình khóa có lịch / agenda / to-do chồng lên ảnh cá nhân; đồng bộ Google Calendar và Apple Calendar; tạo sự kiện lặp có nhắc; tùy chỉnh ảnh, màu, độ mờ, ngôn ngữ; widget lịch và ghi chú; dữ liệu xử lý trên máy. Tên làm việc "LichKhoa" — không dùng tên, logo, ảnh, font của app gốc; chỉ tái tạo tính năng và luồng dùng.
 
 ## 1. Mục tiêu
 Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Chủ dự án: (a) dựng ảnh hình nền màn hình khóa đúng kích thước pixel máy, có lịch tháng / agenda / to-do / ghi chú chồng lên ảnh nền tự chọn; (b) trộn sự kiện Google Calendar (chỉ đọc, OAuth thuần client, không backend) với sự kiện lặp và to-do nhập tại chỗ; (c) đặt làm hình nền khóa bằng ≤ 3 chạm mỗi ngày qua Shortcut. Dùng cá nhân, không đăng nhập, dữ liệu nằm trên máy.
@@ -16,10 +16,10 @@ Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Ch�
 ## 3. Phạm vi
 - IN:
   1. Dựng PNG đúng kích thước pixel màn hình iPhone: preset (`devices.ts`, gồm 1284×2778 iPhone 12/13 Pro Max — mặc định khi không nhận ra máy, v1.2), tự phát hiện (`screen × devicePixelRatio`, mặc định), tùy chỉnh; vùng an toàn tránh đồng hồ (trên) và nút đèn pin/camera (dưới).
-  2. Ba bố cục: **Tháng** (lưới 6×7, tô hôm nay, chấm sự kiện), **Agenda** (N ngày tới, giờ + tên, màu lịch), **To-do** (checklist). Lớp **Ghi chú** (văn bản tự do) bật/tắt trên mọi bố cục.
+  2. Ba bố cục: **Tháng** (lưới 6×7, tô hôm nay, chấm sự kiện; v1.4 D-018: khi `monthList` bật — mặc định — dưới lưới có danh sách sự kiện từ hôm nay trong `agendaDays` ngày + to-do chưa xong, cắt theo chỗ trống kèm dòng "+N"; hình nền là ảnh tĩnh nên không cuộn), **Agenda** (N ngày tới, giờ + tên, màu lịch), **To-do** (checklist). Lớp **Ghi chú** (văn bản tự do) bật/tắt trên mọi bố cục.
   3. Nền: ảnh từ Thư viện (cover-fit, tôn trọng EXIF), màu đơn, gradient; mờ (0–3) + tối (0–0.8); màu chữ / màu nhấn; 3 họ font hệ thống (sans/serif/mono); vị trí khối (trên/giữa/dưới trong vùng an toàn); cỡ chữ (scale); độ trong suốt hộp.
   4. Sự kiện cục bộ: CRUD; cả ngày hoặc có giờ; lặp ngày/**T2–T6**/tuần/tháng/năm + ngày kết thúc; to-do tick/bỏ tick; ghi chú.
-  5. Google Calendar chỉ đọc: OAuth implicit redirect tự viết (không SDK), chọn lịch, tải sự kiện trong [hôm nay − 1 … + 60 ngày], cache cục bộ dùng offline, tự đồng bộ khi mở app nếu token còn hạn và cache cũ hơn 30 phút.
+  5. Google Calendar chỉ đọc: OAuth implicit redirect tự viết (không SDK), chọn lịch, tải sự kiện trong [hôm nay − 1 … + 60 ngày], cache cục bộ dùng offline, tự đồng bộ khi mở app nếu token còn hạn và cache cũ hơn 30 phút. (v1.4, D-018) Tab Sự kiện hiện cả sự kiện Google (chấm + danh sách ngày, nhãn "Google"), chỉ xem, không sửa/xóa.
   6. Xuất: "Lưu ảnh" (Web Share files → fallback tải PNG); "Đặt hình nền" = sao chép PNG vào clipboard rồi mở `shortcuts://run-shortcut?name=<tên>&input=clipboard`; xuất sự kiện `.ics` (Lịch iPhone tự nhắc).
   7. PWA: manifest, service worker (offline app shell), cài Màn hình chính; dữ liệu trong IndexedDB; sao lưu / khôi phục JSON.
   8. Giao diện VI/EN; 12h/24h; tuần bắt đầu T2/CN.
@@ -80,6 +80,7 @@ interface Note { id: string; title: string; body: string; pinned: boolean; updat
 interface Occurrence { id: string; sourceId: string; source: 'local'|'google'; title: string; date: ISODate; time?: string; allDay: boolean; color?: string }
 interface DeviceSpec { id: string; label: string; width: number; height: number; safeTop: number; safeBottom: number } // safe* là tỉ lệ 0..1 của height
 interface DesignConfig { layout: 'month'|'agenda'|'todo'; showNote: boolean /* hiện ghi chú ghim */; showLunar: boolean /* v1.1 */;   // v1.3: bỏ noteText → AppState.notes
+  monthList: boolean /* v1.4 D-018: danh sách dưới lưới Tháng; normalizeState bù true */;
   bg: { kind: 'photo'|'solid'|'gradient'; color: string; color2?: string }; blur: 0|1|2|3; dim: number;
   textColor: string; accentColor: string; font: 'sans'|'serif'|'mono'; position: 'top'|'middle'|'bottom';
   scale: number; boxAlpha: number; agendaDays: number; weekStart: 0|1; hour12: boolean; lang: 'vi'|'en' }

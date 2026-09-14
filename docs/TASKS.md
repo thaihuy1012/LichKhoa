@@ -4,8 +4,8 @@ Nguồn sự thật: `docs/SPEC.md` (v1.3 — v1.0 Chủ dự án duyệt 2026-0
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 8/9 (chờ T-4.0)
-- Đang làm: (điểm dừng sạch) CHỜ CHỦ DỰ ÁN — T-4.0 thử iPhone (dist `E:/DuAn/lichkhoa-dist` @f4f6098; hướng dẫn `docs/HUONG-DAN.md` mục "Bài thử trên iPhone"). Có kết quả → điền `docs/bao-cao/M4.md` mục 4 → Kiến trúc sư duyệt M4 → nghiệm thu cuối. Phiên mới: đọc SU-CO → TASKS → hỏi Chủ dự án kết quả T-4.0.
+- M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 9/9 (T-4.0 có kết quả 2026-09-14)
+- Đang làm: T-4.8 (Tháng + danh sách) ∥ T-4.9 (tab Sự kiện hiện Google) — D-018, SPEC v1.4. HUONG-DAN + thẻ Guide đã sửa theo T-4.0 (lỗi Shortcut `error 2` → bấm lại). Xong 2 phiếu → kiem-thu `npm run check` → ảnh mẫu → build lại dist cho Chủ dự án thử → Kiến trúc sư duyệt M4 → nghiệm thu cuối.
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
@@ -405,7 +405,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - 2026-09-14: Chủ dự án chọn "Để cuối M4" (D-016) → chạy sau T-4.4, trước T-4.END; gộp thêm bước đặt ảnh hình nền khóa thật (có đè đồng hồ/widget/nút?). Build lại `dist` ngay trước khi thử.
 - 2026-09-14: `dist` mới (HEAD `dfb8ab9`) ở `E:\DuAn\lichkhoa-dist`; đã gửi Chủ dự án hướng dẫn từng bước (theo `docs/HUONG-DAN.md` mục "Bài thử trên iPhone").
 - 2026-09-14: build lại `E:\DuAn\lichkhoa-dist` @ `f4f6098` (gồm T-4.7). Nếu Chủ dự án đã kéo bản cũ lên Netlify: kéo bản mới vào cùng site (Deploys → kéo thả) — Client ID giữ nguyên vì cùng URL.
-- Trạng thái: CHỜ CHỦ DỰ ÁN
+- 2026-09-14: Chủ dự án thử xong (host URL GitHub). A, B, D, E ✔; hình nền không bị đè ✔; C ✔ trên hình nền nhưng tab Sự kiện không hiện sự kiện Google; Shortcut thỉnh thoảng báo `extensionKit.errorDomain error 2` (bấm lại được); yêu cầu mới: danh sách sự kiện/to-do dưới lưới Tháng. Chi tiết `docs/bao-cao/M4.md` mục 4.
+- Trạng thái: DONE
 
 ### T-4.1 — Ảnh nền: nạp, EXIF, thu nhỏ, cover-fit, mờ, tối
 - Phạm vi file: `src/render/background.ts` (mới: `loadPhoto(file, dev): Promise<Blob>`, `drawBackground(ctx, bg, design, dev)`), `src/render/wallpaper.ts`, `tests/unit/background.test.ts` (phần toán cover-fit thuần), `tests/fixtures/photo-4000x3000.jpg`.
@@ -480,6 +481,38 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Lệnh kiểm tra: `npm run check`
 - Nhật ký: 2026-09-14 lượt 1: DONE (pages.yml contents:read; closeImage; paintBackground trước ảnh; wipe → saveBg(null) + bgRef null; test #4 settings.spec:171 và #10 design.spec:111 fail trước) nhưng `loadPhoto` đổi MỌI ảnh sang PNG (ảnh chụp 2568×5556 → PNG hàng chục MB, SPEC §8.9) → trả thợ: PNG chỉ khi nguồn png/webp/gif, còn lại JPEG 0.9 (Lần thử 1/3). Lượt 2: `outputTypeFor` + quality 0.9, unit + e2e → kiem-thu PASS (full ×2 116/12 skip/0 fail; size 36,40 KB) → commit.
 - Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
+
+### T-4.8 — Bố cục Tháng + danh sách sự kiện/to-do bên dưới (SPEC v1.4, D-018)
+- Mục tiêu: bố cục Tháng khi `design.monthList` bật (mặc định) thu lưới lại, dưới lưới vẽ danh sách: sự kiện từ hôm nay (Google + cục bộ, `agendaDays` ngày) + to-do chưa xong. Hình nền là ảnh tĩnh → cắt theo chỗ trống kèm dòng "+N … nữa", không cuộn.
+- Phạm vi file (chỉ được sửa): `src/core/model.ts` (thêm `DesignConfig.monthList`, mặc định `true`, `normalizeState` bù `true`), `src/render/layout/month.ts`, `src/render/layout/common.ts` (chỉ THÊM hàm dùng chung nếu cần, không đổi hàm cũ), `src/core/i18n/vi.json` + `en.json` (chỉ thêm khóa), `src/ui/screens/Preview.tsx` (chỉ thêm công tắc), test: `tests/unit/layout-month-list.test.ts` (mới), `tests/unit/model.test.ts` (chỉ THÊM). Test khóa (layout-month, layout, wallpaper…) chỉ được sửa đúng chỗ fixture/`defaultDesign` thêm `monthList` — phải khai báo.
+- Giao diện có sẵn: `RenderData.occurrences` (đã sắp, gồm Google — `collect.ts`), `RenderData.todos` (đã sắp theo `cmpTodo`, lọc `!done`), `groupAgenda(occ, today, c.agendaDays)`, `common.ts`: `mainArea`, `blockStartY`, `fontSize`, `fmtTime`, `truncate`, `todoDueLabel`, `dayLabel`; ô tick to-do: dùng lại cách vẽ trong `layout/todo.ts`.
+- Tham khảo: `F:/LICH_NEN/LichNen.js` L388–391 (bố cục `month-agenda` = drawMonth + drawAgenda compact), L302–342 `drawAgenda` (cắt theo `maxY`, dòng "+N sự kiện nữa", to-do tối đa + "+N việc nữa"), L263–300 `drawMonth` (rowH thu nhỏ khi compact). Thợ tự kiểm số dòng.
+- Yêu cầu:
+  1. `monthList=false` → vẽ y như hiện tại (không đổi op nào của lưới).
+  2. `monthList=true` → lưới Tháng chiếm ~56% chiều cao `mainArea` (hằng số có tên, chỉnh được), danh sách dùng phần còn lại; MỘT hộp nền (`boxAlpha`) bao cả lưới + danh sách, hộp ôm nội dung (ít mục thì hộp ngắn lại); `position` top/middle/bottom áp cho cả khối.
+  3. Dòng sự kiện: chấm màu (`occ.color ?? accentColor`) + nhãn ngày ngắn ("Hôm nay" / "Mai" / "T4 16/9"; EN "Today"/"Tomorrow"/"Wed 9/16") + giờ (`fmtTime`, cả ngày = `events.allDay`) + tiêu đề `truncate`. Dòng to-do: ô tick + chữ `truncate` + nhãn hạn bên phải (`todoDueLabel`, quá hạn tô `accentColor`).
+  4. Số dòng tối đa L = số dòng vừa phần còn lại (cỡ chữ ≈ `dev.width*0.032*scale`, cao dòng ≈ 1.6× cỡ chữ). Cả hai có mục: sự kiện được tối đa ⌈L/2⌉ dòng, to-do phần còn lại; bên nào không dùng hết thì nhường bên kia. Dòng "+N" (khóa mới `month.moreEvents` "+{n} sự kiện nữa" / "+{n} more events", `month.moreTodos` "+{n} việc nữa" / "+{n} more to-dos") nằm TRONG trần L. Không có gì → 1 dòng `agenda.empty`.
+  5. Công tắc `data-testid="month-list"` (checkbox) ở Preview, cạnh công tắc `showLunar` (Preview.tsx ~L342), khóa i18n `preview.monthList` "Danh sách dưới lịch tháng" / "List under month".
+- Tiêu chí nghiệm thu:
+  - [ ] Unit `layout-month-list.test.ts`: 20 sự kiện + 10 to-do → số dòng danh sách ≤ L, có cả "+N sự kiện" và "+N việc", (đã hiện + N) = tổng; 0 to-do → sự kiện dùng hết L; 0 sự kiện + 3 to-do → hiện 3 to-do; to-do quá hạn có nhãn màu accent; không mục nào → có text `agenda.empty`.
+  - [ ] Unit: mọi op nằm trong `mainArea` với thiết bị 1284×2778 và 1179×2556 × `showNote` bật/tắt × `showLunar` bật/tắt × `position` top/middle/bottom; `monthList=false` → không có text sự kiện/to-do nào; cỡ chữ số ngày khi có danh sách ≥ `dev.width*0.028`.
+  - [ ] Unit `model.test.ts`: state thiếu `monthList` → `normalizeState` cho `true`.
+  - [ ] `npx tsc --noEmit; npm run test` pass; test khóa chỉ đổi chỗ đã khai báo.
+  - [ ] Quản lý dựng ảnh mẫu 1284×2778 (`scripts/mau-anh.cjs`) có/không danh sách, xem bằng mắt trước khi DONE.
+- Lệnh kiểm tra (thợ): `npx tsc --noEmit; npm run test` — KHÔNG build/e2e (T-4.9 song song dùng build). kiem-thu chạy `npm run check` sau.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+
+### T-4.9 — Tab Sự kiện hiện sự kiện Google (chỉ xem) (SPEC v1.4, D-018)
+- Mục tiêu: lịch nhỏ + danh sách ngày trong tab Sự kiện hiện cả sự kiện Google từ `state.google.cache` (chấm màu lịch + mục trong danh sách), chỉ xem.
+- Phạm vi file (chỉ được sửa): `src/ui/screens/events/EventsTab.tsx`, `src/ui/styles.css` (chỉ thêm class nhãn), `src/core/collect.ts` (CHỈ thêm `export` cho `cmpOccurrence` nếu chưa export), `tests/e2e/events.spec.ts` (chỉ THÊM test). KHÔNG sửa i18n (nhãn "Google" là tên riêng, viết thẳng).
+- Giao diện có sẵn: `EventsTab.tsx:59` `monthOcc = expandOccurrences(state.events, monthFrom, monthTo)`; `state.google.cache?.events: Occurrence[]` (`source: 'google'`, có `color`); `cmpOccurrence` trong `core/collect.ts`.
+- Yêu cầu: (1) `monthOcc` = cục bộ đã expand + sự kiện cache Google có `date` trong [monthFrom, monthTo], sắp bằng `cmpOccurrence`; (2) chấm trên ô ngày tính cả Google (giữ trần 3 chấm); (3) mục Google trong danh sách ngày: phần tử KHÔNG bấm được (không phải `<button>`, không mở sheet), `data-testid="ev-item-google"`, thanh màu lịch + giờ/"Cả ngày" + tiêu đề + nhãn nhỏ "Google" (class mới trong styles.css); mục cục bộ giữ nguyên `ev-item` và vẫn mở sheet sửa; (4) không có cache → như cũ.
+- Tiêu chí nghiệm thu:
+  - [ ] e2e mới trong `events.spec.ts` (chromium + webkit): state có `google.cache` gồm 1 sự kiện hôm nay + 1 sự kiện cả ngày 3 ngày sau (nạp bằng cách các test hiện có đang dùng — thợ tự tìm, ví dụ nhập JSON sao lưu hoặc ghi IndexedDB trước khi tải trang) → ô hôm nay có `.cal-dot`; danh sách hôm nay có `ev-item-google` chứa tiêu đề + "Google"; bấm vào không mở sheet (`ev-cancel` không hiện); chọn ngày +3 → hiện sự kiện cả ngày; thêm 1 sự kiện cục bộ cùng ngày → cả hai cùng hiện, mục cục bộ vẫn mở sheet.
+  - [ ] 428×926 không cuộn ngang.
+  - [ ] `npx tsc --noEmit; npm run test; npm run build; npx playwright test tests/e2e/events.spec.ts` pass.
+- Lệnh kiểm tra (thợ): như tiêu chí cuối (phiếu duy nhất được build/e2e trong đợt T-4.8 ∥ T-4.9).
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
 
 ### T-4.END — Kiểm thử tích hợp M4
 - Phạm vi file: `tests/e2e/m4-design.spec.ts`, `tests/e2e/m4-export.spec.ts`, `tests/e2e/m4-offline.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.

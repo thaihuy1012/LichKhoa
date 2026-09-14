@@ -25,7 +25,7 @@ Nếu bạn không cần lịch Google, có thể bỏ qua phần này.
 
 **Lưu ý bảo mật**: Client ID chỉ lưu trên máy bạn (localStorage), không gửi lên đâu khác, không đưa vào code.
 
-**Về đăng nhập trong app đã cài (standalone)**: theo thiết kế, Google sẽ mở màn đăng nhập trong một cửa sổ trình duyệt nhỏ rồi tự đưa bạn quay lại app. *Đang chờ xác nhận trên máy thật (xem mục "Bài thử trên iPhone" bên dưới).* Nếu sau khi đăng nhập app không quay lại được (bị kẹt ở cửa sổ trình duyệt, hoặc báo lỗi): hãy mở LichKhoa bằng **Safari thường** (lưu địa chỉ này làm Bookmark để lần sau vào nhanh) và dùng Google từ đó thay vì từ app đã cài. Lưu ý: dữ liệu lưu ở Safari và dữ liệu lưu ở app cài trên Màn hình chính là **hai nơi tách biệt** — hãy chọn một nơi và dùng xuyên suốt.
+**Về đăng nhập trong app đã cài (standalone)**: Google mở màn đăng nhập ngay trong app rồi tự đưa bạn quay lại, hiện "Đã kết nối" + danh sách lịch (đã thử trên iPhone 13 Pro Max ngày 14/09/2026). Nếu trên máy khác app không quay lại được sau khi đăng nhập (bị kẹt ở cửa sổ trình duyệt, hoặc báo lỗi): hãy mở LichKhoa bằng **Safari thường** (lưu địa chỉ này làm Bookmark để lần sau vào nhanh) và dùng Google từ đó thay vì từ app đã cài. Lưu ý: dữ liệu lưu ở Safari và dữ liệu lưu ở app cài trên Màn hình chính là **hai nơi tách biệt** — hãy chọn một nơi và dùng xuyên suốt.
 
 ## C. Tạo Shortcut "Đặt hình nền" (làm một lần duy nhất)
 
@@ -40,6 +40,8 @@ Nếu bạn không cần lịch Google, có thể bỏ qua phần này.
 6. Lưu lại.
 
 Ghi chú: chỉ dùng hành động **"Set Wallpaper"**, không cần và không dùng "Run Script"/Scriptable/iCloud — LichKhoa tự sao chép ảnh vào clipboard và mở Shortcut với `input=clipboard`.
+
+**Nếu Shortcut báo lỗi** `The operation couldn't be completed. (com.apple.extensionKit.errorDomain error 2.)`: đây là lỗi của iOS (hành động "Set Wallpaper" hay lỗi xen kẽ, cứ một lần được một lần hỏng — Apple đã ghi nhận, không phải lỗi LichKhoa). Cách xử lý: quay lại LichKhoa và bấm **"Đặt hình nền"** thêm một lần nữa. Cập nhật iOS lên bản mới nhất có thể hết lỗi.
 
 ## D. HTTPS để thử trên iPhone (dành cho người quản lý dự án dựng bản chạy)
 
@@ -57,7 +59,7 @@ Ghi chú: chỉ dùng hành động **"Set Wallpaper"**, không cần và không
 
 ## Giới hạn đã biết
 
-- Phiên đăng nhập Google chỉ sống **1 giờ** và **không tự gia hạn** được trên iPhone (Safari chặn cookie bên thứ ba) → mở app sau hơn 1 giờ kể từ lần kết nối trước thì cần bấm **"Kết nối lại"** (tab Đồng bộ) trước khi đồng bộ; sự kiện đã tải trước đó vẫn hiện bình thường.
+- Phiên đăng nhập Google chỉ sống **1 giờ** và **không tự gia hạn** được trên iPhone (Safari chặn cookie bên thứ ba) → mở app sau hơn 1 giờ kể từ lần kết nối trước thì cần bấm **"Kết nối lại"** (tab Đồng bộ) trước khi đồng bộ — thường kết nối được ngay, không phải nhập lại mật khẩu Google; sự kiện đã tải trước đó vẫn hiện bình thường (cả khi không có mạng).
 - LichKhoa **không tự đổi hình nền** khi bạn không mở app và bấm nút — không có tính năng chạy nền tự động.
 - Hành động "Set Wallpaper" cần **iOS 17 trở lên** và hình nền khóa hiện tại phải đang ở chế độ **Ảnh tĩnh** (không phải "Photo Shuffle").
 - Nếu chỉ mở bằng Safari thường (chưa "Thêm vào MH chính"), Safari có thể tự xóa dữ liệu đã lưu sau **7 ngày không dùng**. Cài vào Màn hình chính để tránh mất dữ liệu; nên thỉnh thoảng **Xuất JSON** để sao lưu (tab Xem trước → cuộn xuống phần cài đặt).

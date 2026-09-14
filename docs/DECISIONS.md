@@ -70,6 +70,14 @@
 - Điểm 1: không thêm kiểm tra webkit; `dist/sw.js` có `NavigationRoute(createHandlerBoundToURL("index.html"))` → (D) là phép thử quyết định. Điểm 2: chấp nhận localStorage (readonly, 1 giờ, không script ngoài) → giới hạn đã biết. Điểm 3: giữ chữ ký `fetchEvents`; +1 request/lượt là rẻ. Điểm 4: T-4.2. Điểm 5: gộp vào T-4.0.
 - S4 mới (Tồn đọng): sau redirect kết nối thành công, `App.tsx` L72 chỉ tự đồng bộ khi cache > 30′ → nên ép đồng bộ ngay (truyền cache = null khi `authResult.ok`); làm ở phiếu M4 chạm `App.tsx`.
 
+## D-018 — SPEC v1.4 sau thử máy thật T-4.0: Tháng + danh sách; tab Sự kiện hiện Google (2026-09-14 · người quyết: Chủ dự án)
+- Bối cảnh: T-4.0 đạt A/B/D/E + hình nền không bị đè. Chủ dự án: bố cục Tháng "chỉ thấy ngày, không thấy sự kiện → vô ích", muốn danh sách sự kiện + to-do dưới lưới tháng, "nhiều quá thì thanh cuộn"; tab Sự kiện không hiện sự kiện Google (`EventsTab.tsx:59` chỉ expand `state.events`).
+- Hỏi 2 điểm (hình nền là ảnh tĩnh → không cuộn được) → Chủ dự án chọn cả 2 khuyến nghị:
+  - Bố cục Tháng có danh sách bên dưới: sự kiện từ hôm nay (Google + cục bộ, `agendaDays` ngày) + to-do chưa xong, cắt theo chỗ trống kèm dòng "+N … nữa"; công tắc bật/tắt `DesignConfig.monthList` (mặc định bật). Như `month-agenda` của LICH_NEN (`LichNen.js` L388–391, `drawAgenda` compact L302–342).
+  - Tab Sự kiện hiện sự kiện Google (chấm + danh sách), chỉ xem, nhãn "Google", không mở sheet sửa.
+- Lỗi Shortcut `com.apple.extensionKit.errorDomain error 2` (bấm lại thì được): lỗi iOS đã biết của "Set Wallpaper" (Apple Community thread 255761645, FB15159428) → không đổi mã; HUONG-DAN + thẻ Guide hướng dẫn bấm lại.
+- Phiếu: T-4.8 (hình nền) ∥ T-4.9 (tab Sự kiện). Được sửa test khóa chỉ chỗ `defaultDesign`/fixture thêm `monthList`, phải khai báo.
+
 ## D-017 — Ảnh nền lưu IndexedDB dạng ArrayBuffer (2026-09-14 · người quyết: Quản lý, chấp nhận khai báo ngoài phạm vi của T-4.2)
 - WebKit (Playwright) abort transaction khi structured-clone Blob vào IndexedDB → `saveBg` lưu `{buf: ArrayBuffer, type}`; `loadBg` đọc cả dạng mới lẫn Blob cũ. Chữ ký SPEC §5 (`Blob|null`) giữ nguyên. Safari cũ cũng từng lỗi Blob-in-IDB → an toàn hơn cho iPhone.
 
