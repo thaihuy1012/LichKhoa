@@ -7,7 +7,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 12/12 ✔ tag `M4-ok` (D-021 — DUYỆT M4 + nghiệm thu cuối, gộp)
 - Đang làm (2026-09-15): ĐỢT BẢO TRÌ D-023 — B-001 (Gemini) → B-002 (sonnet). Xem mục "Bảo trì 2026-09-15" cuối file.
 - 2026-09-15 phiên 2 (nền): làm trong worktree `.claude/worktrees/bao-tri-D-023`, nhánh `worktree-bao-tri-D-023` (từ `main` fd17357) — commit ở nhánh này, Chủ dự án gộp về `main` (`git merge --ff-only worktree-bao-tri-D-023`). Lượt Gemini `B-001` vòng 1 phiên trước chết khi dừng phiên (`DONE 255`, đầu ra rỗng, không đổi `src/`) → `huy B-001`, giao lại vòng 1 (không tính Lần thử, không tính lỗi làn). Lưu ý: `agy-run.sh huy` hoàn tác MỌI thay đổi chưa commit, kể cả sổ sách → commit sổ trước khi giao Gemini.
-- 2026-09-15 phiên 2: B-001 ✔ DONE. Làn Gemini TẮT tới hết phiên này (agy ghi ra ngoài worktree — BAI-HOC 2026-09-15); phiên sau chạy ở checkout chính thì bật lại được. Tiếp: B-002 (tho-sonnet).
+- 2026-09-15 phiên 2: B-001 ✔ DONE. Làn Gemini TẮT tới hết phiên này (agy ghi ra ngoài worktree — BAI-HOC 2026-09-15); phiên sau chạy ở checkout chính thì bật lại được. B-002 ✔ DONE. ĐỢT BẢO TRÌ D-023 XONG (2/2) — chờ Chủ dự án: gộp nhánh về `main`, xem ô màu trên iPhone sau deploy (`git push`).
 - Trước đó: DỰ ÁN ĐÃ ĐÓNG 2026-09-14 (D-021 nghiệm thu, D-022 Chủ dự án chọn đóng; giữ "Chủ dự án tự `git push`"). Mở lại khi Chủ dự án yêu cầu: đọc SU-CO → TASKS (Tồn đọng S4) → DECISIONS D-021/D-022. Thử máy thật lần 3: T-4.10 ✔ "Ghi chú hiện đúng" → mọi hạng mục thử tay M4 đạt. Deploy lần đầu OK 2026-09-14: Chủ dự án `git push -u origin main` (3396ec7..fcf6bdc, không force) → Actions run 34867029741 build + deploy success → `https://thaihuy1012.github.io/LichKhoa/` 200, manifest scope `/LichKhoa/`. Nhánh `main` theo dõi `origin/main`; Quản lý không push được (`.claude/settings.json` deny) → mỗi lần cần deploy, Chủ dự án chạy `! git push`. Sau đó → Kiến trúc sư duyệt M4 → nghiệm thu cuối.
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
@@ -25,7 +25,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - ~~S4 · T-2.12 · ô todo-due trống không nhãn~~ → đã sửa T-2.14.
 - ~~S4 · T-2.14 · `App.tsx` "Đang tải…" cứng tiếng Việt~~ → đã sửa (`App.tsx:90` dùng i18n; D-021 xác nhận).
 - ~~S4 · soát chéo M4 #5 · nhập JSON giữ ảnh nền cũ của máy~~ → Chủ dự án chọn giữ như hiện tại (2026-09-15, D-023) → đóng, không sửa.
-- S4 · T-4.6 · webkit Windows: `input[type=color]` hiện chữ "#00000(" cạnh span hex → mã màu hiện 2 lần (iPhone có ô màu thật nên không bị). → phiếu B-002 (2026-09-15).
+- ~~S4 · T-4.6 · webkit Windows: `input[type=color]` hiện chữ "#00000(" cạnh span hex → mã màu hiện 2 lần~~ → đã sửa B-002 (2026-09-15).
 - ~~S4 · D-015 · sau redirect kết nối thành công~~ → đã sửa T-4.2.
 - ~~S4 · T-3.3 · nút `sync-connect` / `sync-now` kiểu nút phụ~~ → đã sửa T-4.2 (accent; D-021 xác nhận).
 - ~~S4 · T-4.8 · nhãn ngày lặp / cột tiêu đề lệch / số âm lịch nhỏ~~ → Chủ dự án thử máy thật 2026-09-14: "dễ đọc, chữ và số âm lịch đã ổn" → đóng, không sửa.
@@ -572,4 +572,5 @@ Thứ tự: B-001 (Gemini) → B-002 (sonnet). Không song song (Gemini và th�
   [ ] Ảnh chụp chromium màn Thiết kế sau sửa: ô màu vẫn hiện màu như trước.
   [ ] `npm run check` pass, không sửa test.
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet (không đủ điều kiện Gemini: tiêu chí chính kiểm bằng mắt, không có lệnh test tự động) · Lần thử: 0/3 · Trạng thái: TODO
+- Nhật ký: 2026-09-15 lượt 1: DONE (`.color-input`: `color: transparent; font-size: 0`, nền `none` → `rgba(255,255,255,0.12)`; ảnh `docs/test-log/B-002-truoc.png`, `-sau.png`, `-sau-chromium.png`) → kiem-thu PASS (211×2 unit; e2e 64/6 skip/0 fail; T-4.6 `design.spec.ts:79` pass 2 trình duyệt; chỉ styles.css +10/−1) → review ảnh đạt: webkit hết chữ trong ô (ô xám 44px), chromium vẫn hiện đúng màu. Ghi nhận: nền 0.12 lộ qua padding mặc định của `::-webkit-color-swatch-wrapper` → Chromium (có lẽ cả iPhone) có thêm viền mờ bo góc quanh ô màu — chấp nhận (thẩm mỹ, cùng tông nút); Chủ dự án xem trên máy thật, không thích thì đổi lại `background: none` (1 dòng) → commit.
+- Model: sonnet (không đủ điều kiện Gemini: tiêu chí chính kiểm bằng mắt, không có lệnh test tự động) · Lần thử: 0/3 · Trạng thái: DONE

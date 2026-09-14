@@ -909,9 +909,18 @@ select option {
   padding: 0;
   border: none;
   border-radius: 8px;
-  background: none;
+  background: rgba(255, 255, 255, 0.12);
   cursor: pointer;
   flex: none;
+  /* webkit Windows không có color picker gốc: input[type=color] rơi về ô nhập
+     chữ, tự in giá trị hex (VD "#0000C"). Ô màu thật (Chromium, iOS Safari) vẽ
+     bằng lớp phủ ::-webkit-color-swatch-wrapper/::-webkit-color-swatch kín và
+     đục hoàn toàn phần content-box, nên background đặt ở đây bị che khuất và
+     không đổi giao diện của chúng; chỉ lộ ra làm nền nhận biết khi trình
+     duyệt không vẽ được ô màu (trường hợp lỗi). Tương tự, color:transparent +
+     font-size:0 chỉ ảnh hưởng khi trình duyệt render chữ hex thay vì ô màu. */
+  color: transparent;
+  font-size: 0;
 }
 
 .design-screen input[type='range'] {
