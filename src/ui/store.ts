@@ -113,7 +113,10 @@ export function reducer(state: AppState, action: Action): AppState {
         if (action.pinned && n.pinned) return { ...n, pinned: false };
         return n;
       });
-      return { ...state, notes };
+      const design = action.pinned && !state.design.showNote
+        ? { ...state.design, showNote: true }
+        : state.design;
+      return { ...state, notes, design };
     }
     case 'replaceState': {
       const normalized = normalizeState(action.state);

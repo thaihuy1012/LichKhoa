@@ -164,6 +164,24 @@ describe('reducer', () => {
     expect(s1.notes).toEqual([a, b]); // không mutate
   });
 
+  it('pinNote(true) tự bật design.showNote; pinNote(false) giữ nguyên; đã bật thì không đổi gì khác', () => {
+    const state = defaultState(device);
+    expect(state.design.showNote).toBe(false);
+    const a = { id: 'a', title: '', body: 'A', pinned: false, updated: 1 };
+    const s0 = { ...state, notes: [a] };
+
+    const s1 = reducer(s0, { type: 'pinNote', id: 'a', pinned: true });
+    expect(s1.design.showNote).toBe(true);
+    expect(s1.notes.find((n) => n.id === 'a')!.pinned).toBe(true);
+
+    const s2 = reducer(s1, { type: 'pinNote', id: 'a', pinned: false });
+    expect(s2.design.showNote).toBe(true); // không tự tắt
+
+    const s3 = { ...s2, design: { ...s2.design, showNote: true } };
+    const s4 = reducer(s3, { type: 'pinNote', id: 'a', pinned: true });
+    expect(s4.design).toBe(s3.design); // đã bật sẵn thì không đổi
+  });
+
   it('replaceState hợp lệ thay toàn bộ state qua normalizeState; null giữ state cũ', () => {
     const state = defaultState(device);
     const raw = { version: 1, device: device2 };

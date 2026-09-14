@@ -69,7 +69,7 @@ test('M2 luồng chính: sự kiện lặp tuần + nhắc trước, agenda đ�
   await page.getByTestId('nt-pin').click();
   await page.getByTestId('nt-save').click();
   await expect(page.getByTestId('note-item')).toHaveCount(2);
-  await page.getByTestId('note-show').click();
+  await page.getByTestId('note-show').check();
 
   await page.getByTestId('tab-preview').click();
   await expect(page.getByTestId('preview')).toBeVisible();

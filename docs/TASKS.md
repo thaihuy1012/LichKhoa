@@ -526,7 +526,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   - [ ] e2e (chromium + webkit): dữ liệu mới (showNote mặc định false) → tab Sự kiện → Ghi chú → thêm ghi chú có tiêu đề + nội dung, bật `nt-pin`, lưu → công tắc `note-show` đang bật và `window.__lastOps` (`?test=1`) chứa tiêu đề ghi chú. Test viết trước, phải FAIL trên code cũ.
   - [ ] `npm run check` pass; test cũ không sửa.
 - Lệnh kiểm tra: `npx tsc --noEmit; npm run test; npm run build; npx playwright test tests/e2e/notes.spec.ts`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: PHẢN BIỆN — test cũ `notes.spec.ts:33` `note-show.click()` sau khi ghim giờ tắt công tắc → CHẤP NHẬN `.check()` (D-020); Chủ dự án trả `vite.config.ts` về env → DONE (209 unit, notes 4/4) → kiem-thu REGRESSION `m2-events.spec.ts:72` cùng nguyên nhân (phiếu thiếu grep `note-show` — BAI-HOC) → D-020 bổ sung, trả thợ (Lần thử 1/3) → lượt 2 DONE → kiem-thu PASS (`docs/test-log/T-4.10.txt`: check 64/6 skip/0 fail; notes+m2-events ×3 24/0) → commit.
+- Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
 
 ### T-4.END — Kiểm thử tích hợp M4
 - Phạm vi file: `tests/e2e/m4-design.spec.ts`, `tests/e2e/m4-export.spec.ts`, `tests/e2e/m4-offline.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.

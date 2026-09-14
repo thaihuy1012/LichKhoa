@@ -30,7 +30,7 @@ test('Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn q
   await expect(page.getByTestId('note-item').nth(0).locator('.note-item-pin')).toBeVisible();
 
   // Hiện trên hình nền.
-  await page.getByTestId('note-show').click();
+  await page.getByTestId('note-show').check();
 
   // Dựng hình nền qua tab Xem trước để đọc window.__lastOps.
   await page.getByTestId('tab-preview').click();
@@ -53,4 +53,27 @@ test('Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn q
   await page.getByTestId('tab-events').click();
   await page.getByTestId('seg-note').click();
   await expect(page.getByTestId('note-item')).toHaveCount(2);
+});
+
+test('T-4.10: ghim ghi chú (nt-pin) tự bật công tắc hiện trên hình nền', async ({ page }) => {
+  await openNoteTab(page);
+  await expect(page.getByTestId('note-show')).not.toBeChecked();
+
+  await page.getByTestId('add-note').click();
+  await page.getByTestId('nt-title').fill('Ghi chú ghim');
+  await page.getByTestId('nt-body').fill('Nội dung ghim');
+  await page.getByTestId('nt-pin').click();
+  await page.getByTestId('nt-save').click();
+
+  await expect(page.getByTestId('note-show')).toBeChecked();
+
+  await page.getByTestId('tab-preview').click();
+  await expect(page.getByTestId('preview')).toBeVisible();
+  await page.waitForFunction(() => (window as unknown as { __lastOps?: unknown[] }).__lastOps);
+  const opsTexts = await page.evaluate(() =>
+    ((window as unknown as { __lastOps?: { text?: string }[] }).__lastOps ?? [])
+      .map((o) => o.text)
+      .filter((t): t is string => !!t),
+  );
+  expect(opsTexts.some((tx) => tx.includes('Ghi chú ghim') || tx.includes('Nội dung ghim'))).toBe(true);
 });

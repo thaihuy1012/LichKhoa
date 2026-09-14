@@ -70,6 +70,12 @@
 - Điểm 1: không thêm kiểm tra webkit; `dist/sw.js` có `NavigationRoute(createHandlerBoundToURL("index.html"))` → (D) là phép thử quyết định. Điểm 2: chấp nhận localStorage (readonly, 1 giờ, không script ngoài) → giới hạn đã biết. Điểm 3: giữ chữ ký `fetchEvents`; +1 request/lượt là rẻ. Điểm 4: T-4.2. Điểm 5: gộp vào T-4.0.
 - S4 mới (Tồn đọng): sau redirect kết nối thành công, `App.tsx` L72 chỉ tự đồng bộ khi cache > 30′ → nên ép đồng bộ ngay (truyền cache = null khi `authResult.ok`); làm ở phiếu M4 chạm `App.tsx`.
 
+## D-020 — T-4.10 PHẢN BIỆN lượt 1: CHẤP NHẬN sửa 1 dòng test khóa `notes.spec.ts` (2026-09-14 · người quyết: Quản lý)
+- Ghim → tự bật `showNote` (T-4.10, Chủ dự án xác nhận chưa bật công tắc "Hiện trên hình nền") làm test cũ `notes.spec.ts:10` fail: dòng 33 `note-show.click()` sau khi ghim giờ TẮT công tắc.
+- Quyết định: đổi đúng dòng đó thành `.check()` (đảm bảo bật — idempotent), giữ nguyên mọi assertion và mục đích test. Khai báo trong báo cáo; kiem-thu kiểm diff test khóa chỉ có dòng này.
+- Bổ sung (kiem-thu REGRESSION `m2-events.spec.ts:33`, T-2.END): cùng nguyên nhân — dòng 72 `note-show.click()` sau khi ghim. Quản lý phân loại: không phải lỗi sản phẩm (hành vi mới cố ý), không mở SC; cho đổi dòng 72 thành `.check()` như trên. `grep note-show tests/` chỉ còn 2 chỗ này.
+- `vite.config.ts`: Chủ dự án từng sửa cứng `base: '/LichKhoa/'` (chưa commit) → Chủ dự án chọn trả về `process.env.VITE_BASE ?? '/'`; workflow build `/LichKhoa/` theo tên repo. Repo: `github.com/thaihuy1012/LichKhoa` → Pages `https://thaihuy1012.github.io/LichKhoa/`.
+
 ## D-019 — Nối repo với GitHub, deploy bằng workflow Pages (2026-09-14 · người quyết: Chủ dự án)
 - Chủ dự án đồng ý "nối repo này với GitHub cho workflow tự deploy" (cho phép `git push`). Trước đó Chủ dự án tự tải bản build lên GitHub; bản build dùng `VITE_BASE=/` và chạy được.
 - Việc còn thiếu (chờ Chủ dự án): URL/tên repo đang dùng. Nếu repo là `<user>.github.io` thì trang ở gốc → workflow phải build `VITE_BASE=/` (hiện đang `/<tên-repo>/`). Đổi URL thì phải sửa origin/redirect của Client ID Google.
