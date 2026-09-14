@@ -407,6 +407,19 @@ select option {
   white-space: nowrap;
 }
 
+.ev-item-google {
+  opacity: 0.85;
+}
+
+.ev-tag-google {
+  font-size: 10px;
+  color: #9ab8ff;
+  border: 1px solid #3a4a7a;
+  border-radius: 4px;
+  padding: 1px 5px;
+  flex-shrink: 0;
+}
+
 .hint {
   font-size: 12px;
   color: #888;

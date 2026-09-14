@@ -2,7 +2,7 @@ import type { AppState, Occurrence, RenderData, ISODate, Todo } from './model';
 import { parseISODate, toISODate } from './calendar';
 import { expandOccurrences } from './recurrence';
 
-function cmpOccurrence(a: Occurrence, b: Occurrence): number {
+export function cmpOccurrence(a: Occurrence, b: Occurrence): number {
   if (a.date !== b.date) return a.date < b.date ? -1 : 1;
   if (a.allDay !== b.allDay) return a.allDay ? -1 : 1;
   const ta = a.time ?? '';

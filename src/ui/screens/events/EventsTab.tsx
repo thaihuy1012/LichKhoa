@@ -3,6 +3,7 @@ import type { Store } from '../../store';
 import type { AppState, LocalEvent, Occurrence } from '../../../core/model';
 import { monthGrid, parseISODate, toISODate } from '../../../core/calendar';
 import { expandOccurrences } from '../../../core/recurrence';
+import { cmpOccurrence } from '../../../core/collect';
 import { solarToLunar } from '../../../core/lunar';
 import { eventToIcs } from '../../../export/ics';
 import { t } from '../../../core/i18n';
@@ -56,7 +57,9 @@ export function EventsTab({ store, state, showToast }: Props) {
   const grid = monthGrid(ym.y, ym.m0, state.design.weekStart);
   const monthFrom = `${ym.y}-${String(ym.m0 + 1).padStart(2, '0')}-01`;
   const monthTo = toISODate(new Date(ym.y, ym.m0, lastDayOfMonth(ym.y, ym.m0), 12));
-  const monthOcc = expandOccurrences(state.events, monthFrom, monthTo);
+  const localOcc = expandOccurrences(state.events, monthFrom, monthTo);
+  const googleOcc = (state.google.cache?.events ?? []).filter((o) => o.date >= monthFrom && o.date <= monthTo);
+  const monthOcc = [...localOcc, ...googleOcc].sort(cmpOccurrence);
   const occByDate = new Map<string, Occurrence[]>();
   for (const o of monthOcc) {
     const list = occByDate.get(o.date);
@@ -218,7 +221,19 @@ export function EventsTab({ store, state, showToast }: Props) {
         </button>
         {dayOcc.length === 0 && <p class="empty">{t('events.dayEmpty', lang)}</p>}
         {dayOcc.map((o) => {
-          const src = o.source === 'local' ? state.events.find((e) => e.id === o.sourceId) : undefined;
+          if (o.source === 'google') {
+            return (
+              <div key={o.id} data-testid="ev-item-google" class="ev-item ev-item-google">
+                <span class="ev-item-bar" style={{ background: o.color || EVENT_COLORS[0] }} />
+                <span class="ev-item-time">{o.allDay ? t('events.allDay', lang) : o.time}</span>
+                <span class="ev-item-body">
+                  <span class="ev-item-title">{o.title}</span>
+                </span>
+                <span class="ev-tag-google">Google</span>
+              </div>
+            );
+          }
+          const src = state.events.find((e) => e.id === o.sourceId);
           const meta = src ? eventMeta(src, lang) : '';
           return (
             <button key={o.id} type="button" data-testid="ev-item" class="ev-item" onClick={() => onOccClick(o)}>

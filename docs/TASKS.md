@@ -25,6 +25,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - ~~S4 · D-015 · sau redirect kết nối thành công~~ → đã sửa T-4.2.
 - (cũ) S4 · D-015 · sau redirect kết nối thành công, `App.tsx` L72 chỉ tự đồng bộ khi cache > 30′ → ép đồng bộ ngay (cache = null khi `authResult.ok`); làm ở T-4.2 (App.tsx trong phạm vi).
 - S4 · T-3.3 · nút `sync-connect` / `sync-now` dùng kiểu nút phụ (xám) dù là thao tác chính → kiểu accent như "Lưu ảnh"; làm ở T-4.2 (styles).
+- S4 · T-4.8 · danh sách dưới lưới Tháng lặp nhãn ngày ("Hôm nay · …" ×3) và cột tiêu đề không thẳng hàng; số âm lịch trong ô rất nhỏ khi bật ghi chú (≈ 0.55 × cỡ số ngày). Chờ Chủ dự án xem trên máy thật rồi mới chỉnh.
 - S4 · T-3.1 · `parseFragment` giải mã `error` 2 lần (`URLSearchParams` đã giải mã) và trả `{error}` không kiểm `state` — vô hại với mã lỗi ASCII của Google; sửa nếu có phiếu chạm oauth.ts.
 - ~~S4 · T-2.5 · `eventToIcs` chưa gập dòng > 75 byte~~ → đã sửa T-2.15.
 
@@ -500,7 +501,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   - [ ] `npx tsc --noEmit; npm run test` pass; test khóa chỉ đổi chỗ đã khai báo.
   - [ ] Quản lý dựng ảnh mẫu 1284×2778 (`scripts/mau-anh.cjs`) có/không danh sách, xem bằng mắt trước khi DONE.
 - Lệnh kiểm tra (thợ): `npx tsc --noEmit; npm run test` — KHÔNG build/e2e (T-4.9 song song dùng build). kiem-thu chạy `npm run check` sau.
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Nhật ký: 2026-09-14 lượt 1: DONE (model `monthList`; month.ts tách `drawGrid`/`buildListRows`/`drawList`, `GRID_RATIO=0.62` thay 0.56 vì showNote bật làm số ngày < 0.028·W; i18n 3 khóa; công tắc `month-list`; unit layout-month-list mới + model +1; test khóa `layout-month.test.ts` thêm `monthList:false` 10 chỗ — đã khai báo, trong phạm vi D-018) — tsc OK, unit 206×2 TZ → kiem-thu PASS chung T-4.9 (`docs/test-log/T-4.8-4.9.txt`: check 206×2 unit, e2e 62/6 skip/0 fail; events ×3 54/0; size 37,40 KB; test khóa đúng D-018) → Quản lý review + ảnh mẫu (scratchpad `mau-t48/tong-month.png`: bố cục/cắt dòng/"+N"/Quá hạn ổn) nhưng `buildListRows` lấy cả to-do ĐÃ XONG (`d.todos` gồm done) → trả thợ lọc `!done` + test (Lần thử 1/3).
+- Model: sonnet · Lần thử: 1/3 · Trạng thái: DOING
 
 ### T-4.9 — Tab Sự kiện hiện sự kiện Google (chỉ xem) (SPEC v1.4, D-018)
 - Mục tiêu: lịch nhỏ + danh sách ngày trong tab Sự kiện hiện cả sự kiện Google từ `state.google.cache` (chấm màu lịch + mục trong danh sách), chỉ xem.
@@ -512,7 +514,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   - [ ] 428×926 không cuộn ngang.
   - [ ] `npx tsc --noEmit; npm run test; npm run build; npx playwright test tests/e2e/events.spec.ts` pass.
 - Lệnh kiểm tra (thợ): như tiêu chí cuối (phiếu duy nhất được build/e2e trong đợt T-4.8 ∥ T-4.9).
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Nhật ký: 2026-09-14 lượt 1: DONE (collect.ts export `cmpOccurrence`; EventsTab gộp Google, `ev-item-google` div không bấm + nhãn; styles `.ev-item-google`/`.ev-tag-google`; events.spec +2 test, seed IDB kèm `device`) — thợ tự chạy: tsc OK, unit 198, build OK, events.spec 18 pass → kiem-thu PASS chung T-4.8 (`docs/test-log/T-4.8-4.9.txt`; events ×3 54/0) → Quản lý review diff: đúng phiếu → commit.
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-4.END — Kiểm thử tích hợp M4
 - Phạm vi file: `tests/e2e/m4-design.spec.ts`, `tests/e2e/m4-export.spec.ts`, `tests/e2e/m4-offline.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.
