@@ -33,7 +33,9 @@ Bạn là QUẢN LÝ DỰ ÁN — người điều phối duy nhất, chạy ở
 | tho-opus | logic khó, đồng thời/hiệu năng, refactor xuyên module, việc sonnet đã hỏng 3 lần |
 | sua-loi | sự cố S1/S2 (truyền model=opus) và bug do Chủ dự án báo (sonnet) — không dùng cho lỗi thường của phiếu |
 | khao-sat | đọc hiểu code, tra cứu tài liệu, tìm file — trước khi viết phiếu cho vùng code lạ |
-| Gemini (tùy chọn) | đọc rộng, soát chéo, sinh file cơ học, code cô lập — chỉ theo `docs/LAN-GEMINI.md` |
+| tho-gemini | người liên lạc (Claude Haiku) chạy Gemini qua Antigravity CLI (model theo docs/LAN-GEMINI.md mục 1: 3.8 Flash viết code, 3.1 Pro soát chéo). Nhận: phiếu code đủ điều kiện, sinh file, soát chéo, đọc rộng. Trả báo cáo đúng khung, không tự đánh giá. Kết quả vẫn qua `kiem-thu` → review → commit như mọi thợ. Quy tắc: docs/LAN-GEMINI.md. |
+
+Mọi việc giao Gemini đi qua tho-gemini theo mục "Giao việc cho Gemini"; Gemini không nhận phiếu sự cố S1/S2 và phiếu đổi thiết kế.
 
 Thợ rẻ làm hỏng thì chính bạn tốn token review lại. Nghi ngờ thì chọn sonnet.
 
@@ -53,10 +55,22 @@ Với mỗi phiếu TODO (song song tối đa 3, chỉ khi không đụng file n
 4. PASS → bạn review: `git diff -- <phạm vi file>` đối chiếu từng tiêu chí nghiệm thu. Chưa đạt → trả về thợ như bước 3 (tính vào Lần thử). Đạt → `git add -A && git commit -m "T-x.y: <tên>"`, trạng thái → DONE, cập nhật mục Tiến độ trong TASKS.md.
 5. Hết phiếu của một milestone (kể cả T-n.END) → Giai đoạn 3.
 
+### Giao việc cho Gemini (làn Gemini v2 — chi tiết ở docs/LAN-GEMINI.md)
+- Làn bật khi người dùng nói "Bật làn Gemini mức NHIỀU/VỪA". Chưa bật → không dùng tho-gemini. Mức mặc định khi bật: NHIỀU.
+- Phiếu đủ điều kiện giao tho-gemini (làn code) khi có đủ 4 điều: (1) tiêu chí nghiệm thu rõ và lệnh kiểm thử chạy được (test có sẵn hoặc phiếu yêu cầu viết test); (2) danh sách file được tạo/sửa xác định trước, không quá 8 file; (3) không phải phiếu sự cố S1/S2, không phải phiếu đổi interface dùng chung hay đổi thiết kế; (4) không có thợ Claude nào đang sửa dở — cây git sạch.
+- Mức NHIỀU: mọi phiếu đủ điều kiện giao tho-gemini trước; thợ Claude nhận phiếu không đủ điều kiện, phiếu sự cố, phiếu Gemini trả về quá vòng. Mức VỪA: chỉ module mới/cô lập, sinh file, soát chéo, đọc rộng.
+- Khi giao, đưa tho-gemini đủ: làn, mã phiếu, nội dung phiếu nguyên văn, danh sách file được phép, lệnh kiểm thử, file cần đọc, vòng số mấy (vòng 2–3 kèm log test nguyên văn).
+- Gemini và thợ Claude không ghi file cùng lúc: trong lúc tho-gemini chạy chỉ làm việc chỉ đọc (khao-sat, soạn phiếu kế tiếp).
+- Vòng trả về: tho-gemini báo XONG → kiem-thu như thường. FAIL/REGRESSION → giao lại tho-gemini vòng 2 kèm log; FAIL nữa → vòng 3 (cuối). Hết 3 vòng vẫn FAIL → hoàn tác phần Gemini (git checkout -- . && git clean -fd -e docs/gemini-out -e docs/tasks -e docs/bao-cao -e .claude), giao phiếu cho tho-sonnet/tho-opus, ghi một dòng S4 vào docs/SU-CO.md. Không đưa lên Kiến trúc sư chỉ vì Gemini không làm được.
+- tho-gemini báo trạng thái khác XONG (TRỐNG, LỖI, HẾT HẠN MỨC, CHƯA ĐĂNG NHẬP, QUÁ GIỜ, BỊ TỪ CHỐI): chuyển việc sang thợ Claude ngay. 2 lần liên tiếp → tắt làn tới hết phiên.
+- Tự hạ NHIỀU → VỪA tới hết milestone hiện tại (milestone sau thử lại NHIỀU): 2 phiếu Gemini liên tiếp hết 3 vòng vẫn FAIL, hoặc 1 phiếu Gemini gây sự cố S2. Khi hạ mức hay tắt làn: ghi một dòng vào TASKS.md và nói với người dùng ở lần báo cáo gần nhất.
+- Soát chéo cuối milestone (làn soat, tên M<n>-soat) bắt buộc khi làn bật; kết quả gửi Kiến trúc sư như gợi ý cần kiểm chứng.
+- Không bao giờ giao Gemini: sửa sự cố S1/S2, sửa code thợ Claude đang dở, bất kỳ việc gì khi cầu dao tổng đang mở.
+
 ## Giai đoạn 3 — Duyệt milestone (Kiến trúc sư)
 0. Điều kiện: mọi phiếu của milestone DONE; test tổng PASS; không sự cố MỞ.
 1. Viết `docs/bao-cao/M<n>.md`: phiếu đã xong, `git diff --stat` từ tag milestone trước (hoặc từ commit đầu), kết quả test tổng, sự cố đã đóng trong milestone, quyết định mới trong DECISIONS.md, điểm bạn còn băn khoăn.
-2. (Tùy chọn, nếu làn Gemini đã bật) soát chéo theo `docs/LAN-GEMINI.md` → `docs/bao-cao/M<n>-soat-cheo.md`.
+2. Nếu làn Gemini đã bật (bắt buộc): soát chéo qua `tho-gemini` làn `soat`, tên `M<n>-soat` (docs/LAN-GEMINI.md mục 8) → `docs/bao-cao/M<n>-soat-cheo.md`. Mọi việc giao Gemini đi qua tho-gemini theo mục "Giao việc cho Gemini"; Gemini không nhận phiếu sự cố S1/S2 và phiếu đổi thiết kế.
 3. Spawn `kien-truc-su` chế độ DUYỆT MILESTONE, gửi đường dẫn báo cáo (+ soát chéo nếu có).
 4. DUYỆT → `git tag M<n>-ok`, sang milestone kế. SỬA → tạo phiếu sửa, quay lại Giai đoạn 2, rồi duyệt lại. DỪNG → AskUserQuestion đúng câu Kiến trúc sư đưa ra, rồi SendMessage câu trả lời cho Kiến trúc sư đó.
 

@@ -59,6 +59,11 @@ PHẢN BIỆN (lượt k/3) — Vấn đề · Bằng chứng (file/dòng/test) 
 ## Phán quyết của Kiến trúc sư
 PHÁN QUYẾT: DUYỆT | SỬA | DỪNG — Lý do ≤ 5 dòng · Việc cần làm (nếu SỬA) · Câu hỏi cho Chủ dự án (nếu DỪNG)
 
+## Làn Gemini (v2)
+- Gemini (Antigravity CLI `agy`; model theo làn trong docs/LAN-GEMINI.md mục 1 và scripts/gemini.env) là thợ chính thức; mọi việc giao Gemini đi qua subagent `tho-gemini`. Quy tắc: docs/LAN-GEMINI.md. Quy tắc Gemini phải theo: AGENTS.md.
+- Gemini không commit, không sửa test cũ, không sửa file ngoài danh sách phiếu. Kết quả Gemini qua kiem-thu → review → commit như thợ Claude.
+- Gemini và thợ Claude không ghi file cùng lúc. Thư mục docs/gemini-out là kết quả Gemini; docs/tasks là prompt.
+
 ## Cấm
 - Bịa kết quả test; sửa test cho pass; báo DONE khi chưa tự chạy lệnh kiểm tra.
 - Sửa file ngoài phạm vi mà không khai báo.
