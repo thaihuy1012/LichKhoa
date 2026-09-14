@@ -30,7 +30,7 @@ function assertAllOpsInSafeArea(ops: ReturnType<typeof layoutMonth>, dev: Device
 
 describe('layoutMonth', () => {
   it('tháng 2/2026: >= 28 op text ngày; có op tô hôm nay fill === accentColor', () => {
-    const design: DesignConfig = { ...defaultDesign(), accentColor: '#ff8800' };
+    const design: DesignConfig = { ...defaultDesign(), monthList: false, accentColor: '#ff8800' };
     const d = renderData('2026-02-15');
     const ops = layoutMonth(d, design, DEV_1179);
 
@@ -44,7 +44,7 @@ describe('layoutMonth', () => {
   });
 
   it('ô hôm nay đọc được khi accentColor === textColor', () => {
-    const design: DesignConfig = { ...defaultDesign(), accentColor: '#ffffff', textColor: '#ffffff' };
+    const design: DesignConfig = { ...defaultDesign(), monthList: false, accentColor: '#ffffff', textColor: '#ffffff' };
     const d = renderData('2026-02-15');
     const ops = layoutMonth(d, design, DEV_1179);
     const todayText = ops.find(
@@ -58,7 +58,7 @@ describe('layoutMonth', () => {
   });
 
   it('ngày có occurrence có op dot', () => {
-    const design: DesignConfig = defaultDesign();
+    const design: DesignConfig = { ...defaultDesign(), monthList: false };
     const d = renderData('2026-02-01', [
       { id: 'o1', sourceId: 'e1', source: 'local', title: 'Họp', date: '2026-02-10', allDay: true },
     ]);
@@ -68,7 +68,7 @@ describe('layoutMonth', () => {
   });
 
   it('hôm nay có occurrence: chấm occurrence không lẫn vào vòng tô hôm nay (fill khác accentColor)', () => {
-    const design: DesignConfig = { ...defaultDesign(), accentColor: '#ff8800' };
+    const design: DesignConfig = { ...defaultDesign(), monthList: false, accentColor: '#ff8800' };
     const d = renderData('2026-02-15', [
       { id: 'o1', sourceId: 'e1', source: 'local', title: 'Họp', date: '2026-02-15', allDay: true },
     ]);
@@ -89,7 +89,7 @@ describe('layoutMonth', () => {
     const devices = [DEV_1179, DEV_1320];
     for (const dev of devices) {
       for (const position of positions) {
-        const design: DesignConfig = { ...defaultDesign(), position };
+        const design: DesignConfig = { ...defaultDesign(), monthList: false, position };
         const d = renderData('2026-02-15', [
           { id: 'o1', sourceId: 'e1', source: 'local', title: 'Họp', date: '2026-02-28', allDay: true },
         ]);
@@ -102,7 +102,7 @@ describe('layoutMonth', () => {
 
 describe('layoutMonth âm lịch', () => {
   it('showLunar=true: có op text "Âm lịch ..." và nhãn ngày âm trong ô', () => {
-    const design: DesignConfig = { ...defaultDesign(), showLunar: true };
+    const design: DesignConfig = { ...defaultDesign(), monthList: false, showLunar: true };
     const d = renderData('2026-02-17');
     const ops = layoutMonth(d, design, DEV_1179);
     const texts = ops.filter((o) => o.op === 'text').map((o) => (o as { text: string }).text);
@@ -111,7 +111,7 @@ describe('layoutMonth âm lịch', () => {
   });
 
   it('showLunar=false: không có op âm lịch nào', () => {
-    const design: DesignConfig = { ...defaultDesign(), showLunar: false };
+    const design: DesignConfig = { ...defaultDesign(), monthList: false, showLunar: false };
     const d = renderData('2026-02-17');
     const ops = layoutMonth(d, design, DEV_1179);
     const texts = ops.filter((o) => o.op === 'text').map((o) => (o as { text: string }).text);
@@ -120,7 +120,7 @@ describe('layoutMonth âm lịch', () => {
   });
 
   it('showLunar=true: dấu hôm nay bao trọn cả số dương lẫn số âm', () => {
-    const design: DesignConfig = { ...defaultDesign(), accentColor: '#ff8800', showLunar: true };
+    const design: DesignConfig = { ...defaultDesign(), monthList: false, accentColor: '#ff8800', showLunar: true };
     const d = renderData('2026-09-13');
     const ops = layoutMonth(d, design, DEV_1179);
 
@@ -150,7 +150,7 @@ describe('layoutMonth âm lịch', () => {
     const devices = [DEV_1179, DEV_1320];
     for (const dev of devices) {
       for (const position of positions) {
-        const design: DesignConfig = { ...defaultDesign(), position, showLunar: true };
+        const design: DesignConfig = { ...defaultDesign(), monthList: false, position, showLunar: true };
         const d = renderData('2026-02-17', [
           { id: 'o1', sourceId: 'e1', source: 'local', title: 'Họp', date: '2026-02-17', allDay: true },
         ]);
@@ -163,7 +163,7 @@ describe('layoutMonth âm lịch', () => {
 
 describe('layoutMonth chấm sự kiện ngày hôm nay luôn thấy được', () => {
   function checkVisible(showLunar: boolean) {
-    const design: DesignConfig = { ...defaultDesign(), accentColor: '#ff8800', showLunar };
+    const design: DesignConfig = { ...defaultDesign(), monthList: false, accentColor: '#ff8800', showLunar };
     const d = renderData('2026-02-15', [
       { id: 'o1', sourceId: 'e1', source: 'local', title: 'Họp', date: '2026-02-15', allDay: true },
     ]);

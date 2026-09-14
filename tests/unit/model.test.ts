@@ -30,6 +30,20 @@ describe('normalizeState', () => {
     expect(result!.shortcutName).toBe('DatHinhNen');
   });
 
+  it('design thiếu monthList (T-4.8) → normalizeState bù true', () => {
+    const raw = {
+      version: 1,
+      events: [],
+      todos: [],
+      design: { ...defaultDesign() },
+      device,
+    };
+    delete (raw.design as Record<string, unknown>)['monthList'];
+    const result = normalizeState(raw);
+    expect(result).not.toBeNull();
+    expect(result!.design.monthList).toBe(true);
+  });
+
   it('version khác 1 → null', () => {
     const raw = { ...defaultState(device), version: 2 };
     expect(normalizeState(raw)).toBeNull();

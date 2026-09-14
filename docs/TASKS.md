@@ -5,7 +5,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 9/9 (T-4.0 có kết quả 2026-09-14)
-- Đang làm: T-4.8 (Tháng + danh sách) ∥ T-4.9 (tab Sự kiện hiện Google) — D-018, SPEC v1.4. HUONG-DAN + thẻ Guide đã sửa theo T-4.0 (lỗi Shortcut `error 2` → bấm lại). Xong 2 phiếu → kiem-thu `npm run check` → ảnh mẫu → build lại dist cho Chủ dự án thử → Kiến trúc sư duyệt M4 → nghiệm thu cuối.
+- Đang làm: CHỜ CHỦ DỰ ÁN thử lại trên iPhone bản có T-4.8 (Tháng + danh sách) + T-4.9 (tab Sự kiện hiện Google) — dist mới `E:/DuAn/lichkhoa-dist` (VITE_BASE `/` như bản trước). Hỏi thêm: cách đưa bản lên GitHub (tự tải hay nối repo + push). Có phản hồi → sửa nếu cần → Kiến trúc sư duyệt M4 → nghiệm thu cuối.
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
@@ -501,8 +501,8 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
   - [ ] `npx tsc --noEmit; npm run test` pass; test khóa chỉ đổi chỗ đã khai báo.
   - [ ] Quản lý dựng ảnh mẫu 1284×2778 (`scripts/mau-anh.cjs`) có/không danh sách, xem bằng mắt trước khi DONE.
 - Lệnh kiểm tra (thợ): `npx tsc --noEmit; npm run test` — KHÔNG build/e2e (T-4.9 song song dùng build). kiem-thu chạy `npm run check` sau.
-- Nhật ký: 2026-09-14 lượt 1: DONE (model `monthList`; month.ts tách `drawGrid`/`buildListRows`/`drawList`, `GRID_RATIO=0.62` thay 0.56 vì showNote bật làm số ngày < 0.028·W; i18n 3 khóa; công tắc `month-list`; unit layout-month-list mới + model +1; test khóa `layout-month.test.ts` thêm `monthList:false` 10 chỗ — đã khai báo, trong phạm vi D-018) — tsc OK, unit 206×2 TZ → kiem-thu PASS chung T-4.9 (`docs/test-log/T-4.8-4.9.txt`: check 206×2 unit, e2e 62/6 skip/0 fail; events ×3 54/0; size 37,40 KB; test khóa đúng D-018) → Quản lý review + ảnh mẫu (scratchpad `mau-t48/tong-month.png`: bố cục/cắt dòng/"+N"/Quá hạn ổn) nhưng `buildListRows` lấy cả to-do ĐÃ XONG (`d.todos` gồm done) → trả thợ lọc `!done` + test (Lần thử 1/3).
-- Model: sonnet · Lần thử: 1/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-14 lượt 1: DONE (model `monthList`; month.ts tách `drawGrid`/`buildListRows`/`drawList`, `GRID_RATIO=0.62` thay 0.56 vì showNote bật làm số ngày < 0.028·W; i18n 3 khóa; công tắc `month-list`; unit layout-month-list mới + model +1; test khóa `layout-month.test.ts` thêm `monthList:false` 10 chỗ — đã khai báo, trong phạm vi D-018) — tsc OK, unit 206×2 TZ → kiem-thu PASS chung T-4.9 (`docs/test-log/T-4.8-4.9.txt`: check 206×2 unit, e2e 62/6 skip/0 fail; events ×3 54/0; size 37,40 KB; test khóa đúng D-018) → Quản lý review + ảnh mẫu (scratchpad `mau-t48/tong-month.png`: bố cục/cắt dòng/"+N"/Quá hạn ổn) nhưng `buildListRows` lấy cả to-do ĐÃ XONG (`d.todos` gồm done) → trả thợ lọc `!done` + test (Lần thử 1/3). Lượt 2: `d.todos.filter(!done)` + 2 test (FAIL trước khi sửa) → kiem-thu PASS (`docs/test-log/T-4.8.txt`: 208×2 unit, e2e 62/6 skip/0 fail, size 37,39 KB) → commit.
+- Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
 
 ### T-4.9 — Tab Sự kiện hiện sự kiện Google (chỉ xem) (SPEC v1.4, D-018)
 - Mục tiêu: lịch nhỏ + danh sách ngày trong tab Sự kiện hiện cả sự kiện Google từ `state.google.cache` (chấm màu lịch + mục trong danh sách), chỉ xem.

@@ -344,6 +344,18 @@ export function Preview({ store }: { store: Store }) {
           />
         </div>
 
+        <div class="field field-between">
+          <label for="month-list">{t('preview.monthList', lang)}</label>
+          <input
+            type="checkbox"
+            id="month-list"
+            class="switch"
+            data-testid="month-list"
+            checked={state.design.monthList}
+            onChange={(e) => setDesign({ monthList: (e.target as HTMLInputElement).checked })}
+          />
+        </div>
+
         <button type="button" class="btn block" data-testid="export-json" onClick={onExportJson}>
           {t('settings.exportJson', lang)}
         </button>

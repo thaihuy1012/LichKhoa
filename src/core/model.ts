@@ -68,6 +68,7 @@ export interface DesignConfig {
   hour12: boolean;
   lang: 'vi' | 'en';
   showLunar: boolean;
+  monthList: boolean; // v1.4 (D-018): bố cục Tháng có danh sách sự kiện/to-do bên dưới lưới
 }
 
 export interface AppState {
@@ -111,6 +112,7 @@ export function defaultDesign(): DesignConfig {
     hour12: false,
     lang: 'vi',
     showLunar: true,
+    monthList: true,
   };
 }
 

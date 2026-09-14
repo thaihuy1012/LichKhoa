@@ -151,6 +151,10 @@
   "todo.empty": "Không có việc cần làm",
   "todo.overdue": "Quá hạn",
 
+  "month.moreEvents": "+{n} sự kiện nữa",
+  "month.moreTodos": "+{n} việc nữa",
+  "preview.monthList": "Danh sách dưới lịch tháng",
+
   "common.comingSoon": "Sắp có",
   "sync.lastSync": "Đồng bộ lần cuối: {time}",
   "sync.neverSynced": "Chưa đồng bộ lần nào",

@@ -151,6 +151,10 @@
   "todo.empty": "No to-dos",
   "todo.overdue": "Overdue",
 
+  "month.moreEvents": "+{n} more events",
+  "month.moreTodos": "+{n} more to-dos",
+  "preview.monthList": "List under month",
+
   "common.comingSoon": "Coming soon",
   "sync.lastSync": "Last synced: {time}",
   "sync.neverSynced": "Never synced yet",
