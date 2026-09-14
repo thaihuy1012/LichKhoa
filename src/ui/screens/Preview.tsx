@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { Store } from '../store';
+import { useStoreState } from '../useStoreState';
 import type { DesignConfig } from '../../core/model';
 import { DEVICES, customDevice, detectDevice } from '../../render/devices';
 import { renderWallpaper } from '../../render/wallpaper';
@@ -27,7 +28,7 @@ function isValidSize(n: number): boolean {
 }
 
 export function Preview({ store }: { store: Store }) {
-  const [state, setState] = useState(store.getState());
+  const state = useStoreState(store);
   const [imgUrl, setImgUrl] = useState<string | null>(null);
   const [blob, setBlob] = useState<Blob | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -40,14 +41,6 @@ export function Preview({ store }: { store: Store }) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const renderTokenRef = useRef(0);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    // Đồng bộ ngay khi đăng ký: nếu dispatch xảy ra giữa lúc khởi tạo state cục bộ
-    // (useState(store.getState()) lúc render) và lúc effect này chạy (sau paint),
-    // store đã đổi nhưng Preview chưa nhận — cập nhật lại để không kẹt ở state cũ.
-    setState(store.getState());
-    return store.subscribe(setState);
-  }, [store]);
 
   useEffect(() => {
     setWidthText(String(state.device.width));

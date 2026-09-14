@@ -1,5 +1,6 @@
-import { useLayoutEffect, useState } from 'preact/hooks';
+import { useState } from 'preact/hooks';
 import type { Store } from '../store';
+import { useStoreState } from '../useStoreState';
 import type { DesignConfig } from '../../core/model';
 import { loadPhoto } from '../../render/background';
 import { saveBg } from '../../storage/db';
@@ -37,14 +38,9 @@ function rangePct(value: number, min: number, max: number): string {
 
 /** Màn Thiết kế: nền (ảnh/màu/gradient), mờ/tối, màu chữ/nhấn, font, vị trí, scale, boxAlpha, agendaDays. */
 export function Design({ store }: { store: Store }) {
-  const [state, setState] = useState(store.getState());
+  const state = useStoreState(store);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // useLayoutEffect (không phải useEffect): đăng ký subscribe ngay sau commit, trước khi
-  // trình duyệt vẽ khung hình kế tiếp -- tránh lọt mất dispatch xảy ra ngay sau khi mount
-  // (vd. chuyển tab rồi bấm/kéo range ngay lập tức) do useEffect bị hoãn tới sau paint.
-  useLayoutEffect(() => store.subscribe(setState), [store]);
 
   const lang = state.design.lang;
   const { bg } = state.design;

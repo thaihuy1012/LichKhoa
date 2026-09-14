@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { Store } from '../store';
+import { useStoreState } from '../useStoreState';
 import { t } from '../../core/i18n';
 import { Toast } from '../components/Toast';
 import { EventsTab } from './events/EventsTab';
@@ -11,15 +12,10 @@ type Segment = 'events' | 'todos' | 'note';
 const TOAST_MS = 2600;
 
 export function Events({ store }: { store: Store }) {
-  const [state, setState] = useState(store.getState());
+  const state = useStoreState(store);
   const [segment, setSegment] = useState<Segment>('events');
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    setState(store.getState());
-    return store.subscribe(setState);
-  }, [store]);
 
   useEffect(
     () => () => {

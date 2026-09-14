@@ -7,6 +7,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 12/12 ✔ tag `M4-ok` (D-021 — DUYỆT M4 + nghiệm thu cuối, gộp)
 - Đang làm (2026-09-15): ĐỢT BẢO TRÌ D-023 — B-001 (Gemini) → B-002 (sonnet). Xem mục "Bảo trì 2026-09-15" cuối file.
 - 2026-09-15 phiên 2 (nền): làm trong worktree `.claude/worktrees/bao-tri-D-023`, nhánh `worktree-bao-tri-D-023` (từ `main` fd17357) — commit ở nhánh này, Chủ dự án gộp về `main` (`git merge --ff-only worktree-bao-tri-D-023`). Lượt Gemini `B-001` vòng 1 phiên trước chết khi dừng phiên (`DONE 255`, đầu ra rỗng, không đổi `src/`) → `huy B-001`, giao lại vòng 1 (không tính Lần thử, không tính lỗi làn). Lưu ý: `agy-run.sh huy` hoàn tác MỌI thay đổi chưa commit, kể cả sổ sách → commit sổ trước khi giao Gemini.
+- 2026-09-15 phiên 2: B-001 ✔ DONE. Làn Gemini TẮT tới hết phiên này (agy ghi ra ngoài worktree — BAI-HOC 2026-09-15); phiên sau chạy ở checkout chính thì bật lại được. Tiếp: B-002 (tho-sonnet).
 - Trước đó: DỰ ÁN ĐÃ ĐÓNG 2026-09-14 (D-021 nghiệm thu, D-022 Chủ dự án chọn đóng; giữ "Chủ dự án tự `git push`"). Mở lại khi Chủ dự án yêu cầu: đọc SU-CO → TASKS (Tồn đọng S4) → DECISIONS D-021/D-022. Thử máy thật lần 3: T-4.10 ✔ "Ghi chú hiện đúng" → mọi hạng mục thử tay M4 đạt. Deploy lần đầu OK 2026-09-14: Chủ dự án `git push -u origin main` (3396ec7..fcf6bdc, không force) → Actions run 34867029741 build + deploy success → `https://thaihuy1012.github.io/LichKhoa/` 200, manifest scope `/LichKhoa/`. Nhánh `main` theo dõi `origin/main`; Quản lý không push được (`.claude/settings.json` deny) → mỗi lần cần deploy, Chủ dự án chạy `! git push`. Sau đó → Kiến trúc sư duyệt M4 → nghiệm thu cuối.
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
@@ -558,7 +559,8 @@ Thứ tự: B-001 (Gemini) → B-002 (sonnet). Không song song (Gemini và th�
   [ ] `store-subscribe-guard.test.ts` pass cả 2 TZ; nếu tạm thêm `store.subscribe(` vào một màn thì test fail (thợ tự thử rồi hoàn tác, ghi trong báo cáo).
   [ ] `npx tsc --noEmit` sạch; `npm run check` pass toàn bộ (unit ×2 TZ + e2e chromium/webkit), không test cũ nào bị sửa/skip.
 - Lệnh kiểm tra: `npm run check`
-- Model: gemini (làn code) · Lần thử: 0/3 · Trạng thái: DOING (vòng 1 giao tho-gemini 2026-09-15)
+- Nhật ký: 2026-09-15 vòng 1 (phiên 1) chết khi dừng phiên → `huy`, giao lại. Vòng 1 (phiên 2, worktree): Gemini XONG 6 phút nhưng agy ghi 7 file vào checkout chính thay vì worktree → kiem-thu báo LỖI MÔI TRƯỜNG (không tính Lần thử) → Quản lý chép 7 file sang worktree, trả checkout chính về HEAD (BAI-HOC 2026-09-15). kiem-thu PASS (tsc; 211×2 unit; e2e 64 pass/6 skip, khớp mốc; guard 2/2 ×2 TZ; diff đúng phạm vi) → review đạt (App re-render theo mọi dispatch thay vì chỉ `lang` — chấp nhận, đúng phiếu) → commit.
+- Model: gemini (làn code) · Lần thử: 0/3 · Trạng thái: DONE
 
 ### B-002 — webkit Windows: ô màu hiện mã hex lần 2 (S4 T-4.6)
 - Mức: S4. Triệu chứng: màn Thiết kế trên Playwright webkit (Windows), `input[type=color]` tự in chữ kiểu "#00000(" bên cạnh `span.color-hex` → mã màu hiện 2 lần, chữ trong ô bị cắt. iPhone thật có ô màu nên không bị.

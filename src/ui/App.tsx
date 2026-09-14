@@ -8,6 +8,7 @@ import { toISODate } from '../core/calendar';
 import { consumeState, saveToken, getToken, clearToken } from '../google/oauth';
 import { handleAuthRedirect, autoSyncIfNeeded } from './sync';
 import { createStore, type Store } from './store';
+import { useStoreState } from './useStoreState';
 import { Preview } from './screens/Preview';
 import { Events } from './screens/Events';
 import { Design } from './screens/Design';
@@ -35,9 +36,10 @@ async function loadInitialState(): Promise<AppState> {
 export function App() {
   const [store, setStore] = useState<Store | null>(null);
   const [tab, setTab] = useState<TabId>('preview');
-  const [lang, setLang] = useState<AppState['design']['lang']>('vi');
   const [authNotice, setAuthNotice] = useState<AuthNotice | null>(null);
   const bootedRef = useRef(false);
+  const state = useStoreState(store);
+  const lang = state?.design.lang ?? 'vi';
 
   useEffect(() => {
     let cancelled = false;
@@ -48,13 +50,6 @@ export function App() {
       cancelled = true;
     };
   }, []);
-
-  useEffect(() => {
-    if (!store) return;
-    const update = () => setLang(store.getState().design.lang);
-    update();
-    return store.subscribe(update);
-  }, [store]);
 
   // Chạy 1 lần khi state đã nạp, KHÔNG phụ thuộc tab đang mở (SPEC §2 TH1): xử lý redirect Google
   // (nếu có #access_token/#error) rồi tự đồng bộ nếu token còn hạn và cache cũ/không có.
