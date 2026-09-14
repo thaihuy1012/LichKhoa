@@ -5,7 +5,8 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 12/12 ✔ tag `M4-ok` (D-021 — DUYỆT M4 + nghiệm thu cuối, gộp)
-- Đang làm: DỰ ÁN ĐÃ ĐÓNG 2026-09-14 (D-021 nghiệm thu, D-022 Chủ dự án chọn đóng; giữ "Chủ dự án tự `git push`"). Mở lại khi Chủ dự án yêu cầu: đọc SU-CO → TASKS (Tồn đọng S4) → DECISIONS D-021/D-022. Thử máy thật lần 3: T-4.10 ✔ "Ghi chú hiện đúng" → mọi hạng mục thử tay M4 đạt. Deploy lần đầu OK 2026-09-14: Chủ dự án `git push -u origin main` (3396ec7..fcf6bdc, không force) → Actions run 34867029741 build + deploy success → `https://thaihuy1012.github.io/LichKhoa/` 200, manifest scope `/LichKhoa/`. Nhánh `main` theo dõi `origin/main`; Quản lý không push được (`.claude/settings.json` deny) → mỗi lần cần deploy, Chủ dự án chạy `! git push`. Sau đó → Kiến trúc sư duyệt M4 → nghiệm thu cuối.
+- Đang làm (2026-09-15): ĐỢT BẢO TRÌ D-023 — B-001 (Gemini) → B-002 (sonnet). Xem mục "Bảo trì 2026-09-15" cuối file.
+- Trước đó: DỰ ÁN ĐÃ ĐÓNG 2026-09-14 (D-021 nghiệm thu, D-022 Chủ dự án chọn đóng; giữ "Chủ dự án tự `git push`"). Mở lại khi Chủ dự án yêu cầu: đọc SU-CO → TASKS (Tồn đọng S4) → DECISIONS D-021/D-022. Thử máy thật lần 3: T-4.10 ✔ "Ghi chú hiện đúng" → mọi hạng mục thử tay M4 đạt. Deploy lần đầu OK 2026-09-14: Chủ dự án `git push -u origin main` (3396ec7..fcf6bdc, không force) → Actions run 34867029741 build + deploy success → `https://thaihuy1012.github.io/LichKhoa/` 200, manifest scope `/LichKhoa/`. Nhánh `main` theo dõi `origin/main`; Quản lý không push được (`.claude/settings.json` deny) → mỗi lần cần deploy, Chủ dự án chạy `! git push`. Sau đó → Kiến trúc sư duyệt M4 → nghiệm thu cuối.
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
@@ -13,6 +14,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - Chuyển phiên: T-2.8 đã commit — điểm dừng sạch. Phiên mới (`claude --agent quan-ly`): đọc SU-CO → TASKS, giao T-2.6 (nhớ tiêu chí Quản lý dựng ảnh mẫu 3 bố cục xem bằng mắt). Ảnh mẫu mới nhất đã gửi Chủ dự án: có âm lịch (lichkhoa-amlich-r1.png).
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
 - Làn Gemini: BẬT (D-009) — Pro `gemini-3.1-pro-high`, Flash `gemini-3.8-flash-high`. Dùng đầu tiên: soát chéo cuối M2.
+- 2026-09-15: Chủ dự án bật làn Gemini **v2 mức NHIỀU** (kit v2.1, `tho-gemini`). `agy-run.sh kiem-tra` → SẴN SÀNG (agy 1.2.2; code `gemini-3.8-flash-high`, soat/doc `gemini-3.1-pro-high`, sinh `gemini-3.8-flash-low`). Dự án vẫn ĐÓNG (D-022) → hỏi Chủ dự án việc tiếp theo.
 
 ## Tồn đọng (S4 — không chặn)
 - ~~S4 · T-1.2 · mặc định `boxAlpha=1` che ảnh nền~~ → đã sửa T-4.2 (0.35 khi chọn ảnh; D-021 xác nhận).
@@ -20,8 +22,8 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - ~~S4 · T-2.7 · `EventsTab.tsx` L93 durationMin ngầm 60~~ → đã sửa trong T-2.12.
 - ~~S4 · T-2.12 · ô todo-due trống không nhãn~~ → đã sửa T-2.14.
 - ~~S4 · T-2.14 · `App.tsx` "Đang tải…" cứng tiếng Việt~~ → đã sửa (`App.tsx:90` dùng i18n; D-021 xác nhận).
-- S4 · soát chéo M4 #5 · nhập JSON (backup không kèm ảnh, SPEC §5) giữ ảnh nền cũ của máy nếu `design.bg.kind==='photo'` — chấp nhận (cùng máy thì đúng ý); nếu cần, hỏi Chủ dự án.
-- S4 · T-4.6 · webkit Windows: `input[type=color]` hiện chữ "#00000(" cạnh span hex → mã màu hiện 2 lần (iPhone có ô màu thật nên không bị). Làm nếu có phiếu chạm Design.tsx.
+- ~~S4 · soát chéo M4 #5 · nhập JSON giữ ảnh nền cũ của máy~~ → Chủ dự án chọn giữ như hiện tại (2026-09-15, D-023) → đóng, không sửa.
+- S4 · T-4.6 · webkit Windows: `input[type=color]` hiện chữ "#00000(" cạnh span hex → mã màu hiện 2 lần (iPhone có ô màu thật nên không bị). → phiếu B-002 (2026-09-15).
 - ~~S4 · D-015 · sau redirect kết nối thành công~~ → đã sửa T-4.2.
 - ~~S4 · T-3.3 · nút `sync-connect` / `sync-now` kiểu nút phụ~~ → đã sửa T-4.2 (accent; D-021 xác nhận).
 - ~~S4 · T-4.8 · nhãn ngày lặp / cột tiêu đề lệch / số âm lịch nhỏ~~ → Chủ dự án thử máy thật 2026-09-14: "dễ đọc, chữ và số âm lịch đã ổn" → đóng, không sửa.
@@ -535,3 +537,36 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Bổ sung (Quản lý 2026-09-14): chạy phần TỰ ĐỘNG ngay (song song việc Chủ dự án thử iPhone T-4.0); duyệt M4 chờ cả hai. `data-testid` có sẵn: Design (`bg-kind-*`, `bg-file`, `blur-0..3`, `dim`, `font-*`, `position-*`, …), Preview (`copy`, `set-wallpaper`, `shortcut-name`, `save`, `preview`). Offline webkit (D-013): thử (1) sau `serviceWorker.ready`, trong page `await caches.match('/')`/`caches.match('index.html')` phải có; (2) `context.setOffline(true)` + `page.goto(url)` (không `reload`) — nếu vẫn "internal error" thì `test.skip(webkit)` riêng bước reload có lý do + giữ khẳng định (1) cho webkit. Luôn `npm run build` trước khi chạy Playwright riêng lẻ (BAI-HOC). Không trùng lặp test đã có ở `design.spec`/`share.spec` — `m4-*` là LUỒNG ĐẦU-CUỐI: ảnh → tùy chỉnh → xuất/sao chép/đặt hình nền → offline mở lại.
 - Nhật ký: 2026-09-14 lượt 1: DONE (m4-design, m4-export, m4-offline; webkit `caches.match` pass, offline goto vẫn lỗi engine → skip D-013; không sửa src; size 36,27 KB) → kiem-thu PASS (m4 ×3 12/6 skip; full ×2 104/12 skip/0 fail; test M1–M3 không đổi từ M3-ok) → commit.
 - Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
+
+---
+## Bảo trì 2026-09-15 (D-023) — làn Gemini v2 NHIỀU
+Thứ tự: B-001 (Gemini) → B-002 (sonnet). Không song song (Gemini và thợ Claude không ghi cùng lúc).
+
+### B-001 — Hook `useStoreState` thay mọi `store.subscribe` trong UI (D-021 băn khoăn 2)
+- Mức: S4 (phòng ngừa). Nguyên nhân gốc đã lặp 2 lần (T-1.END Preview, T-4.6 Design): màn tự `useState(store.getState())` + subscribe trong `useEffect` (chạy sau paint) → dispatch ngay sau mount bị lọt. `Events.tsx:19–22` vẫn còn mẫu lỗi này.
+- Mục tiêu: một hook duy nhất đăng ký store; màn hình không gọi `store.subscribe` trực tiếp; test chặn tái phạm.
+- Phạm vi file (chỉ được sửa): `src/ui/useStoreState.ts` (mới), `src/ui/App.tsx`, `src/ui/screens/Preview.tsx`, `src/ui/screens/Events.tsx`, `src/ui/screens/Design.tsx`, `src/ui/screens/Sync.tsx`, `tests/unit/store-subscribe-guard.test.ts` (mới). KHÔNG sửa `src/ui/store.ts`, không sửa test cũ.
+- Giao diện / đầu vào có sẵn: `Store` trong `src/ui/store.ts:142–146` (`getState`, `dispatch`, `subscribe` trả hàm hủy) — giữ nguyên.
+- Yêu cầu:
+  - `useStoreState.ts` export đúng chữ ký (overload): `useStoreState(store: Store): AppState` và `useStoreState(store: Store | null): AppState | null`. Cài đặt: `useState(() => store?.getState() ?? null)`; `useLayoutEffect` (KHÔNG `useEffect`) phụ thuộc `[store]`: nếu có store → `setState(store.getState())` (bắt dispatch lọt giữa render và đăng ký) rồi `return store.subscribe(setState)`. Comment ngắn giải thích vì sao useLayoutEffect + đọc lại.
+  - `Preview.tsx`, `Events.tsx`, `Design.tsx`, `Sync.tsx`: bỏ cặp `useState(store.getState())` + effect subscribe, thay `const state = useStoreState(store);`. Bỏ import hook không còn dùng. Không đổi gì khác.
+  - `App.tsx` (L52–57): thay effect đọc `lang` bằng `useStoreState(store)` (store có thể null) — giữ nguyên hành vi hiện tại khi store chưa nạp (dùng đúng giá trị mặc định `lang` đang có). Không đụng effect boot/redirect Google (L59+).
+  - `store-subscribe-guard.test.ts` (Vitest, môi trường node, dùng `node:fs`/`node:path`): duyệt đệ quy mọi `.ts`/`.tsx` trong `src/`; khẳng định chuỗi `.subscribe(` chỉ xuất hiện trong `src/ui/store.ts` và `src/ui/useStoreState.ts`; thông báo lỗi nêu tên file vi phạm. Thêm 1 test khẳng định `src/ui/useStoreState.ts` chứa `useLayoutEffect` và không chứa `useEffect(`.
+- Tiêu chí nghiệm thu:
+  [ ] `grep -rn "\.subscribe(" src` chỉ ra `src/ui/store.ts` và `src/ui/useStoreState.ts`.
+  [ ] `store-subscribe-guard.test.ts` pass cả 2 TZ; nếu tạm thêm `store.subscribe(` vào một màn thì test fail (thợ tự thử rồi hoàn tác, ghi trong báo cáo).
+  [ ] `npx tsc --noEmit` sạch; `npm run check` pass toàn bộ (unit ×2 TZ + e2e chromium/webkit), không test cũ nào bị sửa/skip.
+- Lệnh kiểm tra: `npm run check`
+- Model: gemini (làn code) · Lần thử: 0/3 · Trạng thái: DOING (vòng 1 giao tho-gemini 2026-09-15)
+
+### B-002 — webkit Windows: ô màu hiện mã hex lần 2 (S4 T-4.6)
+- Mức: S4. Triệu chứng: màn Thiết kế trên Playwright webkit (Windows), `input[type=color]` tự in chữ kiểu "#00000(" bên cạnh `span.color-hex` → mã màu hiện 2 lần, chữ trong ô bị cắt. iPhone thật có ô màu nên không bị.
+- Mục tiêu: trên webkit Windows ô màu chỉ hiện ô màu (hoặc ô trống có viền), không hiện chữ; mã hex chỉ hiện ở `span.color-hex`. Chromium và iPhone không đổi giao diện.
+- Phạm vi file (chỉ được sửa): `src/ui/styles.css` (khối `.color-row` ~L977–990). Nếu CSS không đủ mà phải sửa markup → PHẢN BIỆN trước, không tự sửa `Design.tsx`.
+- Giao diện / đầu vào có sẵn: `Design.tsx` L126–236 (4 cặp `input[type=color]` + `span.color-hex`, testid `bg-color-hex`, `bg-color2-hex`, `text-color-hex`, `accent-color-hex`); công cụ chụp webkit `scripts/chup.cjs` (cách dùng: `scripts/README-cong-cu.md`; cần `npm run build` trước).
+- Tiêu chí nghiệm thu:
+  [ ] Ảnh chụp webkit màn Thiết kế trước/sau (lưu `docs/test-log/B-002-truoc.png`, `B-002-sau.png`, trong `docs/test-log/` không tính vào phạm vi): trong ô màu không còn chữ; ô vẫn thấy màu hoặc viền, vùng chạm ≥ 44px.
+  [ ] Ảnh chụp chromium màn Thiết kế sau sửa: ô màu vẫn hiện màu như trước.
+  [ ] `npm run check` pass, không sửa test.
+- Lệnh kiểm tra: `npm run check`
+- Model: sonnet (không đủ điều kiện Gemini: tiêu chí chính kiểm bằng mắt, không có lệnh test tự động) · Lần thử: 0/3 · Trạng thái: TODO

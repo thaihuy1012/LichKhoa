@@ -81,6 +81,12 @@
 ## D-022 — Đóng dự án; giữ Chủ dự án tự push (2026-09-14 · người quyết: Chủ dự án)
 - Sau D-021 (DUYỆT M4 + nghiệm thu cuối), hỏi 2 câu → Chủ dự án chọn: (a) **đóng dự án**, không làm đợt bảo trì (S4 còn lại + hook `useStoreState` để ngỏ); (b) **giữ Chủ dự án tự `git push`** — `.claude/settings.json` giữ `deny: Bash(git push *)`; Quản lý chuẩn bị commit/tag, Chủ dự án chạy `! git push` (+ `! git push origin --tags` khi có tag mới — tag `M*-ok` là tag thường, `--follow-tags` KHÔNG đẩy). 4 tag M1–M4-ok đã lên GitHub 2026-09-14.
 
+## D-023 — Mở lại dự án cho một đợt bảo trì nhỏ, làn Gemini v2 NHIỀU (2026-09-15 · người quyết: Chủ dự án)
+- Chủ dự án bật làn Gemini v2 mức NHIỀU (kit v2.1; `agy-run.sh kiem-tra` → SẴN SÀNG) và chọn "Bảo trì nhỏ": B-001 hook `useStoreState` + unit test chặn `store.subscribe` ngoài hook (D-021 băn khoăn 2), B-002 S4 ô màu webkit hiện hex 2 lần (T-4.6).
+- S4 nhập JSON giữ ảnh nền cũ: Chủ dự án chọn **giữ như hiện tại** → đóng, không sửa.
+- Giao việc: B-001 đủ 4 điều kiện Gemini (≤ 8 file, chữ ký hook cố định trong phiếu, không đổi `Store`, có lệnh `npm run check`) → `tho-gemini` làn code. B-002 tiêu chí chính kiểm bằng mắt → `tho-sonnet`.
+- Xong đợt: không cần Kiến trúc sư duyệt (không đổi SPEC); chuẩn bị commit, Chủ dự án tự `git push` (D-022).
+
 ## D-020 — T-4.10 PHẢN BIỆN lượt 1: CHẤP NHẬN sửa 1 dòng test khóa `notes.spec.ts` (2026-09-14 · người quyết: Quản lý)
 - Ghim → tự bật `showNote` (T-4.10, Chủ dự án xác nhận chưa bật công tắc "Hiện trên hình nền") làm test cũ `notes.spec.ts:10` fail: dòng 33 `note-show.click()` sau khi ghim giờ TẮT công tắc.
 - Quyết định: đổi đúng dòng đó thành `.check()` (đảm bảo bật — idempotent), giữ nguyên mọi assertion và mục đích test. Khai báo trong báo cáo; kiem-thu kiểm diff test khóa chỉ có dòng này.
