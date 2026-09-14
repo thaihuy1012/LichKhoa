@@ -79,7 +79,7 @@
 - Hỏi Chủ dự án (không chặn duyệt): (a) đóng dự án ngay hay làm một đợt bảo trì nhỏ (`useStoreState` + nhập JSON xóa ảnh nền cũ); (b) giữ quy trình "Chủ dự án tự `git push` mỗi lần deploy" hay mở quyền push cho Quản lý trong `.claude/settings.json`.
 
 ## D-022 — Đóng dự án; giữ Chủ dự án tự push (2026-09-14 · người quyết: Chủ dự án)
-- Sau D-021 (DUYỆT M4 + nghiệm thu cuối), hỏi 2 câu → Chủ dự án chọn: (a) **đóng dự án**, không làm đợt bảo trì (S4 còn lại + hook `useStoreState` để ngỏ); (b) **giữ Chủ dự án tự `git push`** — `.claude/settings.json` giữ `deny: Bash(git push *)`; Quản lý chuẩn bị commit/tag, Chủ dự án chạy `! git push --follow-tags`.
+- Sau D-021 (DUYỆT M4 + nghiệm thu cuối), hỏi 2 câu → Chủ dự án chọn: (a) **đóng dự án**, không làm đợt bảo trì (S4 còn lại + hook `useStoreState` để ngỏ); (b) **giữ Chủ dự án tự `git push`** — `.claude/settings.json` giữ `deny: Bash(git push *)`; Quản lý chuẩn bị commit/tag, Chủ dự án chạy `! git push` (+ `! git push origin --tags` khi có tag mới — tag `M*-ok` là tag thường, `--follow-tags` KHÔNG đẩy). 4 tag M1–M4-ok đã lên GitHub 2026-09-14.
 
 ## D-020 — T-4.10 PHẢN BIỆN lượt 1: CHẤP NHẬN sửa 1 dòng test khóa `notes.spec.ts` (2026-09-14 · người quyết: Quản lý)
 - Ghim → tự bật `showNote` (T-4.10, Chủ dự án xác nhận chưa bật công tắc "Hiện trên hình nền") làm test cũ `notes.spec.ts:10` fail: dòng 33 `note-show.click()` sau khi ghim giờ TẮT công tắc.
