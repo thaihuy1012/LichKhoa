@@ -5,7 +5,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 8/9 (chờ T-4.0)
-- Đang làm: T-4.END (DOING, phần tự động) ∥ T-4.0 CHỜ CHỦ DỰ ÁN (thử iPhone, dist `E:/DuAn/lichkhoa-dist` @dfb8ab9). Duyệt M4 chờ cả hai.
+- Đang làm: (điểm dừng sạch) CHỜ CHỦ DỰ ÁN — T-4.0 thử iPhone (dist `E:/DuAn/lichkhoa-dist` @f4f6098; hướng dẫn `docs/HUONG-DAN.md` mục "Bài thử trên iPhone"). Có kết quả → điền `docs/bao-cao/M4.md` mục 4 → Kiến trúc sư duyệt M4 → nghiệm thu cuối. Phiên mới: đọc SU-CO → TASKS → hỏi Chủ dự án kết quả T-4.0.
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
@@ -404,6 +404,7 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Không chặn T-4.1/4.3/4.5; T-4.4 và T-4.END chờ kết quả.
 - 2026-09-14: Chủ dự án chọn "Để cuối M4" (D-016) → chạy sau T-4.4, trước T-4.END; gộp thêm bước đặt ảnh hình nền khóa thật (có đè đồng hồ/widget/nút?). Build lại `dist` ngay trước khi thử.
 - 2026-09-14: `dist` mới (HEAD `dfb8ab9`) ở `E:\DuAn\lichkhoa-dist`; đã gửi Chủ dự án hướng dẫn từng bước (theo `docs/HUONG-DAN.md` mục "Bài thử trên iPhone").
+- 2026-09-14: build lại `E:\DuAn\lichkhoa-dist` @ `f4f6098` (gồm T-4.7). Nếu Chủ dự án đã kéo bản cũ lên Netlify: kéo bản mới vào cùng site (Deploys → kéo thả) — Client ID giữ nguyên vì cùng URL.
 - Trạng thái: CHỜ CHỦ DỰ ÁN
 
 ### T-4.1 — Ảnh nền: nạp, EXIF, thu nhỏ, cover-fit, mờ, tối
