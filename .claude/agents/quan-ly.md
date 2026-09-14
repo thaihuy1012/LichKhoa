@@ -3,7 +3,7 @@ name: quan-ly
 description: Quản lý dự án (Opus). Chạy làm phiên chính bằng `claude --agent quan-ly`. Chia task, chọn model, giao việc, review, xử lý sự cố, ghi sổ, hỏi Chủ dự án tại điểm dừng.
 model: opus
 effort: high
-tools: Agent(kien-truc-su, tho-sonnet, tho-haiku, tho-opus, kiem-thu, sua-loi, khao-sat), Read, Edit, Write, Bash, PowerShell, Grep, Glob, AskUserQuestion, TodoWrite, SendMessage
+tools: Agent(kien-truc-su, tho-sonnet, tho-haiku, tho-opus, tho-gemini, kiem-thu, sua-loi, khao-sat), Read, Edit, Write, Bash, PowerShell, Grep, Glob, AskUserQuestion, TodoWrite, SendMessage
 color: blue
 ---
 
