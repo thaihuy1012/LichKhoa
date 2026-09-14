@@ -70,6 +70,11 @@
 - Điểm 1: không thêm kiểm tra webkit; `dist/sw.js` có `NavigationRoute(createHandlerBoundToURL("index.html"))` → (D) là phép thử quyết định. Điểm 2: chấp nhận localStorage (readonly, 1 giờ, không script ngoài) → giới hạn đã biết. Điểm 3: giữ chữ ký `fetchEvents`; +1 request/lượt là rẻ. Điểm 4: T-4.2. Điểm 5: gộp vào T-4.0.
 - S4 mới (Tồn đọng): sau redirect kết nối thành công, `App.tsx` L72 chỉ tự đồng bộ khi cache > 30′ → nên ép đồng bộ ngay (truyền cache = null khi `authResult.ok`); làm ở phiếu M4 chạm `App.tsx`.
 
+## D-019 — Nối repo với GitHub, deploy bằng workflow Pages (2026-09-14 · người quyết: Chủ dự án)
+- Chủ dự án đồng ý "nối repo này với GitHub cho workflow tự deploy" (cho phép `git push`). Trước đó Chủ dự án tự tải bản build lên GitHub; bản build dùng `VITE_BASE=/` và chạy được.
+- Việc còn thiếu (chờ Chủ dự án): URL/tên repo đang dùng. Nếu repo là `<user>.github.io` thì trang ở gốc → workflow phải build `VITE_BASE=/` (hiện đang `/<tên-repo>/`). Đổi URL thì phải sửa origin/redirect của Client ID Google.
+- Máy chưa có `gh`; git dùng credential manager → lần push đầu Chủ dự án tự chạy (`! git push …`) để đăng nhập. Nhánh cục bộ `master` → đổi thành `main` (workflow chạy theo push `main`). Repo phải public (Pages miễn phí) → mã nguồn công khai; không có secret trong repo (SPEC M3). Settings → Pages → Source = GitHub Actions do Chủ dự án bật.
+
 ## D-018 — SPEC v1.4 sau thử máy thật T-4.0: Tháng + danh sách; tab Sự kiện hiện Google (2026-09-14 · người quyết: Chủ dự án)
 - Bối cảnh: T-4.0 đạt A/B/D/E + hình nền không bị đè. Chủ dự án: bố cục Tháng "chỉ thấy ngày, không thấy sự kiện → vô ích", muốn danh sách sự kiện + to-do dưới lưới tháng, "nhiều quá thì thanh cuộn"; tab Sự kiện không hiện sự kiện Google (`EventsTab.tsx:59` chỉ expand `state.events`).
 - Hỏi 2 điểm (hình nền là ảnh tĩnh → không cuộn được) → Chủ dự án chọn cả 2 khuyến nghị:

@@ -5,7 +5,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 9/9 (T-4.0 có kết quả 2026-09-14)
-- Đang làm: CHỜ CHỦ DỰ ÁN thử lại trên iPhone bản có T-4.8 (Tháng + danh sách) + T-4.9 (tab Sự kiện hiện Google) — dist mới `E:/DuAn/lichkhoa-dist` @5f8401c (VITE_BASE `/` như bản trước). Hỏi thêm: cách đưa bản lên GitHub (tự tải hay nối repo + push). Có phản hồi → sửa nếu cần → Kiến trúc sư duyệt M4 → nghiệm thu cuối.
+- Đang làm: T-4.10 (ghim ghi chú → tự bật `showNote`). Thử máy thật lần 2 (dist @5f8401c): Tháng + danh sách ✔ dễ đọc, không bị che; tab Sự kiện hiện Google ✔; ghi chú ghim không lên hình nền → T-4.10. Chủ dự án ĐỒNG Ý nối repo GitHub + push để workflow tự deploy (D-019) — chờ Chủ dự án cho URL/tên repo đang dùng (quyết định VITE_BASE + origin OAuth). Sau đó → Kiến trúc sư duyệt M4 → nghiệm thu cuối.
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
@@ -25,7 +25,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - ~~S4 · D-015 · sau redirect kết nối thành công~~ → đã sửa T-4.2.
 - (cũ) S4 · D-015 · sau redirect kết nối thành công, `App.tsx` L72 chỉ tự đồng bộ khi cache > 30′ → ép đồng bộ ngay (cache = null khi `authResult.ok`); làm ở T-4.2 (App.tsx trong phạm vi).
 - S4 · T-3.3 · nút `sync-connect` / `sync-now` dùng kiểu nút phụ (xám) dù là thao tác chính → kiểu accent như "Lưu ảnh"; làm ở T-4.2 (styles).
-- S4 · T-4.8 · danh sách dưới lưới Tháng lặp nhãn ngày ("Hôm nay · …" ×3) và cột tiêu đề không thẳng hàng; số âm lịch trong ô rất nhỏ khi bật ghi chú (≈ 0.55 × cỡ số ngày). Chờ Chủ dự án xem trên máy thật rồi mới chỉnh.
+- ~~S4 · T-4.8 · nhãn ngày lặp / cột tiêu đề lệch / số âm lịch nhỏ~~ → Chủ dự án thử máy thật 2026-09-14: "dễ đọc, chữ và số âm lịch đã ổn" → đóng, không sửa.
 - S4 · T-3.1 · `parseFragment` giải mã `error` 2 lần (`URLSearchParams` đã giải mã) và trả `{error}` không kiểm `state` — vô hại với mã lỗi ASCII của Google; sửa nếu có phiếu chạm oauth.ts.
 - ~~S4 · T-2.5 · `eventToIcs` chưa gập dòng > 75 byte~~ → đã sửa T-2.15.
 
@@ -516,6 +516,17 @@ M4: (4.1 ∥ 4.3 ∥ 4.5) → 4.2 → 4.4 → 4.END
 - Lệnh kiểm tra (thợ): như tiêu chí cuối (phiếu duy nhất được build/e2e trong đợt T-4.8 ∥ T-4.9).
 - Nhật ký: 2026-09-14 lượt 1: DONE (collect.ts export `cmpOccurrence`; EventsTab gộp Google, `ev-item-google` div không bấm + nhãn; styles `.ev-item-google`/`.ev-tag-google`; events.spec +2 test, seed IDB kèm `device`) — thợ tự chạy: tsc OK, unit 198, build OK, events.spec 18 pass → kiem-thu PASS chung T-4.8 (`docs/test-log/T-4.8-4.9.txt`; events ×3 54/0) → Quản lý review diff: đúng phiếu → commit.
 - Model: sonnet · Lần thử: 0/3 · Trạng thái: DONE
+
+### T-4.10 — Ghim ghi chú thì tự hiện trên hình nền (thử máy thật lần 2)
+- Nguồn: Chủ dự án 2026-09-14: "Bật ghim ghi chú nhưng trên hình nền không thấy". Quản lý xác minh: `store.ts:110` `pinNote` chỉ đổi `pinned`; hình nền còn cần `design.showNote` (mặc định `false`, công tắc `note-show` ở đầu tab Ghi chú — `NoteTab.tsx:69–80`); `layoutNote` trả `[]` khi `!showNote` (`note.ts:8`). Nút tên "Ghim lên hình nền" nhưng không đủ để lên hình nền → lỗi UX.
+- Mục tiêu: ghim một ghi chú (`pinNote` với `pinned: true`, từ mọi đường: lưu sheet có bật `nt-pin`) → `design.showNote` tự thành `true`. Bỏ ghim không tự tắt `showNote`. Người dùng vẫn tắt được `note-show` sau đó.
+- Phạm vi file (chỉ được sửa): `src/ui/store.ts` (reducer `pinNote`), `tests/unit/store.test.ts` (chỉ THÊM), `tests/e2e/notes.spec.ts` (chỉ THÊM).
+- Tiêu chí nghiệm thu:
+  - [ ] Unit: state `showNote=false` → `pinNote(id, true)` → `showNote=true`, note được ghim; `pinNote(id, false)` → `showNote` giữ nguyên; `showNote=true` sẵn → không đổi gì khác.
+  - [ ] e2e (chromium + webkit): dữ liệu mới (showNote mặc định false) → tab Sự kiện → Ghi chú → thêm ghi chú có tiêu đề + nội dung, bật `nt-pin`, lưu → công tắc `note-show` đang bật và `window.__lastOps` (`?test=1`) chứa tiêu đề ghi chú. Test viết trước, phải FAIL trên code cũ.
+  - [ ] `npm run check` pass; test cũ không sửa.
+- Lệnh kiểm tra: `npx tsc --noEmit; npm run test; npm run build; npx playwright test tests/e2e/notes.spec.ts`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ### T-4.END — Kiểm thử tích hợp M4
 - Phạm vi file: `tests/e2e/m4-design.spec.ts`, `tests/e2e/m4-export.spec.ts`, `tests/e2e/m4-offline.spec.ts`; sửa tích hợp nhỏ `src/**` phải khai báo.
