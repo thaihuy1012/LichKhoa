@@ -691,7 +691,8 @@ Mẫu: `docs/tham-khao/inks-tuan.PNG`. Thứ tự: 5.1 → 5.2 → 5.3 → 5.END
   [ ] `grep -nE "0\.05|0\.008" tests/unit/layout-week.test.ts` rỗng; test (d) vẫn kiểm đúng điều cũ.
   [ ] `npm run check` pass; ngoài L117–124, L142–147 không dòng test cũ nào đổi.
 - Lệnh kiểm tra: `npx tsc --noEmit; npm run test` rồi `npm run check`
-- Model: sonnet (sửa test khóa → không giao Gemini) · Lần thử: 0/3 · Trạng thái: DOING (giao tho-sonnet 2026-09-15)
+- Nhật ký: 2026-09-15 lượt 1: DONE (hour12 2 hậu tố khi khác buổi; `charW(font)` mono 0.62; common +`truncateByFactor`, `truncate` gọi lại hệ số 0.5; bỏ `todoDueText`; test khóa đổi đúng 2 vùng (d) + bỏ 1 assertion so hằng `chipTimeSize` — đã khai; +2 test) → kiem-thu PASS (unit 243×2/21 file; e2e 72/6 skip; 2 grep rỗng) → review đạt (chấp nhận test còn nhận diện chip bằng `r === 10`/alpha chip "+N" — hằng hiếm đổi) → commit.
+- Model: sonnet (sửa test khóa → không giao Gemini) · Lần thử: 0/3 · Trạng thái: DONE
 
 ### B-004 — `parseFragment`: nhánh lỗi phải kiểm `state` (S4 T-3.1)
 - Mục tiêu: `#error=…` chỉ được nhận khi `state` khớp (chống chèn lỗi giả vào URL); giữ nguyên mọi hành vi khác.
@@ -702,4 +703,4 @@ Mẫu: `docs/tham-khao/inks-tuan.PNG`. Thứ tự: 5.1 → 5.2 → 5.3 → 5.END
   [ ] Test mới: `#error=access_denied&state=x` với expected `abc` → `null`; `#error=access_denied` (không state) → `null`; test cũ `oauth.test.ts:77–80`, `:92–95` và `store.test.ts:344–352` pass nguyên văn.
   [ ] `npm run check` pass; `git diff -- tests/` chỉ có dòng thêm.
 - Lệnh kiểm tra: `npm run check`
-- Model: gemini (làn code — 2 file, chữ ký giữ nguyên, lệnh kiểm rõ) · Lần thử: 0/3 · Trạng thái: TODO (sau T-5.4 — không ghi cùng lúc thợ Claude)
+- Model: gemini (làn code — 2 file, chữ ký giữ nguyên, lệnh kiểm rõ) · Lần thử: 0/3 · Trạng thái: DOING (tho-gemini vòng 1, 2026-09-15)

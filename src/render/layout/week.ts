@@ -7,7 +7,9 @@ import {
   lunarCellLabel,
   mainArea,
   pastel,
+  todoDueLabel,
   truncate,
+  truncateByFactor,
   weekDates,
   weekdayLabels,
   type DrawOp,
@@ -24,23 +26,36 @@ type ChipItem =
 
 type TodayItem = ChipItem;
 
-/** Ước lượng độ rộng chữ số/ký tự thường (không lạc quan hơn thực tế để chữ không tràn chip). */
-const CHAR_W = 0.55;
+/** Ước lượng độ rộng chữ theo font: mono rộng hơn sans/serif (không lạc quan hơn thực tế để chữ không tràn chip). */
+function charW(font: DesignConfig['font']): number {
+  return font === 'mono' ? 0.62 : 0.55;
+}
 
-/** Nhãn giờ hiển thị: "HH:mm - HH:mm" (12h chỉ AM/PM ở giờ kết thúc); không vừa `fitWidth` → thử
- * "HH:mm-HH:mm" (gạch nối liền); vẫn không vừa → chỉ giờ bắt đầu; không `endTime` → giờ bắt đầu;
- * cả ngày → nhãn "Cả ngày". */
-function chipTimeText(occ: Occurrence, hour12: boolean, lang: 'vi' | 'en', fitWidth?: number, size?: number): string {
+/** Nhãn giờ hiển thị: "HH:mm - HH:mm"; 12h chỉ bỏ hậu tố AM/PM ở giờ bắt đầu khi cùng buổi với giờ kết
+ * thúc (khác buổi, vd vắt qua trưa, giữ đủ 2 hậu tố như Inks); không vừa `fitWidth` → thử "HH:mm-HH:mm"
+ * (gạch nối liền); vẫn không vừa → chỉ giờ bắt đầu; không `endTime` → giờ bắt đầu; cả ngày → nhãn "Cả ngày". */
+function chipTimeText(
+  occ: Occurrence,
+  hour12: boolean,
+  lang: 'vi' | 'en',
+  fitWidth?: number,
+  size?: number,
+  font: DesignConfig['font'] = 'sans'
+): string {
   if (occ.allDay) return t('events.allDay', lang);
   if (!occ.time) return '';
   const startOnly = fmtTime(occ.time, hour12);
   if (!occ.endTime) return startOnly;
   const end = fmtTime(occ.endTime, hour12);
-  const start12 = fmtTime(occ.time, true).replace(/ (AM|PM)$/, '');
-  const start = hour12 ? start12 : fmtTime(occ.time, false);
+  let start = startOnly;
+  if (hour12) {
+    const startSuffix = startOnly.match(/ (AM|PM)$/)?.[1];
+    const endSuffix = end.match(/ (AM|PM)$/)?.[1];
+    start = startSuffix === endSuffix ? startOnly.replace(/ (AM|PM)$/, '') : startOnly;
+  }
   const spaced = `${start} - ${end}`;
   if (fitWidth === undefined || size === undefined) return spaced;
-  const fits = (text: string) => text.length * size * CHAR_W <= fitWidth;
+  const fits = (text: string) => text.length * size * charW(font) <= fitWidth;
   if (fits(spaced)) return spaced;
   const tight = `${start}-${end}`;
   if (fits(tight)) return tight;
@@ -314,7 +329,7 @@ function drawChip(
   const textColor = chip.kind === 'todo' && chip.overdue ? OVERDUE_CHIP_COLOR : TODO_TEXT;
   const line1 =
     chip.kind === 'event'
-      ? chipTimeText(chip.occ, c.hour12, c.lang, availWidth, timeSize)
+      ? chipTimeText(chip.occ, c.hour12, c.lang, availWidth, timeSize, c.font)
       : `☐${chip.overdue ? ` ${t('todo.overdue', c.lang)}` : ''}`;
   const line1Size = chip.kind === 'event' ? timeSize : titleSize;
   const line2 = chip.kind === 'event' ? chip.occ.title : chip.todo.text;
@@ -323,7 +338,7 @@ function drawChip(
     op: 'text',
     x: x + pad,
     y: y + pad + line1Size * 0.85,
-    text: chip.kind === 'event' ? line1 : truncate(line1, availWidth, line1Size),
+    text: chip.kind === 'event' ? line1 : truncateByFactor(line1, availWidth, line1Size, charW(c.font)),
     size: line1Size,
     weight: 600,
     color: textColor,
@@ -334,7 +349,7 @@ function drawChip(
     op: 'text',
     x: x + pad,
     y: y + pad + line1Size * 1.2 + titleSize * 0.9,
-    text: truncate(line2, availWidth, titleSize),
+    text: truncateByFactor(line2, availWidth, titleSize, charW(c.font)),
     size: titleSize,
     weight: 400,
     color: TODO_TEXT,
@@ -393,7 +408,7 @@ function drawTodayItem(
       font: c.font,
     });
   } else if (item.todo.due) {
-    const due = { text: item.overdue ? t('todo.overdue', c.lang) : todoDueText(item.todo.due, today, c.lang), overdue: item.overdue };
+    const due = todoDueLabel(item.todo.due, today, c.lang);
     ops.push({
       op: 'text',
       x: textLeft,
@@ -406,10 +421,4 @@ function drawTodayItem(
       font: c.font,
     });
   }
-}
-
-function todoDueText(due: ISODate, today: ISODate, lang: 'vi' | 'en'): string {
-  if (due === today) return t('date.today', lang);
-  const [, m, dd] = due.split('-');
-  return `${Number(dd)}/${Number(m)}`;
 }

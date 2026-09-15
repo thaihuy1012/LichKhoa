@@ -147,13 +147,19 @@ export function wrapText(text: string, width: number, size: number, maxLines: nu
   return lines.length > maxLines ? lines.slice(0, maxLines) : lines;
 }
 
-/** Cắt `text` thành một dòng vừa bề rộng `width` với cỡ chữ `size`, thêm "…" nếu bị cắt.
- * Dùng cùng hệ số ước lượng ký tự/dòng như `wrapText`. */
-export function truncate(text: string, width: number, size: number): string {
-  const cpl = Math.max(4, Math.floor(width / (size * 0.5)));
+/** Cắt `text` thành một dòng vừa bề rộng `width` với cỡ chữ `size` và hệ số ước lượng ký tự tùy chỉnh
+ * `charWidthFactor` (vd font mono rộng hơn sans/serif), thêm "…" nếu bị cắt. */
+export function truncateByFactor(text: string, width: number, size: number, charWidthFactor: number): string {
+  const cpl = Math.max(4, Math.floor(width / (size * charWidthFactor)));
   const s = String(text ?? '');
   if (s.length <= cpl) return s;
   return `${s.slice(0, Math.max(1, cpl - 1))}…`;
+}
+
+/** Cắt `text` thành một dòng vừa bề rộng `width` với cỡ chữ `size`, thêm "…" nếu bị cắt.
+ * Dùng cùng hệ số ước lượng ký tự/dòng như `wrapText`. */
+export function truncate(text: string, width: number, size: number): string {
+  return truncateByFactor(text, width, size, 0.5);
 }
 
 /** Nhãn hạn to-do: "Quá hạn" nếu qua ngày `today`, "Hôm nay" nếu đúng hôm nay, còn lại "d/m". */

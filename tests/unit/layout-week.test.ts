@@ -114,22 +114,64 @@ describe('layoutWeek', () => {
     const d = renderData(today, occ);
     const ops = layoutWeek(d, design, DEV_1284);
 
-    const margin = DEV_1284.width * 0.05;
-    const gridWidth = DEV_1284.width - 2 * margin;
-    const gap = gridWidth * 0.008;
-    const colW = (gridWidth - gap * 6) / 7;
-    const chipTextSize = DEV_1284.width * 0.0187;
-    const chipTimeSize = DEV_1284.width * 0.0159;
-    const chipPad = chipTextSize * 0.22;
-    const availWidth = colW - chipPad * 2;
-
     const chipLine = textOps(ops).find((o) => o.text.includes('09:00') && o.text.includes('09:40'));
     expect(chipLine).toBeDefined();
-    if (chipLine) {
+    // Bề rộng chip suy từ rect chip (r=10) chứa dòng giờ, không chép hằng lề/cột của week.ts (D-025 d).
+    const chipRect = ops.find((o) => o.op === 'rect' && o.r === 10) as Extract<(typeof ops)[number], { op: 'rect' }> | undefined;
+    expect(chipRect).toBeDefined();
+    if (chipLine && chipRect) {
+      const pad = chipLine.x - chipRect.x;
+      const availWidth = chipRect.w - pad * 2;
       expect(chipLine.size * 0.55 * chipLine.text.length).toBeLessThanOrEqual(availWidth + 0.5);
       expect(chipLine.size).toBeGreaterThanOrEqual(20);
-      expect(chipLine.size).toBeCloseTo(chipTimeSize, 1);
     }
+  });
+
+  it('hour12: cùng buổi cắt hậu tố AM/PM ở giờ bắt đầu; vắt qua trưa giữ đủ 2 hậu tố; 24h không đổi (T-5.4 a)', () => {
+    const sameOcc: Occurrence[] = [
+      { id: 'e1', sourceId: 'e1', source: 'local', title: 'Cùng buổi', date: today, time: '09:00', endTime: '11:00', allDay: false },
+    ];
+    const opsSame = layoutWeek(renderData(today, sameOcc), { ...defaultDesign(), hour12: true }, DEV_1284);
+    expect(textOps(opsSame).some((o) => o.text.includes('9:00 - 11:00 AM'))).toBe(true);
+
+    const crossOcc: Occurrence[] = [
+      { id: 'e2', sourceId: 'e2', source: 'local', title: 'Vắt trưa', date: today, time: '11:00', endTime: '13:00', allDay: false },
+    ];
+    // Scale nhỏ để chip đủ rộng chứa chuỗi đầy đủ ở máy đích.
+    const opsCross = layoutWeek(renderData(today, crossOcc), { ...defaultDesign(), hour12: true, scale: 0.6 }, DEV_1284);
+    expect(textOps(opsCross).some((o) => o.text.includes('11:00 AM') && o.text.includes('1:00 PM'))).toBe(true);
+
+    const dayOcc: Occurrence[] = [
+      { id: 'e3', sourceId: 'e3', source: 'local', title: '24h', date: today, time: '09:00', endTime: '09:40', allDay: false },
+    ];
+    const ops24 = layoutWeek(renderData(today, dayOcc), { ...defaultDesign(), hour12: false }, DEV_1284);
+    expect(textOps(ops24).some((o) => o.text.includes('09:00 - 09:40'))).toBe(true);
+  });
+
+  it('font mono: mọi op text trong chip vừa ước lượng 0.62×size×len ≤ bề rộng chip, 1284×2778 (T-5.4 b)', () => {
+    const occ: Occurrence[] = [
+      { id: 'e1', sourceId: 'e1', source: 'local', title: 'Cuộc họp dài dài quan trọng', date: today, time: '09:00', endTime: '09:40', allDay: false },
+    ];
+    const todos: Todo[] = [
+      { id: 't1', text: 'Việc rất dài cần làm hôm nay ngay bây giờ', done: false, order: 0, due: today },
+    ];
+    const d = renderData(today, occ, todos);
+    const ops = layoutWeek(d, { ...defaultDesign(), font: 'mono' }, DEV_1284);
+
+    let checked = 0;
+    for (let i = 0; i < ops.length - 2; i++) {
+      const rect = ops[i];
+      const l1 = ops[i + 1];
+      const l2 = ops[i + 2];
+      if (rect.op !== 'rect' || rect.r !== 10 || rect.alpha === 0.16) continue; // bỏ chip "+N"
+      if (l1.op !== 'text' || l2.op !== 'text') continue;
+      const pad = l1.x - rect.x;
+      const availWidth = rect.w - pad * 2;
+      expect(l1.size * 0.62 * l1.text.length).toBeLessThanOrEqual(availWidth + 0.5);
+      expect(l2.size * 0.62 * l2.text.length).toBeLessThanOrEqual(availWidth + 0.5);
+      checked += 1;
+    }
+    expect(checked).toBeGreaterThanOrEqual(2);
   });
 
   it('rect tô cột hôm nay có fill === accentColor, nằm đúng cột hôm nay', () => {
@@ -139,14 +181,18 @@ describe('layoutWeek', () => {
     const accentRect = ops.find((o) => o.op === 'rect' && o.fill === '#123456');
     expect(accentRect).toBeDefined();
 
-    const margin = DEV_1284.width * 0.05;
-    const gridWidth = DEV_1284.width - 2 * margin;
-    const gap = gridWidth * 0.008;
-    const colW = (gridWidth - gap * 6) / 7;
+    // Tâm cột suy từ x của op nhãn thứ (D-025 d, như `tests/e2e/m5-week.spec.ts` columnCenters).
     const todayIdx = dates.indexOf(today);
-    const expectedX = margin + todayIdx * (colW + gap);
+    const labels = weekdayLabels(1, 'vi');
+    const centers = labels.map((label) => textOps(ops).find((o) => o.text === label)!.x);
+    expect(centers).toHaveLength(7);
     if (accentRect && accentRect.op === 'rect') {
-      expect(accentRect.x).toBeCloseTo(expectedX, 1);
+      const contains = (x: number) => x >= accentRect.x - 0.5 && x <= accentRect.x + accentRect.w + 0.5;
+      expect(contains(centers[todayIdx])).toBe(true);
+      for (let i = 0; i < 7; i++) {
+        if (i === todayIdx) continue;
+        expect(contains(centers[i])).toBe(false);
+      }
     }
   });
 
