@@ -227,14 +227,56 @@ describe('collectRenderData', () => {
     expect(data.occurrences.length).toBe(3);
   });
 
-  it('B-003: hai local trùng nhau -> giữ cả hai (không gộp cùng nguồn)', () => {
+  it('B-005 (D-027): hai local trùng nhau, không createdAt -> giữ 1, mục đứng sau', () => {
     const state = defaultState(device);
     state.events = [
       { id: 'local1', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none' },
       { id: 'local2', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none' },
     ];
     const data = collectRenderData(state, '2026-03-15');
-    expect(data.occurrences.length).toBe(2);
+    expect(data.occurrences.length).toBe(1);
+    expect(data.occurrences[0].sourceId).toBe('local2');
+  });
+
+  it('B-005 (D-027): hai local trùng nhau, createdAt 1000/2000 -> giữ createdAt lớn hơn dù đứng trước', () => {
+    const state = defaultState(device);
+    state.events = [
+      { id: 'local1', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none', createdAt: 2000 },
+      { id: 'local2', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none', createdAt: 1000 },
+    ];
+    const data = collectRenderData(state, '2026-03-15');
+    expect(data.occurrences.length).toBe(1);
+    expect(data.occurrences[0].sourceId).toBe('local1');
+  });
+
+  it('B-005 (D-027): hai Google trùng nhau (2 lịch) -> giữ createdAt lớn hơn', () => {
+    const state = defaultState(device);
+    state.google.cache = {
+      fetchedAt: 0,
+      events: [
+        { id: 'g1', sourceId: 'g1', source: 'google', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', allDay: false, createdAt: 1000 },
+        { id: 'g2', sourceId: 'g2', source: 'google', title: 'họp nhóm', date: '2026-03-15', time: '09:00', allDay: false, createdAt: 3000 },
+      ],
+    };
+    const data = collectRenderData(state, '2026-03-15');
+    expect(data.occurrences.length).toBe(1);
+    expect(data.occurrences[0].sourceId).toBe('g2');
+  });
+
+  it('B-005 (D-027): 2 sự kiện lặp hằng ngày trùng tên/giờ -> mỗi ngày trong tuần còn 1, là mục thắng', () => {
+    const state = defaultState(device);
+    state.events = [
+      { id: 'ev1', title: 'Tập thể dục', date: '2026-03-10', time: '06:00', repeat: 'daily', createdAt: 1000 },
+      { id: 'ev2', title: 'Tập thể dục', date: '2026-03-10', time: '06:00', repeat: 'daily' },
+    ];
+    const data = collectRenderData(state, '2026-03-15');
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(2026, 2, 15 + i, 12);
+      const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      const dayOcc = data.occurrences.filter((o) => o.date === iso && o.title === 'Tập thể dục');
+      expect(dayOcc.length).toBe(1);
+      expect(dayOcc[0].sourceId).toBe('ev1');
+    }
   });
 
   it('B-003: cả ngày cùng tên -> lọc', () => {

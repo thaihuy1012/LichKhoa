@@ -21,9 +21,10 @@ function dedupKey(o: Occurrence): string {
 }
 
 /**
- * v1.6 (B-003, D-026): sự kiện local và Google trùng nhau (cùng ngày + giờ/`allDay` +
- * tên chuẩn hóa) -> chỉ giữ 1 (cái `createdAt` lớn hơn; thiếu = 0; bằng nhau ưu tiên
- * Google). Nhóm chỉ 1 nguồn (toàn local hoặc toàn Google) giữ nguyên, không gộp.
+ * v1.7 (B-005, D-027): sự kiện trùng nhau (cùng ngày + giờ/`allDay` + tên chuẩn hóa)
+ * -> chỉ giữ 1, bất kể nguồn (local-local, google-google, local-google). Ưu tiên
+ * `createdAt` lớn hơn (thiếu = 0); bằng nhau -> ưu tiên `google`; cùng nguồn và bằng
+ * nhau -> mục đứng SAU trong mảng đầu vào. Nhóm chỉ 1 mục giữ nguyên.
  */
 export function dedupOccurrences(occs: Occurrence[]): Occurrence[] {
   const groups = new Map<string, Occurrence[]>();
@@ -39,20 +40,20 @@ export function dedupOccurrences(occs: Occurrence[]): Occurrence[] {
   const result: Occurrence[] = [];
   for (const k of order) {
     const list = groups.get(k)!;
-    const hasLocal = list.some((o) => o.source === 'local');
-    const hasGoogle = list.some((o) => o.source === 'google');
-    if (hasLocal && hasGoogle) {
-      const winner = list.reduce((best, cur) => {
-        const bs = best.createdAt ?? 0;
-        const cs = cur.createdAt ?? 0;
-        if (cs > bs) return cur;
-        if (cs === bs && cur.source === 'google' && best.source !== 'google') return cur;
-        return best;
-      });
-      result.push(winner);
-    } else {
-      result.push(...list);
+    if (list.length === 1) {
+      result.push(list[0]);
+      continue;
     }
+    const winner = list.reduce((best, cur) => {
+      const bs = best.createdAt ?? 0;
+      const cs = cur.createdAt ?? 0;
+      if (cs > bs) return cur;
+      if (cs < bs) return best;
+      if (cur.source === 'google' && best.source !== 'google') return cur;
+      if (best.source === 'google' && cur.source !== 'google') return best;
+      return cur; // cùng nguồn, bằng createdAt -> mục đứng sau thắng
+    });
+    result.push(winner);
   }
   return result;
 }
