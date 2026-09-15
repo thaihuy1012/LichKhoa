@@ -124,6 +124,7 @@
   "settings.layoutMonth": "Tháng",
   "settings.layoutAgenda": "Agenda",
   "settings.layoutTodo": "Việc cần làm",
+  "settings.layoutWeek": "Tuần",
   "settings.lunar": "Âm lịch",
   "settings.timeFormat": "Định dạng giờ",
   "settings.hour12Switch": "Giờ 12h (AM/PM)",

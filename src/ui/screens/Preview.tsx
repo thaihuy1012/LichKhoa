@@ -21,6 +21,7 @@ const LAYOUTS: { id: DesignConfig['layout']; testid: string; key: string }[] = [
   { id: 'month', testid: 'layout-month', key: 'settings.layoutMonth' },
   { id: 'agenda', testid: 'layout-agenda', key: 'settings.layoutAgenda' },
   { id: 'todo', testid: 'layout-todo', key: 'settings.layoutTodo' },
+  { id: 'week', testid: 'layout-week', key: 'settings.layoutWeek' },
 ];
 
 function isValidSize(n: number): boolean {

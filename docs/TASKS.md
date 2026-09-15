@@ -5,7 +5,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 12/12 ✔ tag `M4-ok` (D-021 — DUYỆT M4 + nghiệm thu cuối, gộp)
-- **M5 (SPEC v1.5, D-024) — Bố cục Tuần giống Inks: 2/4** (T-5.1 ✔, T-5.2 ✔; T-5.3 DOING — tho-gemini). Thứ tự 5.1 → 5.2 → 5.3 → 5.END → ảnh mẫu cho Chủ dự án → soát chéo Gemini `M5-soat` → Kiến trúc sư duyệt M5 → tag `M5-ok`. Xem mục "M5" cuối file. Làn Gemini: BẬT mức NHIỀU ở checkout chính (không chạy trong worktree — BAI-HOC); T-5.3 đủ điều kiện → tho-gemini.
+- **M5 (SPEC v1.5, D-024) — Bố cục Tuần giống Inks: 3/4** (T-5.1 ✔, T-5.2 ✔, T-5.3 ✔ Gemini; T-5.END DOING). Thứ tự 5.1 → 5.2 → 5.3 → 5.END → ảnh mẫu cho Chủ dự án → soát chéo Gemini `M5-soat` → Kiến trúc sư duyệt M5 → tag `M5-ok`. Xem mục "M5" cuối file. Làn Gemini: BẬT mức NHIỀU ở checkout chính (không chạy trong worktree — BAI-HOC); T-5.3 đủ điều kiện → tho-gemini.
 - 2026-09-15: ĐỢT BẢO TRÌ D-023 XONG (B-001, B-002) — Quản lý phiên chính dọn rác Gemini ở checkout chính, `merge --ff-only` nhánh worktree → `main` 6fec4b5, `npm run check` pass (211×2 unit, 64 e2e, 6 skip có từ trước). Chủ dự án `git push` (e954b16..6fec4b5) → Actions run 34911429434 success, trang 200, CSS `.color-input` mới đã lên. Chờ Chủ dự án xem ô màu trên iPhone. Dự án trở lại trạng thái ĐÓNG (D-022).
 - Trước đó (2026-09-15): ĐỢT BẢO TRÌ D-023 — B-001 (Gemini) → B-002 (sonnet). Xem mục "Bảo trì 2026-09-15" cuối file.
 - 2026-09-15 phiên 2 (nền): làm trong worktree `.claude/worktrees/bao-tri-D-023`, nhánh `worktree-bao-tri-D-023` (từ `main` fd17357) — commit ở nhánh này, Chủ dự án gộp về `main` (`git merge --ff-only worktree-bao-tri-D-023`). Lượt Gemini `B-001` vòng 1 phiên trước chết khi dừng phiên (`DONE 255`, đầu ra rỗng, không đổi `src/`) → `huy B-001`, giao lại vòng 1 (không tính Lần thử, không tính lỗi làn). Lưu ý: `agy-run.sh huy` hoàn tác MỌI thay đổi chưa commit, kể cả sổ sách → commit sổ trước khi giao Gemini.
@@ -639,7 +639,8 @@ Mẫu: `docs/tham-khao/inks-tuan.PNG`. Thứ tự: 5.1 → 5.2 → 5.3 → 5.END
   [ ] Ở 428×926: 4 nút bố cục nằm trên một hàng, không cuộn ngang (`scrollWidth <= clientWidth`), mỗi nút cao ≥ 44 px.
   [ ] `npm run check` pass, không test cũ nào bị sửa/skip; tập khóa vi = en.
 - Lệnh kiểm tra: `npm run check`
-- Model: gemini (làn code — 4 file, tiêu chí đo bằng lệnh, không đổi hợp đồng) · Lần thử: 0/3 · Trạng thái: DOING (tho-gemini vòng 1, 2026-09-15)
+- Nhật ký: 2026-09-15 vòng 1 (gemini-3.8-flash-high, 6 phút): XONG (LAYOUTS +week, 2 khóa i18n, `week.spec.ts` 2 test) → kiem-thu PASS (228×2 unit; e2e 68/6 skip = +4) → review diff đạt + ảnh chụp webkit tab Xem trước: 4 nút một hàng, "Việc cần làm" không xuống dòng → commit.
+- Model: gemini (làn code — 4 file, tiêu chí đo bằng lệnh, không đổi hợp đồng) · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-5.END — Kiểm thử tích hợp M5
 - Mục tiêu: E2E luồng chính M5 theo SPEC v1.5 §6 M5.
@@ -648,4 +649,4 @@ Mẫu: `docs/tham-khao/inks-tuan.PNG`. Thứ tự: 5.1 → 5.2 → 5.3 → 5.END
   [ ] chromium + webkit (`?test=1`, IndexedDB trống): tab Sự kiện tạo sự kiện hôm nay 09:00 thời lượng 40 phút + sự kiện ngày khác trong tuần; tạo to-do có hạn hôm nay → chọn bố cục Tuần → preview 1284×2778; `__lastOps` có chip "09:00 - 09:40" nằm trong cột hôm nay (x trong khoảng rect tô hôm nay), chip sự kiện kia ở cột ngày đó, chip to-do, và tên sự kiện trong danh sách hôm nay (op text cỡ lớn hơn chip); reload vẫn Tuần.
   [ ] `npm run check` pass toàn bộ.
 - Lệnh kiểm tra: `npx playwright test tests/e2e/m5-week.spec.ts; npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING (giao tho-sonnet 2026-09-15)
