@@ -100,9 +100,11 @@ test('Chạm thật (CDP): nhấn giữ ~600ms rồi kéo dọc đổi thứ t�
   expect(ops.indexOf('A')).toBeLessThan(ops.indexOf('B'));
 });
 
-/** SC-002 (Chủ dự án): trên iPhone, các nút cũ trong hàng (▲▼×, tick, chữ) CŨNG không hoạt động —
- * hồi quy do bộ cử chỉ T-6.2/T-6.3 bọc cả hàng nuốt mất click của nút con khi chạm có xê dịch nhẹ. */
-test('Chạm thật (CDP): chạm nút ▲▼×/tick/chữ trong hàng vẫn có tác dụng dù ngón tay xê dịch nhẹ', async ({
+/** SC-002 (Chủ dự án): trên iPhone, các nút trong hàng (tick, chữ, +Hạn) CŨNG không hoạt động —
+ * hồi quy do bộ cử chỉ T-6.2/T-6.3 bọc cả hàng nuốt mất click của nút con khi chạm có xê dịch nhẹ.
+ * B-008: bỏ ▲▼× (đổi thứ tự nay bằng nhấn giữ kéo, test riêng ở trên) -> test này chỉ còn 3 nút đơn
+ * nhiệm còn lại trong hàng: todo-toggle, todo-edit, todo-due-label. */
+test('Chạm thật (CDP): chạm nút tick/chữ/+Hạn trong hàng vẫn có tác dụng dù ngón tay xê dịch nhẹ', async ({
   page,
   browserName,
 }) => {
@@ -130,18 +132,6 @@ test('Chạm thật (CDP): chạm nút ▲▼×/tick/chữ trong hàng vẫn có
   // `.todo-edit-input` là <input> nên giá trị không còn nằm trong text content để `hasText` khớp lại
   // được (input value không tính vào textContent) — dò theo vị trí ổn định qua cả chuỗi thao tác.
 
-  // ▼ trên B (index 1) -> A, C, B — nút không bị disable vì B/C cùng nhóm chưa xong.
-  await tapWithJitter(rows.nth(1).getByTestId('todo-down'));
-  await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('A');
-  await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('C');
-  await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('B');
-
-  // ▲ trên B (giờ ở index 2) đưa lại về A, B, C.
-  await tapWithJitter(rows.nth(2).getByTestId('todo-up'));
-  await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('A');
-  await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('B');
-  await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('C');
-
   // tick hoàn thành A (index 0) -> A rời danh sách chính, sang nhóm "Đã xong" (thu gọn mặc định).
   await tapWithJitter(rows.nth(0).getByTestId('todo-toggle'));
   await expect(rows).toHaveCount(2); // B, C còn trong danh sách chính; A đang ẩn trong nhóm thu gọn
@@ -149,22 +139,24 @@ test('Chạm thật (CDP): chạm nút ▲▼×/tick/chữ trong hàng vẫn có
   await expect(rows).toHaveCount(3); // mở nhóm "Đã xong" -> B(0), C(1), A(2, done)
   await expect(rows.nth(2).getByTestId('todo-toggle')).toHaveClass(/todo-toggle-done/);
 
-  // chạm chữ C (index 1) -> mở sửa (nút × của hàng vẫn còn trong DOM khi đang sửa, xem JSX SwipeRow).
+  // chạm chữ C (index 1) -> mở sửa.
   await tapWithJitter(rows.nth(1).getByTestId('todo-edit'));
   const editInput = page.locator('.todo-edit-input');
   await expect(editInput).toBeVisible();
   await expect(editInput).toHaveValue('C');
+  await editInput.blur();
 
-  // × xóa C (index 1, vẫn đúng hàng dù đang sửa) -> còn B, A.
-  await tapWithJitter(rows.nth(1).getByTestId('todo-del'));
-  await expect(page.getByTestId('todo-item')).toHaveCount(2);
+  // chạm "+ Hạn" trên B (index 0, không hạn) -> mở ô chọn ngày.
+  await tapWithJitter(rows.nth(0).getByTestId('todo-due-label'));
+  await expect(page.getByTestId('todo-due-edit')).toBeVisible();
 });
 
-/** SC-002 — nguyên nhân gốc xác nhận: giữ tay ≥ LONG_PRESS_MS (450ms) KHÔNG di chuyển trên nút ▼
- * (trước sửa) bị `canDrag` (không phân biệt target) coi là mở đầu kéo sắp xếp -> `setPointerCapture`
- * + `suppressClickRef=true` -> click thật của nút bị nuốt, thứ tự KHÔNG đổi. Test này KHÔNG cần vuốt
- * — chỉ giữ yên rồi thả — cô lập đúng cơ chế bị nuốt-click, khác test chạm nhanh (đã qua) ở trên. */
-test('Chạm thật (CDP): giữ nút ▼ hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn đổi thứ tự', async ({
+/** SC-002 — nguyên nhân gốc xác nhận: giữ tay ≥ LONG_PRESS_MS (450ms) KHÔNG di chuyển trên nút hành
+ * động (trước sửa) bị `canDrag` (không phân biệt target) coi là mở đầu kéo sắp xếp -> `setPointerCapture`
+ * + `suppressClickRef=true` -> click thật của nút bị nuốt. Test này KHÔNG cần vuốt — chỉ giữ yên rồi
+ * thả — cô lập đúng cơ chế bị nuốt-click, khác test chạm nhanh (đã qua) ở trên.
+ * B-008: dùng todo-toggle (▲▼ đã bỏ) — giữ tick của B hơi lâu không di chuyển vẫn phải tick được. */
+test('Chạm thật (CDP): giữ nút tick hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn có tác dụng', async ({
   page,
   browserName,
 }) => {
@@ -177,8 +169,8 @@ test('Chạm thật (CDP): giữ nút ▼ hơi lâu (qua ngưỡng nhấn giữ)
   const rows = page.getByTestId('todo-item');
   const client = await page.context().newCDPSession(page);
 
-  const downBtn = rows.filter({ hasText: 'B' }).getByTestId('todo-down');
-  const box = (await downBtn.boundingBox())!;
+  const toggleBtn = rows.filter({ hasText: 'B' }).getByTestId('todo-toggle');
+  const box = (await toggleBtn.boundingBox())!;
   const x = box.x + box.width / 2;
   const y = box.y + box.height / 2;
 
@@ -186,9 +178,10 @@ test('Chạm thật (CDP): giữ nút ▼ hơi lâu (qua ngưỡng nhấn giữ)
   await page.waitForTimeout(600); // qua LONG_PRESS_MS=450, đứng yên tuyệt đối (không vuốt/kéo)
   await touchPoint(client, 'touchEnd', x, y);
 
-  await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('A');
-  await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('C');
-  await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('B');
+  // Tick thành công -> B rời danh sách chính, sang nhóm "Đã xong" (thu gọn mặc định).
+  await expect(rows).toHaveCount(2);
+  await page.getByTestId('todo-done-toggle').click();
+  await expect(rows.filter({ hasText: 'B' }).getByTestId('todo-toggle')).toHaveClass(/todo-toggle-done/);
 });
 
 /** SC-002 lượt 2 — triệu chứng (1) "2 việc chồng lên nhau và không nhìn thấy": boundingBox KHÔNG
@@ -384,7 +377,8 @@ test('Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống
   await dragCOverAWithIosCancel(page, 'touchcancel');
 });
 
-test('Chuỗi sự kiện iOS: chạm nút ▼ xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click)', async ({
+// B-008: ▲▼ đã bỏ -> dùng todo-due-label (nút "+ Hạn"), cùng loại nút hành động đơn nhiệm.
+test('Chuỗi sự kiện iOS: chạm nút +Hạn xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click)', async ({
   page,
 }) => {
   await page.goto('/?test=1');
@@ -393,10 +387,10 @@ test('Chuỗi sự kiện iOS: chạm nút ▼ xê dịch ngang 5px — touchmov
   await expect(page.getByTestId('todo-item')).toHaveCount(3);
   test.skip(!(await installSyntheticTouch(page)), 'trình duyệt không có constructor Touch/TouchEvent');
 
-  const box = (await page.getByTestId('todo-item').nth(1).getByTestId('todo-down').boundingBox())!;
+  const box = (await page.getByTestId('todo-item').nth(1).getByTestId('todo-due-label').boundingBox())!;
   const x = box.x + box.width / 2;
   const y = box.y + box.height / 2;
-  await syn(page, 'down', '[data-testid="todo-down"]', 'B', x, y);
+  await syn(page, 'down', '[data-testid="todo-due-label"]', 'B', x, y);
   const notPrevented = await syn(page, 'move', x + 5, y);
   await syn(page, 'touchEndOnly', x + 5, y);
   expect(notPrevented).toBe(true);

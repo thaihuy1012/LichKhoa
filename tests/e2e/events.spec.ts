@@ -101,7 +101,15 @@ test('Sự kiện: thêm/sửa/xóa, xuất .ics, việc cần làm, ghi chú', 
   await expect(rows).toHaveCount(2);
   await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('Việc A');
 
-  await rows.nth(0).getByTestId('todo-down').click();
+  // B-008: bỏ nút ▲▼ -> đổi thứ tự bằng nhấn giữ kéo (chuột giữ ~LONG_PRESS_MS rồi kéo qua hàng kế).
+  const rowA = rows.nth(0);
+  const boxA = (await rowA.boundingBox())!;
+  const boxB = (await rows.nth(1).boundingBox())!;
+  await page.mouse.move(boxA.x + boxA.width / 2, boxA.y + boxA.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(600);
+  await page.mouse.move(boxB.x + boxB.width / 2, boxB.y + boxB.height / 2, { steps: 10 });
+  await page.mouse.up();
   await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('Việc B');
 
   // todo-toggle không ẩn vào nền: viền vẽ qua ::before phải khác màu nền trang.
@@ -219,7 +227,7 @@ test('Sự kiện qua đêm: Kết thúc < Bắt đầu -> mở lại vẫn gi�
   await expect(page.getByTestId('ev-end')).toHaveValue('01:00');
 });
 
-test('Việc cần làm: todo-down tắt (disabled) khi việc kề bên khác nhóm (T-2.14)', async ({ page }) => {
+test('Việc cần làm: kéo việc có hạn sang nhóm không hạn -> thứ tự không đổi (T-2.14, B-008)', async ({ page }) => {
   await openEventsTab(page);
 
   const tomorrow = await page.evaluate(() => {
@@ -237,9 +245,16 @@ test('Việc cần làm: todo-down tắt (disabled) khi việc kề bên khác n
 
   const rows = page.getByTestId('todo-item');
   await expect(rows).toHaveCount(2);
-  // Nhóm "có hạn" (hàng 0) và nhóm "không hạn" (hàng 1) khác nhau -> không hoán đổi được.
-  await expect(rows.nth(0).getByTestId('todo-down')).toBeDisabled();
-  await expect(rows.nth(1).getByTestId('todo-up')).toBeDisabled();
+  // Nhóm "có hạn" (hàng 0) và nhóm "không hạn" (hàng 1) khác nhau -> `reorderTodo` bỏ qua, kéo không đổi thứ tự.
+  const box0 = (await rows.nth(0).boundingBox())!;
+  const box1 = (await rows.nth(1).boundingBox())!;
+  await page.mouse.move(box0.x + box0.width / 2, box0.y + box0.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(600);
+  await page.mouse.move(box1.x + box1.width / 2, box1.y + box1.height / 2, { steps: 10 });
+  await page.mouse.up();
+  await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('Có hạn');
+  await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('Không hạn');
 });
 
 test('Việc cần làm: hạn quá hạn hiện trước việc không hạn', async ({ page }) => {

@@ -4,7 +4,6 @@ import type { Store } from '../../store';
 import type { AppState, ISODate, Todo } from '../../../core/model';
 import { t } from '../../../core/i18n';
 import { toISODate } from '../../../core/calendar';
-import { sameTodoGroup } from '../../store';
 import { sortTodosForDisplay, todoDueLabel } from './util';
 
 interface Props {
@@ -566,25 +565,6 @@ export function TodosTab({ store, state, showToast }: Props) {
           lang={lang}
           onChange={(due) => store.dispatch({ type: 'setTodoDue', id: todo.id, due })}
         />
-        <button
-          type="button"
-          data-testid="todo-up"
-          disabled={idx <= 0 || !sameTodoGroup(todo, list[idx - 1])}
-          onClick={() => store.dispatch({ type: 'moveTodo', id: todo.id, dir: -1 })}
-        >
-          ↑
-        </button>
-        <button
-          type="button"
-          data-testid="todo-down"
-          disabled={idx >= list.length - 1 || !sameTodoGroup(todo, list[idx + 1])}
-          onClick={() => store.dispatch({ type: 'moveTodo', id: todo.id, dir: 1 })}
-        >
-          ↓
-        </button>
-        <button type="button" data-testid="todo-del" onClick={() => store.dispatch({ type: 'deleteTodo', id: todo.id })}>
-          ×
-        </button>
       </div>
     );
     return (
