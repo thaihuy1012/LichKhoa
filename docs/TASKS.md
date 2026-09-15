@@ -639,7 +639,7 @@ Mẫu: `docs/tham-khao/inks-tuan.PNG`. Thứ tự: 5.1 → 5.2 → 5.3 → 5.END
   [ ] Ở 428×926: 4 nút bố cục nằm trên một hàng, không cuộn ngang (`scrollWidth <= clientWidth`), mỗi nút cao ≥ 44 px.
   [ ] `npm run check` pass, không test cũ nào bị sửa/skip; tập khóa vi = en.
 - Lệnh kiểm tra: `npm run check`
-- Model: gemini (làn code — 4 file, tiêu chí đo bằng lệnh, không đổi hợp đồng) · Lần thử: 0/3 · Trạng thái: TODO
+- Model: gemini (làn code — 4 file, tiêu chí đo bằng lệnh, không đổi hợp đồng) · Lần thử: 0/3 · Trạng thái: DOING (tho-gemini vòng 1, 2026-09-15)
 
 ### T-5.END — Kiểm thử tích hợp M5
 - Mục tiêu: E2E luồng chính M5 theo SPEC v1.5 §6 M5.
