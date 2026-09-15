@@ -2,9 +2,9 @@
 (Chỉ Quản lý ghi. Đọc đầu mỗi phiên: sự cố chưa đóng xử lý trước mọi việc khác. Trạng thái: MỞ | ĐANG SỬA | CHỜ CHỦ DỰ ÁN | ĐÃ ĐÓNG.)
 
 ## Đang mở
-- SC-002 (S2, CHỜ CHỦ DỰ ÁN thử máy thật) — iPhone: danh sách Việc không đổi được thứ tự (kéo lẫn nút ▲▼×) — xem dưới.
+- (không)
 
-## SC-002 — iPhone: không đổi được thứ tự Việc, nút ▲▼× trong hàng không bấm được · Mức S2 · Trạng thái: CHỜ CHỦ DỰ ÁN (thử máy thật)
+## SC-002 — iPhone: không đổi được thứ tự Việc, nút ▲▼× trong hàng không bấm được · Mức S2 · Trạng thái: ĐÃ ĐÓNG
 - Phát hiện: 2026-09-15 · bởi Chủ dự án (iPhone 13 Pro Max, PWA, bản `c9f7b82` = tag `M6-ok`) · sau M6.
 - Triệu chứng: (1) nhấn giữ kéo → 2 hàng chồng nhau không nhìn thấy, thả tay thứ tự như cũ; (2) nút ▲ ▼ × trong hàng không hoạt động — "không thể thay đổi thứ tự việc". Vuốt trái, Xóa/Hoàn tác qua vuốt, Lưu trữ vẫn đạt.
 - Tái hiện: tab Sự kiện › Việc, ≥ 3 việc → chạm ▲/▼/× hoặc nhấn giữ kéo. E2E hiện có dùng chuột nên pass → cần test chạm thật (CDP `Input.dispatchTouchEvent`).
@@ -15,7 +15,7 @@
 - Quản lý: lượt 1 chưa đủ (chạm nhanh + xê dịch > 4 px vẫn `preventDefault`; kéo vẫn dựa pointer event dễ bị `pointercancel`) → lượt 2 sua-loi **opus**: kéo cảm ứng bằng Touch Events, không chặn mặc định trên nút con. Không gọi làn soát Gemini (không có thiết bị để thêm bằng chứng; script làn Gemini có thể hoàn tác thay đổi chưa commit).
 - Lượt 2 (opus): ĐÃ SỬA — nguyên nhân gốc: (1) transform kéo đặt trên `.todo-item-inner` bên trong `.todo-item-wrap {overflow:hidden}` → hàng kéo và hàng nhường chỗ bị cắt mất (mọi trình duyệt; `elementFromPoint` trả [B,C,A]); (2) kéo kết thúc bằng pointerup/pointercancel — iOS hủy chuỗi pointer → `onDragCancel`; (3) `touchmove` còn preventDefault khi chạm nút xê dịch > 4 px. Sửa: ngón tay chạy bằng Touch Events (chuột vẫn Pointer), transform lên wrap, không chặn mặc định trên nút; D-030 (`touchcancel` áp thứ tự xem trước). 5 test fail trước/pass sau (`docs/test-log/SC-002-truoc.log`, `-sau.log`).
 - Kiểm chứng độc lập (kiem-thu): PASS — todo-touch + todo-gestures repeat-each=3 57/0 fail (21 skip webkit: không có CDP/`Touch`, mỗi test chạy thật ở chromium); T-6.END m6 6/6; `npm run check` 97 pass / 13 skip. Log `docs/test-log/SC-002-kiem.log`. Commit sửa: xem git log "SC-002".
-- Còn lại: chỉ đóng khi Chủ dự án xác nhận trên iPhone (kéo C lên trên A; chạm nhanh/giữ nút ▲▼×; vuốt vẫn ổn). Không đạt → gói sự cố cho Kiến trúc sư (đã hết 2 lượt sua-loi).
+- Máy thật (Chủ dự án, deploy f299bb5): nhấn giữ kéo đổi thứ tự ✔; nút ▲▼× chạm nhanh/giữ ✔; vuốt Xóa/Hoàn tác ✔ → ĐÃ ĐÓNG 2026-09-15. Commit sửa: f299bb5. Bài học → BAI-HOC.md (đã ghi). Mở băng TodosTab.tsx.
 
 ## SC-001 — Không agent nào có công cụ shell · Mức S1 · Trạng thái: ĐÃ ĐÓNG
 - Phát hiện: 2026-09-13 · bởi tho-sonnet (BLOCKED) + Quản lý tự kiểm · tại T-1.1 / M1
