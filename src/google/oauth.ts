@@ -56,12 +56,15 @@ export function parseFragment(
   if (!raw) return null;
 
   const params = new URLSearchParams(raw);
+  const state = params.get('state');
   const error = params.get('error');
-  if (error) return { error }; // URLSearchParams đã giải mã — không decodeURIComponent lần nữa
+  if (error) {
+    if (!state || state !== expectedState) return null;
+    return { error }; // URLSearchParams đã giải mã — không decodeURIComponent lần nữa
+  }
 
   const accessToken = params.get('access_token');
   const expiresInRaw = params.get('expires_in');
-  const state = params.get('state');
 
   if (!accessToken || !expiresInRaw) return null;
   if (state !== expectedState) return null;

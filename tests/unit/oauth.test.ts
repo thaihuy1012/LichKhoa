@@ -79,6 +79,11 @@ describe('parseFragment', () => {
     expect(parseFragment(hash, 'abc')).toEqual({ error: 'access_denied' });
   });
 
+  it('B-004: error nhưng sai state hoặc thiếu state → null', () => {
+    expect(parseFragment('#error=access_denied&state=x', 'abc')).toBeNull();
+    expect(parseFragment('#error=access_denied', 'abc')).toBeNull();
+  });
+
   it('hash rỗng → null', () => {
     expect(parseFragment('', 'abc')).toBeNull();
     expect(parseFragment('#', 'abc')).toBeNull();

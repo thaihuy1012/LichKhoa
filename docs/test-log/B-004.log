@@ -1,0 +1,139 @@
+
+> lichkhoa@0.1.0 check
+> tsc --noEmit && npm run test && npm run build && playwright test
+
+
+> lichkhoa@0.1.0 test
+> cross-env TZ=Asia/Ho_Chi_Minh vitest run && cross-env TZ=UTC vitest run
+
+
+ RUN  v5.0.0 E:/DuAn/thu-nghiem
+
+
+ Test Files  21 passed (21)
+      Tests  244 passed (244)
+   Start at  09:45:30
+   Duration  1.80s (transform 40%, import 36%, tests 19%, worker 5%)
+
+    Isolate  21 workers spawned · ~321ms startup each (spawn + environment, per file)
+             at least ~641ms faster with isolate: false — reuses workers across files instead of one per file
+
+
+ RUN  v5.0.0 E:/DuAn/thu-nghiem
+
+
+ Test Files  21 passed (21)
+      Tests  244 passed (244)
+   Start at  02:45:33
+   Duration  2.20s (import 37%, transform 36%, tests 22%, worker 5%)
+
+    Isolate  21 workers spawned · ~339ms startup each (spawn + environment, per file)
+             at least ~677ms faster with isolate: false — reuses workers across files instead of one per file
+
+
+> lichkhoa@0.1.0 build
+> tsc --noEmit && vite build
+
+[36mvite v8.3.0 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 48 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/registerSW.js                0.13 kB
+dist/manifest.webmanifest         0.29 kB
+dist/index.html                   0.86 kB │ gzip:  0.42 kB
+dist/assets/index-BL8EXTp7.css   11.65 kB │ gzip:  2.90 kB
+dist/assets/index-wWKhMkIY.js   105.97 kB │ gzip: 34.77 kB
+
+[32m✓ built in 147ms[39m
+
+PWA v1.3.0
+mode      generateSW
+precache  7 entries (115.85 KiB)
+files generated
+  dist/sw.js
+  dist/workbox-9c191d2f.js
+
+Running 78 tests using 4 workers
+
+  ✓   4 [chromium] › tests\e2e\design.spec.ts:79:1 › T-4.6: rãnh trượt có màu + nhãn giá trị, mã hex đọc trọn vẹn, swatch chọn có viền (610ms)
+  ✓   1 [chromium] › tests\e2e\dedup.spec.ts:48:1 › B-003: sự kiện local trùng Google (cùng tên/giờ hôm nay) -> hình nền chỉ còn 1, tab Sự kiện vẫn 2 (1.3s)
+  ✓   5 [chromium] › tests\e2e\design.spec.ts:161:1 › T-4.7 review: định dạng lưu ảnh nền theo nguồn — JPEG giữ JPEG, PNG giữ PNG (548ms)
+  ✓   7 [chromium] › tests\e2e\events.spec.ts:127:3 › iPhone 13 Pro Max (428x926): không cuộn ngang, ev-save trong viewport › tab Sự kiện + sheet mở (330ms)
+  ✓   3 [chromium] › tests\e2e\design.spec.ts:111:1 › T-4.7 #10: PNG trong suốt không lộ nền đen — vẽ trên màu nền đã chọn (2.1s)
+  ✓   8 [chromium] › tests\e2e\events.spec.ts:153:1 › Sự kiện: lặp Thứ Hai đến Thứ Sáu (v1.3) (492ms)
+  ✓   6 [chromium] › tests\e2e\events.spec.ts:44:1 › Sự kiện: thêm/sửa/xóa, xuất .ics, việc cần làm, ghi chú (1.3s)
+  ✓  10 [chromium] › tests\e2e\events.spec.ts:209:1 › Sự kiện qua đêm: Kết thúc < Bắt đầu -> mở lại vẫn giữ giờ Kết thúc (T-2.14) (490ms)
+  ✓  11 [chromium] › tests\e2e\events.spec.ts:222:1 › Việc cần làm: todo-down tắt (disabled) khi việc kề bên khác nhóm (T-2.14) (470ms)
+  ✓   9 [chromium] › tests\e2e\events.spec.ts:189:1 › Sự kiện: Nhắc trước -> .ics có VALARM (742ms)
+  ✓  14 [chromium] › tests\e2e\events.spec.ts:337:1 › 428x926: tab Sự kiện với sự kiện Google không cuộn ngang (368ms)
+  ✓  12 [chromium] › tests\e2e\events.spec.ts:245:1 › Việc cần làm: hạn quá hạn hiện trước việc không hạn (529ms)
+  ✓  13 [chromium] › tests\e2e\events.spec.ts:269:1 › Sự kiện: tab Sự kiện hiện sự kiện Google (chỉ xem, T-4.9) (670ms)
+  ✓  15 [chromium] › tests\e2e\iphone13pm.spec.ts:4:3 › iPhone 13 Pro Max (D-007) › lần đầu mở: preset 1284x2778, không cuộn, vùng chạm/áp dụng >= 16px/44px (683ms)
+  ✓  18 [chromium] › tests\e2e\m2-events.spec.ts:145:1 › Sự kiện lặp Thứ Hai đến Thứ Sáu (v1.3): hiện đúng ngày trên Agenda (977ms)
+  ✓  16 [chromium] › tests\e2e\m1-render.spec.ts:5:1 › M1: chọn thiết bị, xem preview, lưu ảnh, reload giữ trạng thái (1.8s)
+  ✓  20 [chromium] › tests\e2e\m2-i18n.spec.ts:55:1 › T-2.14: đổi en -> nhãn "Thiết bị"/"Tự phát hiện"/"Tùy chỉnh"/"Lưu ảnh" trên Preview đổi theo (2.8s)
+  ✓   2 [chromium] › tests\e2e\design.spec.ts:26:1 › Thiết kế: đổi từng tùy chọn -> preview đổi; chọn ảnh -> boxAlpha 0.35 (8.3s)
+  ✓  17 [chromium] › tests\e2e\m2-events.spec.ts:33:1 › M2 luồng chính: sự kiện lặp tuần + nhắc trước, agenda đổi hash, ghi chú ghim, hạn to-do, sao lưu/khôi phục (5.2s)
+  ✓  22 [chromium] › tests\e2e\m3-google.spec.ts:157:3 › M3 Google Calendar (mock OAuth + REST) › Tự đồng bộ khi mở app với cache cũ (> 30 phút) (718ms)
+  ✓  21 [chromium] › tests\e2e\m3-google.spec.ts:117:3 › M3 Google Calendar (mock OAuth + REST) › Kết nối → tự về tab Đồng bộ → chọn lịch → Đồng bộ ngay → agenda hiện sự kiện → 401 → Kết nối lại (1.2s)
+  ✓  23 [chromium] › tests\e2e\m3-google.spec.ts:179:3 › M3 Google Calendar (mock OAuth + REST) › T-3.4 yêu cầu 1: sự kiện cả ngày 3 ngày → agenda hiện tiêu đề ở cả 3 ngày (672ms)
+  ✓  19 [chromium] › tests\e2e\m2-i18n.spec.ts:11:1 › i18n: đổi ngôn ngữ đổi nhãn tab; 12h -> AM/PM trong agenda; tắt âm lịch -> mất dòng Âm lịch (4.7s)
+  ✓  27 [chromium] › tests\e2e\m4-offline.spec.ts:4:1 › offline: sau lần tải đầu, mở lại app vẫn dùng được (292ms)
+  ✓  24 [chromium] › tests\e2e\m3-google.spec.ts:224:1 › offline + reload vẫn hiện sự kiện Google đã đồng bộ (từ cache IndexedDB) (1.1s)
+  ✓  26 [chromium] › tests\e2e\m4-export.spec.ts:10:3 › M4: ảnh nền + tùy chỉnh -> Sao chép / Đặt hình nền › sau khi chỉnh ảnh nền, Sao chép ghi image/png; Đặt hình nền điều hướng shortcuts:// (2.4s)
+  ✓  29 [chromium] › tests\e2e\notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload (2.1s)
+  ✓  28 [chromium] › tests\e2e\m5-week.spec.ts:49:1 › M5 luồng chính: sự kiện + to-do trong tuần -> bố cục Tuần, chip đúng cột, danh sách hôm nay, reload giữ Tuần (3.1s)
+  ✓  30 [chromium] › tests\e2e\notes.spec.ts:58:1 › T-4.10: ghim ghi chú (nt-pin) tự bật công tắc hiện trên hình nền (1.9s)
+  ✓  31 [chromium] › tests\e2e\settings.spec.ts:59:1 › Preview: chọn bố cục, cài đặt chung, sao lưu (4.1s)
+  ✓  33 [chromium] › tests\e2e\share.spec.ts:12:3 › Sao chép + Đặt hình nền (T-4.3) › Sao chép ghi mục image/png vào clipboard (3.2s)
+  ✓  34 [chromium] › tests\e2e\share.spec.ts:29:3 › Sao chép + Đặt hình nền (T-4.3) › Đặt hình nền: __lastNav bắt đầu bằng shortcuts://run-shortcut?name=DatHinhNen&input=clipboard (602ms)
+  ✓  36 [chromium] › tests\e2e\share.spec.ts:60:3 › Sao chép + Đặt hình nền (T-4.3) › Sao chép thất bại: hiện toast hướng dẫn thay thế, không mở Shortcut (504ms)
+  ✓  35 [chromium] › tests\e2e\share.spec.ts:45:3 › Sao chép + Đặt hình nền (T-4.3) › tên Shortcut có dấu cách/tiếng Việt được encode trong __lastNav (636ms)
+  ✓  37 [chromium] › tests\e2e\smoke.spec.ts:3:1 › trang có manifest và service worker sẵn sàng (205ms)
+  ✓  39 [chromium] › tests\e2e\week.spec.ts:87:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px (244ms)
+  ✓  25 [chromium] › tests\e2e\m4-design.spec.ts:58:1 › M4: ảnh nền -> blur -> mờ -> vị trí -> font, mỗi bước preview đổi và ops trong vùng an toàn (9.0s)
+  ✓  32 [chromium] › tests\e2e\settings.spec.ts:171:1 › T-4.7 #4: Xóa dữ liệu dọn ảnh nền — chọn lại Ảnh sau đó không hiện ảnh cũ (5.7s)
+  ✓  38 [chromium] › tests\e2e\week.spec.ts:12:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái (2.7s)
+  ✓  40 [webkit] › tests\e2e\dedup.spec.ts:48:1 › B-003: sự kiện local trùng Google (cùng tên/giờ hôm nay) -> hình nền chỉ còn 1, tab Sự kiện vẫn 2 (2.0s)
+  ✓  42 [webkit] › tests\e2e\design.spec.ts:79:1 › T-4.6: rãnh trượt có màu + nhãn giá trị, mã hex đọc trọn vẹn, swatch chọn có viền (1.8s)
+  ✓  43 [webkit] › tests\e2e\design.spec.ts:161:1 › T-4.7 review: định dạng lưu ảnh nền theo nguồn — JPEG giữ JPEG, PNG giữ PNG (2.0s)
+  ✓  44 [webkit] › tests\e2e\design.spec.ts:111:1 › T-4.7 #10: PNG trong suốt không lộ nền đen — vẽ trên màu nền đã chọn (2.4s)
+  ✓  46 [webkit] › tests\e2e\events.spec.ts:127:3 › iPhone 13 Pro Max (428x926): không cuộn ngang, ev-save trong viewport › tab Sự kiện + sheet mở (1.1s)
+  ✓  47 [webkit] › tests\e2e\events.spec.ts:153:1 › Sự kiện: lặp Thứ Hai đến Thứ Sáu (v1.3) (1.5s)
+  ✓  45 [webkit] › tests\e2e\events.spec.ts:44:1 › Sự kiện: thêm/sửa/xóa, xuất .ics, việc cần làm, ghi chú (4.0s)
+  ✓  48 [webkit] › tests\e2e\events.spec.ts:189:1 › Sự kiện: Nhắc trước -> .ics có VALARM (1.7s)
+  ✓  49 [webkit] › tests\e2e\events.spec.ts:209:1 › Sự kiện qua đêm: Kết thúc < Bắt đầu -> mở lại vẫn giữ giờ Kết thúc (T-2.14) (1.5s)
+  ✓  41 [webkit] › tests\e2e\design.spec.ts:26:1 › Thiết kế: đổi từng tùy chọn -> preview đổi; chọn ảnh -> boxAlpha 0.35 (7.6s)
+  ✓  50 [webkit] › tests\e2e\events.spec.ts:222:1 › Việc cần làm: todo-down tắt (disabled) khi việc kề bên khác nhóm (T-2.14) (1.5s)
+  ✓  51 [webkit] › tests\e2e\events.spec.ts:245:1 › Việc cần làm: hạn quá hạn hiện trước việc không hạn (1.5s)
+  ✓  53 [webkit] › tests\e2e\events.spec.ts:337:1 › 428x926: tab Sự kiện với sự kiện Google không cuộn ngang (831ms)
+  ✓  54 [webkit] › tests\e2e\iphone13pm.spec.ts:4:3 › iPhone 13 Pro Max (D-007) › lần đầu mở: preset 1284x2778, không cuộn, vùng chạm/áp dụng >= 16px/44px (1.3s)
+  ✓  52 [webkit] › tests\e2e\events.spec.ts:269:1 › Sự kiện: tab Sự kiện hiện sự kiện Google (chỉ xem, T-4.9) (1.8s)
+  ✓  55 [webkit] › tests\e2e\m1-render.spec.ts:5:1 › M1: chọn thiết bị, xem preview, lưu ảnh, reload giữ trạng thái (2.4s)
+  ✓  57 [webkit] › tests\e2e\m2-events.spec.ts:145:1 › Sự kiện lặp Thứ Hai đến Thứ Sáu (v1.3): hiện đúng ngày trên Agenda (1.8s)
+  ✓  59 [webkit] › tests\e2e\m2-i18n.spec.ts:55:1 › T-2.14: đổi en -> nhãn "Thiết bị"/"Tự phát hiện"/"Tùy chỉnh"/"Lưu ảnh" trên Preview đổi theo (1.0s)
+  ✓  61 [webkit] › tests\e2e\m3-google.spec.ts:157:3 › M3 Google Calendar (mock OAuth + REST) › Tự đồng bộ khi mở app với cache cũ (> 30 phút) (1.2s)
+  ✓  58 [webkit] › tests\e2e\m2-i18n.spec.ts:11:1 › i18n: đổi ngôn ngữ đổi nhãn tab; 12h -> AM/PM trong agenda; tắt âm lịch -> mất dòng Âm lịch (4.3s)
+  ✓  62 [webkit] › tests\e2e\m3-google.spec.ts:179:3 › M3 Google Calendar (mock OAuth + REST) › T-3.4 yêu cầu 1: sự kiện cả ngày 3 ngày → agenda hiện tiêu đề ở cả 3 ngày (1.1s)
+  ✓  60 [webkit] › tests\e2e\m3-google.spec.ts:117:3 › M3 Google Calendar (mock OAuth + REST) › Kết nối → tự về tab Đồng bộ → chọn lịch → Đồng bộ ngay → agenda hiện sự kiện → 401 → Kết nối lại (3.4s)
+  -  63 [webkit] › tests\e2e\m3-google.spec.ts:224:1 › offline + reload vẫn hiện sự kiện Google đã đồng bộ (từ cache IndexedDB)
+  -  65 [webkit] › tests\e2e\m4-export.spec.ts:10:3 › M4: ảnh nền + tùy chỉnh -> Sao chép / Đặt hình nền › sau khi chỉnh ảnh nền, Sao chép ghi image/png; Đặt hình nền điều hướng shortcuts://
+  -  66 [webkit] › tests\e2e\m4-offline.spec.ts:4:1 › offline: sau lần tải đầu, mở lại app vẫn dùng được
+  ✓  56 [webkit] › tests\e2e\m2-events.spec.ts:33:1 › M2 luồng chính: sự kiện lặp tuần + nhắc trước, agenda đổi hash, ghi chú ghim, hạn to-do, sao lưu/khôi phục (7.8s)
+  ✓  68 [webkit] › tests\e2e\notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload (3.3s)
+  ✓  69 [webkit] › tests\e2e\notes.spec.ts:58:1 › T-4.10: ghim ghi chú (nt-pin) tự bật công tắc hiện trên hình nền (2.4s)
+  ✓  67 [webkit] › tests\e2e\m5-week.spec.ts:49:1 › M5 luồng chính: sự kiện + to-do trong tuần -> bố cục Tuần, chip đúng cột, danh sách hôm nay, reload giữ Tuần (4.3s)
+  -  72 [webkit] › tests\e2e\share.spec.ts:12:3 › Sao chép + Đặt hình nền (T-4.3) › Sao chép ghi mục image/png vào clipboard
+  -  73 [webkit] › tests\e2e\share.spec.ts:29:3 › Sao chép + Đặt hình nền (T-4.3) › Đặt hình nền: __lastNav bắt đầu bằng shortcuts://run-shortcut?name=DatHinhNen&input=clipboard
+  -  74 [webkit] › tests\e2e\share.spec.ts:45:3 › Sao chép + Đặt hình nền (T-4.3) › tên Shortcut có dấu cách/tiếng Việt được encode trong __lastNav
+  ✓  75 [webkit] › tests\e2e\share.spec.ts:60:3 › Sao chép + Đặt hình nền (T-4.3) › Sao chép thất bại: hiện toast hướng dẫn thay thế, không mở Shortcut (1.0s)
+  ✓  76 [webkit] › tests\e2e\smoke.spec.ts:3:1 › trang có manifest và service worker sẵn sàng (427ms)
+  ✓  64 [webkit] › tests\e2e\m4-design.spec.ts:58:1 › M4: ảnh nền -> blur -> mờ -> vị trí -> font, mỗi bước preview đổi và ops trong vùng an toàn (8.6s)
+  ✓  77 [webkit] › tests\e2e\week.spec.ts:12:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái (2.1s)
+  ✓  78 [webkit] › tests\e2e\week.spec.ts:87:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px (732ms)
+  ✓  71 [webkit] › tests\e2e\settings.spec.ts:171:1 › T-4.7 #4: Xóa dữ liệu dọn ảnh nền — chọn lại Ảnh sau đó không hiện ảnh cũ (4.9s)
+  ✓  70 [webkit] › tests\e2e\settings.spec.ts:59:1 › Preview: chọn bố cục, cài đặt chung, sao lưu (7.2s)
+
+  6 skipped
+  72 passed (49.6s)
