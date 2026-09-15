@@ -94,7 +94,7 @@ export function collectRenderData(state: AppState, today: ISODate): RenderData {
 
   const occurrences = dedupOccurrences([...localOcc, ...googleOcc]).sort(cmpOccurrence);
 
-  const todos = [...state.todos].sort(cmpTodo);
+  const todos = state.todos.filter((t) => !t.archived).sort(cmpTodo);
 
   const pinned = state.notes.find((n) => n.pinned);
   const note = state.design.showNote && pinned ? pinned.body : '';

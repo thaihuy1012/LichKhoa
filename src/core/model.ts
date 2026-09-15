@@ -22,6 +22,7 @@ export interface Todo {
   done: boolean;
   order: number;
   due?: ISODate; // v1.3
+  archived?: boolean; // v1.7 D-028: ẩn khỏi danh sách chính + RenderData
 }
 
 export interface Note {

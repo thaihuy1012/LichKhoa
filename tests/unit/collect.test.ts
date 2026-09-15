@@ -99,6 +99,18 @@ describe('collectRenderData', () => {
     expect(data.todos.map((t) => t.id)).toEqual(['t1', 't2']);
   });
 
+  it('T-6.1: việc archived không có trong RenderData.todos', () => {
+    const state = defaultState(device);
+    const todos: Todo[] = [
+      { id: 't1', text: 'A', done: false, order: 0 },
+      { id: 't2', text: 'B', done: false, order: 1, archived: true },
+      { id: 't3', text: 'C', done: false, order: 2 },
+    ];
+    state.todos = todos;
+    const data = collectRenderData(state, '2026-03-15');
+    expect(data.todos.map((t) => t.id)).toEqual(['t1', 't3']);
+  });
+
   it('note theo showNote, lấy từ ghi chú ghim', () => {
     const state = defaultState(device);
     state.design.showNote = true;

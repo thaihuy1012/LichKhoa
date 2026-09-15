@@ -6,7 +6,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 ## Tiến độ
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 12/12 ✔ tag `M4-ok` (D-021 — DUYỆT M4 + nghiệm thu cuối, gộp)
 - **M5 (SPEC v1.5, D-024) — Bố cục Tuần giống Inks: 4/4 ✔ tag `M5-ok`** (D-025 — Kiến trúc sư DUYỆT sau soát chéo Gemini). Máy thật (Chủ dự án 2026-09-15): chữ chip đọc được ✔, "◷" hiện đúng ✔ → T-5.4 không cần gấp (chỉ còn S4 dọn code). Chủ dự án yêu cầu thêm (D-026, SPEC v1.6): bấm đúp mở Google Calendar → KHÔNG làm (OUT); sự kiện trùng local/Google → B-003 ✔ DONE (chờ Chủ dự án `git push`). Chủ dự án: "xử lý tồn đọng cho xong" → T-5.4 ✔, B-004 ✔ → **HẾT TỒN ĐỌNG**. Chủ dự án `git push` (a173446..bcb4c15) → Actions run 34922820757 success, trang 200. Sau đó Chủ dự án báo: 2 sự kiện trùng trong app vẫn hiện cả 2 → D-027 ẩn trùng mọi nguồn → B-005 ✔ DONE. Chủ dự án `git push` (bcb4c15..3ef433a) → Actions run 34923759379 success, trang 200. Dự án ĐÓNG lại (D-022).
-- **M6 (SPEC v1.7, D-028) — Cử chỉ danh sách Việc cần làm: 0/3.** Thứ tự 6.1 → 6.2 → 6.END → soát chéo `M6-soat` → Kiến trúc sư duyệt → tag `M6-ok`. Xem mục "M6" cuối file. Không phiếu nào đủ điều kiện Gemini (6.1 đổi hợp đồng; 6.2 cử chỉ cần cảm giác máy thật; 6.END sonnet). Deploy OK: Chủ dự án `git push` (6fec4b5..a173446) → Actions run 34919243300 success, trang 200, JS có `layout-week`. Tag `M5-ok` đã lên GitHub. Chờ Chủ dự án xem trên iPhone 2 ý: (1) chữ chip (~7–8 pt) đọc được không; (2) biểu tượng ◷ có hiện không. Sau đó → phiếu T-5.4 (tồn đọng D-025) nếu cần. Thứ tự 5.1 → 5.2 → 5.3 → 5.END → ảnh mẫu cho Chủ dự án → soát chéo Gemini `M5-soat` → Kiến trúc sư duyệt M5 → tag `M5-ok`. Xem mục "M5" cuối file. Làn Gemini: BẬT mức NHIỀU ở checkout chính (không chạy trong worktree — BAI-HOC); T-5.3 đủ điều kiện → tho-gemini.
+- **M6 (SPEC v1.7, D-028) — Cử chỉ danh sách Việc cần làm: 1/3** (T-6.1 ✔; T-6.2 DOING). Thứ tự 6.1 → 6.2 → 6.END → soát chéo `M6-soat` → Kiến trúc sư duyệt → tag `M6-ok`. Xem mục "M6" cuối file. Không phiếu nào đủ điều kiện Gemini (6.1 đổi hợp đồng; 6.2 cử chỉ cần cảm giác máy thật; 6.END sonnet). Deploy OK: Chủ dự án `git push` (6fec4b5..a173446) → Actions run 34919243300 success, trang 200, JS có `layout-week`. Tag `M5-ok` đã lên GitHub. Chờ Chủ dự án xem trên iPhone 2 ý: (1) chữ chip (~7–8 pt) đọc được không; (2) biểu tượng ◷ có hiện không. Sau đó → phiếu T-5.4 (tồn đọng D-025) nếu cần. Thứ tự 5.1 → 5.2 → 5.3 → 5.END → ảnh mẫu cho Chủ dự án → soát chéo Gemini `M5-soat` → Kiến trúc sư duyệt M5 → tag `M5-ok`. Xem mục "M5" cuối file. Làn Gemini: BẬT mức NHIỀU ở checkout chính (không chạy trong worktree — BAI-HOC); T-5.3 đủ điều kiện → tho-gemini.
 - 2026-09-15: ĐỢT BẢO TRÌ D-023 XONG (B-001, B-002) — Quản lý phiên chính dọn rác Gemini ở checkout chính, `merge --ff-only` nhánh worktree → `main` 6fec4b5, `npm run check` pass (211×2 unit, 64 e2e, 6 skip có từ trước). Chủ dự án `git push` (e954b16..6fec4b5) → Actions run 34911429434 success, trang 200, CSS `.color-input` mới đã lên. Chờ Chủ dự án xem ô màu trên iPhone. Dự án trở lại trạng thái ĐÓNG (D-022).
 - Trước đó (2026-09-15): ĐỢT BẢO TRÌ D-023 — B-001 (Gemini) → B-002 (sonnet). Xem mục "Bảo trì 2026-09-15" cuối file.
 - 2026-09-15 phiên 2 (nền): làm trong worktree `.claude/worktrees/bao-tri-D-023`, nhánh `worktree-bao-tri-D-023` (từ `main` fd17357) — commit ở nhánh này, Chủ dự án gộp về `main` (`git merge --ff-only worktree-bao-tri-D-023`). Lượt Gemini `B-001` vòng 1 phiên trước chết khi dừng phiên (`DONE 255`, đầu ra rỗng, không đổi `src/`) → `huy B-001`, giao lại vòng 1 (không tính Lần thử, không tính lỗi làn). Lưu ý: `agy-run.sh huy` hoàn tác MỌI thay đổi chưa commit, kể cả sổ sách → commit sổ trước khi giao Gemini.
@@ -743,7 +743,8 @@ Thứ tự: 6.1 → 6.2 → 6.END (tuần tự; 6.2 cần action của 6.1).
   [ ] collect: việc `archived` không có trong `RenderData.todos`.
   [ ] `npm run check` pass; test cũ không đổi.
 - Lệnh kiểm tra: `npx tsc --noEmit; npm run test` rồi `npm run check`
-- Model: sonnet (đổi hợp đồng dùng chung) · Lần thử: 0/3 · Trạng thái: DOING (giao tho-sonnet 2026-09-15)
+- Nhật ký: 2026-09-15 lượt 1: DONE (`archived`; `archiveTodo`/`restoreTodo`/`reorderTodo`; `sameTodoGroup` loại việc lưu trữ; `moveTodo` lọc lưu trữ; collect lọc; +4 test) → kiem-thu PASS (unit 251×2/21 file; e2e 72/6 skip; test chỉ thêm) → review đạt → commit.
+- Model: sonnet (đổi hợp đồng dùng chung) · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-6.2 — UI: vuốt trái Lưu trữ / Xóa + Hoàn tác, phần "Đã lưu trữ", nhấn giữ kéo sắp xếp
 - Mục tiêu: cử chỉ kiểu iOS cho danh sách Việc cần làm (tab Sự kiện › Việc).
@@ -761,7 +762,7 @@ Thứ tự: 6.1 → 6.2 → 6.END (tuần tự; 6.2 cần action của 6.1).
   [ ] Chạm thường vào chữ vẫn mở sửa; tick vẫn tick (test khóa `m2-events`, `events` pass nguyên văn).
   [ ] `npm run check` pass; tập khóa vi = en; test cũ không đổi.
 - Lệnh kiểm tra: `npx playwright test tests/e2e/todo-gestures.spec.ts --repeat-each=3; npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING (giao tho-sonnet 2026-09-15)
 
 ### T-6.END — Kiểm thử tích hợp M6
 - Mục tiêu: E2E luồng chính M6 theo SPEC v1.7 §6 M6.

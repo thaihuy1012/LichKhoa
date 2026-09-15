@@ -6,6 +6,8 @@ import { saveState } from '../storage/db';
 /** Cùng nhóm hiển thị theo `cmpTodo`: cùng `done`; nếu chưa xong thì cùng có/không `due`,
  * và nếu có `due` thì cùng ngày. Dùng để `moveTodo` chỉ hoán đổi trong nhóm (T-2.14). */
 export function sameTodoGroup(a: Todo, b: Todo): boolean {
+  if (!!a.archived !== !!b.archived) return false;
+  if (a.archived) return false;
   if (a.done !== b.done) return false;
   if (a.done) return true;
   const aHas = a.due != null;
@@ -28,6 +30,9 @@ export type Action =
   | { type: 'deleteTodo'; id: string }
   | { type: 'moveTodo'; id: string; dir: -1 | 1 }
   | { type: 'setTodoDue'; id: string; due: ISODate | null }
+  | { type: 'archiveTodo'; id: string; archived: boolean }
+  | { type: 'restoreTodo'; todo: Todo }
+  | { type: 'reorderTodo'; id: string; targetId: string }
   | { type: 'addNote'; note: Note }
   | { type: 'updateNote'; note: Note }
   | { type: 'deleteNote'; id: string }
@@ -84,7 +89,8 @@ export function reducer(state: AppState, action: Action): AppState {
     case 'moveTodo': {
       // Hoán đổi theo đúng thứ tự hiển thị (cmpTodo, khớp `sortTodosForDisplay` trong app),
       // chỉ khi việc kề bên cùng nhóm (cùng done, cùng có/không due, cùng ngày due) (T-2.14).
-      const sorted = [...state.todos].sort(cmpTodo);
+      // T-6.1 (D-028): việc đã lưu trữ bị bỏ khỏi danh sách hiển thị -> nhảy qua khi tìm hàng xóm.
+      const sorted = [...state.todos].filter((t) => !t.archived).sort(cmpTodo);
       const idx = sorted.findIndex((t) => t.id === action.id);
       if (idx < 0) return state;
       const swapIdx = idx + action.dir;
@@ -96,6 +102,41 @@ export function reducer(state: AppState, action: Action): AppState {
         [a.id, b.order],
         [b.id, a.order],
       ]);
+      return { ...state, todos: state.todos.map((t) => (orders.has(t.id) ? { ...t, order: orders.get(t.id)! } : t)) };
+    }
+    case 'archiveTodo': {
+      return {
+        ...state,
+        todos: state.todos.map((t) => {
+          if (t.id !== action.id) return t;
+          if (!action.archived) {
+            const { archived: _archived, ...rest } = t;
+            return rest as Todo;
+          }
+          return { ...t, archived: true };
+        }),
+      };
+    }
+    case 'restoreTodo': {
+      if (state.todos.some((t) => t.id === action.todo.id)) return state;
+      return { ...state, todos: [...state.todos, action.todo] };
+    }
+    case 'reorderTodo': {
+      // T-6.1 (D-028): kéo id vào vị trí targetId trong danh sách hiển thị (không lưu trữ),
+      // chỉ khi cùng nhóm hiển thị (cmpTodo); tính lại order trong nhóm, không đụng nhóm khác.
+      const displaySorted = [...state.todos].filter((t) => !t.archived).sort(cmpTodo);
+      const idx = displaySorted.findIndex((t) => t.id === action.id);
+      const targetIdx = displaySorted.findIndex((t) => t.id === action.targetId);
+      if (idx < 0 || targetIdx < 0 || idx === targetIdx) return state;
+      const a = displaySorted[idx];
+      const b = displaySorted[targetIdx];
+      if (!sameTodoGroup(a, b)) return state;
+      const group = displaySorted.filter((t) => sameTodoGroup(t, b));
+      const withoutA = group.filter((t) => t.id !== a.id);
+      const targetIdxInGroup = withoutA.findIndex((t) => t.id === b.id);
+      const insertAt = idx < targetIdx ? targetIdxInGroup + 1 : targetIdxInGroup;
+      const newGroupOrder = [...withoutA.slice(0, insertAt), a, ...withoutA.slice(insertAt)];
+      const orders = new Map<string, number>(newGroupOrder.map((t, i) => [t.id, group[i].order]));
       return { ...state, todos: state.todos.map((t) => (orders.has(t.id) ? { ...t, order: orders.get(t.id)! } : t)) };
     }
     case 'setTodoDue': {

@@ -155,6 +155,74 @@ describe('reducer', () => {
     expect(s3).toEqual(s0);
   });
 
+  it('T-6.1: archiveTodo đặt/bỏ archived; restoreTodo chèn lại sau xóa; restore id đã có -> không đổi', () => {
+    const state = defaultState(device);
+    const s1 = reducer(state, { type: 'addTodo', text: 'A' });
+    const todo = s1.todos[0];
+
+    const s2 = reducer(s1, { type: 'archiveTodo', id: todo.id, archived: true });
+    expect(s2.todos[0].archived).toBe(true);
+    expect(s1.todos[0]).not.toHaveProperty('archived'); // không mutate state cũ
+
+    const s3 = reducer(s2, { type: 'archiveTodo', id: todo.id, archived: false });
+    expect(s3.todos[0]).not.toHaveProperty('archived'); // bỏ archive -> xóa trường, không để false
+
+    const s4 = reducer(s1, { type: 'deleteTodo', id: todo.id });
+    expect(s4.todos).toEqual([]);
+    const s5 = reducer(s4, { type: 'restoreTodo', todo });
+    expect(s5).toEqual(s1); // khôi phục giống hệt trước khi xóa
+
+    const s6 = reducer(s5, { type: 'restoreTodo', todo });
+    expect(s6).toBe(s5); // id đã tồn tại -> không đổi state (cùng tham chiếu)
+  });
+
+  it('T-6.1: reorderTodo đưa việc vào vị trí target trong danh sách hiển thị, chỉ cùng nhóm, không mutate', () => {
+    const state = defaultState(device);
+    const loaded = {
+      ...defaultState(device),
+      todos: [
+        { id: 'a', text: 'A', done: false, order: 0 },
+        { id: 'b', text: 'B', done: false, order: 1 },
+        { id: 'c', text: 'C', done: false, order: 2 },
+        { id: 'd', text: 'D', done: false, order: 3, due: '2099-01-01' }, // nhóm khác (có hạn)
+      ],
+    };
+    const s0 = reducer(state, { type: 'load', state: loaded });
+
+    // kéo C lên trước A -> C,A,B
+    const s1 = reducer(s0, { type: 'reorderTodo', id: 'c', targetId: 'a' });
+    const order1 = [...s1.todos].filter((t) => !t.due).sort((x, y) => x.order - y.order).map((t) => t.id);
+    expect(order1).toEqual(['c', 'a', 'b']);
+    expect(loaded.todos.map((t) => t.order)).toEqual([0, 1, 2, 3]); // không mutate state cũ
+
+    // kéo A xuống sau C (từ A,B,C gốc) -> B,C,A
+    const s2 = reducer(s0, { type: 'reorderTodo', id: 'a', targetId: 'c' });
+    const order2 = [...s2.todos].filter((t) => !t.due).sort((x, y) => x.order - y.order).map((t) => t.id);
+    expect(order2).toEqual(['b', 'c', 'a']);
+
+    // khác nhóm (d có hạn) -> không đổi
+    const s3 = reducer(s0, { type: 'reorderTodo', id: 'a', targetId: 'd' });
+    expect(s3).toEqual(s0);
+  });
+
+  it('T-6.1: moveTodo nhảy qua việc đã lưu trữ khi tìm hàng xóm', () => {
+    const state = defaultState(device);
+    const loaded = {
+      ...defaultState(device),
+      todos: [
+        { id: 'a', text: 'A', done: false, order: 0 },
+        { id: 'b', text: 'B', done: false, order: 1, archived: true },
+        { id: 'c', text: 'C', done: false, order: 2 },
+      ],
+    };
+    const s0 = reducer(state, { type: 'load', state: loaded });
+    // Hiển thị (không archived): A, C. moveTodo(a, dir:1) -> hoán A<->C, bỏ qua B.
+    const s1 = reducer(s0, { type: 'moveTodo', id: 'a', dir: 1 });
+    expect(s1.todos.find((t) => t.id === 'a')!.order).toBe(2);
+    expect(s1.todos.find((t) => t.id === 'c')!.order).toBe(0);
+    expect(s1.todos.find((t) => t.id === 'b')!.order).toBe(1); // việc lưu trữ không đổi
+  });
+
   it('addNote/updateNote/deleteNote CRUD ghi chú, không mutate state cũ', () => {
     const state = defaultState(device);
     const note = { id: 'n1', title: 'T', body: 'B', pinned: false, updated: 1 };
