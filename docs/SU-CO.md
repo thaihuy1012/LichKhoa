@@ -2,7 +2,16 @@
 (Chỉ Quản lý ghi. Đọc đầu mỗi phiên: sự cố chưa đóng xử lý trước mọi việc khác. Trạng thái: MỞ | ĐANG SỬA | CHỜ CHỦ DỰ ÁN | ĐÃ ĐÓNG.)
 
 ## Đang mở
-- (không)
+- SC-002 (S2, ĐANG SỬA) — iPhone: danh sách Việc không đổi được thứ tự (kéo lẫn nút ▲▼×) — xem dưới.
+
+## SC-002 — iPhone: không đổi được thứ tự Việc, nút ▲▼× trong hàng không bấm được · Mức S2 · Trạng thái: ĐANG SỬA
+- Phát hiện: 2026-09-15 · bởi Chủ dự án (iPhone 13 Pro Max, PWA, bản `c9f7b82` = tag `M6-ok`) · sau M6.
+- Triệu chứng: (1) nhấn giữ kéo → 2 hàng chồng nhau không nhìn thấy, thả tay thứ tự như cũ; (2) nút ▲ ▼ × trong hàng không hoạt động — "không thể thay đổi thứ tự việc". Vuốt trái, Xóa/Hoàn tác qua vuốt, Lưu trữ vẫn đạt.
+- Tái hiện: tab Sự kiện › Việc, ≥ 3 việc → chạm ▲/▼/× hoặc nhấn giữ kéo. E2E hiện có dùng chuột nên pass → cần test chạm thật (CDP `Input.dispatchTouchEvent`).
+- Nghi: hồi quy do bộ cử chỉ T-6.2/T-6.3 bọc cả hàng (`touchmove preventDefault` khi pending, `suppressClick`, `setPointerCapture`).
+- Commit tốt cuối cùng cho nút ▲▼×: `3ef433a` (trước T-6.1/T-6.2; chưa kiểm trên máy thật). Không revert: M6 đã duyệt (tag `M6-ok`), revert mất > 1 phiếu DONE → sửa tiến.
+- Đóng băng: `src/ui/screens/events/TodosTab.tsx` (chỉ sua-loi B-007 được sửa). Làn Gemini tạm dừng.
+- Sửa: sua-loi lượt 1 (sonnet, đang chạy từ phiếu B-007 lúc còn mức S3; nhận thêm triệu chứng nút) — nếu chưa xong → lượt 2 opus.
 
 ## SC-001 — Không agent nào có công cụ shell · Mức S1 · Trạng thái: ĐÃ ĐÓNG
 - Phát hiện: 2026-09-13 · bởi tho-sonnet (BLOCKED) + Quản lý tự kiểm · tại T-1.1 / M1
