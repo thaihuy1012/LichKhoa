@@ -851,10 +851,17 @@ select option {
   border-radius: 8px;
 }
 
-.todo-item-dragging {
+/* SC-002: hàng đang kéo nổi trên cùng — transform/z-index/bóng đặt trên `.todo-item-wrap` (không phải
+   `.todo-item-inner`, vốn bị wrap `overflow: hidden` cắt mất khi dịch dọc). Bóng của chính wrap không
+   bị overflow của nó cắt. */
+.todo-item-wrap-dragging {
   z-index: 5;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
   transform-origin: center;
+}
+
+.todo-item-dragging {
+  background: #1b1d27; /* nền đặc, sáng hơn hàng thường một chút để thấy đang được nhấc lên */
 }
 
 .todo-archived-item {

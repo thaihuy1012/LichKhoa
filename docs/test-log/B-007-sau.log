@@ -1,0 +1,8 @@
+
+Running 3 tests using 3 workers
+
+  ✓  1 [chromium] › tests\e2e\todo-touch.spec.ts:105:1 › Chạm thật (CDP): chạm nút ▲▼×/tick/chữ trong hàng vẫn có tác dụng dù ngón tay xê dịch nhẹ (1.4s)
+  ✓  3 [chromium] › tests\e2e\todo-touch.spec.ts:167:1 › Chạm thật (CDP): giữ nút ▼ hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn đổi thứ tự (1.5s)
+  ✓  2 [chromium] › tests\e2e\todo-touch.spec.ts:40:1 › Chạm thật (CDP): nhấn giữ ~600ms rồi kéo dọc đổi thứ tự, hàng nổi/dịch không chồng nhau (2.6s)
+
+  3 passed (8.6s)

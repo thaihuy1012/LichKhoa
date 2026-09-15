@@ -214,3 +214,34 @@ test('T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó v
   await rows.nth(0).getByTestId('todo-edit').click();
   await expect(rows.nth(0).locator('.todo-edit-input')).toBeVisible();
 });
+
+test('SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất)', async ({ page }) => {
+  await page.goto('/?test=1');
+  await openTodos(page);
+  for (const text of ['A', 'B', 'C']) await addTodo(page, text);
+
+  const rows = page.getByTestId('todo-item');
+  await expect(rows).toHaveCount(3);
+  const boxC = (await rows.nth(2).boundingBox())!;
+  const boxA = (await rows.nth(0).boundingBox())!;
+
+  await page.mouse.move(boxC.x + boxC.width / 2, boxC.y + boxC.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(600);
+  await page.mouse.move(boxA.x + boxA.width / 2, boxA.y + boxA.height / 2, { steps: 10 });
+  await page.waitForTimeout(300); // chờ hiệu ứng trượt nhường chỗ (0.15s) xong
+
+  // Hit-test thật tại tâm hình hiển thị của từng hàng (boundingBox không tính phần bị `overflow` cắt).
+  const hits = await page.evaluate(() =>
+    ['A', 'B', 'C'].map((text) => {
+      const edit = Array.from(document.querySelectorAll('[data-testid="todo-edit"]')).find((e) => e.textContent === text);
+      const r = edit!.closest('[data-testid="todo-item"]')!.getBoundingClientRect();
+      const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+      return hit?.closest('.todo-item-wrap')?.querySelector('[data-testid="todo-edit"]')?.textContent ?? null;
+    }),
+  );
+  await page.mouse.up();
+
+  expect(hits).toEqual(['A', 'B', 'C']);
+  await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('C');
+});

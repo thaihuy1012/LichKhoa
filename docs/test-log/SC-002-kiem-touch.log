@@ -1,0 +1,84 @@
+
+Running 78 tests using 4 workers
+
+  ✓   1 [chromium] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0 (1.0s)
+  ✓   3 [chromium] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất (1.4s)
+  ✓   4 [chromium] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ (2.4s)
+  ✓   2 [chromium] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên (2.6s)
+  ✓   5 [chromium] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa (1.5s)
+  ✓   6 [chromium] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) (1.7s)
+  ✓   8 [chromium] › tests\e2e\todo-touch.spec.ts:105:1 › Chạm thật (CDP): chạm nút ▲▼×/tick/chữ trong hàng vẫn có tác dụng dù ngón tay xê dịch nhẹ (1.1s)
+  ✓   9 [chromium] › tests\e2e\todo-touch.spec.ts:167:1 › Chạm thật (CDP): giữ nút ▼ hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn đổi thứ tự (1.2s)
+  ✓   7 [chromium] › tests\e2e\todo-touch.spec.ts:40:1 › Chạm thật (CDP): nhấn giữ ~600ms rồi kéo dọc đổi thứ tự, hàng nổi/dịch không chồng nhau (2.5s)
+  ✓  10 [chromium] › tests\e2e\todo-touch.spec.ts:210:1 › Chạm thật (CDP): giữa lúc kéo, hàng kéo và hàng nhường chỗ đều NHÌN THẤY (không bị cắt mất) (1.9s)
+  ✓  11 [chromium] › tests\e2e\todo-touch.spec.ts:375:1 › Chuỗi sự kiện iOS: pointercancel giữa lúc kéo, touch vẫn tiếp tục rồi touchend -> vẫn đổi thứ tự C,A,B (1.5s)
+  ✓  13 [chromium] › tests\e2e\todo-touch.spec.ts:387:1 › Chuỗi sự kiện iOS: chạm nút ▼ xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click) (514ms)
+  ✓  12 [chromium] › tests\e2e\todo-touch.spec.ts:381:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước (1.5s)
+  ✓  17 [chromium] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0 (1.1s)
+  ✓  16 [chromium] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất (1.2s)
+  ✓  18 [chromium] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa (1.3s)
+  ✓  15 [chromium] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ (2.2s)
+  ✓  14 [chromium] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên (2.4s)
+  ✓  19 [chromium] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) (1.7s)
+  ✓  21 [chromium] › tests\e2e\todo-touch.spec.ts:105:1 › Chạm thật (CDP): chạm nút ▲▼×/tick/chữ trong hàng vẫn có tác dụng dù ngón tay xê dịch nhẹ (1.2s)
+  ✓  22 [chromium] › tests\e2e\todo-touch.spec.ts:167:1 › Chạm thật (CDP): giữ nút ▼ hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn đổi thứ tự (1.3s)
+  ✓  20 [chromium] › tests\e2e\todo-touch.spec.ts:40:1 › Chạm thật (CDP): nhấn giữ ~600ms rồi kéo dọc đổi thứ tự, hàng nổi/dịch không chồng nhau (2.5s)
+  ✓  23 [chromium] › tests\e2e\todo-touch.spec.ts:210:1 › Chạm thật (CDP): giữa lúc kéo, hàng kéo và hàng nhường chỗ đều NHÌN THẤY (không bị cắt mất) (1.9s)
+  ✓  24 [chromium] › tests\e2e\todo-touch.spec.ts:375:1 › Chuỗi sự kiện iOS: pointercancel giữa lúc kéo, touch vẫn tiếp tục rồi touchend -> vẫn đổi thứ tự C,A,B (1.5s)
+  ✓  25 [chromium] › tests\e2e\todo-touch.spec.ts:381:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước (1.5s)
+  ✓  26 [chromium] › tests\e2e\todo-touch.spec.ts:387:1 › Chuỗi sự kiện iOS: chạm nút ▼ xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click) (606ms)
+  ✓  29 [chromium] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0 (1.1s)
+  ✓  30 [chromium] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất (1.2s)
+  ✓  27 [chromium] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ (2.2s)
+  ✓  31 [chromium] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa (1.4s)
+  ✓  28 [chromium] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên (2.4s)
+  ✓  32 [chromium] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) (1.6s)
+  ✓  34 [chromium] › tests\e2e\todo-touch.spec.ts:105:1 › Chạm thật (CDP): chạm nút ▲▼×/tick/chữ trong hàng vẫn có tác dụng dù ngón tay xê dịch nhẹ (1.1s)
+  ✓  35 [chromium] › tests\e2e\todo-touch.spec.ts:167:1 › Chạm thật (CDP): giữ nút ▼ hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn đổi thứ tự (1.2s)
+  ✓  33 [chromium] › tests\e2e\todo-touch.spec.ts:40:1 › Chạm thật (CDP): nhấn giữ ~600ms rồi kéo dọc đổi thứ tự, hàng nổi/dịch không chồng nhau (2.5s)
+  ✓  37 [chromium] › tests\e2e\todo-touch.spec.ts:375:1 › Chuỗi sự kiện iOS: pointercancel giữa lúc kéo, touch vẫn tiếp tục rồi touchend -> vẫn đổi thứ tự C,A,B (1.5s)
+  ✓  36 [chromium] › tests\e2e\todo-touch.spec.ts:210:1 › Chạm thật (CDP): giữa lúc kéo, hàng kéo và hàng nhường chỗ đều NHÌN THẤY (không bị cắt mất) (1.9s)
+  ✓  38 [chromium] › tests\e2e\todo-touch.spec.ts:381:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước (1.5s)
+  ✓  39 [chromium] › tests\e2e\todo-touch.spec.ts:387:1 › Chuỗi sự kiện iOS: chạm nút ▼ xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click) (576ms)
+  ✓  42 [webkit] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0 (2.0s)
+  ✓  43 [webkit] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất (2.5s)
+  ✓  41 [webkit] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên (4.2s)
+  ✓  40 [webkit] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ (4.4s)
+  -  46 [webkit] › tests\e2e\todo-touch.spec.ts:40:1 › Chạm thật (CDP): nhấn giữ ~600ms rồi kéo dọc đổi thứ tự, hàng nổi/dịch không chồng nhau
+  -  47 [webkit] › tests\e2e\todo-touch.spec.ts:105:1 › Chạm thật (CDP): chạm nút ▲▼×/tick/chữ trong hàng vẫn có tác dụng dù ngón tay xê dịch nhẹ
+  ✓  44 [webkit] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa (2.8s)
+  -  48 [webkit] › tests\e2e\todo-touch.spec.ts:167:1 › Chạm thật (CDP): giữ nút ▼ hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn đổi thứ tự
+  -  49 [webkit] › tests\e2e\todo-touch.spec.ts:210:1 › Chạm thật (CDP): giữa lúc kéo, hàng kéo và hàng nhường chỗ đều NHÌN THẤY (không bị cắt mất)
+  ✓  45 [webkit] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) (2.8s)
+  -  50 [webkit] › tests\e2e\todo-touch.spec.ts:375:1 › Chuỗi sự kiện iOS: pointercancel giữa lúc kéo, touch vẫn tiếp tục rồi touchend -> vẫn đổi thứ tự C,A,B
+  -  51 [webkit] › tests\e2e\todo-touch.spec.ts:381:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước
+  -  52 [webkit] › tests\e2e\todo-touch.spec.ts:387:1 › Chuỗi sự kiện iOS: chạm nút ▼ xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click)
+  ✓  56 [webkit] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0 (2.0s)
+  ✓  55 [webkit] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất (2.4s)
+  ✓  53 [webkit] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ (4.3s)
+  -  59 [webkit] › tests\e2e\todo-touch.spec.ts:40:1 › Chạm thật (CDP): nhấn giữ ~600ms rồi kéo dọc đổi thứ tự, hàng nổi/dịch không chồng nhau
+  -  60 [webkit] › tests\e2e\todo-touch.spec.ts:105:1 › Chạm thật (CDP): chạm nút ▲▼×/tick/chữ trong hàng vẫn có tác dụng dù ngón tay xê dịch nhẹ
+  ✓  54 [webkit] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên (4.3s)
+  -  61 [webkit] › tests\e2e\todo-touch.spec.ts:167:1 › Chạm thật (CDP): giữ nút ▼ hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn đổi thứ tự
+  -  62 [webkit] › tests\e2e\todo-touch.spec.ts:210:1 › Chạm thật (CDP): giữa lúc kéo, hàng kéo và hàng nhường chỗ đều NHÌN THẤY (không bị cắt mất)
+  ✓  57 [webkit] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa (2.6s)
+  ✓  58 [webkit] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) (2.8s)
+  -  63 [webkit] › tests\e2e\todo-touch.spec.ts:375:1 › Chuỗi sự kiện iOS: pointercancel giữa lúc kéo, touch vẫn tiếp tục rồi touchend -> vẫn đổi thứ tự C,A,B
+  -  64 [webkit] › tests\e2e\todo-touch.spec.ts:381:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước
+  -  65 [webkit] › tests\e2e\todo-touch.spec.ts:387:1 › Chuỗi sự kiện iOS: chạm nút ▼ xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click)
+  ✓  69 [webkit] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0 (1.9s)
+  ✓  68 [webkit] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất (2.4s)
+  ✓  67 [webkit] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên (4.1s)
+  -  72 [webkit] › tests\e2e\todo-touch.spec.ts:40:1 › Chạm thật (CDP): nhấn giữ ~600ms rồi kéo dọc đổi thứ tự, hàng nổi/dịch không chồng nhau
+  -  73 [webkit] › tests\e2e\todo-touch.spec.ts:105:1 › Chạm thật (CDP): chạm nút ▲▼×/tick/chữ trong hàng vẫn có tác dụng dù ngón tay xê dịch nhẹ
+  ✓  66 [webkit] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ (4.8s)
+  -  74 [webkit] › tests\e2e\todo-touch.spec.ts:167:1 › Chạm thật (CDP): giữ nút ▼ hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn đổi thứ tự
+  -  75 [webkit] › tests\e2e\todo-touch.spec.ts:210:1 › Chạm thật (CDP): giữa lúc kéo, hàng kéo và hàng nhường chỗ đều NHÌN THẤY (không bị cắt mất)
+  ✓  70 [webkit] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa (2.6s)
+  ✓  71 [webkit] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) (2.8s)
+  -  76 [webkit] › tests\e2e\todo-touch.spec.ts:375:1 › Chuỗi sự kiện iOS: pointercancel giữa lúc kéo, touch vẫn tiếp tục rồi touchend -> vẫn đổi thứ tự C,A,B
+  -  77 [webkit] › tests\e2e\todo-touch.spec.ts:381:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước
+  -  78 [webkit] › tests\e2e\todo-touch.spec.ts:387:1 › Chuỗi sự kiện iOS: chạm nút ▼ xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click)
+
+  21 skipped
+  57 passed (56.8s)

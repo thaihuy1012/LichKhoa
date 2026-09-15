@@ -88,17 +88,47 @@ interface GestureCallbacks {
   onDragCancel: () => void;
 }
 
+/** SC-002: trình duyệt có Touch Events (Safari iOS, Chrome Android, chromium `hasTouch`) -> cử chỉ bằng
+ * NGÓN TAY đi hoàn toàn qua `touchstart/touchmove/touchend/touchcancel`; pointer `pointerType: 'touch'`
+ * bị bỏ qua. Lý do: WebKit iOS hủy luồng POINTER (`pointercancel`) bất cứ khi nào một cử chỉ gốc của
+ * UIKit (cuộn, nhấn giữ hệ thống…) tranh ngón tay, trong khi luồng TOUCH vẫn chạy tiếp tới `touchend`.
+ * Bộ cũ kết thúc kéo bằng `pointerup`/`pointercancel` -> `onDragCancel` -> "thả tay thứ tự như cũ"
+ * (tái hiện: tests/e2e/todo-touch.spec.ts "Chuỗi sự kiện iOS…"). Chuột/bút vẫn dùng Pointer Events. */
+const HAS_TOUCH_EVENTS = typeof window !== 'undefined' && 'ontouchstart' in window;
+
+/** Nút hành động đơn nhiệm trong hàng (▲▼×, tick, hạn, nút panel vuốt): chạm vào đây KHÔNG mở đầu nhấn
+ * giữ kéo và KHÔNG bị chặn touchmove sớm, để click của nút không bị nuốt (SC-002 triệu chứng 2).
+ * `todo-edit` (chữ việc) là ngoại lệ lưỡng dụng theo thiết kế T-6.2/T-6.3: chạm nhanh sửa, nhấn giữ kéo. */
+function isActionButton(target: EventTarget | null): boolean {
+  const btn = (target as HTMLElement | null)?.closest?.('button') as HTMLElement | null | undefined;
+  return !!btn && btn.dataset.testid !== 'todo-edit';
+}
+
+function findTouch(list: TouchList, id: number | null): Touch | null {
+  for (let i = 0; i < list.length; i++) if (list[i].identifier === id) return list[i];
+  return null;
+}
+
 /** Bộ nhận cử chỉ dùng chung cho hàng thường và hàng đã lưu trữ (T-6.2). `canDrag` tắt cho hàng lưu trữ.
- * `isOpen`: hàng đang mở sẵn (panel lộ ra) hay không, để vuốt tiếp từ vị trí mở không giật về 0 (T-6.3 #2). */
+ * `isOpen`: hàng đang mở sẵn (panel lộ ra) hay không, để vuốt tiếp từ vị trí mở không giật về 0 (T-6.3 #2).
+ * Một máy trạng thái (`begin`/`move`/`endGesture`) nhận dữ liệu từ 2 nguồn: Pointer Events (chuột/bút)
+ * hoặc Touch Events (ngón tay, xem HAS_TOUCH_EVENTS). */
 function useRowGesture(canDrag: boolean, isOpen: boolean, cb: GestureCallbacks) {
   const phaseRef = useRef<Phase>('idle');
   const startRef = useRef({ x: 0, y: 0 });
+  const sourceRef = useRef<'pointer' | 'touch' | null>(null);
   const pointerIdRef = useRef<number | null>(null);
+  const touchIdRef = useRef<number | null>(null);
+  const onActionRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const suppressClickRef = useRef(false);
   const [dx, setDx] = useState<number | null>(null);
+  const dxRef = useRef<number | null>(null);
   const [dragging, setDragging] = useState(false);
   const rowElRef = useRef<HTMLDivElement | null>(null);
+  // Listener touch gốc đăng ký 1 lần (xem effect dưới) -> luôn đọc props mới nhất qua ref.
+  const latestRef = useRef({ canDrag, isOpen, cb });
+  latestRef.current = { canDrag, isOpen, cb };
 
   function clearTimer() {
     if (timerRef.current) {
@@ -107,43 +137,31 @@ function useRowGesture(canDrag: boolean, isOpen: boolean, cb: GestureCallbacks) 
     }
   }
 
-  // Safari iOS (bằng chứng review T-6.2 lượt 1): hàng có `touch-action: pan-y` để cuộn dọc mượt
-  // khi không kéo. Nhưng WebKit chốt quyết định cuộn/không-cuộn cho cả chuỗi chạm ngay khi touch
-  // bắt đầu di chuyển theo `touch-action`; gọi `preventDefault()` trên PointerEvent (`onPointerMove`
-  // ở JSX) không còn chặn được cuộn nữa một khi WebKit đã "giành" cử chỉ — nó hủy pointer luôn
-  // (bắn `pointercancel`) trước khi JS kịp phản ứng. Cách chặn được: đăng ký listener `touchmove`
-  // gốc (không qua JSX, vì {passive:false} không tự đặt được qua props) trực tiếp trên phần tử
-  // hàng, gọi `preventDefault()` ngay khi đang vuốt ngang (đã xác định hướng) hoặc đang kéo (đã qua
-  // nhấn giữ) — tức TRƯỚC khi trình duyệt kịp chốt cuộn cho lần di chuyển đó.
-  useEffect(() => {
-    const el = rowElRef.current;
-    if (!el) return;
-    function onTouchMove(e: TouchEvent) {
-      if (phaseRef.current === 'swipe' || phaseRef.current === 'drag') {
-        e.preventDefault();
-        return;
-      }
-      // T-6.3 (#4, soát chéo M6): còn `pending` (chưa qua ngưỡng SWIPE_ACTIVATE_PX=16 để JS tự
-      // chuyển phase) nhưng đã thấy rõ hướng ngang (|dx|>|dy|) từ vài px đầu -> chặn cuộn NGAY,
-      // không đợi đủ 16px, vì WebKit chốt quyền cuộn/vuốt-lùi từ những pixel di chuyển đầu tiên.
-      if (phaseRef.current === 'pending' && e.touches.length === 1) {
-        const touch = e.touches[0];
-        const dxNow = touch.clientX - startRef.current.x;
-        const dyNow = touch.clientY - startRef.current.y;
-        if (Math.abs(dxNow) > EARLY_SWIPE_PX && Math.abs(dxNow) > Math.abs(dyNow)) e.preventDefault();
-      }
-    }
-    el.addEventListener('touchmove', onTouchMove, { passive: false });
-    return () => el.removeEventListener('touchmove', onTouchMove);
-  }, []);
+  function updateDx(v: number | null) {
+    dxRef.current = v;
+    setDx(v);
+  }
 
-  function onPointerDown(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
-    if ((e.target as HTMLElement).closest('input')) return;
-    startRef.current = { x: e.clientX, y: e.clientY };
-    pointerIdRef.current = e.pointerId;
+  /** Bắt pointer về hàng (chỉ nguồn pointer; touch đã tự "bắt" về phần tử touchstart theo spec). */
+  function capturePointer() {
+    const el = rowElRef.current;
+    if (!el || sourceRef.current !== 'pointer' || pointerIdRef.current === null) return;
+    try {
+      el.setPointerCapture(pointerIdRef.current);
+    } catch {
+      /* ignore: pointer may already be released */
+    }
+  }
+
+  function begin(x: number, y: number, target: EventTarget | null, source: 'pointer' | 'touch') {
+    startRef.current = { x, y };
+    sourceRef.current = source;
     phaseRef.current = 'pending';
     clearTimer();
-    if (canDrag) {
+    // SC-002 (lượt 1, test "giữ nút ▼ hơi lâu"): giữ tay > LONG_PRESS_MS trên nút hành động từng bị coi
+    // là mở đầu kéo -> suppressClick nuốt click thật của nút.
+    onActionRef.current = isActionButton(target);
+    if (latestRef.current.canDrag && !onActionRef.current) {
       timerRef.current = setTimeout(() => {
         if (phaseRef.current !== 'pending') return;
         phaseRef.current = 'drag';
@@ -151,89 +169,158 @@ function useRowGesture(canDrag: boolean, isOpen: boolean, cb: GestureCallbacks) 
         setDragging(true);
         const el = rowElRef.current;
         if (el) {
-          try {
-            el.setPointerCapture(e.pointerId);
-          } catch {
-            /* ignore: pointer may already be released */
-          }
-          cb.onBeginDrag(el);
+          capturePointer();
+          latestRef.current.cb.onBeginDrag(el);
         }
       }, LONG_PRESS_MS);
     }
   }
 
-  function onPointerMove(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
-    if (pointerIdRef.current !== e.pointerId) return;
-    const dxNow = e.clientX - startRef.current.x;
-    const dyNow = e.clientY - startRef.current.y;
+  /** Trả về true nếu lần di chuyển thuộc về cử chỉ (vuốt/kéo) -> nơi gọi chặn hành vi mặc định (cuộn). */
+  function move(x: number, y: number): boolean {
+    const dxNow = x - startRef.current.x;
+    const dyNow = y - startRef.current.y;
+    const { isOpen: open, cb: callbacks } = latestRef.current;
+    // T-6.3 (#2, soát chéo M6): hàng đang mở sẵn -> điểm bắt đầu của dx là -PANEL_PX, không phải 0.
+    const base = open ? -SWIPE_PANEL_PX : 0;
     if (phaseRef.current === 'pending') {
       if (Math.abs(dxNow) > SWIPE_ACTIVATE_PX && Math.abs(dxNow) > Math.abs(dyNow)) {
         clearTimer();
         phaseRef.current = 'swipe';
         suppressClickRef.current = true;
-        const el = rowElRef.current;
-        if (el) {
-          try {
-            el.setPointerCapture(e.pointerId);
-          } catch {
-            /* ignore */
-          }
-        }
-        // T-6.3 (#2, soát chéo M6): hàng đang mở sẵn (isOpen) -> điểm bắt đầu của dx là -PANEL_PX,
-        // không phải 0, nếu không hàng giật về 0 rồi mới chạy theo ngón tay tiếp.
-        const base = isOpen ? -SWIPE_PANEL_PX : 0;
-        setDx(Math.min(0, Math.max(-SWIPE_PANEL_PX - 24, base + dxNow)));
-      } else if (Math.abs(dyNow) > MOVE_CANCEL_PX) {
+        capturePointer();
+        updateDx(Math.min(0, Math.max(-SWIPE_PANEL_PX - 24, base + dxNow)));
+        return true;
+      }
+      if (Math.abs(dyNow) > MOVE_CANCEL_PX) {
         clearTimer();
         phaseRef.current = 'idle';
       }
-      return;
+      return false;
     }
     if (phaseRef.current === 'swipe') {
-      e.preventDefault();
-      const base = isOpen ? -SWIPE_PANEL_PX : 0;
-      setDx(Math.min(0, Math.max(-SWIPE_PANEL_PX - 24, base + dxNow)));
-      return;
+      updateDx(Math.min(0, Math.max(-SWIPE_PANEL_PX - 24, base + dxNow)));
+      return true;
     }
     if (phaseRef.current === 'drag') {
-      e.preventDefault();
-      cb.onDragMove(dyNow);
+      callbacks.onDragMove(dyNow);
+      return true;
     }
+    return false;
   }
 
   function endGesture(cancelled: boolean) {
     clearTimer();
+    const callbacks = latestRef.current.cb;
     if (phaseRef.current === 'swipe') {
       const openThreshold = -SWIPE_PANEL_PX * SWIPE_OPEN_RATIO;
-      const cur = dx ?? 0;
-      cb.onSwipeSettle(!cancelled && cur <= openThreshold);
-      setDx(null);
+      const cur = dxRef.current ?? 0;
+      callbacks.onSwipeSettle(!cancelled && cur <= openThreshold);
+      updateDx(null);
     } else if (phaseRef.current === 'drag') {
       setDragging(false);
-      if (cancelled) cb.onDragCancel();
-      else cb.onDragEnd();
+      if (cancelled) callbacks.onDragCancel();
+      else callbacks.onDragEnd();
     }
     phaseRef.current = 'idle';
+    sourceRef.current = null;
     pointerIdRef.current = null;
-    // T-6.3 (#3, soát chéo M6): dọn cờ suppressClick kể cả khi không có `click` nào theo sau (đề
-    // phòng thêm, ngoài chỗ `onPointerCancel` đã tự dọn) — chạy sau tick hiện tại nên vẫn kịp nuốt
-    // đúng 1 lần click "ma" phát sinh ngay sau cử chỉ (nếu có) trước khi tự dọn.
+    touchIdRef.current = null;
+    // T-6.3 (#3, soát chéo M6): dọn cờ suppressClick kể cả khi không có `click` nào theo sau — chạy sau
+    // tick hiện tại nên vẫn kịp nuốt đúng 1 lần click "ma" phát sinh ngay sau cử chỉ (nếu có).
     setTimeout(() => {
       suppressClickRef.current = false;
     }, 0);
   }
 
+  // Nhánh ngón tay (SC-002). Đăng ký 1 lần trên phần tử hàng, KHÔNG qua JSX: `touchmove` phải là
+  // {passive:false} và có sẵn TRƯỚC touchstart thì `preventDefault()` mới chặn được cuộn trên Safari iOS
+  // (WebKit chốt cuộn/không-cuộn từ các pixel di chuyển đầu; listener thêm giữa chừng không được tính).
+  // Không bao giờ preventDefault ở touchstart -> click của nút con giữ nguyên.
+  useEffect(() => {
+    const el = rowElRef.current;
+    if (!el || !HAS_TOUCH_EVENTS) return;
+    function onTouchStart(e: TouchEvent) {
+      if (sourceRef.current === 'touch' && phaseRef.current !== 'idle') {
+        // Ngón thứ hai chạm khi đang chờ nhấn giữ -> bỏ; đang vuốt/kéo -> tiếp tục theo ngón đầu.
+        if (phaseRef.current === 'pending') {
+          clearTimer();
+          phaseRef.current = 'idle';
+        }
+        return;
+      }
+      if (e.touches.length !== 1) return;
+      if ((e.target as HTMLElement).closest('input')) return;
+      const t = e.changedTouches[0];
+      touchIdRef.current = t.identifier;
+      begin(t.clientX, t.clientY, e.target, 'touch');
+    }
+    function onTouchMove(e: TouchEvent) {
+      if (sourceRef.current !== 'touch') return;
+      const t = findTouch(e.changedTouches, touchIdRef.current) ?? findTouch(e.touches, touchIdRef.current);
+      if (!t) return;
+      if (move(t.clientX, t.clientY)) {
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
+      // T-6.3 (#4, soát chéo M6): còn `pending` nhưng đã thấy rõ hướng ngang (|dx|>|dy|) từ vài px đầu ->
+      // chặn cuộn NGAY, không đợi đủ 16px. SC-002: trừ khi chạm trúng nút hành động — một cú chạm nút hơi
+      // xê dịch không được bị preventDefault (nguy cơ iOS bỏ click); vuốt từ nút vẫn được sau 16px.
+      if (phaseRef.current === 'pending' && !onActionRef.current) {
+        const dxNow = t.clientX - startRef.current.x;
+        const dyNow = t.clientY - startRef.current.y;
+        if (Math.abs(dxNow) > EARLY_SWIPE_PX && Math.abs(dxNow) > Math.abs(dyNow) && e.cancelable) e.preventDefault();
+      }
+    }
+    function onTouchEnd(e: TouchEvent) {
+      if (sourceRef.current !== 'touch' || !findTouch(e.changedTouches, touchIdRef.current)) return;
+      endGesture(false);
+    }
+    function onTouchCancel(e: TouchEvent) {
+      if (sourceRef.current !== 'touch' || !findTouch(e.changedTouches, touchIdRef.current)) return;
+      // Không có `click` nào theo sau touchcancel -> tự dọn cờ (tránh nuốt oan lần chạm kế tiếp).
+      suppressClickRef.current = false;
+      // SC-002: hệ thống giành ngón tay giữa lúc KÉO -> áp thứ tự người dùng đang thấy xem trước (không
+      // bật về thứ tự cũ như triệu chứng); đang VUỐT -> đóng panel như trước.
+      endGesture(phaseRef.current !== 'drag');
+    }
+    el.addEventListener('touchstart', onTouchStart, { passive: true });
+    el.addEventListener('touchmove', onTouchMove, { passive: false });
+    el.addEventListener('touchend', onTouchEnd);
+    el.addEventListener('touchcancel', onTouchCancel);
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchmove', onTouchMove);
+      el.removeEventListener('touchend', onTouchEnd);
+      el.removeEventListener('touchcancel', onTouchCancel);
+    };
+  }, []);
+
+  /** Ngón tay đã do nhánh Touch Events xử lý -> bỏ qua bản sao pointer của nó. */
+  function isTouchHandledElsewhere(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
+    return e.pointerType === 'touch' && HAS_TOUCH_EVENTS;
+  }
+
+  function onPointerDown(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
+    if (isTouchHandledElsewhere(e)) return;
+    if ((e.target as HTMLElement).closest('input')) return;
+    pointerIdRef.current = e.pointerId;
+    begin(e.clientX, e.clientY, e.target, 'pointer');
+  }
+
+  function onPointerMove(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
+    if (sourceRef.current !== 'pointer' || pointerIdRef.current !== e.pointerId) return;
+    if (move(e.clientX, e.clientY)) e.preventDefault();
+  }
+
   function onPointerUp(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
-    if (pointerIdRef.current !== e.pointerId) return;
+    if (sourceRef.current !== 'pointer' || pointerIdRef.current !== e.pointerId) return;
     endGesture(false);
   }
 
   function onPointerCancel(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
-    if (pointerIdRef.current !== e.pointerId) return;
-    // `pointercancel` (vd. WebKit giành cuộn giữa chừng) không kéo theo sự kiện `click` nào sau đó
-    // -> phải tự dọn cờ suppressClick ở đây, nếu không lần chạm HỢP LỆ tiếp theo trên hàng này sẽ bị
-    // nuốt oan (kẹt trạng thái). `endGesture(true)` bên dưới đã lo phần dọn `dragInfo`/`dx` để hàng
-    // nổi hoặc panel vuốt trở lại đúng chỗ (không mutate state thật khi bị hủy).
+    if (sourceRef.current !== 'pointer' || pointerIdRef.current !== e.pointerId) return;
+    // `pointercancel` không kéo theo `click` nào -> tự dọn cờ suppressClick (tránh kẹt trạng thái).
     suppressClickRef.current = false;
     endGesture(true);
   }
@@ -307,16 +394,26 @@ function SwipeRow({
     else if (originalIndex > finalIndex && index >= finalIndex && index < originalIndex) shiftPx = rowHeight;
   }
 
-  const innerStyle: Record<string, string> = {};
+  // SC-002 (triệu chứng 1 "2 việc chồng lên nhau và không nhìn thấy"): dịch dọc khi KÉO phải đặt trên
+  // `.todo-item-wrap`, không phải `.todo-item-inner` — wrap có `overflow: hidden` (cắt panel vuốt), nên
+  // hàng kéo/hàng nhường chỗ dịch bên trong khung của chính nó bị cắt mất (tái hiện bằng hit-test
+  // `elementFromPoint`: tests/e2e/todo-gestures.spec.ts "SC-002…", chromium + webkit). Vuốt ngang vẫn
+  // dịch `inner` bên trong wrap (cần bị cắt để lộ panel).
+  const wrapStyle: Record<string, string> = {};
   if (isDraggedRow) {
-    innerStyle.transform = `translateY(${dragInfo!.rawDy}px) scale(1.03)`;
-    innerStyle.transition = 'none';
-  } else if (dx !== null) {
+    wrapStyle.transform = `translateY(${dragInfo!.rawDy}px) scale(1.02)`;
+    wrapStyle.transition = 'none';
+  } else if (dragInfo && dragInfo.listKey === listKey) {
+    // Chỉ có hiệu ứng trượt khi đang kéo; lúc thả (dragInfo=null) bỏ transition để hàng không trượt ngược.
+    if (shiftPx !== 0) wrapStyle.transform = `translateY(${shiftPx}px)`;
+    wrapStyle.transition = 'transform 0.15s ease';
+  }
+
+  const innerStyle: Record<string, string> = {};
+  if (dx !== null) {
     innerStyle.transform = `translateX(${dx}px)`;
     innerStyle.transition = 'none';
-  } else if (shiftPx !== 0) {
-    innerStyle.transform = `translateY(${shiftPx}px)`;
-  } else if (isOpen) {
+  } else if (isOpen && !isDraggedRow) {
     innerStyle.transform = `translateX(-${SWIPE_PANEL_PX}px)`;
   }
 
@@ -328,7 +425,8 @@ function SwipeRow({
 
   return (
     <div
-      class="todo-item-wrap"
+      class={isDraggedRow || dragging ? 'todo-item-wrap todo-item-wrap-dragging' : 'todo-item-wrap'}
+      style={wrapStyle}
       ref={rowElRef}
       onPointerDown={handlers.onPointerDown}
       onPointerMove={handlers.onPointerMove}

@@ -1,0 +1,263 @@
+
+Running 26 tests using 4 workers
+
+[1/26] [chromium] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ
+[2/26] [chromium] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên
+[3/26] [chromium] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất
+[4/26] [chromium] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0
+[5/26] [chromium] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa
+[6/26] [chromium] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất)
+[7/26] [chromium] › tests\e2e\todo-touch.spec.ts:40:1 › Chạm thật (CDP): nhấn giữ ~600ms rồi kéo dọc đổi thứ tự, hàng nổi/dịch không chồng nhau
+[8/26] [chromium] › tests\e2e\todo-touch.spec.ts:105:1 › Chạm thật (CDP): chạm nút ▲▼×/tick/chữ trong hàng vẫn có tác dụng dù ngón tay xê dịch nhẹ
+[9/26] [chromium] › tests\e2e\todo-touch.spec.ts:167:1 › Chạm thật (CDP): giữ nút ▼ hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn đổi thứ tự
+  1) [chromium] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Array [
+    -   "A",
+        "B",
+        "C",
+    +   "A",
+      ]
+
+      242 |   await page.mouse.up();
+      243 |
+    > 244 |   expect(hits).toEqual(['A', 'B', 'C']);
+          |                ^
+      245 |   await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('C');
+      246 | });
+      247 |
+        at E:\DuAn\thu-nghiem\tests\e2e\todo-gestures.spec.ts:244:16
+
+    Error Context: test-results\todo-gestures-SC-002-giữa--72938-hông-bị-khung-hàng-cắt-mất--chromium\error-context.md
+
+
+[10/26] [chromium] › tests\e2e\todo-touch.spec.ts:370:1 › Chuỗi sự kiện iOS: pointercancel giữa lúc kéo, touch vẫn tiếp tục rồi touchend -> vẫn đổi thứ tự C,A,B
+[11/26] [chromium] › tests\e2e\todo-touch.spec.ts:376:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước
+[12/26] [chromium] › tests\e2e\todo-touch.spec.ts:210:1 › Chạm thật (CDP): giữa lúc kéo, hàng kéo và hàng nhường chỗ đều NHÌN THẤY (không bị cắt mất)
+[13/26] [chromium] › tests\e2e\todo-touch.spec.ts:382:1 › Chuỗi sự kiện iOS: chạm nút ▼ xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click)
+  2) [chromium] › tests\e2e\todo-touch.spec.ts:370:1 › Chuỗi sự kiện iOS: pointercancel giữa lúc kéo, touch vẫn tiếp tục rồi touchend -> vẫn đổi thứ tự C,A,B 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 7
+    + Received  + 7
+
+      Array [
+        true,
+        true,
+        true,
+    -   true,
+    -   true,
+    -   true,
+    -   true,
+    -   true,
+    -   true,
+    -   true,
+    +   false,
+    +   false,
+    +   false,
+    +   false,
+    +   false,
+    +   false,
+    +   false,
+      ]
+
+      358 |   }
+      359 |   // Mọi touchmove khi đang kéo phải bị chặn (preventDefault) — nếu không iOS sẽ cuộn trang.
+    > 360 |   expect(prevented).toEqual(Array(10).fill(true));
+          |                     ^
+      361 |   if (ending === 'touchend') await syn(page, 'touchEndOnly', x, yA);
+      362 |   else await syn(page, 'touchCancel', x, yA);
+      363 |
+        at dragCOverAWithIosCancel (E:\DuAn\thu-nghiem\tests\e2e\todo-touch.spec.ts:360:21)
+        at E:\DuAn\thu-nghiem\tests\e2e\todo-touch.spec.ts:373:3
+
+    Error Context: test-results\todo-touch-Chuỗi-sự-kiện-i-3f3a5-hend---vẫn-đổi-thứ-tự-C-A-B-chromium\error-context.md
+
+
+  3) [chromium] › tests\e2e\todo-touch.spec.ts:382:1 › Chuỗi sự kiện iOS: chạm nút ▼ xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click) 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      395 |   const notPrevented = await syn(page, 'move', x + 5, y);
+      396 |   await syn(page, 'touchEndOnly', x + 5, y);
+    > 397 |   expect(notPrevented).toBe(true);
+          |                        ^
+      398 | });
+      399 |
+        at E:\DuAn\thu-nghiem\tests\e2e\todo-touch.spec.ts:397:24
+
+    Error Context: test-results\todo-touch-Chuỗi-sự-kiện-i-3e711-ult-không-làm-iOS-bỏ-click--chromium\error-context.md
+
+
+  4) [chromium] › tests\e2e\todo-touch.spec.ts:376:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 7
+    + Received  + 7
+
+      Array [
+        true,
+        true,
+        true,
+    -   true,
+    -   true,
+    -   true,
+    -   true,
+    -   true,
+    -   true,
+    -   true,
+    +   false,
+    +   false,
+    +   false,
+    +   false,
+    +   false,
+    +   false,
+    +   false,
+      ]
+
+      358 |   }
+      359 |   // Mọi touchmove khi đang kéo phải bị chặn (preventDefault) — nếu không iOS sẽ cuộn trang.
+    > 360 |   expect(prevented).toEqual(Array(10).fill(true));
+          |                     ^
+      361 |   if (ending === 'touchend') await syn(page, 'touchEndOnly', x, yA);
+      362 |   else await syn(page, 'touchCancel', x, yA);
+      363 |
+        at dragCOverAWithIosCancel (E:\DuAn\thu-nghiem\tests\e2e\todo-touch.spec.ts:360:21)
+        at E:\DuAn\thu-nghiem\tests\e2e\todo-touch.spec.ts:379:3
+
+    Error Context: test-results\todo-touch-Chuỗi-sự-kiện-i-9da0d----áp-thứ-tự-đang-xem-trước-chromium\error-context.md
+
+
+[14/26] [webkit] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ
+[15/26] [webkit] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên
+[16/26] [webkit] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất
+  5) [chromium] › tests\e2e\todo-touch.spec.ts:210:1 › Chạm thật (CDP): giữa lúc kéo, hàng kéo và hàng nhường chỗ đều NHÌN THẤY (không bị cắt mất) 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "C"
+    Received: "A"
+
+      237 |   // hàng C kéo ra khỏi khung của chính nó bị cắt, hàng A dịch xuống cũng bị cắt -> hit-test trúng
+      238 |   // khung trống của hàng khác.
+    > 239 |   expect(await rowTextAtCenterOf(page, 'C')).toBe('C');
+          |                                              ^
+      240 |   expect(await rowTextAtCenterOf(page, 'A')).toBe('A');
+      241 |   expect(await rowTextAtCenterOf(page, 'B')).toBe('B');
+      242 |
+        at E:\DuAn\thu-nghiem\tests\e2e\todo-touch.spec.ts:239:46
+
+    Error Context: test-results\todo-touch-Chạm-thật-CDP-g-443bd-NHÌN-THẤY-không-bị-cắt-mất--chromium\error-context.md
+
+
+[17/26] [webkit] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0
+[18/26] [webkit] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa
+[19/26] [webkit] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất)
+[20/26] [webkit] › tests\e2e\todo-touch.spec.ts:40:1 › Chạm thật (CDP): nhấn giữ ~600ms rồi kéo dọc đổi thứ tự, hàng nổi/dịch không chồng nhau
+[21/26] [webkit] › tests\e2e\todo-touch.spec.ts:105:1 › Chạm thật (CDP): chạm nút ▲▼×/tick/chữ trong hàng vẫn có tác dụng dù ngón tay xê dịch nhẹ
+[22/26] [webkit] › tests\e2e\todo-touch.spec.ts:167:1 › Chạm thật (CDP): giữ nút ▼ hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn đổi thứ tự
+[23/26] [webkit] › tests\e2e\todo-touch.spec.ts:210:1 › Chạm thật (CDP): giữa lúc kéo, hàng kéo và hàng nhường chỗ đều NHÌN THẤY (không bị cắt mất)
+[24/26] [webkit] › tests\e2e\todo-touch.spec.ts:370:1 › Chuỗi sự kiện iOS: pointercancel giữa lúc kéo, touch vẫn tiếp tục rồi touchend -> vẫn đổi thứ tự C,A,B
+[25/26] [webkit] › tests\e2e\todo-touch.spec.ts:376:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước
+[26/26] [webkit] › tests\e2e\todo-touch.spec.ts:382:1 › Chuỗi sự kiện iOS: chạm nút ▼ xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click)
+  6) [webkit] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Array [
+    -   "A",
+        "B",
+        "C",
+    +   "A",
+      ]
+
+      242 |   await page.mouse.up();
+      243 |
+    > 244 |   expect(hits).toEqual(['A', 'B', 'C']);
+          |                ^
+      245 |   await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('C');
+      246 | });
+      247 |
+        at E:\DuAn\thu-nghiem\tests\e2e\todo-gestures.spec.ts:244:16
+
+    Error Context: test-results\todo-gestures-SC-002-giữa--72938-hông-bị-khung-hàng-cắt-mất--webkit\error-context.md
+
+
+  7) [webkit] › tests\e2e\todo-touch.spec.ts:370:1 › Chuỗi sự kiện iOS: pointercancel giữa lúc kéo, touch vẫn tiếp tục rồi touchend -> vẫn đổi thứ tự C,A,B 
+
+    Error: page.evaluate: TypeError: Illegal constructor
+
+      321 |
+      322 | async function syn<K extends keyof Syn>(page: Page, fn: K, ...args: Parameters<Syn[K]>): Promise<ReturnType<Syn[K]>> {
+    > 323 |   return page.evaluate(
+          |               ^
+      324 |     ([f, a]) => {
+      325 |       const s = (window as unknown as { __syn: Record<string, (...x: unknown[]) => unknown> }).__syn;
+      326 |       return s[f as string](...(a as unknown[]));
+        at syn (E:\DuAn\thu-nghiem\tests\e2e\todo-touch.spec.ts:323:15)
+        at dragCOverAWithIosCancel (E:\DuAn\thu-nghiem\tests\e2e\todo-touch.spec.ts:347:9)
+        at E:\DuAn\thu-nghiem\tests\e2e\todo-touch.spec.ts:373:3
+
+    Error Context: test-results\todo-touch-Chuỗi-sự-kiện-i-3f3a5-hend---vẫn-đổi-thứ-tự-C-A-B-webkit\error-context.md
+
+
+  8) [webkit] › tests\e2e\todo-touch.spec.ts:376:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước 
+
+    Error: page.evaluate: TypeError: Illegal constructor
+
+      321 |
+      322 | async function syn<K extends keyof Syn>(page: Page, fn: K, ...args: Parameters<Syn[K]>): Promise<ReturnType<Syn[K]>> {
+    > 323 |   return page.evaluate(
+          |               ^
+      324 |     ([f, a]) => {
+      325 |       const s = (window as unknown as { __syn: Record<string, (...x: unknown[]) => unknown> }).__syn;
+      326 |       return s[f as string](...(a as unknown[]));
+        at syn (E:\DuAn\thu-nghiem\tests\e2e\todo-touch.spec.ts:323:15)
+        at dragCOverAWithIosCancel (E:\DuAn\thu-nghiem\tests\e2e\todo-touch.spec.ts:347:9)
+        at E:\DuAn\thu-nghiem\tests\e2e\todo-touch.spec.ts:379:3
+
+    Error Context: test-results\todo-touch-Chuỗi-sự-kiện-i-9da0d----áp-thứ-tự-đang-xem-trước-webkit\error-context.md
+
+
+  9) [webkit] › tests\e2e\todo-touch.spec.ts:382:1 › Chuỗi sự kiện iOS: chạm nút ▼ xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click) 
+
+    Error: page.evaluate: TypeError: Illegal constructor
+
+      321 |
+      322 | async function syn<K extends keyof Syn>(page: Page, fn: K, ...args: Parameters<Syn[K]>): Promise<ReturnType<Syn[K]>> {
+    > 323 |   return page.evaluate(
+          |               ^
+      324 |     ([f, a]) => {
+      325 |       const s = (window as unknown as { __syn: Record<string, (...x: unknown[]) => unknown> }).__syn;
+      326 |       return s[f as string](...(a as unknown[]));
+        at syn (E:\DuAn\thu-nghiem\tests\e2e\todo-touch.spec.ts:323:15)
+        at E:\DuAn\thu-nghiem\tests\e2e\todo-touch.spec.ts:394:9
+
+    Error Context: test-results\todo-touch-Chuỗi-sự-kiện-i-3e711-ult-không-làm-iOS-bỏ-click--webkit\error-context.md
+
+
+  9 failed
+    [chromium] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) 
+    [chromium] › tests\e2e\todo-touch.spec.ts:210:1 › Chạm thật (CDP): giữa lúc kéo, hàng kéo và hàng nhường chỗ đều NHÌN THẤY (không bị cắt mất) 
+    [chromium] › tests\e2e\todo-touch.spec.ts:370:1 › Chuỗi sự kiện iOS: pointercancel giữa lúc kéo, touch vẫn tiếp tục rồi touchend -> vẫn đổi thứ tự C,A,B 
+    [chromium] › tests\e2e\todo-touch.spec.ts:376:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước 
+    [chromium] › tests\e2e\todo-touch.spec.ts:382:1 › Chuỗi sự kiện iOS: chạm nút ▼ xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click) 
+    [webkit] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) 
+    [webkit] › tests\e2e\todo-touch.spec.ts:370:1 › Chuỗi sự kiện iOS: pointercancel giữa lúc kéo, touch vẫn tiếp tục rồi touchend -> vẫn đổi thứ tự C,A,B 
+    [webkit] › tests\e2e\todo-touch.spec.ts:376:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước 
+    [webkit] › tests\e2e\todo-touch.spec.ts:382:1 › Chuỗi sự kiện iOS: chạm nút ▼ xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click) 
+  4 skipped
+  13 passed (20.2s)

@@ -1,0 +1,38 @@
+
+Running 3 tests using 3 workers
+
+  ✓  1 [chromium] › tests\e2e\todo-touch.spec.ts:105:1 › Chạm thật (CDP): chạm nút ▲▼×/tick/chữ trong hàng vẫn có tác dụng dù ngón tay xê dịch nhẹ (1.3s)
+  ✓  3 [chromium] › tests\e2e\todo-touch.spec.ts:40:1 › Chạm thật (CDP): nhấn giữ ~600ms rồi kéo dọc đổi thứ tự, hàng nổi/dịch không chồng nhau (2.6s)
+  ✘  2 [chromium] › tests\e2e\todo-touch.spec.ts:167:1 › Chạm thật (CDP): giữ nút ▼ hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn đổi thứ tự (6.4s)
+
+
+  1) [chromium] › tests\e2e\todo-touch.spec.ts:167:1 › Chạm thật (CDP): giữ nút ▼ hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn đổi thứ tự 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  getByTestId('todo-item').nth(1).getByTestId('todo-edit')
+    Expected: "C"
+    Received: "B"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveText" getByTestId('todo-item').nth(1).getByTestId('todo-edit') with timeout 5000ms
+      - waiting for getByTestId('todo-item').nth(1).getByTestId('todo-edit')
+        14 × locator resolved to <button type="button" class="todo-text" data-testid="todo-edit">B</button>
+           - unexpected value "B"
+
+
+      188 |
+      189 |   await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('A');
+    > 190 |   await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('C');
+          |                                                      ^
+      191 |   await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('B');
+      192 | });
+      193 |
+        at E:\DuAn\thu-nghiem\tests\e2e\todo-touch.spec.ts:190:54
+
+    Error Context: test-results\todo-touch-Chạm-thật-CDP-g-b2717-ng-di-chuyển-vẫn-đổi-thứ-tự-chromium\error-context.md
+
+  1 failed
+    [chromium] › tests\e2e\todo-touch.spec.ts:167:1 › Chạm thật (CDP): giữ nút ▼ hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn đổi thứ tự 
+  2 passed (12.2s)

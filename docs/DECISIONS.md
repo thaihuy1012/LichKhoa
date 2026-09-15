@@ -171,3 +171,8 @@
 - Soát chéo Gemini (lượt 2): #1–#5 thật, đã sửa gốc ở T-6.3; #6 toast đè, #7 listener `createStore` không gỡ (store tạo 1 lần, `App.tsx:47`), #10 unit `createStore` → S4.
 - S4 thêm: Hoàn tác xóa ngay sau khi thêm việc mới → 2 việc cùng `order` (hiển thị vẫn ổn); kéo không tự cuộn khi danh sách dài hơn màn; kéo sang nhóm khác hàng dịch rồi bật về.
 - Chủ dự án thử trên iPhone (3 ý) rồi hỏi: bỏ nút ▲▼× cũ để hàng thoáng hơn? (phải đổi test khóa `m2-events`/`events`, khai báo).
+
+## D-030 — SC-002: kéo cảm ứng bằng Touch Events; `touchcancel` giữa lúc kéo áp thứ tự đang xem trước (2026-09-15 · người quyết: Quản lý)
+- Bối cảnh: sua-loi lượt 2 (opus) chuyển nhánh ngón tay sang Touch Events (chuột vẫn Pointer Events) vì WebKit iOS hủy luồng pointer giữa chừng. Cần chọn hành vi khi `touchcancel` (hệ thống cắt ngang: cuộc gọi, thông báo…) lúc đang kéo.
+- Phương án: A trả về chỗ cũ · B áp thứ tự đang xem trước (hàng đã nổi, các hàng đã dịch chỗ).
+- Quyết định: B — người dùng đã thấy vị trí thả; mất cả thao tác vì một lần cắt ngang của hệ thống tệ hơn; vẫn đổi lại được bằng kéo/▲▼. Nếu thiết bị thật cho thấy `touchcancel` xảy ra cả khi thao tác bình thường → xem lại.
