@@ -165,3 +165,9 @@
 - Chủ dự án chốt: chỉ danh sách **Việc cần làm** (không áp dụng Sự kiện, Ghi chú); Lưu trữ = ẩn khỏi danh sách và hình nền, còn trong phần "Đã lưu trữ" cuối danh sách để khôi phục / xóa hẳn; sự kiện luôn theo giờ (không kéo); Xóa = xóa ngay + thông báo "Hoàn tác" ~5 giây.
 - Quản lý: kéo chỉ trong cùng nhóm hiển thị (IN-10: chưa xong có hạn theo hạn / chưa xong không hạn theo `order` / đã xong); giữ nguyên nút ▲▼ 🗑 hiện có (test khóa dùng) — bỏ sau nếu Chủ dự án muốn.
 - Milestone M6 (T-6.1 lõi → T-6.2 UI cử chỉ → T-6.END). Không giao Gemini: T-6.1 đổi hợp đồng; T-6.2 cử chỉ chạm cần cảm giác trên máy thật.
+
+## D-029 — Duyệt M6 + bảo trì sau M5 (B-003, T-5.4, B-004, B-005, B-006, T-6.3) tại `192b48b`: DUYỆT (2026-09-15 · người quyết: Kiến trúc sư)
+- Kiến trúc sư tự chạy: tsc sạch; unit 252×2 TZ; build; e2e 88 pass / 6 skip. Tiêu chí SPEC §6 M6 có test thật; test khóa đổi đúng khai báo.
+- Soát chéo Gemini (lượt 2): #1–#5 thật, đã sửa gốc ở T-6.3; #6 toast đè, #7 listener `createStore` không gỡ (store tạo 1 lần, `App.tsx:47`), #10 unit `createStore` → S4.
+- S4 thêm: Hoàn tác xóa ngay sau khi thêm việc mới → 2 việc cùng `order` (hiển thị vẫn ổn); kéo không tự cuộn khi danh sách dài hơn màn; kéo sang nhóm khác hàng dịch rồi bật về.
+- Chủ dự án thử trên iPhone (3 ý) rồi hỏi: bỏ nút ▲▼× cũ để hàng thoáng hơn? (phải đổi test khóa `m2-events`/`events`, khai báo).
