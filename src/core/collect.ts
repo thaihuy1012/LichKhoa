@@ -26,21 +26,24 @@ export function cmpTodo(a: Todo, b: Todo): number {
 
 /**
  * Gom dữ liệu để render: expand sự kiện local trong khoảng
- * [ngày 1 của tháng chứa `today`, today + max(agendaDays, 42) - 1].
- * Bắt đầu từ ngày 1 của tháng (không phải `today`) để lưới Tháng có đủ chấm
- * sự kiện cho các ngày trước hôm nay trong cùng tháng. Độ dài đủ cho cả
- * lưới Tháng (tối đa 6 hàng ~ 42 ngày kể từ đầu tháng) lẫn Agenda (agendaDays
+ * [min(ngày 1 của tháng chứa `today`, today − 6 ngày), today + max(agendaDays, 42) - 1].
+ * Lấy sớm hơn giữa đầu tháng và today−6 ngày (so chuỗi ISODate) để tuần chứa
+ * `today` (bố cục Tuần, v1.5) luôn có đủ sự kiện kể cả khi tuần đó bắt đầu ở
+ * tháng trước; đồng thời vẫn giữ đủ chấm sự kiện cho lưới Tháng. Độ dài đủ cho
+ * cả lưới Tháng (tối đa 6 hàng ~ 42 ngày kể từ đầu tháng) lẫn Agenda (agendaDays
  * kể từ hôm nay). Hàm thuần, không side-effect.
  */
 export function collectRenderData(state: AppState, today: ISODate): RenderData {
   const t = parseISODate(today);
   const monthStart = toISODate(new Date(t.y, t.m0, 1, 12));
+  const weekLookback = toISODate(new Date(t.y, t.m0, t.d - 6, 12));
+  const from = monthStart < weekLookback ? monthStart : weekLookback;
 
   const spanDays = Math.max(state.design.agendaDays, 42);
   const toDate = new Date(t.y, t.m0, t.d + spanDays - 1, 12);
   const to = toISODate(toDate);
 
-  const localOcc = expandOccurrences(state.events, monthStart, to);
+  const localOcc = expandOccurrences(state.events, from, to);
   const googleOcc = state.google.cache?.events ?? [];
 
   const occurrences = [...localOcc, ...googleOcc].sort(cmpOccurrence);

@@ -131,15 +131,24 @@ export function normalize(
       const d = new Date(ev.start.dateTime);
       const date = toISODate(d);
       if (!inRange(date)) continue;
+      const time = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+      let endTime: string | undefined;
+      if (ev.end?.dateTime) {
+        const endD = new Date(ev.end.dateTime);
+        if (toISODate(endD) === date && endD.getTime() > d.getTime()) {
+          endTime = `${pad2(endD.getHours())}:${pad2(endD.getMinutes())}`;
+        }
+      }
       result.push({
         id: `google-${calendarId}-${ev.id}@${date}`,
         sourceId: ev.id,
         source: 'google',
         title: ev.summary ?? '',
         date,
-        time: `${pad2(d.getHours())}:${pad2(d.getMinutes())}`,
+        time,
         allDay: false,
         color,
+        ...(endTime != null ? { endTime } : {}),
       });
     }
   }

@@ -30,6 +30,16 @@ function occursOn(ev: LocalEvent, s: ISODate): boolean {
   }
 }
 
+/** `time + durationMin` -> 'HH:mm' nếu vẫn trong ngày (< 24:00); ngược lại `undefined`. */
+function addDuration(time: string, durationMin: number): string | undefined {
+  const [h, m] = time.split(':').map(Number);
+  const total = h * 60 + m + durationMin;
+  if (total >= 24 * 60) return undefined;
+  const eh = Math.floor(total / 60);
+  const em = total % 60;
+  return `${String(eh).padStart(2, '0')}:${String(em).padStart(2, '0')}`;
+}
+
 function cmpOccurrence(a: Occurrence, b: Occurrence): number {
   if (a.date !== b.date) return a.date < b.date ? -1 : 1;
   if (a.allDay !== b.allDay) return a.allDay ? -1 : 1;
@@ -53,6 +63,10 @@ export function expandOccurrences(events: LocalEvent[], from: ISODate, to: ISODa
     const s = toISODate(cursor);
     for (const ev of events) {
       if (occursOn(ev, s)) {
+        const endTime =
+          ev.time != null && ev.durationMin != null && ev.durationMin > 0
+            ? addDuration(ev.time, ev.durationMin)
+            : undefined;
         result.push({
           id: `${ev.id}@${s}`,
           sourceId: ev.id,
@@ -62,6 +76,7 @@ export function expandOccurrences(events: LocalEvent[], from: ISODate, to: ISODa
           time: ev.time,
           allDay: !ev.time,
           color: ev.color,
+          ...(endTime != null ? { endTime } : {}),
         });
       }
     }

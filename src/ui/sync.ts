@@ -16,11 +16,11 @@ export function shouldAutoSync(hasToken: boolean, cache: { fetchedAt: number } |
   return now - cache.fetchedAt > AUTO_SYNC_STALE_MS;
 }
 
-/** Khoảng đồng bộ cố định [today - 1, today + 60] (SPEC §9). */
+/** Khoảng đồng bộ cố định [today - 7, today + 60] (SPEC §9, v1.5: đủ cả tuần chứa hôm nay). */
 export function syncRange(today: ISODate): { timeMin: ISODate; timeMax: ISODate } {
   const { y, m0, d } = parseISODate(today);
   return {
-    timeMin: toISODate(new Date(y, m0, d - 1)),
+    timeMin: toISODate(new Date(y, m0, d - 7)),
     timeMax: toISODate(new Date(y, m0, d + 60)),
   };
 }

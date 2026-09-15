@@ -72,6 +72,30 @@ describe('expandOccurrences', () => {
     expect(occ.map((o) => o.date)).toEqual(['2026-03-02', '2026-03-03', '2026-03-04', '2026-03-05', '2026-03-06']);
   });
 
+  it('T-5.1: có time + durationMin > 0 -> endTime = time + durationMin', () => {
+    const e = ev({ id: 'a', date: '2026-03-01', repeat: 'none', time: '09:00', durationMin: 40 });
+    const occ = expandOccurrences([e], '2026-03-01', '2026-03-01');
+    expect(occ[0].endTime).toBe('09:40');
+  });
+
+  it('T-5.1: 23:30 + 60 phút qua nửa đêm -> không có endTime', () => {
+    const e = ev({ id: 'a', date: '2026-03-01', repeat: 'none', time: '23:30', durationMin: 60 });
+    const occ = expandOccurrences([e], '2026-03-01', '2026-03-01');
+    expect(occ[0].endTime).toBeUndefined();
+  });
+
+  it('T-5.1: không có durationMin -> không có endTime', () => {
+    const e = ev({ id: 'a', date: '2026-03-01', repeat: 'none', time: '09:00' });
+    const occ = expandOccurrences([e], '2026-03-01', '2026-03-01');
+    expect(occ[0].endTime).toBeUndefined();
+  });
+
+  it('T-5.1: sự kiện lặp -> mọi occurrence cùng endTime', () => {
+    const e = ev({ id: 'a', date: '2026-03-01', repeat: 'daily', time: '09:00', durationMin: 40 });
+    const occ = expandOccurrences([e], '2026-03-01', '2026-03-03');
+    expect(occ.every((o) => o.endTime === '09:40')).toBe(true);
+  });
+
   it('sắp theo ngày rồi giờ, cả ngày (allDay) đứng trước sự kiện có giờ', () => {
     const e1 = ev({ id: 'late', date: '2026-03-01', repeat: 'none', time: '10:00' });
     const e2 = ev({ id: 'allday', date: '2026-03-01', repeat: 'none' });

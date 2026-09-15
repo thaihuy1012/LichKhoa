@@ -5,7 +5,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 12/12 ✔ tag `M4-ok` (D-021 — DUYỆT M4 + nghiệm thu cuối, gộp)
-- **M5 (SPEC v1.5, D-024) — Bố cục Tuần giống Inks: 0/4.** Thứ tự 5.1 → 5.2 → 5.3 → 5.END → ảnh mẫu cho Chủ dự án → soát chéo Gemini `M5-soat` → Kiến trúc sư duyệt M5 → tag `M5-ok`. Xem mục "M5" cuối file. Làn Gemini: BẬT mức NHIỀU ở checkout chính (không chạy trong worktree — BAI-HOC); T-5.3 đủ điều kiện → tho-gemini.
+- **M5 (SPEC v1.5, D-024) — Bố cục Tuần giống Inks: 1/4** (T-5.1 ✔; T-5.2 DOING). Thứ tự 5.1 → 5.2 → 5.3 → 5.END → ảnh mẫu cho Chủ dự án → soát chéo Gemini `M5-soat` → Kiến trúc sư duyệt M5 → tag `M5-ok`. Xem mục "M5" cuối file. Làn Gemini: BẬT mức NHIỀU ở checkout chính (không chạy trong worktree — BAI-HOC); T-5.3 đủ điều kiện → tho-gemini.
 - 2026-09-15: ĐỢT BẢO TRÌ D-023 XONG (B-001, B-002) — Quản lý phiên chính dọn rác Gemini ở checkout chính, `merge --ff-only` nhánh worktree → `main` 6fec4b5, `npm run check` pass (211×2 unit, 64 e2e, 6 skip có từ trước). Chủ dự án `git push` (e954b16..6fec4b5) → Actions run 34911429434 success, trang 200, CSS `.color-input` mới đã lên. Chờ Chủ dự án xem ô màu trên iPhone. Dự án trở lại trạng thái ĐÓNG (D-022).
 - Trước đó (2026-09-15): ĐỢT BẢO TRÌ D-023 — B-001 (Gemini) → B-002 (sonnet). Xem mục "Bảo trì 2026-09-15" cuối file.
 - 2026-09-15 phiên 2 (nền): làm trong worktree `.claude/worktrees/bao-tri-D-023`, nhánh `worktree-bao-tri-D-023` (từ `main` fd17357) — commit ở nhánh này, Chủ dự án gộp về `main` (`git merge --ff-only worktree-bao-tri-D-023`). Lượt Gemini `B-001` vòng 1 phiên trước chết khi dừng phiên (`DONE 255`, đầu ra rỗng, không đổi `src/`) → `huy B-001`, giao lại vòng 1 (không tính Lần thử, không tính lỗi làn). Lưu ý: `agy-run.sh huy` hoàn tác MỌI thay đổi chưa commit, kể cả sổ sách → commit sổ trước khi giao Gemini.
@@ -599,7 +599,8 @@ Mẫu: `docs/tham-khao/inks-tuan.PNG`. Thứ tự: 5.1 → 5.2 → 5.3 → 5.END
   [ ] `syncRange('2026-03-10')` → `{ timeMin: '2026-03-03', timeMax: '2026-05-09' }`.
   [ ] `npm run check` pass; test khóa chỉ đổi đúng chỗ đã khai.
 - Lệnh kiểm tra: `npx tsc --noEmit; npm run test` rồi `npm run check`
-- Model: sonnet (đổi hợp đồng dùng chung → không giao Gemini) · Lần thử: 0/3 · Trạng thái: DOING (giao tho-sonnet 2026-09-15)
+- Nhật ký: 2026-09-15 lượt 1: DONE (endTime local/Google, collect từ min(đầu tháng, today−6), syncRange −7; test khóa đổi đúng 2 chỗ đã khai: google-normalize thêm `endTime` vào expected, store.test syncRange) → kiem-thu PASS (tsc sạch, unit 219×2, e2e 64/6 skip) → review đạt → commit.
+- Model: sonnet (đổi hợp đồng dùng chung → không giao Gemini) · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-5.2 — `layoutWeek`: hình nền bố cục Tuần giống Inks
 - Mục tiêu: `layoutWeek(d, c, dev): DrawOp[]` thuần, nhìn giống mẫu `docs/tham-khao/inks-tuan.PNG` (thợ mở ảnh bằng Read).
@@ -626,7 +627,7 @@ Mẫu: `docs/tham-khao/inks-tuan.PNG`. Thứ tự: 5.1 → 5.2 → 5.3 → 5.END
   [ ] Mọi op trong `mainArea` với 1284×2778 và 1179×2556 × 3 `position` × `showNote` × `showLunar`; `showNote` → bbox khối Tuần không giao bbox `layoutNote`.
   [ ] `npm run check` pass; ảnh `docs/test-log/T-5.2/…` 1284×2778 đã dựng (Quản lý xem bằng mắt khi review).
 - Lệnh kiểm tra: `npx tsc --noEmit; npm run test` rồi `npm run check`
-- Model: sonnet (tiêu chí chính "giống Inks" kiểm bằng mắt — như B-002, không giao Gemini) · Lần thử: 0/3 · Trạng thái: TODO
+- Model: sonnet (tiêu chí chính "giống Inks" kiểm bằng mắt — như B-002, không giao Gemini) · Lần thử: 0/3 · Trạng thái: DOING (giao tho-sonnet 2026-09-15)
 
 ### T-5.3 — Chọn bố cục "Tuần" trong app
 - Mục tiêu: người dùng chọn được bố cục Tuần ở màn Xem trước; lựa chọn được lưu.

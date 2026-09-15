@@ -139,6 +139,18 @@ describe('collectRenderData', () => {
     expect(data.todos.map((t) => t.id)).toEqual(['due1', 'due2', 'nodue1', 'nodue2', 'done1']);
   });
 
+  it('T-5.1: today đầu tháng -> sự kiện tuần trước (tháng trước) vẫn có, ngoài tuần thì không', () => {
+    const state = defaultState(device);
+    state.events = [
+      { id: 'inWeek', title: 'InWeek', date: '2026-08-31', repeat: 'none' },
+      { id: 'outWeek', title: 'OutWeek', date: '2026-08-25', repeat: 'none' },
+    ];
+    const data = collectRenderData(state, '2026-09-01');
+    const titles = data.occurrences.map((o) => o.title);
+    expect(titles).toContain('InWeek');
+    expect(titles).not.toContain('OutWeek');
+  });
+
   it('2 TZ giả lập: sự kiện đầu tháng và cuối agenda vẫn nằm trong khoảng expand', () => {
     const state = defaultState(device);
     state.design.agendaDays = 10;

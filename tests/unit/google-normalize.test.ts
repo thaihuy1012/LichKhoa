@@ -39,8 +39,10 @@ describe('normalize (thuần)', () => {
     const raw: RawGoogleEvent[] = (eventsCal1.items as RawGoogleEvent[]).filter((e) => e.id === 'ev3');
     const result = normalize('cal1', '#4285F4', raw);
     const d = new Date('2026-01-05T14:30:00+07:00');
+    const dEnd = new Date('2026-01-05T15:30:00+07:00');
     const expectedDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     const expectedTime = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+    const expectedEndTime = `${String(dEnd.getHours()).padStart(2, '0')}:${String(dEnd.getMinutes()).padStart(2, '0')}`;
     expect(result).toEqual([
       {
         id: `google-cal1-ev3@${expectedDate}`,
@@ -51,6 +53,7 @@ describe('normalize (thuần)', () => {
         time: expectedTime,
         allDay: false,
         color: '#4285F4',
+        endTime: expectedEndTime, // T-5.1: end.dateTime cùng ngày, sau start
       },
     ]);
   });
@@ -87,6 +90,46 @@ describe('normalize (thuần)', () => {
         color: '#4285F4',
       },
     ]);
+  });
+
+  it('T-5.1: end.dateTime cùng ngày, sau start -> endTime HH:mm (giờ địa phương, chạy đúng ở cả 2 TZ)', () => {
+    const s = new Date(2026, 0, 5, 6, 0, 0);
+    const e = new Date(2026, 0, 5, 6, 40, 0);
+    const raw: RawGoogleEvent[] = [
+      {
+        id: 'ev-end',
+        summary: 'Hop',
+        start: { dateTime: s.toISOString() },
+        end: { dateTime: e.toISOString() },
+      },
+    ];
+    const result = normalize('cal1', '#4285F4', raw);
+    const expectedTime = `${String(s.getHours()).padStart(2, '0')}:${String(s.getMinutes()).padStart(2, '0')}`;
+    const expectedEndTime = `${String(e.getHours()).padStart(2, '0')}:${String(e.getMinutes()).padStart(2, '0')}`;
+    expect(result[0].time).toBe(expectedTime);
+    expect(result[0].endTime).toBe(expectedEndTime);
+  });
+
+  it('T-5.1: end.dateTime sang ngày sau (giờ địa phương) -> không có endTime', () => {
+    const s = new Date(2026, 0, 5, 23, 0, 0);
+    const e = new Date(2026, 0, 5, 23, 0, 0);
+    e.setHours(e.getHours() + 2); // 2026-01-06 01:00 giờ địa phương
+    const raw: RawGoogleEvent[] = [
+      {
+        id: 'ev-nextday',
+        summary: 'Qua dem',
+        start: { dateTime: s.toISOString() },
+        end: { dateTime: e.toISOString() },
+      },
+    ];
+    const result = normalize('cal1', '#4285F4', raw);
+    expect(result[0].endTime).toBeUndefined();
+  });
+
+  it('T-5.1: all-day không có endTime', () => {
+    const raw: RawGoogleEvent[] = (eventsCal1.items as RawGoogleEvent[]).filter((e) => e.id === 'ev1');
+    const result = normalize('cal1', '#4285F4', raw);
+    expect(result[0].endTime).toBeUndefined();
   });
 
   it('T-3.4 yêu cầu 1: khoảng vượt timeMax bị chặn khi truyền range', () => {

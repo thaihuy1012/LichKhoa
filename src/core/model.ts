@@ -40,6 +40,7 @@ export interface Occurrence {
   time?: string;
   allDay: boolean;
   color?: string;
+  endTime?: string; // v1.5 D-024: 'HH:mm' giờ kết thúc, chỉ khi có time, kết thúc cùng ngày và sau time
 }
 
 export interface DeviceSpec {
@@ -52,7 +53,7 @@ export interface DeviceSpec {
 }
 
 export interface DesignConfig {
-  layout: 'month' | 'agenda' | 'todo';
+  layout: 'month' | 'agenda' | 'todo' | 'week'; // v1.5
   showNote: boolean;
   bg: { kind: 'photo' | 'solid' | 'gradient'; color: string; color2?: string };
   blur: 0 | 1 | 2 | 3;

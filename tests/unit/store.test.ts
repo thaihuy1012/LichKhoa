@@ -248,8 +248,8 @@ describe('sync.ts (T-3.3, điều phối thuần)', () => {
     expect(shouldAutoSync(true, { fetchedAt: now - 31 * 60_000 }, now)).toBe(true);
   });
 
-  it('syncRange: [today-1, today+60]', () => {
-    expect(syncRange('2026-03-10')).toEqual({ timeMin: '2026-03-09', timeMax: '2026-05-09' });
+  it('syncRange: [today-7, today+60] (v1.5)', () => {
+    expect(syncRange('2026-03-10')).toEqual({ timeMin: '2026-03-03', timeMax: '2026-05-09' });
   });
 
   it('performSync: fetch ok -> {ok:true, events, fetchedAt}', async () => {
