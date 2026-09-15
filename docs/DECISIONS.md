@@ -98,6 +98,11 @@
   5. `showLunar` bật → số âm lịch nhỏ dưới số ngày dương ở đầu cột.
 - Quản lý: tuần theo `weekStart` (tuần chứa hôm nay, như Inks). Không cần Kiến trúc sư (tiền lệ D-011, D-018: thêm tính năng trong khung kiến trúc sẵn có).
 
+## D-025 — Duyệt M5 (HEAD sau soát chéo): DUYỆT (2026-09-15 · người quyết: Kiến trúc sư)
+- Tiêu chí SPEC §6 M5 đạt (ảnh máy thật chờ Chủ dự án, không chặn). Kiến trúc sư tự chạy vitest 228/21 file; test khóa đổi đúng khai báo.
+- Soát chéo Gemini: (1) cache Google cũ thiếu ngày đầu tuần → S4, không sửa (cache không có `timeMin`, tự hết sau lần đồng bộ kế); (2) trùng local+Google → bác (ngoài M5); (3) to-do không hạn → bác (D-024); (4) hour12 bỏ AM ở giờ đầu → hạ S4 (Inks cũng vậy, mặc định 24h); (5) VS-15 cho ◷/☐ → bác (không phải ký tự emoji); rủi ro thật là iOS thiếu glyph ◷ → xem máy thật, hỏng thì bỏ "◷ " (`week.ts:388`); (6) e2e chỉ kiểm x → bác (unit đã kiểm mainArea).
+- Tồn đọng gộp phiếu **T-5.4** (sau khi Chủ dự án xem máy thật): hour12 chỉ cắt hậu tố khi cùng buổi + unit test hour12; `CHAR_W` 0.55 theo font (mono ≈ 0.6); `todoDueText` trùng `todoDueLabel`; `layout-week.test.ts:117–124,142–147` chép hằng lề/cột; cache cũ.
+
 ## D-020 — T-4.10 PHẢN BIỆN lượt 1: CHẤP NHẬN sửa 1 dòng test khóa `notes.spec.ts` (2026-09-14 · người quyết: Quản lý)
 - Ghim → tự bật `showNote` (T-4.10, Chủ dự án xác nhận chưa bật công tắc "Hiện trên hình nền") làm test cũ `notes.spec.ts:10` fail: dòng 33 `note-show.click()` sau khi ghim giờ TẮT công tắc.
 - Quyết định: đổi đúng dòng đó thành `.check()` (đảm bảo bật — idempotent), giữ nguyên mọi assertion và mục đích test. Khai báo trong báo cáo; kiem-thu kiểm diff test khóa chỉ có dòng này.
