@@ -5,7 +5,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 12/12 ✔ tag `M4-ok` (D-021 — DUYỆT M4 + nghiệm thu cuối, gộp)
-- **M5 (SPEC v1.5, D-024) — Bố cục Tuần giống Inks: 4/4 ✔ tag `M5-ok`** (D-025 — Kiến trúc sư DUYỆT sau soát chéo Gemini). Máy thật (Chủ dự án 2026-09-15): chữ chip đọc được ✔, "◷" hiện đúng ✔ → T-5.4 không cần gấp (chỉ còn S4 dọn code). Chủ dự án yêu cầu thêm (D-026, SPEC v1.6): bấm đúp mở Google Calendar → KHÔNG làm (OUT); sự kiện trùng local/Google → B-003 ✔ DONE (chờ Chủ dự án `git push`). Deploy OK: Chủ dự án `git push` (6fec4b5..a173446) → Actions run 34919243300 success, trang 200, JS có `layout-week`. Tag `M5-ok` đã lên GitHub. Chờ Chủ dự án xem trên iPhone 2 ý: (1) chữ chip (~7–8 pt) đọc được không; (2) biểu tượng ◷ có hiện không. Sau đó → phiếu T-5.4 (tồn đọng D-025) nếu cần. Thứ tự 5.1 → 5.2 → 5.3 → 5.END → ảnh mẫu cho Chủ dự án → soát chéo Gemini `M5-soat` → Kiến trúc sư duyệt M5 → tag `M5-ok`. Xem mục "M5" cuối file. Làn Gemini: BẬT mức NHIỀU ở checkout chính (không chạy trong worktree — BAI-HOC); T-5.3 đủ điều kiện → tho-gemini.
+- **M5 (SPEC v1.5, D-024) — Bố cục Tuần giống Inks: 4/4 ✔ tag `M5-ok`** (D-025 — Kiến trúc sư DUYỆT sau soát chéo Gemini). Máy thật (Chủ dự án 2026-09-15): chữ chip đọc được ✔, "◷" hiện đúng ✔ → T-5.4 không cần gấp (chỉ còn S4 dọn code). Chủ dự án yêu cầu thêm (D-026, SPEC v1.6): bấm đúp mở Google Calendar → KHÔNG làm (OUT); sự kiện trùng local/Google → B-003 ✔ DONE (chờ Chủ dự án `git push`). Chủ dự án: "xử lý tồn đọng cho xong" → T-5.4 (sonnet) → B-004 (Gemini), cuối file. Deploy OK: Chủ dự án `git push` (6fec4b5..a173446) → Actions run 34919243300 success, trang 200, JS có `layout-week`. Tag `M5-ok` đã lên GitHub. Chờ Chủ dự án xem trên iPhone 2 ý: (1) chữ chip (~7–8 pt) đọc được không; (2) biểu tượng ◷ có hiện không. Sau đó → phiếu T-5.4 (tồn đọng D-025) nếu cần. Thứ tự 5.1 → 5.2 → 5.3 → 5.END → ảnh mẫu cho Chủ dự án → soát chéo Gemini `M5-soat` → Kiến trúc sư duyệt M5 → tag `M5-ok`. Xem mục "M5" cuối file. Làn Gemini: BẬT mức NHIỀU ở checkout chính (không chạy trong worktree — BAI-HOC); T-5.3 đủ điều kiện → tho-gemini.
 - 2026-09-15: ĐỢT BẢO TRÌ D-023 XONG (B-001, B-002) — Quản lý phiên chính dọn rác Gemini ở checkout chính, `merge --ff-only` nhánh worktree → `main` 6fec4b5, `npm run check` pass (211×2 unit, 64 e2e, 6 skip có từ trước). Chủ dự án `git push` (e954b16..6fec4b5) → Actions run 34911429434 success, trang 200, CSS `.color-input` mới đã lên. Chờ Chủ dự án xem ô màu trên iPhone. Dự án trở lại trạng thái ĐÓNG (D-022).
 - Trước đó (2026-09-15): ĐỢT BẢO TRÌ D-023 — B-001 (Gemini) → B-002 (sonnet). Xem mục "Bảo trì 2026-09-15" cuối file.
 - 2026-09-15 phiên 2 (nền): làm trong worktree `.claude/worktrees/bao-tri-D-023`, nhánh `worktree-bao-tri-D-023` (từ `main` fd17357) — commit ở nhánh này, Chủ dự án gộp về `main` (`git merge --ff-only worktree-bao-tri-D-023`). Lượt Gemini `B-001` vòng 1 phiên trước chết khi dừng phiên (`DONE 255`, đầu ra rỗng, không đổi `src/`) → `huy B-001`, giao lại vòng 1 (không tính Lần thử, không tính lỗi làn). Lưu ý: `agy-run.sh huy` hoàn tác MỌI thay đổi chưa commit, kể cả sổ sách → commit sổ trước khi giao Gemini.
@@ -14,7 +14,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - Công cụ review bằng mắt: `scripts/mau-anh.cjs`, `scripts/chup.cjs`, `scripts/cat-anh.cjs` (xem `scripts/README-cong-cu.md`; cần `npm run build` trước).
 - SPEC v1.3 (D-011): lặp T2–T6, nhắc trước qua .ics, hạn to-do, nhiều ghi chú → phiếu T-2.10/2.11/2.12.
 - Nhắc Chủ dự án: tham khảo `F:\LICH_NEN` cho mọi phiếu còn lại — bảng đối chiếu UI ở `docs/tham-khao-LICH_NEN.md` §6.
-- Chờ Chủ dự án: đặt thử ảnh mẫu 1284×2778 (đã gửi 2026-09-13) — có đè đồng hồ/widget/nút không? (không chặn; cần trước T-2.3)
+- ~~Chờ Chủ dự án: đặt thử ảnh mẫu 1284×2778~~ → đã thử máy thật T-4.0 (D-018: hình nền không bị đè).
 - Chuyển phiên: T-2.8 đã commit — điểm dừng sạch. Phiên mới (`claude --agent quan-ly`): đọc SU-CO → TASKS, giao T-2.6 (nhớ tiêu chí Quản lý dựng ảnh mẫu 3 bố cục xem bằng mắt). Ảnh mẫu mới nhất đã gửi Chủ dự án: có âm lịch (lichkhoa-amlich-r1.png).
 - Sự cố mở: (không — SC-001 đã đóng 2026-09-13)
 - Làn Gemini: BẬT (D-009) — Pro `gemini-3.1-pro-high`, Flash `gemini-3.8-flash-high`. Dùng đầu tiên: soát chéo cuối M2.
@@ -31,8 +31,8 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - ~~S4 · D-015 · sau redirect kết nối thành công~~ → đã sửa T-4.2.
 - ~~S4 · T-3.3 · nút `sync-connect` / `sync-now` kiểu nút phụ~~ → đã sửa T-4.2 (accent; D-021 xác nhận).
 - ~~S4 · T-4.8 · nhãn ngày lặp / cột tiêu đề lệch / số âm lịch nhỏ~~ → Chủ dự án thử máy thật 2026-09-14: "dễ đọc, chữ và số âm lịch đã ổn" → đóng, không sửa.
-- S4 · M5 (D-025) → phiếu T-5.4 sau khi Chủ dự án xem máy thật: (a) hour12 "11:00 - 1:00 PM" bỏ AM giờ đầu khi khác buổi; (b) `CHAR_W` 0.55 theo font (mono ≈ 0.6 có thể tràn chip); (c) `todoDueText` `week.ts:411` trùng `todoDueLabel`; (d) `layout-week.test.ts:117–124,142–147` chép hằng lề/cột; (e) cache Google cũ (timeMin −1) thiếu ngày đầu tuần tới lần đồng bộ kế; (f) nếu iOS không vẽ "◷" → bỏ `week.ts:388`.
-- S4 · T-3.1 · `parseFragment` giải mã `error` 2 lần (`URLSearchParams` đã giải mã) và trả `{error}` không kiểm `state` — vô hại với mã lỗi ASCII của Google; sửa nếu có phiếu chạm oauth.ts.
+- S4 · M5 (D-025): (a)–(d) → phiếu **T-5.4** (2026-09-15); (e) cache Google cũ thiếu ngày đầu tuần → đóng, không sửa (D-025: cache không có timeMin, tự hết sau 1 lần đồng bộ); (f) "◷" → Chủ dự án xác nhận iOS hiện đúng → đóng.
+- S4 · T-3.1 · `parseFragment`: giải mã 2 lần đã sửa ở T-3.4 (`oauth.ts:60`); còn trả `{error}` không kiểm `state` → phiếu **B-004** (2026-09-15).
 - ~~S4 · T-2.5 · `eventToIcs` chưa gập dòng > 75 byte~~ → đã sửa T-2.15.
 
 ## Thứ tự & song song
@@ -675,3 +675,31 @@ Mẫu: `docs/tham-khao/inks-tuan.PNG`. Thứ tự: 5.1 → 5.2 → 5.3 → 5.END
 - Lệnh kiểm tra: `npx tsc --noEmit; npm run test` rồi `npm run check`
 - Nhật ký: 2026-09-15 lượt 1: DONE (dedupOccurrences trong collect.ts; createdAt local/Google; updateEvent giữ createdAt; EventsTab gán khi tạo mới; test chỉ thêm) → kiem-thu PASS (unit 241×2/21 file; e2e 72/6 skip; dedup.spec repeat-each=3 6/6) → review diff đạt → commit.
 - Model: sonnet (đổi hợp đồng dùng chung → không giao Gemini) · Lần thử: 0/3 · Trạng thái: DONE
+
+### T-5.4 — Dọn tồn đọng bố cục Tuần (D-025 a–d)
+- Mục tiêu: sửa 4 điểm S4 Kiến trúc sư nêu khi duyệt M5; hình nền 24h ở 1284×2778 không đổi giao diện.
+- Phạm vi file (chỉ được sửa): `src/render/layout/week.ts`, `src/render/layout/common.ts` (chỉ nếu cần thêm helper; không đổi hành vi helper cũ), `tests/unit/layout-week.test.ts` (test khóa T-5.2 — CHỈ được sửa đúng L117–124, L142–147 theo mục (d) và THÊM test; khai báo từng chỗ).
+- Yêu cầu:
+  - (a) hour12: khoảng giờ vắt qua trưa ghi đủ 2 hậu tố "11:00 AM - 1:00 PM"; cùng buổi giữ "9:00 - 11:00 AM" (như Inks). Chuỗi rút gọn khi không vừa chip vẫn theo thứ tự hiện có (có cách → không cách → chỉ giờ bắt đầu).
+  - (b) Hệ số ước lượng độ rộng chữ (`CHAR_W` 0.55) theo `c.font`: mono ≈ 0.62, sans/serif giữ 0.55 — để font mono không tràn chip.
+  - (c) Bỏ `todoDueText` (`week.ts` ~L411) — dùng `todoDueLabel` của `common.ts`, kết quả nhãn không đổi.
+  - (d) `layout-week.test.ts` L117–124, L142–147 đang chép hằng lề/cột của week.ts → suy từ `DrawOp` (vd tâm cột = `x` của op nhãn thứ, như `tests/e2e/m5-week.spec.ts` `columnCenters`), giữ nguyên mục đích kiểm.
+- Tiêu chí nghiệm thu:
+  [ ] Test mới: hour12 `09:00–11:00` → chip chứa "9:00 - 11:00 AM"; `11:00–13:00` (máy rộng/scale nhỏ để vừa) → chứa "11:00 AM" và "1:00 PM"; 24h không đổi ("09:00 - 09:40").
+  [ ] Test mới: `font: 'mono'` 1284×2778 → mọi op text chip có ước lượng `0.62×size×len` ≤ bề rộng trong chip.
+  [ ] `grep -n "todoDueText" src` rỗng; nhãn to-do trên Tuần giống trước (test cũ vẫn pass).
+  [ ] `grep -nE "0\.05|0\.008" tests/unit/layout-week.test.ts` rỗng; test (d) vẫn kiểm đúng điều cũ.
+  [ ] `npm run check` pass; ngoài L117–124, L142–147 không dòng test cũ nào đổi.
+- Lệnh kiểm tra: `npx tsc --noEmit; npm run test` rồi `npm run check`
+- Model: sonnet (sửa test khóa → không giao Gemini) · Lần thử: 0/3 · Trạng thái: DOING (giao tho-sonnet 2026-09-15)
+
+### B-004 — `parseFragment`: nhánh lỗi phải kiểm `state` (S4 T-3.1)
+- Mục tiêu: `#error=…` chỉ được nhận khi `state` khớp (chống chèn lỗi giả vào URL); giữ nguyên mọi hành vi khác.
+- Phạm vi file (chỉ được sửa): `src/google/oauth.ts` (chỉ hàm `parseFragment`, ~L51–73), `tests/unit/oauth.test.ts` (chỉ THÊM test, không sửa test cũ).
+- Giao diện: chữ ký `parseFragment(hash, expectedState)` giữ nguyên (SPEC §5).
+- Yêu cầu: có `error` → trả `{ error }` khi `state === expectedState`; `state` thiếu hoặc khác → `null`. Không `decodeURIComponent` thêm (URLSearchParams đã giải mã).
+- Tiêu chí nghiệm thu:
+  [ ] Test mới: `#error=access_denied&state=x` với expected `abc` → `null`; `#error=access_denied` (không state) → `null`; test cũ `oauth.test.ts:77–80`, `:92–95` và `store.test.ts:344–352` pass nguyên văn.
+  [ ] `npm run check` pass; `git diff -- tests/` chỉ có dòng thêm.
+- Lệnh kiểm tra: `npm run check`
+- Model: gemini (làn code — 2 file, chữ ký giữ nguyên, lệnh kiểm rõ) · Lần thử: 0/3 · Trạng thái: TODO (sau T-5.4 — không ghi cùng lúc thợ Claude)
