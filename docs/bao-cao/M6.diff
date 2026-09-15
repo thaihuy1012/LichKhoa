@@ -437,7 +437,7 @@ index fe1b367..3d9ec4e 100644
      const p = parseISODate(ev.date);
      setYm({ y: p.y, m0: p.m0 });
 diff --git a/src/ui/screens/events/TodosTab.tsx b/src/ui/screens/events/TodosTab.tsx
-index f852753..96b5e6e 100644
+index f852753..5635270 100644
 --- a/src/ui/screens/events/TodosTab.tsx
 +++ b/src/ui/screens/events/TodosTab.tsx
 @@ -1,4 +1,5 @@
@@ -447,7 +447,7 @@ index f852753..96b5e6e 100644
  import type { Store } from '../../store';
  import type { AppState, ISODate, Todo } from '../../../core/model';
  import { t } from '../../../core/i18n';
-@@ -9,8 +10,16 @@ import { sortTodosForDisplay, todoDueLabel } from './util';
+@@ -9,8 +10,17 @@ import { sortTodosForDisplay, todoDueLabel } from './util';
  interface Props {
    store: Store;
    state: AppState;
@@ -458,13 +458,14 @@ index f852753..96b5e6e 100644
 +const LONG_PRESS_MS = 450;
 +const MOVE_CANCEL_PX = 8;
 +const SWIPE_ACTIVATE_PX = 16;
++const EARLY_SWIPE_PX = 4; // T-6.3 (#4): ngưỡng chặn cuộn sớm trong touchmove, thấp hơn SWIPE_ACTIVATE_PX
 +const SWIPE_PANEL_PX = 160;
 +const SWIPE_OPEN_RATIO = 0.4;
 +
  function DueBadge({
    todo,
    today,
-@@ -59,7 +68,264 @@ function DueBadge({
+@@ -59,7 +69,287 @@ function DueBadge({
    );
  }
  
@@ -488,8 +489,9 @@ index f852753..96b5e6e 100644
 +  onDragCancel: () => void;
 +}
 +
-+/** Bộ nhận cử chỉ dùng chung cho hàng thường và hàng đã lưu trữ (T-6.2). `canDrag` tắt cho hàng lưu trữ. */
-+function useRowGesture(canDrag: boolean, cb: GestureCallbacks) {
++/** Bộ nhận cử chỉ dùng chung cho hàng thường và hàng đã lưu trữ (T-6.2). `canDrag` tắt cho hàng lưu trữ.
++ * `isOpen`: hàng đang mở sẵn (panel lộ ra) hay không, để vuốt tiếp từ vị trí mở không giật về 0 (T-6.3 #2). */
++function useRowGesture(canDrag: boolean, isOpen: boolean, cb: GestureCallbacks) {
 +  const phaseRef = useRef<Phase>('idle');
 +  const startRef = useRef({ x: 0, y: 0 });
 +  const pointerIdRef = useRef<number | null>(null);
@@ -518,7 +520,19 @@ index f852753..96b5e6e 100644
 +    const el = rowElRef.current;
 +    if (!el) return;
 +    function onTouchMove(e: TouchEvent) {
-+      if (phaseRef.current === 'swipe' || phaseRef.current === 'drag') e.preventDefault();
++      if (phaseRef.current === 'swipe' || phaseRef.current === 'drag') {
++        e.preventDefault();
++        return;
++      }
++      // T-6.3 (#4, soát chéo M6): còn `pending` (chưa qua ngưỡng SWIPE_ACTIVATE_PX=16 để JS tự
++      // chuyển phase) nhưng đã thấy rõ hướng ngang (|dx|>|dy|) từ vài px đầu -> chặn cuộn NGAY,
++      // không đợi đủ 16px, vì WebKit chốt quyền cuộn/vuốt-lùi từ những pixel di chuyển đầu tiên.
++      if (phaseRef.current === 'pending' && e.touches.length === 1) {
++        const touch = e.touches[0];
++        const dxNow = touch.clientX - startRef.current.x;
++        const dyNow = touch.clientY - startRef.current.y;
++        if (Math.abs(dxNow) > EARLY_SWIPE_PX && Math.abs(dxNow) > Math.abs(dyNow)) e.preventDefault();
++      }
 +    }
 +    el.addEventListener('touchmove', onTouchMove, { passive: false });
 +    return () => el.removeEventListener('touchmove', onTouchMove);
@@ -566,7 +580,10 @@ index f852753..96b5e6e 100644
 +            /* ignore */
 +          }
 +        }
-+        setDx(0);
++        // T-6.3 (#2, soát chéo M6): hàng đang mở sẵn (isOpen) -> điểm bắt đầu của dx là -PANEL_PX,
++        // không phải 0, nếu không hàng giật về 0 rồi mới chạy theo ngón tay tiếp.
++        const base = isOpen ? -SWIPE_PANEL_PX : 0;
++        setDx(Math.min(0, Math.max(-SWIPE_PANEL_PX - 24, base + dxNow)));
 +      } else if (Math.abs(dyNow) > MOVE_CANCEL_PX) {
 +        clearTimer();
 +        phaseRef.current = 'idle';
@@ -575,7 +592,8 @@ index f852753..96b5e6e 100644
 +    }
 +    if (phaseRef.current === 'swipe') {
 +      e.preventDefault();
-+      setDx(Math.min(0, Math.max(-SWIPE_PANEL_PX - 24, dxNow)));
++      const base = isOpen ? -SWIPE_PANEL_PX : 0;
++      setDx(Math.min(0, Math.max(-SWIPE_PANEL_PX - 24, base + dxNow)));
 +      return;
 +    }
 +    if (phaseRef.current === 'drag') {
@@ -598,6 +616,12 @@ index f852753..96b5e6e 100644
 +    }
 +    phaseRef.current = 'idle';
 +    pointerIdRef.current = null;
++    // T-6.3 (#3, soát chéo M6): dọn cờ suppressClick kể cả khi không có `click` nào theo sau (đề
++    // phòng thêm, ngoài chỗ `onPointerCancel` đã tự dọn) — chạy sau tick hiện tại nên vẫn kịp nuốt
++    // đúng 1 lần click "ma" phát sinh ngay sau cử chỉ (nếu có) trước khi tự dọn.
++    setTimeout(() => {
++      suppressClickRef.current = false;
++    }, 0);
 +  }
 +
 +  function onPointerUp(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
@@ -658,7 +682,7 @@ index f852753..96b5e6e 100644
 +  actions: JSX.Element;
 +  children: JSX.Element;
 +}) {
-+  const { dx, dragging, rowElRef, handlers } = useRowGesture(canDrag, {
++  const { dx, dragging, rowElRef, handlers } = useRowGesture(canDrag, isOpen, {
 +    onSwipeSettle: (open) => setOpen(open),
 +    onBeginDrag: (rowEl) => {
 +      const rect = rowEl.getBoundingClientRect();
@@ -730,7 +754,7 @@ index f852753..96b5e6e 100644
    const lang = state.design.lang;
    const today = toISODate(new Date());
    const [inputText, setInputText] = useState('');
-@@ -67,8 +333,17 @@ export function TodosTab({ store, state }: Props) {
+@@ -67,8 +357,17 @@ export function TodosTab({ store, state }: Props) {
    const [editingId, setEditingId] = useState<string | null>(null);
    const [editingText, setEditingText] = useState('');
    const [showDone, setShowDone] = useState(false);
@@ -749,7 +773,7 @@ index f852753..96b5e6e 100644
    const open = sorted.filter((x) => !x.done);
    const done = sorted.filter((x) => x.done);
  
-@@ -93,10 +368,48 @@ export function TodosTab({ store, state }: Props) {
+@@ -93,10 +392,51 @@ export function TodosTab({ store, state }: Props) {
      setEditingId(null);
    }
  
@@ -757,9 +781,12 @@ index f852753..96b5e6e 100644
 +  function handleArchive(todo: Todo) {
 +    setSwipeOpenId(null);
 +    store.dispatch({ type: 'archiveTodo', id: todo.id, archived: true });
++    // T-6.3 (#1, soát chéo M6): việc lưu trữ vẫn còn trong state (chỉ mang cờ `archived: true`) ->
++    // Hoàn tác phải BỎ cờ đó (`archiveTodo … archived: false`), không phải `restoreTodo` (dùng cho
++    // việc đã XÓA hẳn khỏi mảng, `restoreTodo` không làm gì nếu id vẫn còn trong state).
 +    showToast(t('events.todoArchivedToast', lang), {
 +      label: t('events.undo', lang),
-+      onClick: () => store.dispatch({ type: 'restoreTodo', todo }),
++      onClick: () => store.dispatch({ type: 'archiveTodo', id: todo.id, archived: false }),
 +    });
 +  }
 +
@@ -801,7 +828,7 @@ index f852753..96b5e6e 100644
          <button
            type="button"
            data-testid="todo-toggle"
-@@ -149,10 +462,72 @@ export function TodosTab({ store, state }: Props) {
+@@ -149,10 +489,72 @@ export function TodosTab({ store, state }: Props) {
          </button>
        </div>
      );
@@ -875,7 +902,7 @@ index f852753..96b5e6e 100644
        <div class="addrow">
          <input
            type="text"
-@@ -180,13 +555,26 @@ export function TodosTab({ store, state }: Props) {
+@@ -180,13 +582,26 @@ export function TodosTab({ store, state }: Props) {
          </button>
        </div>
        {open.length === 0 && <p class="empty">{t('todo.empty', lang)}</p>}
@@ -905,7 +932,7 @@ index f852753..96b5e6e 100644
        )}
      </div>
 diff --git a/src/ui/store.ts b/src/ui/store.ts
-index c43e876..cbaea5e 100644
+index c43e876..d3ba47b 100644
 --- a/src/ui/store.ts
 +++ b/src/ui/store.ts
 @@ -6,6 +6,8 @@ import { saveState } from '../storage/db';
@@ -956,10 +983,31 @@ index c43e876..cbaea5e 100644
        const idx = sorted.findIndex((t) => t.id === action.id);
        if (idx < 0) return state;
        const swapIdx = idx + action.dir;
-@@ -88,6 +104,41 @@ export function reducer(state: AppState, action: Action): AppState {
-       ]);
-       return { ...state, todos: state.todos.map((t) => (orders.has(t.id) ? { ...t, order: orders.get(t.id)! } : t)) };
-     }
+@@ -82,10 +98,63 @@ export function reducer(state: AppState, action: Action): AppState {
+       const a = sorted[idx];
+       const b = sorted[swapIdx];
+       if (!sameTodoGroup(a, b)) return state;
+-      const orders = new Map<string, number>([
+-        [a.id, b.order],
+-        [b.id, a.order],
+-      ]);
++      // T-6.3 (#5, soát chéo M6): trước đây chỉ hoán trực tiếp `a.order`/`b.order` cho nhau — nếu 2
++      // giá trị đó TRÙNG NHAU (dữ liệu cũ suy thoái, vd khôi phục JSON cũ) thì hoán xong vẫn trùng,
++      // coi như không đổi. Lấy cả nhóm hiển thị (a,b luôn kề nhau trong nhóm vì kề nhau trong
++      // `sorted` và cùng nhóm), hoán vị a/b trong nhóm rồi gán lại theo tập giá trị `order` hiện có
++      // của nhóm (giữ NGUYÊN giá trị cụ thể nếu vốn đã khác nhau — khớp `test` cũ); chỉ khi tập đó
++      // có trùng lặp mới ép thành dãy tăng ngặt bắt đầu từ giá trị nhỏ nhất.
++      const group = sorted.filter((t) => sameTodoGroup(t, a));
++      const idxInGroup = group.findIndex((t) => t.id === a.id);
++      const swapIdxInGroup = idxInGroup + action.dir;
++      const newGroupOrder = [...group];
++      [newGroupOrder[idxInGroup], newGroupOrder[swapIdxInGroup]] = [newGroupOrder[swapIdxInGroup], newGroupOrder[idxInGroup]];
++      const rawValues = group.map((t) => t.order).sort((x, y) => x - y);
++      const hasDup = rawValues.some((v, i) => i > 0 && v === rawValues[i - 1]);
++      const newValues = hasDup ? rawValues.map((_, i) => rawValues[0] + i) : rawValues;
++      const orders = new Map<string, number>(newGroupOrder.map((t, i) => [t.id, newValues[i]]));
++      return { ...state, todos: state.todos.map((t) => (orders.has(t.id) ? { ...t, order: orders.get(t.id)! } : t)) };
++    }
 +    case 'archiveTodo': {
 +      return {
 +        ...state,
@@ -992,13 +1040,18 @@ index c43e876..cbaea5e 100644
 +      const targetIdxInGroup = withoutA.findIndex((t) => t.id === b.id);
 +      const insertAt = idx < targetIdx ? targetIdxInGroup + 1 : targetIdxInGroup;
 +      const newGroupOrder = [...withoutA.slice(0, insertAt), a, ...withoutA.slice(insertAt)];
-+      const orders = new Map<string, number>(newGroupOrder.map((t, i) => [t.id, group[i].order]));
-+      return { ...state, todos: state.todos.map((t) => (orders.has(t.id) ? { ...t, order: orders.get(t.id)! } : t)) };
-+    }
++      // T-6.3 (#5, soát chéo M6): trước đây tái dùng nguyên `group[i].order` cũ theo VỊ TRÍ — nếu dữ
++      // liệu cũ suy thoái có `order` trùng nhau (vd khôi phục JSON cũ), hoán vị các giá trị trùng đó
++      // vẫn ra trùng, không đổi thứ tự hiển thị. Giữ nguyên tập giá trị cũ khi vốn đã khác nhau (khớp
++      // `test` cũ); chỉ ép thành dãy tăng ngặt khi tập đó có trùng lặp.
++      const rawValues = group.map((t) => t.order).sort((x, y) => x - y);
++      const hasDup = rawValues.some((v, i) => i > 0 && v === rawValues[i - 1]);
++      const newValues = hasDup ? rawValues.map((_, i) => rawValues[0] + i) : rawValues;
++      const orders = new Map<string, number>(newGroupOrder.map((t, i) => [t.id, newValues[i]]));
+       return { ...state, todos: state.todos.map((t) => (orders.has(t.id) ? { ...t, order: orders.get(t.id)! } : t)) };
+     }
      case 'setTodoDue': {
-       return {
-         ...state,
-@@ -161,6 +212,26 @@ export function createStore(initialState: AppState): Store {
+@@ -161,6 +230,26 @@ export function createStore(initialState: AppState): Store {
      }, PERSIST_DEBOUNCE_MS);
    }
  
@@ -1515,10 +1568,10 @@ index 0000000..dc136fc
 +});
 diff --git a/tests/e2e/todo-gestures.spec.ts b/tests/e2e/todo-gestures.spec.ts
 new file mode 100644
-index 0000000..2b07b57
+index 0000000..76dd21f
 --- /dev/null
 +++ b/tests/e2e/todo-gestures.spec.ts
-@@ -0,0 +1,153 @@
+@@ -0,0 +1,216 @@
 +import { test, expect } from '@playwright/test';
 +
 +/** T-6.2: cử chỉ hàng to-do (vuốt trái, nhấn giữ kéo, phần Đã lưu trữ). */
@@ -1671,6 +1724,69 @@ index 0000000..2b07b57
 +  await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('C');
 +  await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('A');
 +  await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('B');
++});
++
++test('T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất', async ({ page }) => {
++  await page.goto('/?test=1');
++  await openTodos(page);
++  await addTodo(page, 'Việc A');
++  await expect(page.getByTestId('todo-item')).toHaveCount(1);
++
++  const wrap = await swipeLeft(page, page.getByTestId('todo-item').nth(0));
++  await wrap.getByTestId('todo-swipe-archive').click();
++  await expect(page.getByTestId('todo-item')).toHaveCount(0);
++  await expect(page.getByTestId('todo-archived-toggle')).toContainText('1');
++
++  // Trước T-6.3 (#1): callback Hoàn tác gọi `restoreTodo` -> không làm gì (id vẫn còn trong state,
++  // chỉ mang cờ `archived: true`) -> việc KHÔNG trở lại. Phải gọi `archiveTodo … archived: false`.
++  await page.getByTestId('toast-undo').click();
++  await expect(page.getByTestId('todo-item')).toHaveCount(1);
++  await expect(page.getByTestId('todo-item').filter({ hasText: 'Việc A' })).toBeVisible();
++  await expect(page.getByTestId('todo-archived-toggle')).toHaveCount(0);
++});
++
++test('T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0', async ({ page }) => {
++  await page.goto('/?test=1');
++  await openTodos(page);
++  await addTodo(page, 'Việc A');
++
++  const row = page.getByTestId('todo-item').nth(0);
++  const wrap = await swipeLeft(page, row);
++  await expect(wrap.getByTestId('todo-swipe-archive')).toBeVisible();
++  const openBox = (await row.boundingBox())!; // x sau khi mở hẳn (~ -160px so với đóng)
++
++  const wrapBox = (await wrap.boundingBox())!;
++  const y = wrapBox.y + wrapBox.height / 2;
++  await page.mouse.move(wrapBox.x + wrapBox.width - 10, y);
++  await page.mouse.down();
++  // Vuốt tiếp một khoảng nhỏ (~8px): trước T-6.3 (#2), dx bắt đầu lại từ 0 -> hàng giật về gần vị
++  // trí đóng (x tăng vọt) rồi mới chạy tiếp theo ngón tay. Đúng: tiếp tục mượt từ vị trí đang mở.
++  await page.mouse.move(wrapBox.x + wrapBox.width - 18, y);
++  const midBox = (await row.boundingBox())!;
++  await page.mouse.up();
++
++  expect(midBox.x).toBeLessThanOrEqual(openBox.x + 5);
++});
++
++test('T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa', async ({ page }) => {
++  await page.goto('/?test=1');
++  await openTodos(page);
++  for (const text of ['A', 'B', 'C']) await addTodo(page, text);
++
++  const rows = page.getByTestId('todo-item');
++  const boxC = (await rows.nth(2).boundingBox())!;
++  const boxA = (await rows.nth(0).boundingBox())!;
++
++  await page.mouse.move(boxC.x + boxC.width / 2, boxC.y + boxC.height / 2);
++  await page.mouse.down();
++  await page.waitForTimeout(600);
++  await page.mouse.move(boxA.x + boxA.width / 2, boxA.y + boxA.height / 2, { steps: 10 });
++  await page.mouse.up();
++  await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('C');
++
++  // Chạm vào chữ ngay sau khi thả tay kéo -> phải mở sửa (không bị `suppressClickRef` kẹt nuốt oan).
++  await rows.nth(0).getByTestId('todo-edit').click();
++  await expect(rows.nth(0).locator('.todo-edit-input')).toBeVisible();
 +});
 diff --git a/tests/unit/collect.test.ts b/tests/unit/collect.test.ts
 index cb76b07..8ac7e26 100644
@@ -2023,7 +2139,7 @@ index cdbc075..e3d71f6 100644
      const e1 = ev({ id: 'late', date: '2026-03-01', repeat: 'none', time: '10:00' });
      const e2 = ev({ id: 'allday', date: '2026-03-01', repeat: 'none' });
 diff --git a/tests/unit/store.test.ts b/tests/unit/store.test.ts
-index 6a8a1f5..08a7376 100644
+index 6a8a1f5..cb94a1c 100644
 --- a/tests/unit/store.test.ts
 +++ b/tests/unit/store.test.ts
 @@ -68,6 +68,25 @@ describe('reducer', () => {
@@ -2052,7 +2168,7 @@ index 6a8a1f5..08a7376 100644
    it('addTodo tạo id, done:false; toggleTodo/updateTodo/deleteTodo hoạt động, không mutate', () => {
      const state = defaultState(device);
      const s1 = reducer(state, { type: 'addTodo', text: 'Việc 1' });
-@@ -136,6 +155,74 @@ describe('reducer', () => {
+@@ -136,6 +155,101 @@ describe('reducer', () => {
      expect(s3).toEqual(s0);
    });
  
@@ -2122,6 +2238,33 @@ index 6a8a1f5..08a7376 100644
 +    expect(s1.todos.find((t) => t.id === 'a')!.order).toBe(2);
 +    expect(s1.todos.find((t) => t.id === 'c')!.order).toBe(0);
 +    expect(s1.todos.find((t) => t.id === 'b')!.order).toBe(1); // việc lưu trữ không đổi
++  });
++
++  it('T-6.3 (#5, soát chéo M6): reorderTodo/moveTodo vẫn đổi được thứ tự khi order cũ trùng nhau', () => {
++    const state = defaultState(device);
++    const loaded = {
++      ...defaultState(device),
++      todos: [
++        { id: 'a', text: 'A', done: false, order: 0 },
++        { id: 'b', text: 'B', done: false, order: 0 },
++        { id: 'c', text: 'C', done: false, order: 0 },
++      ],
++    };
++    const s0 = reducer(state, { type: 'load', state: loaded });
++
++    // reorderTodo(c, a): kéo C lên trước A -> C,A,B (dù 3 việc cùng order: 0 ban đầu).
++    const s1 = reducer(s0, { type: 'reorderTodo', id: 'c', targetId: 'a' });
++    const order1 = [...s1.todos].sort((x, y) => x.order - y.order).map((t) => t.id);
++    expect(order1).toEqual(['c', 'a', 'b']);
++    // order mới phải khác nhau từng đôi một (không còn trùng như dữ liệu cũ).
++    const values1 = s1.todos.map((t) => t.order);
++    expect(new Set(values1).size).toBe(3);
++
++    // moveTodo(b, -1) trên state gốc (A,B,C cùng order: 0) -> B đổi chỗ lên trước A.
++    const s2 = reducer(s0, { type: 'moveTodo', id: 'b', dir: -1 });
++    const order2 = [...s2.todos].sort((x, y) => x.order - y.order).map((t) => t.id);
++    expect(order2[0]).toBe('b'); // B lên trước A (không còn "không đổi" như lỗi cũ)
++    expect(s2.todos.find((t) => t.id === 'b')!.order).not.toBe(s2.todos.find((t) => t.id === 'a')!.order);
 +  });
 +
    it('addNote/updateNote/deleteNote CRUD ghi chú, không mutate state cũ', () => {
