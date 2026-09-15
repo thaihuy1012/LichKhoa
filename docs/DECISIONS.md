@@ -159,3 +159,9 @@
 - Chủ dự án: tạo 2 sự kiện trùng trong app thì màn khóa vẫn hiện cả 2. Nguyên nhân: B-003 chỉ lọc cặp local–Google — Quản lý tự quyết giữ local–local/Google–Google khi viết phiếu, không hỏi.
 - Chủ dự án chọn "Ẩn trùng mọi nguồn": nhóm trùng (cùng khóa D-026) có ≥ 2 mục → giữ 1: `createdAt` lớn nhất (thiếu = 0); bằng nhau → ưu tiên Google; cùng nguồn và bằng nhau → mục đứng sau theo thứ tự đầu vào (local = thêm sau). Tab Sự kiện vẫn hiện đủ.
 - Phiếu B-005 (sonnet — sửa test khóa B-003 "hai local trùng nhau → giữ cả hai", phải khai báo).
+
+## D-028 — SPEC v1.7: vuốt trái Xóa/Lưu trữ + nhấn giữ kéo sắp xếp cho Việc cần làm (2026-09-15 · người quyết: Chủ dự án)
+- Yêu cầu: "Ở tab sự kiện, vuốt sang trái hiện xóa hoặc lưu trữ; nhấn giữ để di chuyển lên xuống sắp xếp thứ tự".
+- Chủ dự án chốt: chỉ danh sách **Việc cần làm** (không áp dụng Sự kiện, Ghi chú); Lưu trữ = ẩn khỏi danh sách và hình nền, còn trong phần "Đã lưu trữ" cuối danh sách để khôi phục / xóa hẳn; sự kiện luôn theo giờ (không kéo); Xóa = xóa ngay + thông báo "Hoàn tác" ~5 giây.
+- Quản lý: kéo chỉ trong cùng nhóm hiển thị (IN-10: chưa xong có hạn theo hạn / chưa xong không hạn theo `order` / đã xong); giữ nguyên nút ▲▼ 🗑 hiện có (test khóa dùng) — bỏ sau nếu Chủ dự án muốn.
+- Milestone M6 (T-6.1 lõi → T-6.2 UI cử chỉ → T-6.END). Không giao Gemini: T-6.1 đổi hợp đồng; T-6.2 cử chỉ chạm cần cảm giác trên máy thật.

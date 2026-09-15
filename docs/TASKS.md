@@ -5,7 +5,8 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 12/12 ✔ tag `M4-ok` (D-021 — DUYỆT M4 + nghiệm thu cuối, gộp)
-- **M5 (SPEC v1.5, D-024) — Bố cục Tuần giống Inks: 4/4 ✔ tag `M5-ok`** (D-025 — Kiến trúc sư DUYỆT sau soát chéo Gemini). Máy thật (Chủ dự án 2026-09-15): chữ chip đọc được ✔, "◷" hiện đúng ✔ → T-5.4 không cần gấp (chỉ còn S4 dọn code). Chủ dự án yêu cầu thêm (D-026, SPEC v1.6): bấm đúp mở Google Calendar → KHÔNG làm (OUT); sự kiện trùng local/Google → B-003 ✔ DONE (chờ Chủ dự án `git push`). Chủ dự án: "xử lý tồn đọng cho xong" → T-5.4 ✔, B-004 ✔ → **HẾT TỒN ĐỌNG**. Chủ dự án `git push` (a173446..bcb4c15) → Actions run 34922820757 success, trang 200. Sau đó Chủ dự án báo: 2 sự kiện trùng trong app vẫn hiện cả 2 → D-027 ẩn trùng mọi nguồn → B-005 ✔ DONE. Chủ dự án `git push` (bcb4c15..3ef433a) → Actions run 34923759379 success, trang 200. Dự án ĐÓNG lại (D-022); mở lại khi Chủ dự án yêu cầu. Deploy OK: Chủ dự án `git push` (6fec4b5..a173446) → Actions run 34919243300 success, trang 200, JS có `layout-week`. Tag `M5-ok` đã lên GitHub. Chờ Chủ dự án xem trên iPhone 2 ý: (1) chữ chip (~7–8 pt) đọc được không; (2) biểu tượng ◷ có hiện không. Sau đó → phiếu T-5.4 (tồn đọng D-025) nếu cần. Thứ tự 5.1 → 5.2 → 5.3 → 5.END → ảnh mẫu cho Chủ dự án → soát chéo Gemini `M5-soat` → Kiến trúc sư duyệt M5 → tag `M5-ok`. Xem mục "M5" cuối file. Làn Gemini: BẬT mức NHIỀU ở checkout chính (không chạy trong worktree — BAI-HOC); T-5.3 đủ điều kiện → tho-gemini.
+- **M5 (SPEC v1.5, D-024) — Bố cục Tuần giống Inks: 4/4 ✔ tag `M5-ok`** (D-025 — Kiến trúc sư DUYỆT sau soát chéo Gemini). Máy thật (Chủ dự án 2026-09-15): chữ chip đọc được ✔, "◷" hiện đúng ✔ → T-5.4 không cần gấp (chỉ còn S4 dọn code). Chủ dự án yêu cầu thêm (D-026, SPEC v1.6): bấm đúp mở Google Calendar → KHÔNG làm (OUT); sự kiện trùng local/Google → B-003 ✔ DONE (chờ Chủ dự án `git push`). Chủ dự án: "xử lý tồn đọng cho xong" → T-5.4 ✔, B-004 ✔ → **HẾT TỒN ĐỌNG**. Chủ dự án `git push` (a173446..bcb4c15) → Actions run 34922820757 success, trang 200. Sau đó Chủ dự án báo: 2 sự kiện trùng trong app vẫn hiện cả 2 → D-027 ẩn trùng mọi nguồn → B-005 ✔ DONE. Chủ dự án `git push` (bcb4c15..3ef433a) → Actions run 34923759379 success, trang 200. Dự án ĐÓNG lại (D-022).
+- **M6 (SPEC v1.7, D-028) — Cử chỉ danh sách Việc cần làm: 0/3.** Thứ tự 6.1 → 6.2 → 6.END → soát chéo `M6-soat` → Kiến trúc sư duyệt → tag `M6-ok`. Xem mục "M6" cuối file. Không phiếu nào đủ điều kiện Gemini (6.1 đổi hợp đồng; 6.2 cử chỉ cần cảm giác máy thật; 6.END sonnet). Deploy OK: Chủ dự án `git push` (6fec4b5..a173446) → Actions run 34919243300 success, trang 200, JS có `layout-week`. Tag `M5-ok` đã lên GitHub. Chờ Chủ dự án xem trên iPhone 2 ý: (1) chữ chip (~7–8 pt) đọc được không; (2) biểu tượng ◷ có hiện không. Sau đó → phiếu T-5.4 (tồn đọng D-025) nếu cần. Thứ tự 5.1 → 5.2 → 5.3 → 5.END → ảnh mẫu cho Chủ dự án → soát chéo Gemini `M5-soat` → Kiến trúc sư duyệt M5 → tag `M5-ok`. Xem mục "M5" cuối file. Làn Gemini: BẬT mức NHIỀU ở checkout chính (không chạy trong worktree — BAI-HOC); T-5.3 đủ điều kiện → tho-gemini.
 - 2026-09-15: ĐỢT BẢO TRÌ D-023 XONG (B-001, B-002) — Quản lý phiên chính dọn rác Gemini ở checkout chính, `merge --ff-only` nhánh worktree → `main` 6fec4b5, `npm run check` pass (211×2 unit, 64 e2e, 6 skip có từ trước). Chủ dự án `git push` (e954b16..6fec4b5) → Actions run 34911429434 success, trang 200, CSS `.color-input` mới đã lên. Chờ Chủ dự án xem ô màu trên iPhone. Dự án trở lại trạng thái ĐÓNG (D-022).
 - Trước đó (2026-09-15): ĐỢT BẢO TRÌ D-023 — B-001 (Gemini) → B-002 (sonnet). Xem mục "Bảo trì 2026-09-15" cuối file.
 - 2026-09-15 phiên 2 (nền): làm trong worktree `.claude/worktrees/bao-tri-D-023`, nhánh `worktree-bao-tri-D-023` (từ `main` fd17357) — commit ở nhánh này, Chủ dự án gộp về `main` (`git merge --ff-only worktree-bao-tri-D-023`). Lượt Gemini `B-001` vòng 1 phiên trước chết khi dừng phiên (`DONE 255`, đầu ra rỗng, không đổi `src/`) → `huy B-001`, giao lại vòng 1 (không tính Lần thử, không tính lỗi làn). Lưu ý: `agy-run.sh huy` hoàn tác MỌI thay đổi chưa commit, kể cả sổ sách → commit sổ trước khi giao Gemini.
@@ -721,3 +722,52 @@ Mẫu: `docs/tham-khao/inks-tuan.PNG`. Thứ tự: 5.1 → 5.2 → 5.3 → 5.END
 - Lệnh kiểm tra: `npx tsc --noEmit; npm run test` rồi `npm run check`
 - Nhật ký: 2026-09-15 lượt 1: DONE (dedupOccurrences lọc mọi nhóm ≥ 2; đổi 1 case khóa B-003 đã khai; +2 test) → review: thiếu test tiêu chí "sự kiện lặp trùng" → trả thợ (Lần thử 1/3). Lượt 2: +1 test lặp daily 7 ngày → kiem-thu PASS (unit 247×2/21 file; e2e 72/6 skip; dedup.spec 2 trình duyệt) → commit.
 - Model: sonnet (sửa test khóa → không giao Gemini) · Lần thử: 1/3 · Trạng thái: DONE
+
+---
+## M6 — Cử chỉ danh sách Việc cần làm (SPEC v1.7, D-028)
+Thứ tự: 6.1 → 6.2 → 6.END (tuần tự; 6.2 cần action của 6.1).
+
+### T-6.1 — Lõi: `Todo.archived` + action lưu trữ / khôi phục / sắp xếp
+- Mục tiêu: hợp đồng dữ liệu và reducer cho cử chỉ ở T-6.2; hình nền bỏ việc đã lưu trữ.
+- Phạm vi file (chỉ được sửa): `src/core/model.ts` (`Todo.archived?: boolean`), `src/ui/store.ts` (action mới + `moveTodo` bỏ qua việc lưu trữ), `src/core/collect.ts` (lọc `archived`), `tests/unit/store.test.ts`, `tests/unit/collect.test.ts` (chỉ THÊM test).
+- Giao diện / đầu vào có sẵn: SPEC v1.7 §3 IN-4, §5 `Todo`; `cmpTodo` (`collect.ts`) — nhóm hiển thị: chưa xong có hạn (theo `due`) / chưa xong không hạn (theo `order`) / đã xong (theo `order`); `moveTodo` hiện có (`store.ts`) đổi chỗ trong cùng nhóm.
+- Yêu cầu:
+  - Action `archiveTodo { id; archived: boolean }` → đặt/bỏ `archived` (bỏ = xóa trường, không để `false`).
+  - Action `restoreTodo { todo: Todo }` → chèn lại việc đã xóa (giữ `id`, `order`, mọi trường); `id` đã tồn tại → không đổi state.
+  - Action `reorderTodo { id; targetId }` → đưa `id` vào vị trí của `targetId` trong danh sách hiển thị (kéo xuống → sau target, kéo lên → trước target), tính lại `order` các việc trong nhóm để thứ tự `cmpTodo` đúng như vậy. Chỉ hợp lệ khi hai việc cùng nhóm hiển thị, cùng chưa lưu trữ, và (nhóm có hạn) cùng `due`; ngược lại → không đổi state. Không mutate state cũ.
+  - `moveTodo` và `reorderTodo` bỏ qua việc `archived` (không đổi chỗ với việc đã lưu trữ).
+  - `collectRenderData`: `todos` không có việc `archived` (mọi bố cục hình nền tự hết).
+- Tiêu chí nghiệm thu:
+  [ ] store: archive → có `archived: true`; bỏ archive → không còn trường; restore sau `deleteTodo` → state giống trước khi xóa (`toEqual`); restore id đã có → state không đổi (cùng tham chiếu hoặc `toEqual`).
+  [ ] store: 3 việc không hạn A,B,C (order 0,1,2) → `reorderTodo(C, A)` → thứ tự hiển thị C,A,B; `reorderTodo(A, C)` từ A,B,C → B,C,A; khác nhóm (một việc có hạn) → không đổi; `moveTodo` với hàng xóm đã lưu trữ → nhảy qua việc lưu trữ.
+  [ ] collect: việc `archived` không có trong `RenderData.todos`.
+  [ ] `npm run check` pass; test cũ không đổi.
+- Lệnh kiểm tra: `npx tsc --noEmit; npm run test` rồi `npm run check`
+- Model: sonnet (đổi hợp đồng dùng chung) · Lần thử: 0/3 · Trạng thái: DOING (giao tho-sonnet 2026-09-15)
+
+### T-6.2 — UI: vuốt trái Lưu trữ / Xóa + Hoàn tác, phần "Đã lưu trữ", nhấn giữ kéo sắp xếp
+- Mục tiêu: cử chỉ kiểu iOS cho danh sách Việc cần làm (tab Sự kiện › Việc).
+- Phạm vi file (chỉ được sửa): `src/ui/screens/events/TodosTab.tsx`, `src/ui/screens/Events.tsx` (chỉ: truyền `showToast` cho TodosTab và cho toast nhận nút hành động), `src/ui/styles.css`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `tests/e2e/todo-gestures.spec.ts` (mới).
+- Giao diện / đầu vào có sẵn: T-6.1 (`archiveTodo`, `restoreTodo`, `reorderTodo`); testid hiện có `todo-item`, `todo-toggle`, `todo-edit`, `todo-up`, `todo-down`, `todo-del` — GIỮ NGUYÊN (test khóa dùng); `showToast` ở `Events.tsx:27`.
+- Yêu cầu:
+  - Vuốt trái (pointer events; ngang > 16 px và |dx| > |dy|; hàng `touch-action: pan-y`) → hàng trượt, lộ 2 nút bên phải: "Lưu trữ" (`todo-swipe-archive`) và "Xóa" (`todo-swipe-delete`, đỏ), mỗi nút ≥ 44 px; thả quá ~40% → mở hẳn, ít hơn → đóng; vuốt phải / chạm chỗ khác / mở hàng khác → đóng; mỗi lúc chỉ 1 hàng mở. Vuốt không kích hoạt tick / sửa.
+  - Xóa → `deleteTodo` + toast "Đã xóa" có nút "Hoàn tác" (`toast-undo`) ~5 s → `restoreTodo`. Lưu trữ → `archiveTodo` + toast "Đã lưu trữ" + Hoàn tác (bỏ lưu trữ).
+  - Cuối danh sách: nút `todo-archived-toggle` "Đã lưu trữ (N)" (ẩn khi N = 0), mặc định thu gọn; mở ra liệt kê `todo-archived-item` (chữ mờ); vuốt trái → "Khôi phục" (`todo-swipe-restore`) và "Xóa" (xóa hẳn + Hoàn tác).
+  - Nhấn giữ ~450 ms không di chuyển (> 8 px → hủy) → chế độ kéo: hàng nổi lên (bóng, scale nhẹ) đi theo ngón tay theo chiều dọc, các hàng khác dịch chỗ; thả → `reorderTodo(id, targetId)`; thả sang nhóm khác → trở về chỗ cũ. Khi đang kéo trang không cuộn. Nhấn giữ không mở sửa / không tick; hàng `-webkit-user-select: none; -webkit-touch-callout: none`.
+  - Hỗ trợ cả chuột (pointer) để test được trên chromium/webkit desktop.
+- Tiêu chí nghiệm thu:
+  [ ] `todo-gestures.spec.ts` (chromium + webkit): vuốt trái (chuột/pointer) → hiện 2 nút; Xóa → việc biến mất, bấm `toast-undo` → trở lại đúng vị trí; Lưu trữ → biến mất khỏi danh sách và khỏi `__lastOps` (bố cục Việc), `todo-archived-toggle` "(1)" → mở → vuốt → Khôi phục → trở lại danh sách.
+  [ ] Nhấn giữ việc C (3 việc không hạn A,B,C) ~600 ms, kéo lên trên A, thả → danh sách C,A,B; `__lastOps` bố cục Việc cùng thứ tự; reload giữ nguyên.
+  [ ] Chạm thường vào chữ vẫn mở sửa; tick vẫn tick (test khóa `m2-events`, `events` pass nguyên văn).
+  [ ] `npm run check` pass; tập khóa vi = en; test cũ không đổi.
+- Lệnh kiểm tra: `npx playwright test tests/e2e/todo-gestures.spec.ts --repeat-each=3; npm run check`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+
+### T-6.END — Kiểm thử tích hợp M6
+- Mục tiêu: E2E luồng chính M6 theo SPEC v1.7 §6 M6.
+- Phạm vi file: `tests/e2e/m6-todo-gestures.spec.ts` (mới); được sửa lỗi tích hợp nhỏ trong `src/**` nhưng phải khai báo từng file.
+- Tiêu chí nghiệm thu:
+  [ ] chromium + webkit (`?test=1`, IndexedDB trống): thêm 3 việc qua UI → vuốt Xóa → Hoàn tác; Lưu trữ 1 việc → không có trên hình nền ở cả bố cục Việc và Tuần/Tháng-danh-sách (nếu việc có hạn hôm nay) → Khôi phục; nhấn giữ kéo việc thứ 3 lên đầu → thứ tự mới trong danh sách và `__lastOps`; xuất JSON có trường `archived` khi đang lưu trữ; reload giữ mọi thứ.
+  [ ] `npm run check` pass toàn bộ.
+- Lệnh kiểm tra: `npx playwright test tests/e2e/m6-todo-gestures.spec.ts --repeat-each=3; npm run check`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
