@@ -1,0 +1,2129 @@
+diff --git a/src/core/collect.ts b/src/core/collect.ts
+index 4d1b8b5..d032acb 100644
+--- a/src/core/collect.ts
++++ b/src/core/collect.ts
+@@ -12,6 +12,52 @@ export function cmpOccurrence(a: Occurrence, b: Occurrence): number {
+   return 0;
+ }
+ 
++function normalizeTitleKey(title: string): string {
++  return title.normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase();
++}
++
++function dedupKey(o: Occurrence): string {
++  return `${o.date}|${o.allDay ? '*' : (o.time ?? '')}|${normalizeTitleKey(o.title)}`;
++}
++
++/**
++ * v1.7 (B-005, D-027): sự kiện trùng nhau (cùng ngày + giờ/`allDay` + tên chuẩn hóa)
++ * -> chỉ giữ 1, bất kể nguồn (local-local, google-google, local-google). Ưu tiên
++ * `createdAt` lớn hơn (thiếu = 0); bằng nhau -> ưu tiên `google`; cùng nguồn và bằng
++ * nhau -> mục đứng SAU trong mảng đầu vào. Nhóm chỉ 1 mục giữ nguyên.
++ */
++export function dedupOccurrences(occs: Occurrence[]): Occurrence[] {
++  const groups = new Map<string, Occurrence[]>();
++  const order: string[] = [];
++  for (const o of occs) {
++    const k = dedupKey(o);
++    if (!groups.has(k)) {
++      groups.set(k, []);
++      order.push(k);
++    }
++    groups.get(k)!.push(o);
++  }
++  const result: Occurrence[] = [];
++  for (const k of order) {
++    const list = groups.get(k)!;
++    if (list.length === 1) {
++      result.push(list[0]);
++      continue;
++    }
++    const winner = list.reduce((best, cur) => {
++      const bs = best.createdAt ?? 0;
++      const cs = cur.createdAt ?? 0;
++      if (cs > bs) return cur;
++      if (cs < bs) return best;
++      if (cur.source === 'google' && best.source !== 'google') return cur;
++      if (best.source === 'google' && cur.source !== 'google') return best;
++      return cur; // cùng nguồn, bằng createdAt -> mục đứng sau thắng
++    });
++    result.push(winner);
++  }
++  return result;
++}
++
+ /** v1.3: chưa xong có `due` (tăng dần) -> chưa xong không `due` (theo `order`) -> đã xong (theo `order`). */
+ export function cmpTodo(a: Todo, b: Todo): number {
+   if (a.done !== b.done) return a.done ? 1 : -1;
+@@ -46,9 +92,9 @@ export function collectRenderData(state: AppState, today: ISODate): RenderData {
+   const localOcc = expandOccurrences(state.events, from, to);
+   const googleOcc = state.google.cache?.events ?? [];
+ 
+-  const occurrences = [...localOcc, ...googleOcc].sort(cmpOccurrence);
++  const occurrences = dedupOccurrences([...localOcc, ...googleOcc]).sort(cmpOccurrence);
+ 
+-  const todos = [...state.todos].sort(cmpTodo);
++  const todos = state.todos.filter((t) => !t.archived).sort(cmpTodo);
+ 
+   const pinned = state.notes.find((n) => n.pinned);
+   const note = state.design.showNote && pinned ? pinned.body : '';
+diff --git a/src/core/i18n/en.json b/src/core/i18n/en.json
+index 97a21fa..a4bbe69 100644
+--- a/src/core/i18n/en.json
++++ b/src/core/i18n/en.json
+@@ -98,6 +98,13 @@
+   "events.todoMarkDone": "Mark done",
+   "events.todoMarkUndone": "Mark not done",
+   "events.todoDue": "Due",
++  "events.todoArchive": "Archive",
++  "events.todoDelete": "Delete",
++  "events.todoRestore": "Restore",
++  "events.todoDeletedToast": "Deleted",
++  "events.todoArchivedToast": "Archived",
++  "events.undo": "Undo",
++  "events.todoArchivedCount": "Archived ({n})",
+   "events.alarm": "Reminder",
+   "events.alarmHint": "Reminders are handled by the iPhone Calendar app: tap \"Add to iPhone Calendar\" below, then open the .ics file.",
+   "events.alarmMeta": "Reminder {label}",
+diff --git a/src/core/i18n/vi.json b/src/core/i18n/vi.json
+index 001b78d..d6adac4 100644
+--- a/src/core/i18n/vi.json
++++ b/src/core/i18n/vi.json
+@@ -98,6 +98,13 @@
+   "events.todoMarkDone": "Đánh dấu đã xong",
+   "events.todoMarkUndone": "Đánh dấu chưa xong",
+   "events.todoDue": "Hạn",
++  "events.todoArchive": "Lưu trữ",
++  "events.todoDelete": "Xóa",
++  "events.todoRestore": "Khôi phục",
++  "events.todoDeletedToast": "Đã xóa",
++  "events.todoArchivedToast": "Đã lưu trữ",
++  "events.undo": "Hoàn tác",
++  "events.todoArchivedCount": "Đã lưu trữ ({n})",
+   "events.alarm": "Nhắc trước",
+   "events.alarmHint": "Việc nhắc do Lịch iPhone thực hiện: bấm \"Thêm vào Lịch iPhone\" bên dưới rồi mở file .ics.",
+   "events.alarmMeta": "Nhắc trước {label}",
+diff --git a/src/core/model.ts b/src/core/model.ts
+index 273cb86..dc011a1 100644
+--- a/src/core/model.ts
++++ b/src/core/model.ts
+@@ -13,6 +13,7 @@ export interface LocalEvent {
+   until?: ISODate;
+   color?: string;
+   alarmMin?: number; // v1.3: phút nhắc trước, 0/thiếu = không nhắc -> VALARM trong .ics
++  createdAt?: number; // v1.6 (B-003): mốc tạo (ms), dùng để chọn cái tạo sau khi trùng local/Google
+ }
+ 
+ export interface Todo {
+@@ -21,6 +22,7 @@ export interface Todo {
+   done: boolean;
+   order: number;
+   due?: ISODate; // v1.3
++  archived?: boolean; // v1.7 D-028: ẩn khỏi danh sách chính + RenderData
+ }
+ 
+ export interface Note {
+@@ -41,6 +43,7 @@ export interface Occurrence {
+   allDay: boolean;
+   color?: string;
+   endTime?: string; // v1.5 D-024: 'HH:mm' giờ kết thúc, chỉ khi có time, kết thúc cùng ngày và sau time
++  createdAt?: number; // v1.6 (B-003): mốc tạo (ms), dùng để chọn cái tạo sau khi trùng local/Google
+ }
+ 
+ export interface DeviceSpec {
+diff --git a/src/core/recurrence.ts b/src/core/recurrence.ts
+index 4d8f045..4b9a620 100644
+--- a/src/core/recurrence.ts
++++ b/src/core/recurrence.ts
+@@ -77,6 +77,7 @@ export function expandOccurrences(events: LocalEvent[], from: ISODate, to: ISODa
+           allDay: !ev.time,
+           color: ev.color,
+           ...(endTime != null ? { endTime } : {}),
++          ...(ev.createdAt != null ? { createdAt: ev.createdAt } : {}),
+         });
+       }
+     }
+diff --git a/src/google/calendar.ts b/src/google/calendar.ts
+index 1cfacd5..adf9123 100644
+--- a/src/google/calendar.ts
++++ b/src/google/calendar.ts
+@@ -30,6 +30,7 @@ export interface RawGoogleEvent {
+   summary?: string;
+   start?: RawGoogleEventTime;
+   end?: RawGoogleEventTime;
++  created?: string; // RFC3339, v1.6 (B-003): dùng để so trùng local/Google
+ }
+ 
+ async function googleGet(url: string, token: string): Promise<any> {
+@@ -113,6 +114,8 @@ export function normalize(
+   const inRange = (date: ISODate): boolean => !range || (date >= range.min && date <= range.max);
+   for (const ev of events) {
+     if (ev.status === 'cancelled' || !ev.start) continue;
++    const createdAt = ev.created != null ? Date.parse(ev.created) : NaN;
++    const createdAtValid = !Number.isNaN(createdAt);
+     if (ev.start.date) {
+       const dates = ev.end?.date ? expandAllDayDates(ev.start.date, ev.end.date) : [ev.start.date];
+       for (const date of dates) {
+@@ -125,6 +128,7 @@ export function normalize(
+           date,
+           allDay: true,
+           color,
++          ...(createdAtValid ? { createdAt } : {}),
+         });
+       }
+     } else if (ev.start.dateTime) {
+@@ -149,6 +153,7 @@ export function normalize(
+         allDay: false,
+         color,
+         ...(endTime != null ? { endTime } : {}),
++        ...(createdAtValid ? { createdAt } : {}),
+       });
+     }
+   }
+diff --git a/src/google/oauth.ts b/src/google/oauth.ts
+index 100f7de..137f4cc 100644
+--- a/src/google/oauth.ts
++++ b/src/google/oauth.ts
+@@ -56,12 +56,15 @@ export function parseFragment(
+   if (!raw) return null;
+ 
+   const params = new URLSearchParams(raw);
++  const state = params.get('state');
+   const error = params.get('error');
+-  if (error) return { error }; // URLSearchParams đã giải mã — không decodeURIComponent lần nữa
++  if (error) {
++    if (!state || state !== expectedState) return null;
++    return { error }; // URLSearchParams đã giải mã — không decodeURIComponent lần nữa
++  }
+ 
+   const accessToken = params.get('access_token');
+   const expiresInRaw = params.get('expires_in');
+-  const state = params.get('state');
+ 
+   if (!accessToken || !expiresInRaw) return null;
+   if (state !== expectedState) return null;
+diff --git a/src/render/layout/common.ts b/src/render/layout/common.ts
+index 4e344e6..b378ce4 100644
+--- a/src/render/layout/common.ts
++++ b/src/render/layout/common.ts
+@@ -147,15 +147,21 @@ export function wrapText(text: string, width: number, size: number, maxLines: nu
+   return lines.length > maxLines ? lines.slice(0, maxLines) : lines;
+ }
+ 
+-/** Cắt `text` thành một dòng vừa bề rộng `width` với cỡ chữ `size`, thêm "…" nếu bị cắt.
+- * Dùng cùng hệ số ước lượng ký tự/dòng như `wrapText`. */
+-export function truncate(text: string, width: number, size: number): string {
+-  const cpl = Math.max(4, Math.floor(width / (size * 0.5)));
++/** Cắt `text` thành một dòng vừa bề rộng `width` với cỡ chữ `size` và hệ số ước lượng ký tự tùy chỉnh
++ * `charWidthFactor` (vd font mono rộng hơn sans/serif), thêm "…" nếu bị cắt. */
++export function truncateByFactor(text: string, width: number, size: number, charWidthFactor: number): string {
++  const cpl = Math.max(4, Math.floor(width / (size * charWidthFactor)));
+   const s = String(text ?? '');
+   if (s.length <= cpl) return s;
+   return `${s.slice(0, Math.max(1, cpl - 1))}…`;
+ }
+ 
++/** Cắt `text` thành một dòng vừa bề rộng `width` với cỡ chữ `size`, thêm "…" nếu bị cắt.
++ * Dùng cùng hệ số ước lượng ký tự/dòng như `wrapText`. */
++export function truncate(text: string, width: number, size: number): string {
++  return truncateByFactor(text, width, size, 0.5);
++}
++
+ /** Nhãn hạn to-do: "Quá hạn" nếu qua ngày `today`, "Hôm nay" nếu đúng hôm nay, còn lại "d/m". */
+ export function todoDueLabel(due: ISODate, today: ISODate, lang: 'vi' | 'en'): { text: string; overdue: boolean } {
+   if (due < today) return { text: t('todo.overdue', lang), overdue: true };
+diff --git a/src/render/layout/week.ts b/src/render/layout/week.ts
+index 7c28c9b..3168478 100644
+--- a/src/render/layout/week.ts
++++ b/src/render/layout/week.ts
+@@ -7,7 +7,9 @@ import {
+   lunarCellLabel,
+   mainArea,
+   pastel,
++  todoDueLabel,
+   truncate,
++  truncateByFactor,
+   weekDates,
+   weekdayLabels,
+   type DrawOp,
+@@ -24,23 +26,36 @@ type ChipItem =
+ 
+ type TodayItem = ChipItem;
+ 
+-/** Ước lượng độ rộng chữ số/ký tự thường (không lạc quan hơn thực tế để chữ không tràn chip). */
+-const CHAR_W = 0.55;
++/** Ước lượng độ rộng chữ theo font: mono rộng hơn sans/serif (không lạc quan hơn thực tế để chữ không tràn chip). */
++function charW(font: DesignConfig['font']): number {
++  return font === 'mono' ? 0.62 : 0.55;
++}
+ 
+-/** Nhãn giờ hiển thị: "HH:mm - HH:mm" (12h chỉ AM/PM ở giờ kết thúc); không vừa `fitWidth` → thử
+- * "HH:mm-HH:mm" (gạch nối liền); vẫn không vừa → chỉ giờ bắt đầu; không `endTime` → giờ bắt đầu;
+- * cả ngày → nhãn "Cả ngày". */
+-function chipTimeText(occ: Occurrence, hour12: boolean, lang: 'vi' | 'en', fitWidth?: number, size?: number): string {
++/** Nhãn giờ hiển thị: "HH:mm - HH:mm"; 12h chỉ bỏ hậu tố AM/PM ở giờ bắt đầu khi cùng buổi với giờ kết
++ * thúc (khác buổi, vd vắt qua trưa, giữ đủ 2 hậu tố như Inks); không vừa `fitWidth` → thử "HH:mm-HH:mm"
++ * (gạch nối liền); vẫn không vừa → chỉ giờ bắt đầu; không `endTime` → giờ bắt đầu; cả ngày → nhãn "Cả ngày". */
++function chipTimeText(
++  occ: Occurrence,
++  hour12: boolean,
++  lang: 'vi' | 'en',
++  fitWidth?: number,
++  size?: number,
++  font: DesignConfig['font'] = 'sans'
++): string {
+   if (occ.allDay) return t('events.allDay', lang);
+   if (!occ.time) return '';
+   const startOnly = fmtTime(occ.time, hour12);
+   if (!occ.endTime) return startOnly;
+   const end = fmtTime(occ.endTime, hour12);
+-  const start12 = fmtTime(occ.time, true).replace(/ (AM|PM)$/, '');
+-  const start = hour12 ? start12 : fmtTime(occ.time, false);
++  let start = startOnly;
++  if (hour12) {
++    const startSuffix = startOnly.match(/ (AM|PM)$/)?.[1];
++    const endSuffix = end.match(/ (AM|PM)$/)?.[1];
++    start = startSuffix === endSuffix ? startOnly.replace(/ (AM|PM)$/, '') : startOnly;
++  }
+   const spaced = `${start} - ${end}`;
+   if (fitWidth === undefined || size === undefined) return spaced;
+-  const fits = (text: string) => text.length * size * CHAR_W <= fitWidth;
++  const fits = (text: string) => text.length * size * charW(font) <= fitWidth;
+   if (fits(spaced)) return spaced;
+   const tight = `${start}-${end}`;
+   if (fits(tight)) return tight;
+@@ -314,7 +329,7 @@ function drawChip(
+   const textColor = chip.kind === 'todo' && chip.overdue ? OVERDUE_CHIP_COLOR : TODO_TEXT;
+   const line1 =
+     chip.kind === 'event'
+-      ? chipTimeText(chip.occ, c.hour12, c.lang, availWidth, timeSize)
++      ? chipTimeText(chip.occ, c.hour12, c.lang, availWidth, timeSize, c.font)
+       : `☐${chip.overdue ? ` ${t('todo.overdue', c.lang)}` : ''}`;
+   const line1Size = chip.kind === 'event' ? timeSize : titleSize;
+   const line2 = chip.kind === 'event' ? chip.occ.title : chip.todo.text;
+@@ -323,7 +338,7 @@ function drawChip(
+     op: 'text',
+     x: x + pad,
+     y: y + pad + line1Size * 0.85,
+-    text: chip.kind === 'event' ? line1 : truncate(line1, availWidth, line1Size),
++    text: chip.kind === 'event' ? line1 : truncateByFactor(line1, availWidth, line1Size, charW(c.font)),
+     size: line1Size,
+     weight: 600,
+     color: textColor,
+@@ -334,7 +349,7 @@ function drawChip(
+     op: 'text',
+     x: x + pad,
+     y: y + pad + line1Size * 1.2 + titleSize * 0.9,
+-    text: truncate(line2, availWidth, titleSize),
++    text: truncateByFactor(line2, availWidth, titleSize, charW(c.font)),
+     size: titleSize,
+     weight: 400,
+     color: TODO_TEXT,
+@@ -393,7 +408,7 @@ function drawTodayItem(
+       font: c.font,
+     });
+   } else if (item.todo.due) {
+-    const due = { text: item.overdue ? t('todo.overdue', c.lang) : todoDueText(item.todo.due, today, c.lang), overdue: item.overdue };
++    const due = todoDueLabel(item.todo.due, today, c.lang);
+     ops.push({
+       op: 'text',
+       x: textLeft,
+@@ -407,9 +422,3 @@ function drawTodayItem(
+     });
+   }
+ }
+-
+-function todoDueText(due: ISODate, today: ISODate, lang: 'vi' | 'en'): string {
+-  if (due === today) return t('date.today', lang);
+-  const [, m, dd] = due.split('-');
+-  return `${Number(dd)}/${Number(m)}`;
+-}
+diff --git a/src/ui/components/Toast.tsx b/src/ui/components/Toast.tsx
+index 5b2bf93..2262533 100644
+--- a/src/ui/components/Toast.tsx
++++ b/src/ui/components/Toast.tsx
+@@ -1,8 +1,22 @@
+-/** Thông báo nhỏ ở đáy màn hình (T-2.7, port lich-nen.html L166-168/L706). */
+-export function Toast({ message }: { message: string | null }) {
++/** Thông báo nhỏ ở đáy màn hình (T-2.7, port lich-nen.html L166-168/L706).
++ * T-6.2: thêm nút hành động tùy chọn (vd. "Hoàn tác"). */
++export function Toast({
++  message,
++  actionLabel,
++  onAction,
++}: {
++  message: string | null;
++  actionLabel?: string | null;
++  onAction?: () => void;
++}) {
+   return (
+     <div class={message ? 'toast show' : 'toast'} data-testid="toast">
+-      {message ?? ''}
++      <span class="toast-msg">{message ?? ''}</span>
++      {message && actionLabel && (
++        <button type="button" class="toast-action" data-testid="toast-undo" onClick={onAction}>
++          {actionLabel}
++        </button>
++      )}
+     </div>
+   );
+ }
+diff --git a/src/ui/screens/Events.tsx b/src/ui/screens/Events.tsx
+index 05f2b95..39b37c1 100644
+--- a/src/ui/screens/Events.tsx
++++ b/src/ui/screens/Events.tsx
+@@ -15,6 +15,7 @@ export function Events({ store }: { store: Store }) {
+   const state = useStoreState(store);
+   const [segment, setSegment] = useState<Segment>('events');
+   const [toastMsg, setToastMsg] = useState<string | null>(null);
++  const [toastAction, setToastAction] = useState<{ label: string; onClick: () => void } | null>(null);
+   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+ 
+   useEffect(
+@@ -24,10 +25,18 @@ export function Events({ store }: { store: Store }) {
+     [],
+   );
+ 
+-  function showToast(msg: string) {
++  // T-6.2: toast có thể mang nút hành động (vd. "Hoàn tác"), hiện lâu hơn (~5s) khi có hành động.
++  function showToast(msg: string, action?: { label: string; onClick: () => void }) {
+     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+     setToastMsg(msg);
+-    toastTimerRef.current = setTimeout(() => setToastMsg(null), TOAST_MS);
++    setToastAction(action ?? null);
++    toastTimerRef.current = setTimeout(
++      () => {
++        setToastMsg(null);
++        setToastAction(null);
++      },
++      action ? 5000 : TOAST_MS,
++    );
+   }
+ 
+   const lang = state.design.lang;
+@@ -54,10 +63,19 @@ export function Events({ store }: { store: Store }) {
+       </div>
+       <div class="events-body">
+         {segment === 'events' && <EventsTab store={store} state={state} showToast={showToast} />}
+-        {segment === 'todos' && <TodosTab store={store} state={state} />}
++        {segment === 'todos' && <TodosTab store={store} state={state} showToast={showToast} />}
+         {segment === 'note' && <NoteTab store={store} state={state} showToast={showToast} />}
+       </div>
+-      <Toast message={toastMsg} />
++      <Toast
++        message={toastMsg}
++        actionLabel={toastAction?.label}
++        onAction={() => {
++          if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
++          toastAction?.onClick();
++          setToastMsg(null);
++          setToastAction(null);
++        }}
++      />
+     </div>
+   );
+ }
+diff --git a/src/ui/screens/events/EventsTab.tsx b/src/ui/screens/events/EventsTab.tsx
+index fe1b367..3d9ec4e 100644
+--- a/src/ui/screens/events/EventsTab.tsx
++++ b/src/ui/screens/events/EventsTab.tsx
+@@ -138,7 +138,7 @@ export function EventsTab({ store, state, showToast }: Props) {
+   function save() {
+     const ev = buildEvent();
+     if (editingId) store.dispatch({ type: 'updateEvent', event: ev });
+-    else store.dispatch({ type: 'addEvent', event: ev });
++    else store.dispatch({ type: 'addEvent', event: { ...ev, createdAt: Date.now() } });
+     setSelected(ev.date);
+     const p = parseISODate(ev.date);
+     setYm({ y: p.y, m0: p.m0 });
+diff --git a/src/ui/screens/events/TodosTab.tsx b/src/ui/screens/events/TodosTab.tsx
+index f852753..96b5e6e 100644
+--- a/src/ui/screens/events/TodosTab.tsx
++++ b/src/ui/screens/events/TodosTab.tsx
+@@ -1,4 +1,5 @@
+-import { useState } from 'preact/hooks';
++import { useEffect, useRef, useState } from 'preact/hooks';
++import type { JSX } from 'preact';
+ import type { Store } from '../../store';
+ import type { AppState, ISODate, Todo } from '../../../core/model';
+ import { t } from '../../../core/i18n';
+@@ -9,8 +10,16 @@ import { sortTodosForDisplay, todoDueLabel } from './util';
+ interface Props {
+   store: Store;
+   state: AppState;
++  showToast: (msg: string, action?: { label: string; onClick: () => void }) => void;
+ }
+ 
++/** T-6.2: một bộ cử chỉ pointer duy nhất cho mỗi hàng, phân biệt vuốt ngang / nhấn giữ kéo / chạm thường. */
++const LONG_PRESS_MS = 450;
++const MOVE_CANCEL_PX = 8;
++const SWIPE_ACTIVATE_PX = 16;
++const SWIPE_PANEL_PX = 160;
++const SWIPE_OPEN_RATIO = 0.4;
++
+ function DueBadge({
+   todo,
+   today,
+@@ -59,7 +68,264 @@ function DueBadge({
+   );
+ }
+ 
+-export function TodosTab({ store, state }: Props) {
++interface DragInfo {
++  id: string;
++  listKey: 'open' | 'done';
++  originalIndex: number;
++  finalIndex: number;
++  rowHeight: number;
++  rawDy: number;
++}
++
++type Phase = 'idle' | 'pending' | 'swipe' | 'drag';
++
++interface GestureCallbacks {
++  onSwipeSettle: (open: boolean) => void;
++  onBeginDrag: (rowEl: HTMLDivElement) => void;
++  onDragMove: (dy: number) => void;
++  onDragEnd: () => void;
++  onDragCancel: () => void;
++}
++
++/** Bộ nhận cử chỉ dùng chung cho hàng thường và hàng đã lưu trữ (T-6.2). `canDrag` tắt cho hàng lưu trữ. */
++function useRowGesture(canDrag: boolean, cb: GestureCallbacks) {
++  const phaseRef = useRef<Phase>('idle');
++  const startRef = useRef({ x: 0, y: 0 });
++  const pointerIdRef = useRef<number | null>(null);
++  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
++  const suppressClickRef = useRef(false);
++  const [dx, setDx] = useState<number | null>(null);
++  const [dragging, setDragging] = useState(false);
++  const rowElRef = useRef<HTMLDivElement | null>(null);
++
++  function clearTimer() {
++    if (timerRef.current) {
++      clearTimeout(timerRef.current);
++      timerRef.current = null;
++    }
++  }
++
++  // Safari iOS (bằng chứng review T-6.2 lượt 1): hàng có `touch-action: pan-y` để cuộn dọc mượt
++  // khi không kéo. Nhưng WebKit chốt quyết định cuộn/không-cuộn cho cả chuỗi chạm ngay khi touch
++  // bắt đầu di chuyển theo `touch-action`; gọi `preventDefault()` trên PointerEvent (`onPointerMove`
++  // ở JSX) không còn chặn được cuộn nữa một khi WebKit đã "giành" cử chỉ — nó hủy pointer luôn
++  // (bắn `pointercancel`) trước khi JS kịp phản ứng. Cách chặn được: đăng ký listener `touchmove`
++  // gốc (không qua JSX, vì {passive:false} không tự đặt được qua props) trực tiếp trên phần tử
++  // hàng, gọi `preventDefault()` ngay khi đang vuốt ngang (đã xác định hướng) hoặc đang kéo (đã qua
++  // nhấn giữ) — tức TRƯỚC khi trình duyệt kịp chốt cuộn cho lần di chuyển đó.
++  useEffect(() => {
++    const el = rowElRef.current;
++    if (!el) return;
++    function onTouchMove(e: TouchEvent) {
++      if (phaseRef.current === 'swipe' || phaseRef.current === 'drag') e.preventDefault();
++    }
++    el.addEventListener('touchmove', onTouchMove, { passive: false });
++    return () => el.removeEventListener('touchmove', onTouchMove);
++  }, []);
++
++  function onPointerDown(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
++    if ((e.target as HTMLElement).closest('input')) return;
++    startRef.current = { x: e.clientX, y: e.clientY };
++    pointerIdRef.current = e.pointerId;
++    phaseRef.current = 'pending';
++    clearTimer();
++    if (canDrag) {
++      timerRef.current = setTimeout(() => {
++        if (phaseRef.current !== 'pending') return;
++        phaseRef.current = 'drag';
++        suppressClickRef.current = true;
++        setDragging(true);
++        const el = rowElRef.current;
++        if (el) {
++          try {
++            el.setPointerCapture(e.pointerId);
++          } catch {
++            /* ignore: pointer may already be released */
++          }
++          cb.onBeginDrag(el);
++        }
++      }, LONG_PRESS_MS);
++    }
++  }
++
++  function onPointerMove(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
++    if (pointerIdRef.current !== e.pointerId) return;
++    const dxNow = e.clientX - startRef.current.x;
++    const dyNow = e.clientY - startRef.current.y;
++    if (phaseRef.current === 'pending') {
++      if (Math.abs(dxNow) > SWIPE_ACTIVATE_PX && Math.abs(dxNow) > Math.abs(dyNow)) {
++        clearTimer();
++        phaseRef.current = 'swipe';
++        suppressClickRef.current = true;
++        const el = rowElRef.current;
++        if (el) {
++          try {
++            el.setPointerCapture(e.pointerId);
++          } catch {
++            /* ignore */
++          }
++        }
++        setDx(0);
++      } else if (Math.abs(dyNow) > MOVE_CANCEL_PX) {
++        clearTimer();
++        phaseRef.current = 'idle';
++      }
++      return;
++    }
++    if (phaseRef.current === 'swipe') {
++      e.preventDefault();
++      setDx(Math.min(0, Math.max(-SWIPE_PANEL_PX - 24, dxNow)));
++      return;
++    }
++    if (phaseRef.current === 'drag') {
++      e.preventDefault();
++      cb.onDragMove(dyNow);
++    }
++  }
++
++  function endGesture(cancelled: boolean) {
++    clearTimer();
++    if (phaseRef.current === 'swipe') {
++      const openThreshold = -SWIPE_PANEL_PX * SWIPE_OPEN_RATIO;
++      const cur = dx ?? 0;
++      cb.onSwipeSettle(!cancelled && cur <= openThreshold);
++      setDx(null);
++    } else if (phaseRef.current === 'drag') {
++      setDragging(false);
++      if (cancelled) cb.onDragCancel();
++      else cb.onDragEnd();
++    }
++    phaseRef.current = 'idle';
++    pointerIdRef.current = null;
++  }
++
++  function onPointerUp(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
++    if (pointerIdRef.current !== e.pointerId) return;
++    endGesture(false);
++  }
++
++  function onPointerCancel(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
++    if (pointerIdRef.current !== e.pointerId) return;
++    // `pointercancel` (vd. WebKit giành cuộn giữa chừng) không kéo theo sự kiện `click` nào sau đó
++    // -> phải tự dọn cờ suppressClick ở đây, nếu không lần chạm HỢP LỆ tiếp theo trên hàng này sẽ bị
++    // nuốt oan (kẹt trạng thái). `endGesture(true)` bên dưới đã lo phần dọn `dragInfo`/`dx` để hàng
++    // nổi hoặc panel vuốt trở lại đúng chỗ (không mutate state thật khi bị hủy).
++    suppressClickRef.current = false;
++    endGesture(true);
++  }
++
++  function onClickCapture(e: JSX.TargetedMouseEvent<HTMLDivElement>) {
++    if (suppressClickRef.current) {
++      e.preventDefault();
++      e.stopPropagation();
++      suppressClickRef.current = false;
++    }
++  }
++
++  return {
++    dx,
++    dragging,
++    rowElRef,
++    handlers: { onPointerDown, onPointerMove, onPointerUp, onPointerCancel, onClickCapture },
++  };
++}
++
++function SwipeRow({
++  id,
++  isOpen,
++  setOpen,
++  canDrag,
++  dragInfo,
++  setDragInfo,
++  listKey,
++  index,
++  list,
++  onDragCommit,
++  actions,
++  children,
++}: {
++  id: string;
++  isOpen: boolean;
++  setOpen: (open: boolean) => void;
++  canDrag: boolean;
++  dragInfo: DragInfo | null;
++  setDragInfo: (update: DragInfo | null | ((prev: DragInfo | null) => DragInfo | null)) => void;
++  listKey: 'open' | 'done';
++  index: number;
++  list: Todo[];
++  onDragCommit: (id: string, targetId: string) => void;
++  actions: JSX.Element;
++  children: JSX.Element;
++}) {
++  const { dx, dragging, rowElRef, handlers } = useRowGesture(canDrag, {
++    onSwipeSettle: (open) => setOpen(open),
++    onBeginDrag: (rowEl) => {
++      const rect = rowEl.getBoundingClientRect();
++      setDragInfo({ id, listKey, originalIndex: index, finalIndex: index, rowHeight: rect.height + 6, rawDy: 0 });
++    },
++    onDragMove: (dy) => {
++      setDragInfo((prev) => {
++        if (!prev || prev.id !== id) return prev;
++        const steps = Math.round(dy / prev.rowHeight);
++        const finalIndex = Math.min(list.length - 1, Math.max(0, prev.originalIndex + steps));
++        return { ...prev, rawDy: dy, finalIndex };
++      });
++    },
++    onDragEnd: () => onDragCommit(id, ''),
++    onDragCancel: () => setDragInfo(null),
++  });
++
++  const isDraggedRow = dragInfo?.id === id && dragInfo.listKey === listKey;
++  let shiftPx = 0;
++  if (dragInfo && dragInfo.listKey === listKey && !isDraggedRow) {
++    const { originalIndex, finalIndex, rowHeight } = dragInfo;
++    if (originalIndex < finalIndex && index > originalIndex && index <= finalIndex) shiftPx = -rowHeight;
++    else if (originalIndex > finalIndex && index >= finalIndex && index < originalIndex) shiftPx = rowHeight;
++  }
++
++  const innerStyle: Record<string, string> = {};
++  if (isDraggedRow) {
++    innerStyle.transform = `translateY(${dragInfo!.rawDy}px) scale(1.03)`;
++    innerStyle.transition = 'none';
++  } else if (dx !== null) {
++    innerStyle.transform = `translateX(${dx}px)`;
++    innerStyle.transition = 'none';
++  } else if (shiftPx !== 0) {
++    innerStyle.transform = `translateY(${shiftPx}px)`;
++  } else if (isOpen) {
++    innerStyle.transform = `translateX(-${SWIPE_PANEL_PX}px)`;
++  }
++
++  // Đóng hẳn (không vuốt, không mở) -> ẩn hẳn panel nút (không chỉ che bằng transform): review
++  // T-6.2 lượt 2 phát hiện mép phải lộ vệt cong mảnh khi đóng, do góc bo `.todo-item-wrap` clip
++  // hình chữ nhật `.todo-item-inner` để lộ một mẩu panel phía sau qua góc bo. `visibility: hidden`
++  // khi đóng loại bỏ hẳn phần đó khỏi hiển thị bất kể góc bo/viền.
++  const showActions = isOpen || dx !== null;
++
++  return (
++    <div
++      class="todo-item-wrap"
++      ref={rowElRef}
++      onPointerDown={handlers.onPointerDown}
++      onPointerMove={handlers.onPointerMove}
++      onPointerUp={handlers.onPointerUp}
++      onPointerCancel={handlers.onPointerCancel}
++      onClickCapture={handlers.onClickCapture}
++    >
++      <div class="todo-swipe-actions" style={{ visibility: showActions ? 'visible' : 'hidden' }}>
++        {actions}
++      </div>
++      <div
++        class={isDraggedRow || dragging ? 'todo-item-inner todo-item-dragging' : 'todo-item-inner'}
++        style={innerStyle}
++      >
++        {children}
++      </div>
++    </div>
++  );
++}
++
++export function TodosTab({ store, state, showToast }: Props) {
+   const lang = state.design.lang;
+   const today = toISODate(new Date());
+   const [inputText, setInputText] = useState('');
+@@ -67,8 +333,17 @@ export function TodosTab({ store, state }: Props) {
+   const [editingId, setEditingId] = useState<string | null>(null);
+   const [editingText, setEditingText] = useState('');
+   const [showDone, setShowDone] = useState(false);
++  const [showArchived, setShowArchived] = useState(false);
++  const [swipeOpenId, setSwipeOpenId] = useState<string | null>(null);
++  const [dragInfo, setDragInfoState] = useState<DragInfo | null>(null);
+ 
+-  const sorted = sortTodosForDisplay(state.todos);
++  function setDragInfo(update: DragInfo | null | ((prev: DragInfo | null) => DragInfo | null)) {
++    setDragInfoState((prev) => (typeof update === 'function' ? (update as (p: DragInfo | null) => DragInfo | null)(prev) : update));
++  }
++
++  const activeTodos = state.todos.filter((x) => !x.archived);
++  const archivedTodos = [...state.todos.filter((x) => !!x.archived)].sort((a, b) => a.order - b.order);
++  const sorted = sortTodosForDisplay(activeTodos);
+   const open = sorted.filter((x) => !x.done);
+   const done = sorted.filter((x) => x.done);
+ 
+@@ -93,10 +368,48 @@ export function TodosTab({ store, state }: Props) {
+     setEditingId(null);
+   }
+ 
+-  function renderRow(todo: Todo, list: Todo[]) {
++  function handleArchive(todo: Todo) {
++    setSwipeOpenId(null);
++    store.dispatch({ type: 'archiveTodo', id: todo.id, archived: true });
++    showToast(t('events.todoArchivedToast', lang), {
++      label: t('events.undo', lang),
++      onClick: () => store.dispatch({ type: 'restoreTodo', todo }),
++    });
++  }
++
++  function handleDelete(todo: Todo) {
++    setSwipeOpenId(null);
++    store.dispatch({ type: 'deleteTodo', id: todo.id });
++    showToast(t('events.todoDeletedToast', lang), {
++      label: t('events.undo', lang),
++      onClick: () => store.dispatch({ type: 'restoreTodo', todo }),
++    });
++  }
++
++  function handleRestore(todo: Todo) {
++    setSwipeOpenId(null);
++    store.dispatch({ type: 'archiveTodo', id: todo.id, archived: false });
++  }
++
++  function handleDragEnd(list: Todo[], listKey: 'open' | 'done') {
++    setDragInfoState((prev) => {
++      if (!prev || prev.listKey !== listKey) return null;
++      const { id, originalIndex, finalIndex } = prev;
++      if (finalIndex !== originalIndex) {
++        const dragged = list[originalIndex];
++        const withoutDragged = list.filter((tItem) => tItem.id !== id);
++        const preview = [...withoutDragged.slice(0, finalIndex), dragged, ...withoutDragged.slice(finalIndex)];
++        const target = finalIndex > originalIndex ? preview[finalIndex - 1] : preview[finalIndex + 1];
++        if (target) store.dispatch({ type: 'reorderTodo', id, targetId: target.id });
++      }
++      return null;
++    });
++  }
++
++  function renderRow(todo: Todo, list: Todo[], listKey: 'open' | 'done') {
+     const idx = list.indexOf(todo);
+-    return (
+-      <div key={todo.id} class="todo-item" data-testid="todo-item">
++    const content = (
++      <div class="todo-item" data-testid="todo-item">
+         <button
+           type="button"
+           data-testid="todo-toggle"
+@@ -149,10 +462,72 @@ export function TodosTab({ store, state }: Props) {
+         </button>
+       </div>
+     );
++    return (
++      <SwipeRow
++        key={todo.id}
++        id={todo.id}
++        isOpen={swipeOpenId === todo.id}
++        setOpen={(open) => setSwipeOpenId(open ? todo.id : null)}
++        canDrag={true}
++        dragInfo={dragInfo}
++        setDragInfo={setDragInfo}
++        listKey={listKey}
++        index={idx}
++        list={list}
++        onDragCommit={() => handleDragEnd(list, listKey)}
++        actions={
++          <>
++            <button type="button" data-testid="todo-swipe-archive" class="todo-swipe-archive" onClick={() => handleArchive(todo)}>
++              {t('events.todoArchive', lang)}
++            </button>
++            <button type="button" data-testid="todo-swipe-delete" class="todo-swipe-delete" onClick={() => handleDelete(todo)}>
++              {t('events.todoDelete', lang)}
++            </button>
++          </>
++        }
++      >
++        {content}
++      </SwipeRow>
++    );
++  }
++
++  function renderArchivedRow(todo: Todo) {
++    const content = (
++      <div class="todo-item todo-archived-item" data-testid="todo-archived-item">
++        <span class="todo-text">{todo.text}</span>
++      </div>
++    );
++    return (
++      <SwipeRow
++        key={todo.id}
++        id={todo.id}
++        isOpen={swipeOpenId === todo.id}
++        setOpen={(open) => setSwipeOpenId(open ? todo.id : null)}
++        canDrag={false}
++        dragInfo={null}
++        setDragInfo={() => {}}
++        listKey="open"
++        index={0}
++        list={[]}
++        onDragCommit={() => {}}
++        actions={
++          <>
++            <button type="button" data-testid="todo-swipe-restore" class="todo-swipe-restore" onClick={() => handleRestore(todo)}>
++              {t('events.todoRestore', lang)}
++            </button>
++            <button type="button" data-testid="todo-swipe-delete" class="todo-swipe-delete" onClick={() => handleDelete(todo)}>
++              {t('events.todoDelete', lang)}
++            </button>
++          </>
++        }
++      >
++        {content}
++      </SwipeRow>
++    );
+   }
+ 
+   return (
+-    <div class="todos-tab">
++    <div class="todos-tab" onClick={() => setSwipeOpenId(null)}>
+       <div class="addrow">
+         <input
+           type="text"
+@@ -180,13 +555,26 @@ export function TodosTab({ store, state }: Props) {
+         </button>
+       </div>
+       {open.length === 0 && <p class="empty">{t('todo.empty', lang)}</p>}
+-      <div class="todo-list">{open.map((todo) => renderRow(todo, open))}</div>
++      <div class="todo-list">{open.map((todo) => renderRow(todo, open, 'open'))}</div>
+       {done.length > 0 && (
+         <div class="todo-done-group">
+           <button type="button" data-testid="todo-done-toggle" class="row btnrow" onClick={() => setShowDone((v) => !v)}>
+             {t('events.todoDoneCount', lang, { n: done.length })}
+           </button>
+-          {showDone && <div class="todo-done-list">{done.map((todo) => renderRow(todo, done))}</div>}
++          {showDone && <div class="todo-done-list">{done.map((todo) => renderRow(todo, done, 'done'))}</div>}
++        </div>
++      )}
++      {archivedTodos.length > 0 && (
++        <div class="todo-archived-group">
++          <button
++            type="button"
++            data-testid="todo-archived-toggle"
++            class="row btnrow"
++            onClick={() => setShowArchived((v) => !v)}
++          >
++            {t('events.todoArchivedCount', lang, { n: archivedTodos.length })}
++          </button>
++          {showArchived && <div class="todo-archived-list">{archivedTodos.map((todo) => renderArchivedRow(todo))}</div>}
+         </div>
+       )}
+     </div>
+diff --git a/src/ui/store.ts b/src/ui/store.ts
+index c43e876..cbaea5e 100644
+--- a/src/ui/store.ts
++++ b/src/ui/store.ts
+@@ -6,6 +6,8 @@ import { saveState } from '../storage/db';
+ /** Cùng nhóm hiển thị theo `cmpTodo`: cùng `done`; nếu chưa xong thì cùng có/không `due`,
+  * và nếu có `due` thì cùng ngày. Dùng để `moveTodo` chỉ hoán đổi trong nhóm (T-2.14). */
+ export function sameTodoGroup(a: Todo, b: Todo): boolean {
++  if (!!a.archived !== !!b.archived) return false;
++  if (a.archived) return false;
+   if (a.done !== b.done) return false;
+   if (a.done) return true;
+   const aHas = a.due != null;
+@@ -28,6 +30,9 @@ export type Action =
+   | { type: 'deleteTodo'; id: string }
+   | { type: 'moveTodo'; id: string; dir: -1 | 1 }
+   | { type: 'setTodoDue'; id: string; due: ISODate | null }
++  | { type: 'archiveTodo'; id: string; archived: boolean }
++  | { type: 'restoreTodo'; todo: Todo }
++  | { type: 'reorderTodo'; id: string; targetId: string }
+   | { type: 'addNote'; note: Note }
+   | { type: 'updateNote'; note: Note }
+   | { type: 'deleteNote'; id: string }
+@@ -57,7 +62,17 @@ export function reducer(state: AppState, action: Action): AppState {
+     case 'addEvent':
+       return { ...state, events: [...state.events, action.event] };
+     case 'updateEvent':
+-      return { ...state, events: state.events.map((e) => (e.id === action.event.id ? action.event : e)) };
++      // v1.6 (B-003): event mới không mang createdAt -> giữ createdAt của event cũ (nếu có).
++      return {
++        ...state,
++        events: state.events.map((e) =>
++          e.id === action.event.id
++            ? action.event.createdAt == null && e.createdAt != null
++              ? { ...action.event, createdAt: e.createdAt }
++              : action.event
++            : e
++        ),
++      };
+     case 'deleteEvent':
+       return { ...state, events: state.events.filter((e) => e.id !== action.id) };
+     case 'addTodo': {
+@@ -74,7 +89,8 @@ export function reducer(state: AppState, action: Action): AppState {
+     case 'moveTodo': {
+       // Hoán đổi theo đúng thứ tự hiển thị (cmpTodo, khớp `sortTodosForDisplay` trong app),
+       // chỉ khi việc kề bên cùng nhóm (cùng done, cùng có/không due, cùng ngày due) (T-2.14).
+-      const sorted = [...state.todos].sort(cmpTodo);
++      // T-6.1 (D-028): việc đã lưu trữ bị bỏ khỏi danh sách hiển thị -> nhảy qua khi tìm hàng xóm.
++      const sorted = [...state.todos].filter((t) => !t.archived).sort(cmpTodo);
+       const idx = sorted.findIndex((t) => t.id === action.id);
+       if (idx < 0) return state;
+       const swapIdx = idx + action.dir;
+@@ -88,6 +104,41 @@ export function reducer(state: AppState, action: Action): AppState {
+       ]);
+       return { ...state, todos: state.todos.map((t) => (orders.has(t.id) ? { ...t, order: orders.get(t.id)! } : t)) };
+     }
++    case 'archiveTodo': {
++      return {
++        ...state,
++        todos: state.todos.map((t) => {
++          if (t.id !== action.id) return t;
++          if (!action.archived) {
++            const { archived: _archived, ...rest } = t;
++            return rest as Todo;
++          }
++          return { ...t, archived: true };
++        }),
++      };
++    }
++    case 'restoreTodo': {
++      if (state.todos.some((t) => t.id === action.todo.id)) return state;
++      return { ...state, todos: [...state.todos, action.todo] };
++    }
++    case 'reorderTodo': {
++      // T-6.1 (D-028): kéo id vào vị trí targetId trong danh sách hiển thị (không lưu trữ),
++      // chỉ khi cùng nhóm hiển thị (cmpTodo); tính lại order trong nhóm, không đụng nhóm khác.
++      const displaySorted = [...state.todos].filter((t) => !t.archived).sort(cmpTodo);
++      const idx = displaySorted.findIndex((t) => t.id === action.id);
++      const targetIdx = displaySorted.findIndex((t) => t.id === action.targetId);
++      if (idx < 0 || targetIdx < 0 || idx === targetIdx) return state;
++      const a = displaySorted[idx];
++      const b = displaySorted[targetIdx];
++      if (!sameTodoGroup(a, b)) return state;
++      const group = displaySorted.filter((t) => sameTodoGroup(t, b));
++      const withoutA = group.filter((t) => t.id !== a.id);
++      const targetIdxInGroup = withoutA.findIndex((t) => t.id === b.id);
++      const insertAt = idx < targetIdx ? targetIdxInGroup + 1 : targetIdxInGroup;
++      const newGroupOrder = [...withoutA.slice(0, insertAt), a, ...withoutA.slice(insertAt)];
++      const orders = new Map<string, number>(newGroupOrder.map((t, i) => [t.id, group[i].order]));
++      return { ...state, todos: state.todos.map((t) => (orders.has(t.id) ? { ...t, order: orders.get(t.id)! } : t)) };
++    }
+     case 'setTodoDue': {
+       return {
+         ...state,
+@@ -161,6 +212,26 @@ export function createStore(initialState: AppState): Store {
+     }, PERSIST_DEBOUNCE_MS);
+   }
+ 
++  function flushPersist(): void {
++    if (timer !== null) {
++      clearTimeout(timer);
++      timer = null;
++      void saveState(state);
++    }
++  }
++
++  if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
++    window.addEventListener('pagehide', flushPersist);
++  }
++
++  if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
++    document.addEventListener('visibilitychange', () => {
++      if (document.visibilityState === 'hidden') {
++        flushPersist();
++      }
++    });
++  }
++
+   return {
+     getState: () => state,
+     dispatch(action: Action) {
+diff --git a/src/ui/styles.css b/src/ui/styles.css
+index 111a974..e278681 100644
+--- a/src/ui/styles.css
++++ b/src/ui/styles.css
+@@ -787,12 +787,80 @@ select option {
+   opacity: 0.35;
+ }
+ 
+-.todo-done-group {
++.todo-done-group,
++.todo-archived-group {
+   display: flex;
+   flex-direction: column;
+   gap: 6px;
+ }
+ 
++/* ---- cử chỉ hàng to-do: vuốt trái Lưu trữ/Xóa, nhấn giữ kéo sắp xếp (T-6.2) ---- */
++
++.todo-item-wrap {
++  position: relative;
++  overflow: hidden;
++  border-radius: 8px;
++  touch-action: pan-y;
++  -webkit-user-select: none;
++  user-select: none;
++  -webkit-touch-callout: none;
++}
++
++.todo-swipe-actions {
++  position: absolute;
++  top: 0;
++  bottom: 0;
++  right: 0;
++  width: 160px;
++  display: flex;
++}
++
++.todo-swipe-actions button {
++  flex: 1;
++  min-width: 44px;
++  min-height: 44px;
++  border: none;
++  border-radius: 0;
++  color: #fff;
++  font-size: 13px;
++  white-space: nowrap;
++  padding: 0 6px;
++  box-sizing: border-box;
++}
++
++.todo-swipe-archive {
++  background: #4c6ef5;
++}
++
++.todo-swipe-delete {
++  background: #e03131;
++}
++
++.todo-swipe-restore {
++  background: #2f9e44;
++}
++
++.todo-item-inner {
++  position: relative;
++  width: 100%;
++  background: #0b0b0f;
++  /* Khớp bo góc với `.todo-item-wrap` (clip `overflow:hidden`) để không lộ mẩu panel vuốt phía
++     sau qua góc bo khi đóng (review T-6.2 lượt 2): `.todo-item-wrap` clip theo hình chữ nhật bo
++     góc, còn hàng bên trong là hình chữ nhật vuông góc -> ở 4 góc, phần bo của wrapper cắt một
++     mẩu tam giác nhỏ của hàng, để lộ panel/nền phía sau qua đó nếu 2 bán kính không khớp nhau. */
++  border-radius: 8px;
++}
++
++.todo-item-dragging {
++  z-index: 5;
++  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
++  transform-origin: center;
++}
++
++.todo-archived-item {
++  opacity: 0.55;
++}
++
+ .row.btnrow {
+   min-height: 44px;
+   background: none;
+@@ -874,6 +942,9 @@ select option {
+   pointer-events: none;
+   max-width: 90vw;
+   text-align: center;
++  display: flex;
++  align-items: center;
++  gap: 10px;
+ }
+ 
+ .toast.show {
+@@ -881,6 +952,16 @@ select option {
+   transform: translateX(-50%);
+ }
+ 
++.toast-action {
++  pointer-events: auto;
++  background: none;
++  border: none;
++  color: #4c6ef5;
++  font-weight: 700;
++  font-size: 14px;
++  flex-shrink: 0;
++}
++
+ /* Màn Đồng bộ (T-3.3): tái dùng .field/.field-between/.switch/.btn/.hint. */
+ .sync-screen {
+   display: flex;
+diff --git a/tests/e2e/dedup.spec.ts b/tests/e2e/dedup.spec.ts
+new file mode 100644
+index 0000000..9895548
+--- /dev/null
++++ b/tests/e2e/dedup.spec.ts
+@@ -0,0 +1,82 @@
++import { test, expect, type Page } from '@playwright/test';
++
++const SEED_DEVICE = { id: 'iphone-13-pro-max', label: 'iPhone 13 Pro Max', width: 428, height: 926, safeTop: 0.3, safeBottom: 0.14 };
++const TITLE = 'Họp nhóm';
++
++function isoDate(d: Date): string {
++  const p = (n: number) => String(n).padStart(2, '0');
++  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
++}
++
++/** Ghi thẳng `lichkhoa:state` vào IndexedDB (`keyval-store`/`keyval`), hợp nhất trên state đã có (T-4.9). */
++async function seedState(page: Page, patch: Record<string, unknown>): Promise<void> {
++  await page.evaluate(
++    ({ patch, device }) =>
++      new Promise<void>((resolve, reject) => {
++        const req = indexedDB.open('keyval-store');
++        req.onupgradeneeded = () => req.result.createObjectStore('keyval');
++        req.onerror = () => reject(req.error);
++        req.onsuccess = () => {
++          const tx = req.result.transaction('keyval', 'readonly');
++          const getReq = tx.objectStore('keyval').get('lichkhoa:state');
++          getReq.onerror = () => reject(getReq.error);
++          getReq.onsuccess = () => {
++            const cur = (getReq.result ?? { version: 1, device }) as Record<string, unknown>;
++            const next = { ...cur, ...patch };
++            const tx2 = req.result.transaction('keyval', 'readwrite');
++            tx2.objectStore('keyval').put(next, 'lichkhoa:state');
++            tx2.oncomplete = () => {
++              req.result.close();
++              resolve();
++            };
++            tx2.onerror = () => reject(tx2.error);
++          };
++        };
++      }),
++    { patch, device: SEED_DEVICE },
++  );
++}
++
++async function opsTexts(page: Page): Promise<string[]> {
++  return page.evaluate(() =>
++    ((window as unknown as { __lastOps?: { text?: string }[] }).__lastOps ?? [])
++      .map((o) => o.text)
++      .filter((t): t is string => !!t),
++  );
++}
++
++test('B-003: sự kiện local trùng Google (cùng tên/giờ hôm nay) -> hình nền chỉ còn 1, tab Sự kiện vẫn 2', async ({ page }) => {
++  const today = isoDate(new Date());
++
++  await page.goto('/?test=1');
++  await seedState(page, {
++    google: {
++      clientId: '',
++      calendarIds: ['cal1'],
++      cache: {
++        fetchedAt: Date.now(),
++        events: [
++          { id: `google-cal1-g1@${today}`, sourceId: 'g1', source: 'google', title: TITLE, date: today, time: '09:00', allDay: false, color: '#4285F4' },
++        ],
++      },
++    },
++  });
++  await page.reload();
++
++  // Tạo sự kiện local cùng tên/giờ qua tab Sự kiện.
++  await page.getByTestId('tab-events').click();
++  await page.getByTestId('add-event').click();
++  await page.getByTestId('ev-title').fill(TITLE);
++  await page.getByTestId('ev-save').click();
++
++  // Tab Sự kiện: vẫn 2 mục hôm nay, một mục là google.
++  await expect(page.locator('.ev-item').filter({ hasText: TITLE })).toHaveCount(2);
++  await expect(page.getByTestId('ev-item-google')).toHaveCount(1);
++
++  // Hình nền (bố cục Agenda): chỉ còn 1 op text "Họp nhóm".
++  await page.getByTestId('tab-preview').click();
++  await page.getByTestId('layout-agenda').click();
++  await expect
++    .poll(async () => (await opsTexts(page)).filter((t) => t.includes(TITLE)).length, { timeout: 5000 })
++    .toBe(1);
++});
+diff --git a/tests/e2e/m6-todo-gestures.spec.ts b/tests/e2e/m6-todo-gestures.spec.ts
+new file mode 100644
+index 0000000..efe8b8b
+--- /dev/null
++++ b/tests/e2e/m6-todo-gestures.spec.ts
+@@ -0,0 +1,208 @@
++import { test, expect } from '@playwright/test';
++
++/** T-6.END: luồng chính M6 (SPEC v1.7 §6 M6) — vuốt trái Xóa/Lưu trữ + Hoàn tác/Khôi phục,
++ * "Đã lưu trữ", nhấn giữ kéo sắp xếp, xuất JSON có `archived`, reload giữ mọi thứ.
++ * Học cách thao tác từ `tests/e2e/todo-gestures.spec.ts` (vuốt/kéo, chờ IndexedDB trước reload)
++ * và `tests/e2e/m5-week.spec.ts` (đọc `__lastOps`), `tests/e2e/settings.spec.ts` (xuất JSON). */
++
++type Op = { op: string; text?: string; weight?: number };
++
++async function lastOps(page: import('@playwright/test').Page): Promise<Op[]> {
++  return page.evaluate(() => (window as unknown as { __lastOps?: Op[] }).__lastOps ?? []);
++}
++
++async function opsTexts(page: import('@playwright/test').Page): Promise<string[]> {
++  return (await lastOps(page)).map((o) => o.text).filter((t): t is string => !!t);
++}
++
++async function waitPreviewRendered(page: import('@playwright/test').Page) {
++  const preview = page.getByTestId('preview');
++  await expect
++    .poll(() => preview.evaluate((img: HTMLImageElement) => img.naturalWidth), { timeout: 10000 })
++    .toBe(1284);
++}
++
++async function openTodos(page: import('@playwright/test').Page) {
++  await page.getByTestId('tab-events').click();
++  await page.getByTestId('seg-todos').click();
++}
++
++async function addTodo(page: import('@playwright/test').Page, text: string, due?: string) {
++  await page.getByTestId('todo-input').fill(text);
++  if (due) await page.getByTestId('todo-due').fill(due);
++  await page.getByTestId('todo-add').click();
++}
++
++/** `createStore` (src/ui/store.ts) ghi IndexedDB debounce 300ms sau mỗi dispatch — chờ đúng thứ tự
++ * đã lưu (đọc thẳng IndexedDB, không sleep cố định) trước khi reload, xem `todo-gestures.spec.ts`. */
++async function waitForPersistedTodoOrder(page: import('@playwright/test').Page, expectedTexts: string[]) {
++  await page.waitForFunction(
++    (expected) =>
++      new Promise<boolean>((resolve) => {
++        const req = indexedDB.open('keyval-store');
++        req.onerror = () => resolve(false);
++        req.onsuccess = () => {
++          const tx = req.result.transaction('keyval', 'readonly');
++          const getReq = tx.objectStore('keyval').get('lichkhoa:state');
++          getReq.onerror = () => resolve(false);
++          getReq.onsuccess = () => {
++            const state = getReq.result as { todos?: { text: string; order: number; archived?: boolean }[] } | undefined;
++            req.result.close();
++            if (!state?.todos) return resolve(false);
++            const order = [...state.todos]
++              .filter((t) => !t.archived)
++              .sort((a, b) => a.order - b.order)
++              .map((t) => t.text);
++            resolve(JSON.stringify(order) === JSON.stringify(expected));
++          };
++        };
++      }),
++    expectedTexts,
++    { timeout: 5000 },
++  );
++}
++
++async function swipeLeft(
++  page: import('@playwright/test').Page,
++  row: import('@playwright/test').Locator,
++): Promise<import('@playwright/test').Locator> {
++  const box = (await row.boundingBox())!;
++  const y = box.y + box.height / 2;
++  await page.mouse.move(box.x + box.width - 10, y);
++  await page.mouse.down();
++  await page.mouse.move(box.x + box.width - 150, y, { steps: 10 });
++  await page.mouse.up();
++  return row.locator('xpath=../..');
++}
++
++async function readDownload(download: import('@playwright/test').Download): Promise<Buffer> {
++  const stream = await download.createReadStream();
++  const chunks: Buffer[] = [];
++  await new Promise<void>((resolve, reject) => {
++    stream.on('data', (c) => chunks.push(c as Buffer));
++    stream.on('end', () => resolve());
++    stream.on('error', reject);
++  });
++  return Buffer.concat(chunks);
++}
++
++test('T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ', async ({
++  page,
++}) => {
++  await page.goto('/?test=1');
++  const todayIso = await page.evaluate(() => {
++    const d = new Date();
++    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
++  });
++
++  // --- Phase 1: Lưu trữ ẩn khỏi hình nền (bố cục Việc + Tuần), Khôi phục, xuất JSON có `archived`.
++  await openTodos(page);
++  await addTodo(page, 'ViecLuuTru', todayIso);
++  await expect(page.getByTestId('todo-item')).toHaveCount(1);
++
++  await page.getByTestId('tab-preview').click();
++  await page.getByTestId('layout-todo').click();
++  await waitPreviewRendered(page);
++  await expect.poll(async () => opsTexts(page), { timeout: 5000 }).toEqual(
++    expect.arrayContaining(['ViecLuuTru']),
++  );
++
++  await page.getByTestId('layout-week').click();
++  await waitPreviewRendered(page);
++  await expect.poll(async () => opsTexts(page), { timeout: 5000 }).toEqual(
++    expect.arrayContaining(['ViecLuuTru']),
++  );
++
++  await openTodos(page);
++  const wrapLuuTru = await swipeLeft(page, page.getByTestId('todo-item'));
++  await wrapLuuTru.getByTestId('todo-swipe-archive').click();
++  await expect(page.getByTestId('todo-item')).toHaveCount(0);
++  await expect(page.getByTestId('todo-archived-toggle')).toContainText('1');
++
++  await page.getByTestId('tab-preview').click();
++  await page.getByTestId('layout-todo').click();
++  await waitPreviewRendered(page);
++  await expect
++    .poll(async () => opsTexts(page), { timeout: 5000 })
++    .not.toEqual(expect.arrayContaining(['ViecLuuTru']));
++
++  await page.getByTestId('layout-week').click();
++  await waitPreviewRendered(page);
++  await expect
++    .poll(async () => opsTexts(page), { timeout: 5000 })
++    .not.toEqual(expect.arrayContaining(['ViecLuuTru']));
++
++  // Xuất JSON trong khi đang lưu trữ -> có trường `archived: true`.
++  const [download] = await Promise.all([
++    page.waitForEvent('download'),
++    page.getByTestId('export-json').click(),
++  ]);
++  const backup = JSON.parse((await readDownload(download)).toString('utf-8')) as {
++    state: { todos: { text: string; archived?: boolean }[] };
++  };
++  const exportedTodo = backup.state.todos.find((t) => t.text === 'ViecLuuTru');
++  expect(exportedTodo?.archived).toBe(true);
++
++  // Khôi phục từ "Đã lưu trữ" -> trở lại danh sách.
++  await openTodos(page);
++  await page.getByTestId('todo-archived-toggle').click();
++  const archivedRow = page.getByTestId('todo-archived-item');
++  await expect(archivedRow).toHaveCount(1);
++  const wrapArchived = await swipeLeft(page, archivedRow);
++  await wrapArchived.getByTestId('todo-swipe-restore').click();
++  await expect(page.getByTestId('todo-item').filter({ hasText: 'ViecLuuTru' })).toBeVisible();
++
++  // Dọn để phần 2 chỉ còn đúng 3 việc như tiêu chí nghiệm thu.
++  const wrapCleanup = await swipeLeft(page, page.getByTestId('todo-item').filter({ hasText: 'ViecLuuTru' }));
++  await wrapCleanup.getByTestId('todo-swipe-delete').click();
++  await expect(page.getByTestId('todo-item')).toHaveCount(0);
++
++  // --- Phase 2: thêm 3 việc -> vuốt trái Xóa + Hoàn tác -> nhấn giữ kéo sắp xếp -> reload.
++  for (const text of ['A', 'B', 'C']) await addTodo(page, text);
++  const rows = page.getByTestId('todo-item');
++  await expect(rows).toHaveCount(3);
++  await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('A');
++  await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('B');
++  await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('C');
++
++  const wrapA = await swipeLeft(page, rows.nth(0));
++  await wrapA.getByTestId('todo-swipe-delete').click();
++  await expect(rows).toHaveCount(2);
++  await page.getByTestId('toast-undo').click();
++  await expect(rows).toHaveCount(3);
++  await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('A');
++  await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('B');
++  await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('C');
++
++  // Nhấn giữ kéo việc thứ 3 (C) lên đầu.
++  const boxC = (await rows.nth(2).boundingBox())!;
++  const boxA = (await rows.nth(0).boundingBox())!;
++  await page.mouse.move(boxC.x + boxC.width / 2, boxC.y + boxC.height / 2);
++  await page.mouse.down();
++  await page.waitForTimeout(600);
++  await page.mouse.move(boxA.x + boxA.width / 2, boxA.y + boxA.height / 2, { steps: 10 });
++  await page.mouse.up();
++
++  await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('C');
++  await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('A');
++  await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('B');
++
++  await page.getByTestId('tab-preview').click();
++  await page.getByTestId('layout-todo').click();
++  await waitPreviewRendered(page);
++  await expect
++    .poll(async () => opsTexts(page), { timeout: 5000 })
++    .toEqual(expect.arrayContaining(['C', 'A', 'B']));
++  const ops = await opsTexts(page);
++  expect(ops.indexOf('C')).toBeLessThan(ops.indexOf('A'));
++  expect(ops.indexOf('A')).toBeLessThan(ops.indexOf('B'));
++
++  await waitForPersistedTodoOrder(page, ['C', 'A', 'B']);
++  await page.reload();
++  await openTodos(page);
++  await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('C');
++  await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('A');
++  await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('B');
++  await expect(page.getByTestId('todo-item')).toHaveCount(3);
++  await expect(page.getByTestId('todo-archived-toggle')).toHaveCount(0);
++});
+diff --git a/tests/e2e/persist-flush.spec.ts b/tests/e2e/persist-flush.spec.ts
+new file mode 100644
+index 0000000..dc136fc
+--- /dev/null
++++ b/tests/e2e/persist-flush.spec.ts
+@@ -0,0 +1,67 @@
++import { test } from '@playwright/test';
++
++/** B-006: Ghi ngay dữ liệu chờ khi app bị ẩn/đóng (pagehide, visibilitychange=hidden). */
++
++async function openTodos(page: import('@playwright/test').Page) {
++  await page.getByTestId('tab-events').click();
++  await page.getByTestId('seg-todos').click();
++}
++
++async function addTodo(page: import('@playwright/test').Page, text: string) {
++  await page.getByTestId('todo-input').fill(text);
++  await page.getByTestId('todo-add').click();
++}
++
++/** Đọc IndexedDB (keyval-store, key lichkhoa:state), chờ việc xuất hiện trong vòng timeout ms. */
++async function waitForPersistedTodo(page: import('@playwright/test').Page, expectedText: string, timeout = 150) {
++  await page.waitForFunction(
++    (expected) =>
++      new Promise<boolean>((resolve) => {
++        const req = indexedDB.open('keyval-store');
++        req.onerror = () => resolve(false);
++        req.onsuccess = () => {
++          const tx = req.result.transaction('keyval', 'readonly');
++          const getReq = tx.objectStore('keyval').get('lichkhoa:state');
++          getReq.onerror = () => resolve(false);
++          getReq.onsuccess = () => {
++            const state = getReq.result as { todos?: { text: string }[] } | undefined;
++            req.result.close();
++            if (!state?.todos) return resolve(false);
++            resolve(state.todos.some((t) => t.text === expected));
++          };
++        };
++      }),
++    expectedText,
++    { timeout, polling: 10 },
++  );
++}
++
++test('pagehide: ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms', async ({ page }) => {
++  await page.goto('/?test=1');
++  await openTodos(page);
++  await addTodo(page, 'Việc khẩn cấp pagehide');
++
++  // Ngay lập tức (< 300 ms debounce) bắn pagehide -> flush timer
++  await page.evaluate(() => {
++    window.dispatchEvent(new Event('pagehide'));
++  });
++
++  await waitForPersistedTodo(page, 'Việc khẩn cấp pagehide', 150);
++});
++
++test('visibilitychange (hidden): ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms', async ({ page }) => {
++  await page.goto('/?test=1');
++  await openTodos(page);
++  await addTodo(page, 'Việc khẩn cấp visibilitychange');
++
++  // Giả document.visibilityState = 'hidden' rồi bắn visibilitychange ngay lập tức (< 300 ms debounce)
++  await page.evaluate(() => {
++    Object.defineProperty(document, 'visibilityState', {
++      configurable: true,
++      get: () => 'hidden',
++    });
++    document.dispatchEvent(new Event('visibilitychange'));
++  });
++
++  await waitForPersistedTodo(page, 'Việc khẩn cấp visibilitychange', 150);
++});
+diff --git a/tests/e2e/todo-gestures.spec.ts b/tests/e2e/todo-gestures.spec.ts
+new file mode 100644
+index 0000000..2b07b57
+--- /dev/null
++++ b/tests/e2e/todo-gestures.spec.ts
+@@ -0,0 +1,153 @@
++import { test, expect } from '@playwright/test';
++
++/** T-6.2: cử chỉ hàng to-do (vuốt trái, nhấn giữ kéo, phần Đã lưu trữ). */
++
++async function opsTexts(page: import('@playwright/test').Page): Promise<string[]> {
++  return page.evaluate(() =>
++    ((window as unknown as { __lastOps?: { text?: string }[] }).__lastOps ?? [])
++      .map((o) => o.text)
++      .filter((t): t is string => !!t),
++  );
++}
++
++async function openTodos(page: import('@playwright/test').Page) {
++  await page.getByTestId('tab-events').click();
++  await page.getByTestId('seg-todos').click();
++}
++
++async function addTodo(page: import('@playwright/test').Page, text: string) {
++  await page.getByTestId('todo-input').fill(text);
++  await page.getByTestId('todo-add').click();
++}
++
++/** `createStore` (src/ui/store.ts) ghi IndexedDB debounce 300ms sau mỗi dispatch (ngoài phạm vi
++ * T-6.2, không sửa). Reload ngay sau thao tác có thể đọc lại state CŨ nếu bản ghi debounce chưa
++ * chạy xong -> đây là race của TEST (gọi reload sớm), không phải mất dữ liệu thật (app không tự
++ * reload). Chờ đúng thứ tự đã lưu (đọc thẳng IndexedDB, không sleep cố định) trước khi reload. */
++async function waitForPersistedTodoOrder(page: import('@playwright/test').Page, expectedTexts: string[]) {
++  await page.waitForFunction(
++    (expected) =>
++      new Promise<boolean>((resolve) => {
++        const req = indexedDB.open('keyval-store');
++        req.onerror = () => resolve(false);
++        req.onsuccess = () => {
++          const tx = req.result.transaction('keyval', 'readonly');
++          const getReq = tx.objectStore('keyval').get('lichkhoa:state');
++          getReq.onerror = () => resolve(false);
++          getReq.onsuccess = () => {
++            const state = getReq.result as { todos?: { text: string; order: number }[] } | undefined;
++            req.result.close();
++            if (!state?.todos) return resolve(false);
++            const order = [...state.todos].sort((a, b) => a.order - b.order).map((t) => t.text);
++            resolve(JSON.stringify(order) === JSON.stringify(expected));
++          };
++        };
++      }),
++    expectedTexts,
++    { timeout: 5000 },
++  );
++}
++
++/** Vuốt trái một hàng (chuột/pointer): đủ xa để mở hẳn (>40% panel).
++ * Trả về locator hàng bọc ngoài (`.todo-item-wrap`) để soi đúng 2 nút của hàng này
++ * (mỗi hàng luôn có `todo-swipe-archive`/`todo-swipe-delete` trong DOM, dùng `.first()` sẽ trúng hàng khác). */
++async function swipeLeft(
++  page: import('@playwright/test').Page,
++  row: import('@playwright/test').Locator,
++): Promise<import('@playwright/test').Locator> {
++  const box = (await row.boundingBox())!;
++  const y = box.y + box.height / 2;
++  await page.mouse.move(box.x + box.width - 10, y);
++  await page.mouse.down();
++  await page.mouse.move(box.x + box.width - 150, y, { steps: 10 });
++  await page.mouse.up();
++  return row.locator('xpath=../..');
++}
++
++test('Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ', async ({ page }) => {
++  await page.goto('/?test=1');
++  await openTodos(page);
++  await addTodo(page, 'Việc A');
++  await addTodo(page, 'Việc B');
++  await expect(page.getByTestId('todo-item')).toHaveCount(2);
++
++  // Vuốt trái hàng đầu (Việc A) -> hiện 2 nút.
++  const wrapA = await swipeLeft(page, page.getByTestId('todo-item').nth(0));
++  await expect(wrapA.getByTestId('todo-swipe-archive')).toBeVisible();
++  await expect(wrapA.getByTestId('todo-swipe-delete')).toBeVisible();
++
++  // Xóa -> việc biến mất; bấm Hoàn tác -> trở lại.
++  await wrapA.getByTestId('todo-swipe-delete').click();
++  await expect(page.getByTestId('todo-item')).toHaveCount(1);
++  await page.getByTestId('toast-undo').click();
++  await expect(page.getByTestId('todo-item')).toHaveCount(2);
++  await expect(page.getByTestId('todo-item').filter({ hasText: 'Việc A' })).toBeVisible();
++
++  // Lưu trữ Việc B -> biến mất khỏi danh sách và khỏi __lastOps (bố cục Việc).
++  const rowB = page.getByTestId('todo-item').filter({ hasText: 'Việc B' });
++  const wrapB = await swipeLeft(page, rowB);
++  await wrapB.getByTestId('todo-swipe-archive').click();
++  await expect(page.getByTestId('todo-item')).toHaveCount(1);
++  await expect(page.getByTestId('todo-archived-toggle')).toContainText('1');
++
++  await page.getByTestId('tab-preview').click();
++  await page.getByTestId('layout-todo').click();
++  await expect
++    .poll(async () => opsTexts(page), { timeout: 5000 })
++    .not.toEqual(expect.arrayContaining([expect.stringContaining('Việc B')]));
++
++  // Mở phần Đã lưu trữ -> vuốt -> Khôi phục -> trở lại danh sách.
++  await page.getByTestId('tab-events').click();
++  await openTodos(page);
++  await page.getByTestId('todo-archived-toggle').click();
++  const archivedRow = page.getByTestId('todo-archived-item');
++  await expect(archivedRow).toHaveCount(1);
++  const wrapArchived = await swipeLeft(page, archivedRow);
++  await wrapArchived.getByTestId('todo-swipe-restore').click();
++  await expect(page.getByTestId('todo-item').filter({ hasText: 'Việc B' })).toBeVisible();
++  await expect(page.getByTestId('todo-item')).toHaveCount(2);
++});
++
++test('Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên', async ({ page }) => {
++  await page.goto('/?test=1');
++  await openTodos(page);
++  for (const text of ['A', 'B', 'C']) await addTodo(page, text);
++
++  const rows = page.getByTestId('todo-item');
++  await expect(rows).toHaveCount(3);
++  await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('A');
++  await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('B');
++  await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('C');
++
++  const boxC = (await rows.nth(2).boundingBox())!;
++  const boxA = (await rows.nth(0).boundingBox())!;
++
++  // Nhấn giữ việc C ~600ms rồi kéo lên trên A.
++  await page.mouse.move(boxC.x + boxC.width / 2, boxC.y + boxC.height / 2);
++  await page.mouse.down();
++  await page.waitForTimeout(600);
++  await page.mouse.move(boxA.x + boxA.width / 2, boxA.y + boxA.height / 2, { steps: 10 });
++  await page.mouse.up();
++
++  await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('C');
++  await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('A');
++  await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('B');
++
++  await page.getByTestId('tab-preview').click();
++  await page.getByTestId('layout-todo').click();
++  await expect
++    .poll(async () => opsTexts(page), { timeout: 5000 })
++    .toEqual(expect.arrayContaining(['C', 'A', 'B']));
++  const ops = await opsTexts(page);
++  expect(ops.indexOf('C')).toBeLessThan(ops.indexOf('A'));
++  expect(ops.indexOf('A')).toBeLessThan(ops.indexOf('B'));
++
++  // Chờ debounce 300ms của store ghi xong thứ tự mới vào IndexedDB trước khi reload (tránh đọc
++  // lại state cũ) — xem giải thích ở `waitForPersistedTodoOrder`.
++  await waitForPersistedTodoOrder(page, ['C', 'A', 'B']);
++  await page.reload();
++  await openTodos(page);
++  await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('C');
++  await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('A');
++  await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('B');
++});
+diff --git a/tests/unit/collect.test.ts b/tests/unit/collect.test.ts
+index cb76b07..8ac7e26 100644
+--- a/tests/unit/collect.test.ts
++++ b/tests/unit/collect.test.ts
+@@ -99,6 +99,18 @@ describe('collectRenderData', () => {
+     expect(data.todos.map((t) => t.id)).toEqual(['t1', 't2']);
+   });
+ 
++  it('T-6.1: việc archived không có trong RenderData.todos', () => {
++    const state = defaultState(device);
++    const todos: Todo[] = [
++      { id: 't1', text: 'A', done: false, order: 0 },
++      { id: 't2', text: 'B', done: false, order: 1, archived: true },
++      { id: 't3', text: 'C', done: false, order: 2 },
++    ];
++    state.todos = todos;
++    const data = collectRenderData(state, '2026-03-15');
++    expect(data.todos.map((t) => t.id)).toEqual(['t1', 't3']);
++  });
++
+   it('note theo showNote, lấy từ ghi chú ghim', () => {
+     const state = defaultState(device);
+     state.design.showNote = true;
+@@ -151,6 +163,146 @@ describe('collectRenderData', () => {
+     expect(titles).not.toContain('OutWeek');
+   });
+ 
++  it('B-003: local + Google trùng (ngày/giờ/tên chuẩn hóa) -> giữ cái createdAt lớn hơn', () => {
++    const state = defaultState(device);
++    state.events = [
++      { id: 'local1', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none', createdAt: 2000 },
++    ];
++    state.google.cache = {
++      fetchedAt: 0,
++      events: [
++        { id: 'g1', sourceId: 'g1', source: 'google', title: 'họp  nhóm ', date: '2026-03-15', time: '09:00', allDay: false, createdAt: 1000 },
++      ],
++    };
++    const data = collectRenderData(state, '2026-03-15');
++    expect(data.occurrences.length).toBe(1);
++    expect(data.occurrences[0].source).toBe('local');
++  });
++
++  it('B-003: đảo createdAt -> chỉ còn Google', () => {
++    const state = defaultState(device);
++    state.events = [
++      { id: 'local1', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none', createdAt: 1000 },
++    ];
++    state.google.cache = {
++      fetchedAt: 0,
++      events: [
++        { id: 'g1', sourceId: 'g1', source: 'google', title: 'họp  nhóm ', date: '2026-03-15', time: '09:00', allDay: false, createdAt: 2000 },
++      ],
++    };
++    const data = collectRenderData(state, '2026-03-15');
++    expect(data.occurrences.length).toBe(1);
++    expect(data.occurrences[0].source).toBe('google');
++  });
++
++  it('B-003: local không có createdAt -> giữ Google', () => {
++    const state = defaultState(device);
++    state.events = [{ id: 'local1', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none' }];
++    state.google.cache = {
++      fetchedAt: 0,
++      events: [
++        { id: 'g1', sourceId: 'g1', source: 'google', title: 'họp nhóm', date: '2026-03-15', time: '09:00', allDay: false, createdAt: 1000 },
++      ],
++    };
++    const data = collectRenderData(state, '2026-03-15');
++    expect(data.occurrences.length).toBe(1);
++    expect(data.occurrences[0].source).toBe('google');
++  });
++
++  it('B-003: createdAt bằng nhau -> ưu tiên Google', () => {
++    const state = defaultState(device);
++    state.events = [
++      { id: 'local1', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none', createdAt: 1000 },
++    ];
++    state.google.cache = {
++      fetchedAt: 0,
++      events: [
++        { id: 'g1', sourceId: 'g1', source: 'google', title: 'họp nhóm', date: '2026-03-15', time: '09:00', allDay: false, createdAt: 1000 },
++      ],
++    };
++    const data = collectRenderData(state, '2026-03-15');
++    expect(data.occurrences.length).toBe(1);
++    expect(data.occurrences[0].source).toBe('google');
++  });
++
++  it('B-003: khác giờ hoặc khác tên -> giữ cả hai', () => {
++    const state = defaultState(device);
++    state.events = [{ id: 'local1', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none' }];
++    state.google.cache = {
++      fetchedAt: 0,
++      events: [
++        occ('2026-03-15', '10:00', 'Họp nhóm', 'g1'),
++        occ('2026-03-15', '09:00', 'Khác tên', 'g2'),
++      ].map((o) => ({ ...o, source: 'google' as const })),
++    };
++    const data = collectRenderData(state, '2026-03-15');
++    expect(data.occurrences.length).toBe(3);
++  });
++
++  it('B-005 (D-027): hai local trùng nhau, không createdAt -> giữ 1, mục đứng sau', () => {
++    const state = defaultState(device);
++    state.events = [
++      { id: 'local1', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none' },
++      { id: 'local2', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none' },
++    ];
++    const data = collectRenderData(state, '2026-03-15');
++    expect(data.occurrences.length).toBe(1);
++    expect(data.occurrences[0].sourceId).toBe('local2');
++  });
++
++  it('B-005 (D-027): hai local trùng nhau, createdAt 1000/2000 -> giữ createdAt lớn hơn dù đứng trước', () => {
++    const state = defaultState(device);
++    state.events = [
++      { id: 'local1', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none', createdAt: 2000 },
++      { id: 'local2', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none', createdAt: 1000 },
++    ];
++    const data = collectRenderData(state, '2026-03-15');
++    expect(data.occurrences.length).toBe(1);
++    expect(data.occurrences[0].sourceId).toBe('local1');
++  });
++
++  it('B-005 (D-027): hai Google trùng nhau (2 lịch) -> giữ createdAt lớn hơn', () => {
++    const state = defaultState(device);
++    state.google.cache = {
++      fetchedAt: 0,
++      events: [
++        { id: 'g1', sourceId: 'g1', source: 'google', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', allDay: false, createdAt: 1000 },
++        { id: 'g2', sourceId: 'g2', source: 'google', title: 'họp nhóm', date: '2026-03-15', time: '09:00', allDay: false, createdAt: 3000 },
++      ],
++    };
++    const data = collectRenderData(state, '2026-03-15');
++    expect(data.occurrences.length).toBe(1);
++    expect(data.occurrences[0].sourceId).toBe('g2');
++  });
++
++  it('B-005 (D-027): 2 sự kiện lặp hằng ngày trùng tên/giờ -> mỗi ngày trong tuần còn 1, là mục thắng', () => {
++    const state = defaultState(device);
++    state.events = [
++      { id: 'ev1', title: 'Tập thể dục', date: '2026-03-10', time: '06:00', repeat: 'daily', createdAt: 1000 },
++      { id: 'ev2', title: 'Tập thể dục', date: '2026-03-10', time: '06:00', repeat: 'daily' },
++    ];
++    const data = collectRenderData(state, '2026-03-15');
++    for (let i = 0; i < 7; i++) {
++      const d = new Date(2026, 2, 15 + i, 12);
++      const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
++      const dayOcc = data.occurrences.filter((o) => o.date === iso && o.title === 'Tập thể dục');
++      expect(dayOcc.length).toBe(1);
++      expect(dayOcc[0].sourceId).toBe('ev1');
++    }
++  });
++
++  it('B-003: cả ngày cùng tên -> lọc', () => {
++    const state = defaultState(device);
++    state.events = [{ id: 'local1', title: 'Nghỉ lễ', date: '2026-03-15', repeat: 'none', createdAt: 1 }];
++    state.google.cache = {
++      fetchedAt: 0,
++      events: [{ id: 'g1', sourceId: 'g1', source: 'google', title: 'Nghỉ lễ', date: '2026-03-15', allDay: true, createdAt: 2 }],
++    };
++    const data = collectRenderData(state, '2026-03-15');
++    expect(data.occurrences.length).toBe(1);
++    expect(data.occurrences[0].source).toBe('google');
++  });
++
+   it('2 TZ giả lập: sự kiện đầu tháng và cuối agenda vẫn nằm trong khoảng expand', () => {
+     const state = defaultState(device);
+     state.design.agendaDays = 10;
+diff --git a/tests/unit/google-normalize.test.ts b/tests/unit/google-normalize.test.ts
+index 72ea9b9..054a120 100644
+--- a/tests/unit/google-normalize.test.ts
++++ b/tests/unit/google-normalize.test.ts
+@@ -132,6 +132,29 @@ describe('normalize (thuần)', () => {
+     expect(result[0].endTime).toBeUndefined();
+   });
+ 
++  it('B-003: `created` hợp lệ → createdAt = Date.parse(created)', () => {
++    const raw: RawGoogleEvent[] = [
++      {
++        id: 'ev-created',
++        summary: 'Co created',
++        start: { date: '2026-01-01' },
++        created: '2026-01-01T00:00:00Z',
++      },
++    ];
++    const result = normalize('cal1', '#4285F4', raw);
++    expect(result[0].createdAt).toBe(Date.parse('2026-01-01T00:00:00Z'));
++  });
++
++  it('B-003: `created` thiếu hoặc không hợp lệ → không có trường createdAt', () => {
++    const raw: RawGoogleEvent[] = [
++      { id: 'ev-no-created', summary: 'Khong created', start: { date: '2026-01-02' } },
++      { id: 'ev-bad-created', summary: 'Created hong', start: { date: '2026-01-03' }, created: 'khong-hop-le' },
++    ];
++    const result = normalize('cal1', '#4285F4', raw);
++    expect(result[0]).not.toHaveProperty('createdAt');
++    expect(result[1]).not.toHaveProperty('createdAt');
++  });
++
+   it('T-3.4 yêu cầu 1: khoảng vượt timeMax bị chặn khi truyền range', () => {
+     const raw: RawGoogleEvent[] = (eventsMultiday.items as RawGoogleEvent[]).filter((e) => e.id === 'ev-multi');
+     const result = normalize('cal1', '#4285F4', raw, { min: '2026-09-14', max: '2026-09-15' });
+diff --git a/tests/unit/layout-week.test.ts b/tests/unit/layout-week.test.ts
+index 01ed80b..79dfb4c 100644
+--- a/tests/unit/layout-week.test.ts
++++ b/tests/unit/layout-week.test.ts
+@@ -114,24 +114,66 @@ describe('layoutWeek', () => {
+     const d = renderData(today, occ);
+     const ops = layoutWeek(d, design, DEV_1284);
+ 
+-    const margin = DEV_1284.width * 0.05;
+-    const gridWidth = DEV_1284.width - 2 * margin;
+-    const gap = gridWidth * 0.008;
+-    const colW = (gridWidth - gap * 6) / 7;
+-    const chipTextSize = DEV_1284.width * 0.0187;
+-    const chipTimeSize = DEV_1284.width * 0.0159;
+-    const chipPad = chipTextSize * 0.22;
+-    const availWidth = colW - chipPad * 2;
+-
+     const chipLine = textOps(ops).find((o) => o.text.includes('09:00') && o.text.includes('09:40'));
+     expect(chipLine).toBeDefined();
+-    if (chipLine) {
++    // Bề rộng chip suy từ rect chip (r=10) chứa dòng giờ, không chép hằng lề/cột của week.ts (D-025 d).
++    const chipRect = ops.find((o) => o.op === 'rect' && o.r === 10) as Extract<(typeof ops)[number], { op: 'rect' }> | undefined;
++    expect(chipRect).toBeDefined();
++    if (chipLine && chipRect) {
++      const pad = chipLine.x - chipRect.x;
++      const availWidth = chipRect.w - pad * 2;
+       expect(chipLine.size * 0.55 * chipLine.text.length).toBeLessThanOrEqual(availWidth + 0.5);
+       expect(chipLine.size).toBeGreaterThanOrEqual(20);
+-      expect(chipLine.size).toBeCloseTo(chipTimeSize, 1);
+     }
+   });
+ 
++  it('hour12: cùng buổi cắt hậu tố AM/PM ở giờ bắt đầu; vắt qua trưa giữ đủ 2 hậu tố; 24h không đổi (T-5.4 a)', () => {
++    const sameOcc: Occurrence[] = [
++      { id: 'e1', sourceId: 'e1', source: 'local', title: 'Cùng buổi', date: today, time: '09:00', endTime: '11:00', allDay: false },
++    ];
++    const opsSame = layoutWeek(renderData(today, sameOcc), { ...defaultDesign(), hour12: true }, DEV_1284);
++    expect(textOps(opsSame).some((o) => o.text.includes('9:00 - 11:00 AM'))).toBe(true);
++
++    const crossOcc: Occurrence[] = [
++      { id: 'e2', sourceId: 'e2', source: 'local', title: 'Vắt trưa', date: today, time: '11:00', endTime: '13:00', allDay: false },
++    ];
++    // Scale nhỏ để chip đủ rộng chứa chuỗi đầy đủ ở máy đích.
++    const opsCross = layoutWeek(renderData(today, crossOcc), { ...defaultDesign(), hour12: true, scale: 0.6 }, DEV_1284);
++    expect(textOps(opsCross).some((o) => o.text.includes('11:00 AM') && o.text.includes('1:00 PM'))).toBe(true);
++
++    const dayOcc: Occurrence[] = [
++      { id: 'e3', sourceId: 'e3', source: 'local', title: '24h', date: today, time: '09:00', endTime: '09:40', allDay: false },
++    ];
++    const ops24 = layoutWeek(renderData(today, dayOcc), { ...defaultDesign(), hour12: false }, DEV_1284);
++    expect(textOps(ops24).some((o) => o.text.includes('09:00 - 09:40'))).toBe(true);
++  });
++
++  it('font mono: mọi op text trong chip vừa ước lượng 0.62×size×len ≤ bề rộng chip, 1284×2778 (T-5.4 b)', () => {
++    const occ: Occurrence[] = [
++      { id: 'e1', sourceId: 'e1', source: 'local', title: 'Cuộc họp dài dài quan trọng', date: today, time: '09:00', endTime: '09:40', allDay: false },
++    ];
++    const todos: Todo[] = [
++      { id: 't1', text: 'Việc rất dài cần làm hôm nay ngay bây giờ', done: false, order: 0, due: today },
++    ];
++    const d = renderData(today, occ, todos);
++    const ops = layoutWeek(d, { ...defaultDesign(), font: 'mono' }, DEV_1284);
++
++    let checked = 0;
++    for (let i = 0; i < ops.length - 2; i++) {
++      const rect = ops[i];
++      const l1 = ops[i + 1];
++      const l2 = ops[i + 2];
++      if (rect.op !== 'rect' || rect.r !== 10 || rect.alpha === 0.16) continue; // bỏ chip "+N"
++      if (l1.op !== 'text' || l2.op !== 'text') continue;
++      const pad = l1.x - rect.x;
++      const availWidth = rect.w - pad * 2;
++      expect(l1.size * 0.62 * l1.text.length).toBeLessThanOrEqual(availWidth + 0.5);
++      expect(l2.size * 0.62 * l2.text.length).toBeLessThanOrEqual(availWidth + 0.5);
++      checked += 1;
++    }
++    expect(checked).toBeGreaterThanOrEqual(2);
++  });
++
+   it('rect tô cột hôm nay có fill === accentColor, nằm đúng cột hôm nay', () => {
+     const design: DesignConfig = { ...defaultDesign(), accentColor: '#123456' };
+     const d = renderData(today);
+@@ -139,14 +181,18 @@ describe('layoutWeek', () => {
+     const accentRect = ops.find((o) => o.op === 'rect' && o.fill === '#123456');
+     expect(accentRect).toBeDefined();
+ 
+-    const margin = DEV_1284.width * 0.05;
+-    const gridWidth = DEV_1284.width - 2 * margin;
+-    const gap = gridWidth * 0.008;
+-    const colW = (gridWidth - gap * 6) / 7;
++    // Tâm cột suy từ x của op nhãn thứ (D-025 d, như `tests/e2e/m5-week.spec.ts` columnCenters).
+     const todayIdx = dates.indexOf(today);
+-    const expectedX = margin + todayIdx * (colW + gap);
++    const labels = weekdayLabels(1, 'vi');
++    const centers = labels.map((label) => textOps(ops).find((o) => o.text === label)!.x);
++    expect(centers).toHaveLength(7);
+     if (accentRect && accentRect.op === 'rect') {
+-      expect(accentRect.x).toBeCloseTo(expectedX, 1);
++      const contains = (x: number) => x >= accentRect.x - 0.5 && x <= accentRect.x + accentRect.w + 0.5;
++      expect(contains(centers[todayIdx])).toBe(true);
++      for (let i = 0; i < 7; i++) {
++        if (i === todayIdx) continue;
++        expect(contains(centers[i])).toBe(false);
++      }
+     }
+   });
+ 
+diff --git a/tests/unit/oauth.test.ts b/tests/unit/oauth.test.ts
+index db3f7a4..db4dfbb 100644
+--- a/tests/unit/oauth.test.ts
++++ b/tests/unit/oauth.test.ts
+@@ -79,6 +79,11 @@ describe('parseFragment', () => {
+     expect(parseFragment(hash, 'abc')).toEqual({ error: 'access_denied' });
+   });
+ 
++  it('B-004: error nhưng sai state hoặc thiếu state → null', () => {
++    expect(parseFragment('#error=access_denied&state=x', 'abc')).toBeNull();
++    expect(parseFragment('#error=access_denied', 'abc')).toBeNull();
++  });
++
+   it('hash rỗng → null', () => {
+     expect(parseFragment('', 'abc')).toBeNull();
+     expect(parseFragment('#', 'abc')).toBeNull();
+diff --git a/tests/unit/recurrence.test.ts b/tests/unit/recurrence.test.ts
+index cdbc075..e3d71f6 100644
+--- a/tests/unit/recurrence.test.ts
++++ b/tests/unit/recurrence.test.ts
+@@ -96,6 +96,18 @@ describe('expandOccurrences', () => {
+     expect(occ.every((o) => o.endTime === '09:40')).toBe(true);
+   });
+ 
++  it('B-003: event có createdAt -> mọi occurrence có cùng createdAt', () => {
++    const e = ev({ id: 'a', date: '2026-03-01', repeat: 'daily', createdAt: 1234 });
++    const occ = expandOccurrences([e], '2026-03-01', '2026-03-03');
++    expect(occ.every((o) => o.createdAt === 1234)).toBe(true);
++  });
++
++  it('B-003: event không có createdAt -> occurrence không có trường createdAt', () => {
++    const e = ev({ id: 'a', date: '2026-03-01', repeat: 'none' });
++    const occ = expandOccurrences([e], '2026-03-01', '2026-03-01');
++    expect(occ[0]).not.toHaveProperty('createdAt');
++  });
++
+   it('sắp theo ngày rồi giờ, cả ngày (allDay) đứng trước sự kiện có giờ', () => {
+     const e1 = ev({ id: 'late', date: '2026-03-01', repeat: 'none', time: '10:00' });
+     const e2 = ev({ id: 'allday', date: '2026-03-01', repeat: 'none' });
+diff --git a/tests/unit/store.test.ts b/tests/unit/store.test.ts
+index 6a8a1f5..08a7376 100644
+--- a/tests/unit/store.test.ts
++++ b/tests/unit/store.test.ts
+@@ -68,6 +68,25 @@ describe('reducer', () => {
+     expect(s3.events).toEqual([]);
+   });
+ 
++  it('B-003: updateEvent với event mới không có createdAt -> giữ createdAt cũ', () => {
++    const state = defaultState(device);
++    const ev = { id: 'e1', title: 'Họp', date: '2026-02-15', repeat: 'none' as const, createdAt: 1000 };
++    const s1 = reducer(state, { type: 'addEvent', event: ev });
++    const evNoCreatedAt = { id: 'e1', title: 'Họp sửa', date: '2026-02-15', repeat: 'none' as const };
++    const s2 = reducer(s1, { type: 'updateEvent', event: evNoCreatedAt });
++    expect(s2.events[0].createdAt).toBe(1000);
++    expect(s2.events[0].title).toBe('Họp sửa');
++  });
++
++  it('B-003: updateEvent, event cũ không có createdAt -> không thêm', () => {
++    const state = defaultState(device);
++    const ev = { id: 'e1', title: 'Họp', date: '2026-02-15', repeat: 'none' as const };
++    const s1 = reducer(state, { type: 'addEvent', event: ev });
++    const evNoCreatedAt = { id: 'e1', title: 'Họp sửa', date: '2026-02-15', repeat: 'none' as const };
++    const s2 = reducer(s1, { type: 'updateEvent', event: evNoCreatedAt });
++    expect(s2.events[0]).not.toHaveProperty('createdAt');
++  });
++
+   it('addTodo tạo id, done:false; toggleTodo/updateTodo/deleteTodo hoạt động, không mutate', () => {
+     const state = defaultState(device);
+     const s1 = reducer(state, { type: 'addTodo', text: 'Việc 1' });
+@@ -136,6 +155,74 @@ describe('reducer', () => {
+     expect(s3).toEqual(s0);
+   });
+ 
++  it('T-6.1: archiveTodo đặt/bỏ archived; restoreTodo chèn lại sau xóa; restore id đã có -> không đổi', () => {
++    const state = defaultState(device);
++    const s1 = reducer(state, { type: 'addTodo', text: 'A' });
++    const todo = s1.todos[0];
++
++    const s2 = reducer(s1, { type: 'archiveTodo', id: todo.id, archived: true });
++    expect(s2.todos[0].archived).toBe(true);
++    expect(s1.todos[0]).not.toHaveProperty('archived'); // không mutate state cũ
++
++    const s3 = reducer(s2, { type: 'archiveTodo', id: todo.id, archived: false });
++    expect(s3.todos[0]).not.toHaveProperty('archived'); // bỏ archive -> xóa trường, không để false
++
++    const s4 = reducer(s1, { type: 'deleteTodo', id: todo.id });
++    expect(s4.todos).toEqual([]);
++    const s5 = reducer(s4, { type: 'restoreTodo', todo });
++    expect(s5).toEqual(s1); // khôi phục giống hệt trước khi xóa
++
++    const s6 = reducer(s5, { type: 'restoreTodo', todo });
++    expect(s6).toBe(s5); // id đã tồn tại -> không đổi state (cùng tham chiếu)
++  });
++
++  it('T-6.1: reorderTodo đưa việc vào vị trí target trong danh sách hiển thị, chỉ cùng nhóm, không mutate', () => {
++    const state = defaultState(device);
++    const loaded = {
++      ...defaultState(device),
++      todos: [
++        { id: 'a', text: 'A', done: false, order: 0 },
++        { id: 'b', text: 'B', done: false, order: 1 },
++        { id: 'c', text: 'C', done: false, order: 2 },
++        { id: 'd', text: 'D', done: false, order: 3, due: '2099-01-01' }, // nhóm khác (có hạn)
++      ],
++    };
++    const s0 = reducer(state, { type: 'load', state: loaded });
++
++    // kéo C lên trước A -> C,A,B
++    const s1 = reducer(s0, { type: 'reorderTodo', id: 'c', targetId: 'a' });
++    const order1 = [...s1.todos].filter((t) => !t.due).sort((x, y) => x.order - y.order).map((t) => t.id);
++    expect(order1).toEqual(['c', 'a', 'b']);
++    expect(loaded.todos.map((t) => t.order)).toEqual([0, 1, 2, 3]); // không mutate state cũ
++
++    // kéo A xuống sau C (từ A,B,C gốc) -> B,C,A
++    const s2 = reducer(s0, { type: 'reorderTodo', id: 'a', targetId: 'c' });
++    const order2 = [...s2.todos].filter((t) => !t.due).sort((x, y) => x.order - y.order).map((t) => t.id);
++    expect(order2).toEqual(['b', 'c', 'a']);
++
++    // khác nhóm (d có hạn) -> không đổi
++    const s3 = reducer(s0, { type: 'reorderTodo', id: 'a', targetId: 'd' });
++    expect(s3).toEqual(s0);
++  });
++
++  it('T-6.1: moveTodo nhảy qua việc đã lưu trữ khi tìm hàng xóm', () => {
++    const state = defaultState(device);
++    const loaded = {
++      ...defaultState(device),
++      todos: [
++        { id: 'a', text: 'A', done: false, order: 0 },
++        { id: 'b', text: 'B', done: false, order: 1, archived: true },
++        { id: 'c', text: 'C', done: false, order: 2 },
++      ],
++    };
++    const s0 = reducer(state, { type: 'load', state: loaded });
++    // Hiển thị (không archived): A, C. moveTodo(a, dir:1) -> hoán A<->C, bỏ qua B.
++    const s1 = reducer(s0, { type: 'moveTodo', id: 'a', dir: 1 });
++    expect(s1.todos.find((t) => t.id === 'a')!.order).toBe(2);
++    expect(s1.todos.find((t) => t.id === 'c')!.order).toBe(0);
++    expect(s1.todos.find((t) => t.id === 'b')!.order).toBe(1); // việc lưu trữ không đổi
++  });
++
+   it('addNote/updateNote/deleteNote CRUD ghi chú, không mutate state cũ', () => {
+     const state = defaultState(device);
+     const note = { id: 'n1', title: 'T', body: 'B', pinned: false, updated: 1 };
