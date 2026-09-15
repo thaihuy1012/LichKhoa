@@ -15,6 +15,7 @@ export function Events({ store }: { store: Store }) {
   const state = useStoreState(store);
   const [segment, setSegment] = useState<Segment>('events');
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [toastAction, setToastAction] = useState<{ label: string; onClick: () => void } | null>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(
@@ -24,10 +25,18 @@ export function Events({ store }: { store: Store }) {
     [],
   );
 
-  function showToast(msg: string) {
+  // T-6.2: toast có thể mang nút hành động (vd. "Hoàn tác"), hiện lâu hơn (~5s) khi có hành động.
+  function showToast(msg: string, action?: { label: string; onClick: () => void }) {
     if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToastMsg(msg);
-    toastTimerRef.current = setTimeout(() => setToastMsg(null), TOAST_MS);
+    setToastAction(action ?? null);
+    toastTimerRef.current = setTimeout(
+      () => {
+        setToastMsg(null);
+        setToastAction(null);
+      },
+      action ? 5000 : TOAST_MS,
+    );
   }
 
   const lang = state.design.lang;
@@ -54,10 +63,19 @@ export function Events({ store }: { store: Store }) {
       </div>
       <div class="events-body">
         {segment === 'events' && <EventsTab store={store} state={state} showToast={showToast} />}
-        {segment === 'todos' && <TodosTab store={store} state={state} />}
+        {segment === 'todos' && <TodosTab store={store} state={state} showToast={showToast} />}
         {segment === 'note' && <NoteTab store={store} state={state} showToast={showToast} />}
       </div>
-      <Toast message={toastMsg} />
+      <Toast
+        message={toastMsg}
+        actionLabel={toastAction?.label}
+        onAction={() => {
+          if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+          toastAction?.onClick();
+          setToastMsg(null);
+          setToastAction(null);
+        }}
+      />
     </div>
   );
 }

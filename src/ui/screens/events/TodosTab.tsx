@@ -1,4 +1,5 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
+import type { JSX } from 'preact';
 import type { Store } from '../../store';
 import type { AppState, ISODate, Todo } from '../../../core/model';
 import { t } from '../../../core/i18n';
@@ -9,7 +10,15 @@ import { sortTodosForDisplay, todoDueLabel } from './util';
 interface Props {
   store: Store;
   state: AppState;
+  showToast: (msg: string, action?: { label: string; onClick: () => void }) => void;
 }
+
+/** T-6.2: một bộ cử chỉ pointer duy nhất cho mỗi hàng, phân biệt vuốt ngang / nhấn giữ kéo / chạm thường. */
+const LONG_PRESS_MS = 450;
+const MOVE_CANCEL_PX = 8;
+const SWIPE_ACTIVATE_PX = 16;
+const SWIPE_PANEL_PX = 160;
+const SWIPE_OPEN_RATIO = 0.4;
 
 function DueBadge({
   todo,
@@ -59,7 +68,264 @@ function DueBadge({
   );
 }
 
-export function TodosTab({ store, state }: Props) {
+interface DragInfo {
+  id: string;
+  listKey: 'open' | 'done';
+  originalIndex: number;
+  finalIndex: number;
+  rowHeight: number;
+  rawDy: number;
+}
+
+type Phase = 'idle' | 'pending' | 'swipe' | 'drag';
+
+interface GestureCallbacks {
+  onSwipeSettle: (open: boolean) => void;
+  onBeginDrag: (rowEl: HTMLDivElement) => void;
+  onDragMove: (dy: number) => void;
+  onDragEnd: () => void;
+  onDragCancel: () => void;
+}
+
+/** Bộ nhận cử chỉ dùng chung cho hàng thường và hàng đã lưu trữ (T-6.2). `canDrag` tắt cho hàng lưu trữ. */
+function useRowGesture(canDrag: boolean, cb: GestureCallbacks) {
+  const phaseRef = useRef<Phase>('idle');
+  const startRef = useRef({ x: 0, y: 0 });
+  const pointerIdRef = useRef<number | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const suppressClickRef = useRef(false);
+  const [dx, setDx] = useState<number | null>(null);
+  const [dragging, setDragging] = useState(false);
+  const rowElRef = useRef<HTMLDivElement | null>(null);
+
+  function clearTimer() {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  }
+
+  // Safari iOS (bằng chứng review T-6.2 lượt 1): hàng có `touch-action: pan-y` để cuộn dọc mượt
+  // khi không kéo. Nhưng WebKit chốt quyết định cuộn/không-cuộn cho cả chuỗi chạm ngay khi touch
+  // bắt đầu di chuyển theo `touch-action`; gọi `preventDefault()` trên PointerEvent (`onPointerMove`
+  // ở JSX) không còn chặn được cuộn nữa một khi WebKit đã "giành" cử chỉ — nó hủy pointer luôn
+  // (bắn `pointercancel`) trước khi JS kịp phản ứng. Cách chặn được: đăng ký listener `touchmove`
+  // gốc (không qua JSX, vì {passive:false} không tự đặt được qua props) trực tiếp trên phần tử
+  // hàng, gọi `preventDefault()` ngay khi đang vuốt ngang (đã xác định hướng) hoặc đang kéo (đã qua
+  // nhấn giữ) — tức TRƯỚC khi trình duyệt kịp chốt cuộn cho lần di chuyển đó.
+  useEffect(() => {
+    const el = rowElRef.current;
+    if (!el) return;
+    function onTouchMove(e: TouchEvent) {
+      if (phaseRef.current === 'swipe' || phaseRef.current === 'drag') e.preventDefault();
+    }
+    el.addEventListener('touchmove', onTouchMove, { passive: false });
+    return () => el.removeEventListener('touchmove', onTouchMove);
+  }, []);
+
+  function onPointerDown(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
+    if ((e.target as HTMLElement).closest('input')) return;
+    startRef.current = { x: e.clientX, y: e.clientY };
+    pointerIdRef.current = e.pointerId;
+    phaseRef.current = 'pending';
+    clearTimer();
+    if (canDrag) {
+      timerRef.current = setTimeout(() => {
+        if (phaseRef.current !== 'pending') return;
+        phaseRef.current = 'drag';
+        suppressClickRef.current = true;
+        setDragging(true);
+        const el = rowElRef.current;
+        if (el) {
+          try {
+            el.setPointerCapture(e.pointerId);
+          } catch {
+            /* ignore: pointer may already be released */
+          }
+          cb.onBeginDrag(el);
+        }
+      }, LONG_PRESS_MS);
+    }
+  }
+
+  function onPointerMove(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
+    if (pointerIdRef.current !== e.pointerId) return;
+    const dxNow = e.clientX - startRef.current.x;
+    const dyNow = e.clientY - startRef.current.y;
+    if (phaseRef.current === 'pending') {
+      if (Math.abs(dxNow) > SWIPE_ACTIVATE_PX && Math.abs(dxNow) > Math.abs(dyNow)) {
+        clearTimer();
+        phaseRef.current = 'swipe';
+        suppressClickRef.current = true;
+        const el = rowElRef.current;
+        if (el) {
+          try {
+            el.setPointerCapture(e.pointerId);
+          } catch {
+            /* ignore */
+          }
+        }
+        setDx(0);
+      } else if (Math.abs(dyNow) > MOVE_CANCEL_PX) {
+        clearTimer();
+        phaseRef.current = 'idle';
+      }
+      return;
+    }
+    if (phaseRef.current === 'swipe') {
+      e.preventDefault();
+      setDx(Math.min(0, Math.max(-SWIPE_PANEL_PX - 24, dxNow)));
+      return;
+    }
+    if (phaseRef.current === 'drag') {
+      e.preventDefault();
+      cb.onDragMove(dyNow);
+    }
+  }
+
+  function endGesture(cancelled: boolean) {
+    clearTimer();
+    if (phaseRef.current === 'swipe') {
+      const openThreshold = -SWIPE_PANEL_PX * SWIPE_OPEN_RATIO;
+      const cur = dx ?? 0;
+      cb.onSwipeSettle(!cancelled && cur <= openThreshold);
+      setDx(null);
+    } else if (phaseRef.current === 'drag') {
+      setDragging(false);
+      if (cancelled) cb.onDragCancel();
+      else cb.onDragEnd();
+    }
+    phaseRef.current = 'idle';
+    pointerIdRef.current = null;
+  }
+
+  function onPointerUp(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
+    if (pointerIdRef.current !== e.pointerId) return;
+    endGesture(false);
+  }
+
+  function onPointerCancel(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
+    if (pointerIdRef.current !== e.pointerId) return;
+    // `pointercancel` (vd. WebKit giành cuộn giữa chừng) không kéo theo sự kiện `click` nào sau đó
+    // -> phải tự dọn cờ suppressClick ở đây, nếu không lần chạm HỢP LỆ tiếp theo trên hàng này sẽ bị
+    // nuốt oan (kẹt trạng thái). `endGesture(true)` bên dưới đã lo phần dọn `dragInfo`/`dx` để hàng
+    // nổi hoặc panel vuốt trở lại đúng chỗ (không mutate state thật khi bị hủy).
+    suppressClickRef.current = false;
+    endGesture(true);
+  }
+
+  function onClickCapture(e: JSX.TargetedMouseEvent<HTMLDivElement>) {
+    if (suppressClickRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      suppressClickRef.current = false;
+    }
+  }
+
+  return {
+    dx,
+    dragging,
+    rowElRef,
+    handlers: { onPointerDown, onPointerMove, onPointerUp, onPointerCancel, onClickCapture },
+  };
+}
+
+function SwipeRow({
+  id,
+  isOpen,
+  setOpen,
+  canDrag,
+  dragInfo,
+  setDragInfo,
+  listKey,
+  index,
+  list,
+  onDragCommit,
+  actions,
+  children,
+}: {
+  id: string;
+  isOpen: boolean;
+  setOpen: (open: boolean) => void;
+  canDrag: boolean;
+  dragInfo: DragInfo | null;
+  setDragInfo: (update: DragInfo | null | ((prev: DragInfo | null) => DragInfo | null)) => void;
+  listKey: 'open' | 'done';
+  index: number;
+  list: Todo[];
+  onDragCommit: (id: string, targetId: string) => void;
+  actions: JSX.Element;
+  children: JSX.Element;
+}) {
+  const { dx, dragging, rowElRef, handlers } = useRowGesture(canDrag, {
+    onSwipeSettle: (open) => setOpen(open),
+    onBeginDrag: (rowEl) => {
+      const rect = rowEl.getBoundingClientRect();
+      setDragInfo({ id, listKey, originalIndex: index, finalIndex: index, rowHeight: rect.height + 6, rawDy: 0 });
+    },
+    onDragMove: (dy) => {
+      setDragInfo((prev) => {
+        if (!prev || prev.id !== id) return prev;
+        const steps = Math.round(dy / prev.rowHeight);
+        const finalIndex = Math.min(list.length - 1, Math.max(0, prev.originalIndex + steps));
+        return { ...prev, rawDy: dy, finalIndex };
+      });
+    },
+    onDragEnd: () => onDragCommit(id, ''),
+    onDragCancel: () => setDragInfo(null),
+  });
+
+  const isDraggedRow = dragInfo?.id === id && dragInfo.listKey === listKey;
+  let shiftPx = 0;
+  if (dragInfo && dragInfo.listKey === listKey && !isDraggedRow) {
+    const { originalIndex, finalIndex, rowHeight } = dragInfo;
+    if (originalIndex < finalIndex && index > originalIndex && index <= finalIndex) shiftPx = -rowHeight;
+    else if (originalIndex > finalIndex && index >= finalIndex && index < originalIndex) shiftPx = rowHeight;
+  }
+
+  const innerStyle: Record<string, string> = {};
+  if (isDraggedRow) {
+    innerStyle.transform = `translateY(${dragInfo!.rawDy}px) scale(1.03)`;
+    innerStyle.transition = 'none';
+  } else if (dx !== null) {
+    innerStyle.transform = `translateX(${dx}px)`;
+    innerStyle.transition = 'none';
+  } else if (shiftPx !== 0) {
+    innerStyle.transform = `translateY(${shiftPx}px)`;
+  } else if (isOpen) {
+    innerStyle.transform = `translateX(-${SWIPE_PANEL_PX}px)`;
+  }
+
+  // Đóng hẳn (không vuốt, không mở) -> ẩn hẳn panel nút (không chỉ che bằng transform): review
+  // T-6.2 lượt 2 phát hiện mép phải lộ vệt cong mảnh khi đóng, do góc bo `.todo-item-wrap` clip
+  // hình chữ nhật `.todo-item-inner` để lộ một mẩu panel phía sau qua góc bo. `visibility: hidden`
+  // khi đóng loại bỏ hẳn phần đó khỏi hiển thị bất kể góc bo/viền.
+  const showActions = isOpen || dx !== null;
+
+  return (
+    <div
+      class="todo-item-wrap"
+      ref={rowElRef}
+      onPointerDown={handlers.onPointerDown}
+      onPointerMove={handlers.onPointerMove}
+      onPointerUp={handlers.onPointerUp}
+      onPointerCancel={handlers.onPointerCancel}
+      onClickCapture={handlers.onClickCapture}
+    >
+      <div class="todo-swipe-actions" style={{ visibility: showActions ? 'visible' : 'hidden' }}>
+        {actions}
+      </div>
+      <div
+        class={isDraggedRow || dragging ? 'todo-item-inner todo-item-dragging' : 'todo-item-inner'}
+        style={innerStyle}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export function TodosTab({ store, state, showToast }: Props) {
   const lang = state.design.lang;
   const today = toISODate(new Date());
   const [inputText, setInputText] = useState('');
@@ -67,8 +333,17 @@ export function TodosTab({ store, state }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState('');
   const [showDone, setShowDone] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
+  const [swipeOpenId, setSwipeOpenId] = useState<string | null>(null);
+  const [dragInfo, setDragInfoState] = useState<DragInfo | null>(null);
 
-  const sorted = sortTodosForDisplay(state.todos);
+  function setDragInfo(update: DragInfo | null | ((prev: DragInfo | null) => DragInfo | null)) {
+    setDragInfoState((prev) => (typeof update === 'function' ? (update as (p: DragInfo | null) => DragInfo | null)(prev) : update));
+  }
+
+  const activeTodos = state.todos.filter((x) => !x.archived);
+  const archivedTodos = [...state.todos.filter((x) => !!x.archived)].sort((a, b) => a.order - b.order);
+  const sorted = sortTodosForDisplay(activeTodos);
   const open = sorted.filter((x) => !x.done);
   const done = sorted.filter((x) => x.done);
 
@@ -93,10 +368,48 @@ export function TodosTab({ store, state }: Props) {
     setEditingId(null);
   }
 
-  function renderRow(todo: Todo, list: Todo[]) {
+  function handleArchive(todo: Todo) {
+    setSwipeOpenId(null);
+    store.dispatch({ type: 'archiveTodo', id: todo.id, archived: true });
+    showToast(t('events.todoArchivedToast', lang), {
+      label: t('events.undo', lang),
+      onClick: () => store.dispatch({ type: 'restoreTodo', todo }),
+    });
+  }
+
+  function handleDelete(todo: Todo) {
+    setSwipeOpenId(null);
+    store.dispatch({ type: 'deleteTodo', id: todo.id });
+    showToast(t('events.todoDeletedToast', lang), {
+      label: t('events.undo', lang),
+      onClick: () => store.dispatch({ type: 'restoreTodo', todo }),
+    });
+  }
+
+  function handleRestore(todo: Todo) {
+    setSwipeOpenId(null);
+    store.dispatch({ type: 'archiveTodo', id: todo.id, archived: false });
+  }
+
+  function handleDragEnd(list: Todo[], listKey: 'open' | 'done') {
+    setDragInfoState((prev) => {
+      if (!prev || prev.listKey !== listKey) return null;
+      const { id, originalIndex, finalIndex } = prev;
+      if (finalIndex !== originalIndex) {
+        const dragged = list[originalIndex];
+        const withoutDragged = list.filter((tItem) => tItem.id !== id);
+        const preview = [...withoutDragged.slice(0, finalIndex), dragged, ...withoutDragged.slice(finalIndex)];
+        const target = finalIndex > originalIndex ? preview[finalIndex - 1] : preview[finalIndex + 1];
+        if (target) store.dispatch({ type: 'reorderTodo', id, targetId: target.id });
+      }
+      return null;
+    });
+  }
+
+  function renderRow(todo: Todo, list: Todo[], listKey: 'open' | 'done') {
     const idx = list.indexOf(todo);
-    return (
-      <div key={todo.id} class="todo-item" data-testid="todo-item">
+    const content = (
+      <div class="todo-item" data-testid="todo-item">
         <button
           type="button"
           data-testid="todo-toggle"
@@ -149,10 +462,72 @@ export function TodosTab({ store, state }: Props) {
         </button>
       </div>
     );
+    return (
+      <SwipeRow
+        key={todo.id}
+        id={todo.id}
+        isOpen={swipeOpenId === todo.id}
+        setOpen={(open) => setSwipeOpenId(open ? todo.id : null)}
+        canDrag={true}
+        dragInfo={dragInfo}
+        setDragInfo={setDragInfo}
+        listKey={listKey}
+        index={idx}
+        list={list}
+        onDragCommit={() => handleDragEnd(list, listKey)}
+        actions={
+          <>
+            <button type="button" data-testid="todo-swipe-archive" class="todo-swipe-archive" onClick={() => handleArchive(todo)}>
+              {t('events.todoArchive', lang)}
+            </button>
+            <button type="button" data-testid="todo-swipe-delete" class="todo-swipe-delete" onClick={() => handleDelete(todo)}>
+              {t('events.todoDelete', lang)}
+            </button>
+          </>
+        }
+      >
+        {content}
+      </SwipeRow>
+    );
+  }
+
+  function renderArchivedRow(todo: Todo) {
+    const content = (
+      <div class="todo-item todo-archived-item" data-testid="todo-archived-item">
+        <span class="todo-text">{todo.text}</span>
+      </div>
+    );
+    return (
+      <SwipeRow
+        key={todo.id}
+        id={todo.id}
+        isOpen={swipeOpenId === todo.id}
+        setOpen={(open) => setSwipeOpenId(open ? todo.id : null)}
+        canDrag={false}
+        dragInfo={null}
+        setDragInfo={() => {}}
+        listKey="open"
+        index={0}
+        list={[]}
+        onDragCommit={() => {}}
+        actions={
+          <>
+            <button type="button" data-testid="todo-swipe-restore" class="todo-swipe-restore" onClick={() => handleRestore(todo)}>
+              {t('events.todoRestore', lang)}
+            </button>
+            <button type="button" data-testid="todo-swipe-delete" class="todo-swipe-delete" onClick={() => handleDelete(todo)}>
+              {t('events.todoDelete', lang)}
+            </button>
+          </>
+        }
+      >
+        {content}
+      </SwipeRow>
+    );
   }
 
   return (
-    <div class="todos-tab">
+    <div class="todos-tab" onClick={() => setSwipeOpenId(null)}>
       <div class="addrow">
         <input
           type="text"
@@ -180,13 +555,26 @@ export function TodosTab({ store, state }: Props) {
         </button>
       </div>
       {open.length === 0 && <p class="empty">{t('todo.empty', lang)}</p>}
-      <div class="todo-list">{open.map((todo) => renderRow(todo, open))}</div>
+      <div class="todo-list">{open.map((todo) => renderRow(todo, open, 'open'))}</div>
       {done.length > 0 && (
         <div class="todo-done-group">
           <button type="button" data-testid="todo-done-toggle" class="row btnrow" onClick={() => setShowDone((v) => !v)}>
             {t('events.todoDoneCount', lang, { n: done.length })}
           </button>
-          {showDone && <div class="todo-done-list">{done.map((todo) => renderRow(todo, done))}</div>}
+          {showDone && <div class="todo-done-list">{done.map((todo) => renderRow(todo, done, 'done'))}</div>}
+        </div>
+      )}
+      {archivedTodos.length > 0 && (
+        <div class="todo-archived-group">
+          <button
+            type="button"
+            data-testid="todo-archived-toggle"
+            class="row btnrow"
+            onClick={() => setShowArchived((v) => !v)}
+          >
+            {t('events.todoArchivedCount', lang, { n: archivedTodos.length })}
+          </button>
+          {showArchived && <div class="todo-archived-list">{archivedTodos.map((todo) => renderArchivedRow(todo))}</div>}
         </div>
       )}
     </div>

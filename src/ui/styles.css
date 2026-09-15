@@ -787,10 +787,78 @@ select option {
   opacity: 0.35;
 }
 
-.todo-done-group {
+.todo-done-group,
+.todo-archived-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+/* ---- cử chỉ hàng to-do: vuốt trái Lưu trữ/Xóa, nhấn giữ kéo sắp xếp (T-6.2) ---- */
+
+.todo-item-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.todo-swipe-actions {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 160px;
+  display: flex;
+}
+
+.todo-swipe-actions button {
+  flex: 1;
+  min-width: 44px;
+  min-height: 44px;
+  border: none;
+  border-radius: 0;
+  color: #fff;
+  font-size: 13px;
+  white-space: nowrap;
+  padding: 0 6px;
+  box-sizing: border-box;
+}
+
+.todo-swipe-archive {
+  background: #4c6ef5;
+}
+
+.todo-swipe-delete {
+  background: #e03131;
+}
+
+.todo-swipe-restore {
+  background: #2f9e44;
+}
+
+.todo-item-inner {
+  position: relative;
+  width: 100%;
+  background: #0b0b0f;
+  /* Khớp bo góc với `.todo-item-wrap` (clip `overflow:hidden`) để không lộ mẩu panel vuốt phía
+     sau qua góc bo khi đóng (review T-6.2 lượt 2): `.todo-item-wrap` clip theo hình chữ nhật bo
+     góc, còn hàng bên trong là hình chữ nhật vuông góc -> ở 4 góc, phần bo của wrapper cắt một
+     mẩu tam giác nhỏ của hàng, để lộ panel/nền phía sau qua đó nếu 2 bán kính không khớp nhau. */
+  border-radius: 8px;
+}
+
+.todo-item-dragging {
+  z-index: 5;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  transform-origin: center;
+}
+
+.todo-archived-item {
+  opacity: 0.55;
 }
 
 .row.btnrow {
@@ -874,11 +942,24 @@ select option {
   pointer-events: none;
   max-width: 90vw;
   text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .toast.show {
   opacity: 1;
   transform: translateX(-50%);
+}
+
+.toast-action {
+  pointer-events: auto;
+  background: none;
+  border: none;
+  color: #4c6ef5;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
 }
 
 /* Màn Đồng bộ (T-3.3): tái dùng .field/.field-between/.switch/.btn/.hint. */
