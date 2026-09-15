@@ -1,5 +1,5 @@
 import type { DeviceSpec, DesignConfig, ISODate } from '../../core/model';
-import { parseISODate } from '../../core/calendar';
+import { parseISODate, toISODate } from '../../core/calendar';
 import { t } from '../../core/i18n';
 import { solarToLunar, lunarYearName } from '../../core/lunar';
 
@@ -162,4 +162,32 @@ export function todoDueLabel(due: ISODate, today: ISODate, lang: 'vi' | 'en'): {
   if (due === today) return { text: t('date.today', lang), overdue: false };
   const p = parseISODate(due);
   return { text: `${p.d}/${p.m0 + 1}`, overdue: false };
+}
+
+/** 7 ngày của tuần chứa `today`, bắt đầu theo `weekStart` (1: T2..CN, 0: CN..T7); cùng thứ tự cột với `weekdayLabels`. */
+export function weekDates(today: ISODate, weekStart: 0 | 1): ISODate[] {
+  const p = parseISODate(today);
+  const base = new Date(p.y, p.m0, p.d, 12);
+  const dow = base.getDay();
+  const diff = weekStart === 1 ? (dow + 6) % 7 : dow;
+  const start = new Date(base.getFullYear(), base.getMonth(), base.getDate() - diff, 12);
+  const out: ISODate[] = [];
+  for (let i = 0; i < 7; i++) {
+    out.push(toISODate(new Date(start.getFullYear(), start.getMonth(), start.getDate() + i, 12)));
+  }
+  return out;
+}
+
+/** Trộn màu hex với trắng ~60% để ra màu pastel dùng cho chip Tuần; không có màu → xanh mặc định. */
+export function pastel(hex: string | undefined): string {
+  const src = hex && /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(hex) ? hex : '#60a5fa';
+  let h = src.slice(1);
+  if (h.length === 3) h = h.split('').map((ch) => ch + ch).join('');
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  const W = 0.6;
+  const mix = (v: number) => Math.round(v * (1 - W) + 255 * W);
+  const toHex = (v: number) => v.toString(16).padStart(2, '0');
+  return `#${toHex(mix(r))}${toHex(mix(g))}${toHex(mix(b))}`;
 }

@@ -36,6 +36,41 @@ function todos(n) {
   return Array.from({ length: n }, (_, i) => ({ id: 't' + i, text: texts[i % texts.length], done: i % 3 === 1, order: i, due: i % 4 === 0 ? addDays(-1) : i % 4 === 2 ? addDays(0) : i % 5 === 3 ? addDays(3) : undefined }));
 }
 
+// Tuần: sự kiện nhiều ngày trong tuần (kể cả hôm nay), có giờ kết thúc; to-do có hạn/quá hạn.
+function weekEvents() {
+  const colors = ['#ff6b6b', '#4dabf7', '#51cf66', '#fcc419', undefined];
+  const specs = [
+    { day: -2, time: '06:00', dur: 40, title: 'Tập thể dục' },
+    { day: -2, time: '09:00', dur: 180, title: 'Họp & làm việc' },
+    { day: -1, time: '08:00', dur: 120, title: 'Họp nhóm' },
+    { day: 0, time: '07:00', dur: 40, title: 'Sáng sớm chạy bộ' },
+    { day: 0, time: '09:00', dur: 40, title: 'Lớp IMC' },
+    { day: 0, time: '15:00', dur: 90, title: 'Cà phê với Tân' },
+    { day: 0, allDay: true, title: 'Nộp báo cáo tháng' },
+    { day: 1, time: '09:00', dur: 90, title: 'Mua quà tặng' },
+    { day: 2, time: '14:00', dur: 150, title: 'Học Pilates' },
+    { day: 2, time: '18:00', dur: 180, title: 'Tiệc cùng bạn bè' },
+    { day: 3, time: '09:00', dur: 120, title: 'Đón khách sân bay' },
+  ];
+  const addMin = (t, m) => { const [h, mm] = t.split(':').map(Number); const total = h * 60 + mm + m; const hh = Math.floor((total % 1440) / 60); const mn = total % 60; return `${pad(hh)}:${pad(mn)}`; };
+  return specs.map((s, i) => ({
+    id: 'we' + i, title: s.title, date: addDays(s.day),
+    time: s.allDay ? undefined : s.time,
+    durationMin: s.allDay ? undefined : s.dur,
+    repeat: 'none', color: colors[i % colors.length],
+  }));
+}
+
+function weekTodos() {
+  return [
+    { id: 'wt0', text: 'Đóng học phí (quá hạn)', done: false, order: 0, due: addDays(-3) },
+    { id: 'wt1', text: 'Gửi email báo cáo tuần', done: false, order: 1, due: addDays(0) },
+    { id: 'wt2', text: 'Gọi bà', done: false, order: 2, due: addDays(0) },
+    { id: 'wt3', text: 'Mua sữa', done: false, order: 3, due: addDays(1) },
+    { id: 'wt4', text: 'Đặt vé máy bay', done: true, order: 4, due: addDays(-1) },
+  ];
+}
+
 (async () => {
   fs.mkdirSync(OUTDIR, { recursive: true });
   const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { cwd: repoRoot, shell: true, stdio: 'ignore' });
@@ -46,7 +81,7 @@ function todos(n) {
     const page = await ctx.newPage();
     const url = `http://localhost:${PORT}/?test=1`;
     await page.goto(url);
-    for (const layout of ['month', 'agenda', 'todo']) {
+    for (const layout of ['month', 'agenda', 'todo', 'week']) {
       const shots = [];
       for (const showNote of [false, true]) {
         for (const n of [0, 2, 15]) {
@@ -55,7 +90,7 @@ function todos(n) {
             device: { id: 'iphone-1284x2778', label: 'iPhone 12/13 Pro Max', width: 1284, height: 2778, safeTop: 0.30, safeBottom: 0.14 },
             design: { layout, showNote },
             notes: [{ id: 'n1', title: 'Ghi chú cũ', body: 'Không được hiện', pinned: false, updated: 1 }, { id: 'n2', title: 'Việc tuần này', body: 'Nhớ mang ô, trời mưa chiều nay. Mật khẩu wifi nhà mới 12345678. Cuối tuần về quê thăm ông bà.', pinned: true, updated: 2 }],
-            events: events(n), todos: todos(n),
+            events: layout === 'week' ? weekEvents() : events(n), todos: layout === 'week' ? weekTodos() : todos(n),
             google: { clientId: '', calendarIds: [], cache: null }, shortcutName: 'LichKhoa',
           };
           await page.evaluate((s) => new Promise((res, rej) => {

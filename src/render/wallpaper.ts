@@ -4,6 +4,7 @@ import { paint, type DrawOp } from './paint';
 import { layoutMonth } from './layout/month';
 import { layoutAgenda } from './layout/agenda';
 import { layoutTodo } from './layout/todo';
+import { layoutWeek } from './layout/week';
 import { layoutNote } from './layout/note';
 import { decodeImage, drawBackground, makeCanvas, canvasToBlob, closeImage } from './background';
 
@@ -36,6 +37,7 @@ export function buildOps(state: AppState, today: ISODate): DrawOp[] {
   let ops: DrawOp[];
   if (design.layout === 'agenda') ops = layoutAgenda(data, design, device);
   else if (design.layout === 'todo') ops = layoutTodo(data, design, device);
+  else if (design.layout === 'week') ops = layoutWeek(data, design, device);
   else ops = layoutMonth(data, design, device);
 
   return [...ops, ...layoutNote(data, design, device)];

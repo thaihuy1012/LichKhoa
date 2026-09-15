@@ -155,6 +155,9 @@
   "month.moreTodos": "+{n} việc nữa",
   "preview.monthList": "Danh sách dưới lịch tháng",
 
+  "week.todayEmpty": "Không có gì hôm nay",
+  "week.more": "+{n} nữa",
+
   "common.comingSoon": "Sắp có",
   "sync.lastSync": "Đồng bộ lần cuối: {time}",
   "sync.neverSynced": "Chưa đồng bộ lần nào",

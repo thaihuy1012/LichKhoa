@@ -155,6 +155,9 @@
   "month.moreTodos": "+{n} more to-dos",
   "preview.monthList": "List under month",
 
+  "week.todayEmpty": "Nothing today",
+  "week.more": "+{n} more",
+
   "common.comingSoon": "Coming soon",
   "sync.lastSync": "Last synced: {time}",
   "sync.neverSynced": "Never synced yet",
