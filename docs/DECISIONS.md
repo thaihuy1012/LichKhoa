@@ -101,6 +101,7 @@
 ## D-025 — Duyệt M5 (HEAD sau soát chéo): DUYỆT (2026-09-15 · người quyết: Kiến trúc sư)
 - Tiêu chí SPEC §6 M5 đạt (ảnh máy thật chờ Chủ dự án, không chặn). Kiến trúc sư tự chạy vitest 228/21 file; test khóa đổi đúng khai báo.
 - Soát chéo Gemini: (1) cache Google cũ thiếu ngày đầu tuần → S4, không sửa (cache không có `timeMin`, tự hết sau lần đồng bộ kế); (2) trùng local+Google → bác (ngoài M5); (3) to-do không hạn → bác (D-024); (4) hour12 bỏ AM ở giờ đầu → hạ S4 (Inks cũng vậy, mặc định 24h); (5) VS-15 cho ◷/☐ → bác (không phải ký tự emoji); rủi ro thật là iOS thiếu glyph ◷ → xem máy thật, hỏng thì bỏ "◷ " (`week.ts:388`); (6) e2e chỉ kiểm x → bác (unit đã kiểm mainArea).
+- Máy thật (Chủ dự án, sau deploy a173446): chữ chip đọc được, "◷" hiện đúng → T-5.4 chỉ còn dọn code S4, không gấp.
 - Tồn đọng gộp phiếu **T-5.4** (sau khi Chủ dự án xem máy thật): hour12 chỉ cắt hậu tố khi cùng buổi + unit test hour12; `CHAR_W` 0.55 theo font (mono ≈ 0.6); `todoDueText` trùng `todoDueLabel`; `layout-week.test.ts:117–124,142–147` chép hằng lề/cột; cache cũ.
 
 ## D-020 — T-4.10 PHẢN BIỆN lượt 1: CHẤP NHẬN sửa 1 dòng test khóa `notes.spec.ts` (2026-09-14 · người quyết: Quản lý)
@@ -146,3 +147,10 @@
 - Công cụ ảnh mẫu/chụp webkit phải nằm trong repo `scripts/` (đã ghi vào SPEC §5) → T-2.16.
 - Thợ cấm mọi lệnh git đổi cây làm việc (`stash`/`checkout --`/`reset`/`clean`); chỉ Quản lý commit/tag. Song song vẫn theo quy tắc "không chung file".
 - S4 mới KTS phát hiện (gộp T-2.15): `normalizeState` không kiểm `events/todos/notes` là mảng và không ép ≤ 1 ghi chú ghim (bất biến hiện chỉ do `NoteTab.save()` giữ); `eventToIcs` với `weekdays` mà DTSTART rơi T7/CN → Lịch iPhone có thể hiện thêm 1 lần (RFC 5545 để "undefined") → dời DTSTART tới T2 kế tiếp; gập dòng 75 octet (đóng S4 T-2.5). "Đang tải…" (App.tsx) làm trong T-3.3.
+
+## D-026 — SPEC v1.6: ẩn sự kiện trùng local/Google trên hình nền; bỏ "bấm đúp mở Google Calendar" (2026-09-15 · người quyết: Chủ dự án)
+- Chủ dự án yêu cầu 2 tính năng: (a) bấm đúp sự kiện trên màn hình → mở Google Calendar; (b) sự kiện nhập trong app trùng sự kiện Google → hiện sự kiện được tạo sau.
+- (a) Quản lý giải thích hình nền màn khóa là ảnh tĩnh, iOS không cho bấm vào; đề xuất làm trong tab Sự kiện / ảnh xem trước → Chủ dự án chọn **không làm**. Ghi OUT.
+- (b) Chủ dự án chốt (đều theo khuyến nghị): trùng = cùng ngày + cùng giờ bắt đầu + cùng tên (không phân biệt hoa thường, bỏ khoảng trắng thừa; cả ngày: cùng ngày + tên); sự kiện local cũ chưa có thời điểm tạo → coi là tạo trước (hiện Google); chỉ áp dụng trên hình nền — tab Sự kiện vẫn hiện cả hai để còn sửa/xóa bản trong app.
+- Hợp đồng: `LocalEvent.createdAt?` (ms, đặt khi thêm, giữ khi sửa), `Occurrence.createdAt?` (local từ event, Google từ `created` của API); lọc trong `collectRenderData`. Thiếu `createdAt` = 0; bằng nhau → Google.
+- Quy mô nhỏ, trong khung kiến trúc sẵn có → phiếu bảo trì **B-003** (sonnet, đổi hợp đồng nên không giao Gemini), không mở milestone mới, không cần Kiến trúc sư (tiền lệ D-018, D-023).

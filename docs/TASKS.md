@@ -5,7 +5,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 12/12 ✔ tag `M4-ok` (D-021 — DUYỆT M4 + nghiệm thu cuối, gộp)
-- **M5 (SPEC v1.5, D-024) — Bố cục Tuần giống Inks: 4/4 ✔ tag `M5-ok`** (D-025 — Kiến trúc sư DUYỆT sau soát chéo Gemini). Deploy OK: Chủ dự án `git push` (6fec4b5..a173446) → Actions run 34919243300 success, trang 200, JS có `layout-week`. Tag `M5-ok` đã lên GitHub. Chờ Chủ dự án xem trên iPhone 2 ý: (1) chữ chip (~7–8 pt) đọc được không; (2) biểu tượng ◷ có hiện không. Sau đó → phiếu T-5.4 (tồn đọng D-025) nếu cần. Thứ tự 5.1 → 5.2 → 5.3 → 5.END → ảnh mẫu cho Chủ dự án → soát chéo Gemini `M5-soat` → Kiến trúc sư duyệt M5 → tag `M5-ok`. Xem mục "M5" cuối file. Làn Gemini: BẬT mức NHIỀU ở checkout chính (không chạy trong worktree — BAI-HOC); T-5.3 đủ điều kiện → tho-gemini.
+- **M5 (SPEC v1.5, D-024) — Bố cục Tuần giống Inks: 4/4 ✔ tag `M5-ok`** (D-025 — Kiến trúc sư DUYỆT sau soát chéo Gemini). Máy thật (Chủ dự án 2026-09-15): chữ chip đọc được ✔, "◷" hiện đúng ✔ → T-5.4 không cần gấp (chỉ còn S4 dọn code). Chủ dự án yêu cầu thêm (D-026, SPEC v1.6): bấm đúp mở Google Calendar → KHÔNG làm (OUT); sự kiện trùng local/Google → phiếu B-003 (DOING, cuối file). Deploy OK: Chủ dự án `git push` (6fec4b5..a173446) → Actions run 34919243300 success, trang 200, JS có `layout-week`. Tag `M5-ok` đã lên GitHub. Chờ Chủ dự án xem trên iPhone 2 ý: (1) chữ chip (~7–8 pt) đọc được không; (2) biểu tượng ◷ có hiện không. Sau đó → phiếu T-5.4 (tồn đọng D-025) nếu cần. Thứ tự 5.1 → 5.2 → 5.3 → 5.END → ảnh mẫu cho Chủ dự án → soát chéo Gemini `M5-soat` → Kiến trúc sư duyệt M5 → tag `M5-ok`. Xem mục "M5" cuối file. Làn Gemini: BẬT mức NHIỀU ở checkout chính (không chạy trong worktree — BAI-HOC); T-5.3 đủ điều kiện → tho-gemini.
 - 2026-09-15: ĐỢT BẢO TRÌ D-023 XONG (B-001, B-002) — Quản lý phiên chính dọn rác Gemini ở checkout chính, `merge --ff-only` nhánh worktree → `main` 6fec4b5, `npm run check` pass (211×2 unit, 64 e2e, 6 skip có từ trước). Chủ dự án `git push` (e954b16..6fec4b5) → Actions run 34911429434 success, trang 200, CSS `.color-input` mới đã lên. Chờ Chủ dự án xem ô màu trên iPhone. Dự án trở lại trạng thái ĐÓNG (D-022).
 - Trước đó (2026-09-15): ĐỢT BẢO TRÌ D-023 — B-001 (Gemini) → B-002 (sonnet). Xem mục "Bảo trì 2026-09-15" cuối file.
 - 2026-09-15 phiên 2 (nền): làm trong worktree `.claude/worktrees/bao-tri-D-023`, nhánh `worktree-bao-tri-D-023` (từ `main` fd17357) — commit ở nhánh này, Chủ dự án gộp về `main` (`git merge --ff-only worktree-bao-tri-D-023`). Lượt Gemini `B-001` vòng 1 phiên trước chết khi dừng phiên (`DONE 255`, đầu ra rỗng, không đổi `src/`) → `huy B-001`, giao lại vòng 1 (không tính Lần thử, không tính lỗi làn). Lưu ý: `agy-run.sh huy` hoàn tác MỌI thay đổi chưa commit, kể cả sổ sách → commit sổ trước khi giao Gemini.
@@ -652,3 +652,25 @@ Mẫu: `docs/tham-khao/inks-tuan.PNG`. Thứ tự: 5.1 → 5.2 → 5.3 → 5.END
 - Lệnh kiểm tra: `npx playwright test tests/e2e/m5-week.spec.ts; npm run check`
 - Nhật ký: 2026-09-15 lượt 1: DONE (m5-week.spec.ts, không sửa src; repeat-each=3 6/6; check 70/6 skip). Review (trước kiem-thu để khỏi chạy 2 lần): test chép cứng hằng hình học week.ts (margin/gap/colW) → test khóa giòn → trả thợ suy cột từ op nhãn thứ trong `__lastOps` (Lần thử 1/3). Lượt 2: `columnCenters()` từ op nhãn thứ + `containsX()`; bỏ hằng hình học → kiem-thu PASS (repeat-each=3 6/6; unit 228×2/21 file; e2e 70/6 skip; src không đổi) → review đạt → commit.
 - Model: sonnet · Lần thử: 1/3 · Trạng thái: DONE
+
+---
+## Bảo trì 2026-09-15 (2) — SPEC v1.6 (D-026)
+
+### B-003 — Hình nền ẩn sự kiện trùng local/Google, giữ cái tạo sau
+- Mức: tính năng nhỏ (Chủ dự án yêu cầu). Triệu chứng hiện tại: sự kiện nhập trong app trùng sự kiện Google → hình nền hiện 2 lần.
+- Mục tiêu: trên hình nền (mọi bố cục, qua `collectRenderData`) mỗi cặp trùng chỉ còn 1 sự kiện — cái tạo sau. Tab Sự kiện KHÔNG đổi (vẫn hiện cả hai).
+- Phạm vi file (chỉ được sửa): `src/core/model.ts` (`LocalEvent.createdAt?`, `Occurrence.createdAt?`), `src/core/recurrence.ts` (chép `createdAt` sang occurrence), `src/google/calendar.ts` (`RawGoogleEvent.created?`; `normalize` → `createdAt = Date.parse(created)` nếu hợp lệ), `src/core/collect.ts` (lọc trùng), `src/ui/store.ts` (CHỈ `updateEvent`: giữ `createdAt` của event cũ nếu có), `src/ui/screens/events/EventsTab.tsx` (CHỈ chỗ tạo event MỚI: gán `createdAt: Date.now()`), `tests/unit/collect.test.ts`, `tests/unit/google-normalize.test.ts`, `tests/unit/recurrence.test.ts`, `tests/unit/store.test.ts` (chỉ THÊM test), `tests/e2e/dedup.spec.ts` (mới).
+- Giao diện / đầu vào có sẵn: SPEC v1.6 §3 IN-5 (quy tắc trùng), §5 (`createdAt`); DECISIONS D-026. `addEvent` trong reducer KHÔNG đổi (để test khóa `toEqual` không vỡ) — UI tự gán `createdAt`. Cách seed `google.cache` trong E2E: xem `tests/e2e/events.spec.ts` (T-4.9).
+- Yêu cầu:
+  - Khóa trùng: `date` + (`allDay` ? `'*'` : `time`) + tên chuẩn hóa (`normalize('NFC')`, trim, gộp khoảng trắng, `toLowerCase()`).
+  - Trong `collectRenderData`, nhóm theo khóa; nhóm có cả `local` lẫn `google` → giữ đúng 1 occurrence có `createdAt` lớn nhất (thiếu = 0; bằng nhau → ưu tiên `google`). Nhóm chỉ một nguồn → giữ nguyên (không gộp local–local hay google–google). Thứ tự kết quả vẫn theo `cmpOccurrence`.
+  - `createdAt` chỉ xuất hiện trên object khi có giá trị (spread có điều kiện) — để test khóa so `toEqual` không vỡ. Test khóa nào vẫn vỡ → PHẢN BIỆN, không tự sửa.
+- Tiêu chí nghiệm thu:
+  [ ] collect: local "Họp nhóm" 09:00 (createdAt 2000) + Google "họp  nhóm " 09:00 cùng ngày (createdAt 1000) → chỉ còn local; đảo thời điểm → chỉ còn Google; local không có createdAt → Google; bằng nhau → Google; khác giờ hoặc khác tên → giữ cả hai; hai local trùng nhau → giữ cả hai; cả ngày cùng tên → lọc.
+  [ ] google-normalize: `created` hợp lệ → `createdAt` = `Date.parse`; thiếu/không hợp lệ → không có trường.
+  [ ] recurrence: event có `createdAt` → mọi occurrence có cùng `createdAt`; không có → không có trường.
+  [ ] store: `updateEvent` với event mới không có `createdAt` → giữ `createdAt` cũ; event cũ không có → không thêm.
+  [ ] E2E `dedup.spec.ts` (chromium + webkit, `?test=1`): seed state có `google.cache` 1 sự kiện hôm nay "Họp nhóm" 09:00 + tạo sự kiện local cùng tên/giờ qua tab Sự kiện → `__lastOps` (bố cục Agenda) chỉ có 1 op text "Họp nhóm"; tab Sự kiện ngày hôm nay vẫn có 2 mục (một mục `ev-item-google`).
+  [ ] `npm run check` pass; test khóa không bị sửa.
+- Lệnh kiểm tra: `npx tsc --noEmit; npm run test` rồi `npm run check`
+- Model: sonnet (đổi hợp đồng dùng chung → không giao Gemini) · Lần thử: 0/3 · Trạng thái: DOING (giao tho-sonnet 2026-09-15)
