@@ -154,3 +154,8 @@
 - (b) Chủ dự án chốt (đều theo khuyến nghị): trùng = cùng ngày + cùng giờ bắt đầu + cùng tên (không phân biệt hoa thường, bỏ khoảng trắng thừa; cả ngày: cùng ngày + tên); sự kiện local cũ chưa có thời điểm tạo → coi là tạo trước (hiện Google); chỉ áp dụng trên hình nền — tab Sự kiện vẫn hiện cả hai để còn sửa/xóa bản trong app.
 - Hợp đồng: `LocalEvent.createdAt?` (ms, đặt khi thêm, giữ khi sửa), `Occurrence.createdAt?` (local từ event, Google từ `created` của API); lọc trong `collectRenderData`. Thiếu `createdAt` = 0; bằng nhau → Google.
 - Quy mô nhỏ, trong khung kiến trúc sẵn có → phiếu bảo trì **B-003** (sonnet, đổi hợp đồng nên không giao Gemini), không mở milestone mới, không cần Kiến trúc sư (tiền lệ D-018, D-023).
+
+## D-027 — Ẩn sự kiện trùng mọi nguồn trên hình nền (2026-09-15 · người quyết: Chủ dự án)
+- Chủ dự án: tạo 2 sự kiện trùng trong app thì màn khóa vẫn hiện cả 2. Nguyên nhân: B-003 chỉ lọc cặp local–Google — Quản lý tự quyết giữ local–local/Google–Google khi viết phiếu, không hỏi.
+- Chủ dự án chọn "Ẩn trùng mọi nguồn": nhóm trùng (cùng khóa D-026) có ≥ 2 mục → giữ 1: `createdAt` lớn nhất (thiếu = 0); bằng nhau → ưu tiên Google; cùng nguồn và bằng nhau → mục đứng sau theo thứ tự đầu vào (local = thêm sau). Tab Sự kiện vẫn hiện đủ.
+- Phiếu B-005 (sonnet — sửa test khóa B-003 "hai local trùng nhau → giữ cả hai", phải khai báo).
