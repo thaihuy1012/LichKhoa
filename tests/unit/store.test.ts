@@ -223,6 +223,33 @@ describe('reducer', () => {
     expect(s1.todos.find((t) => t.id === 'b')!.order).toBe(1); // việc lưu trữ không đổi
   });
 
+  it('T-6.3 (#5, soát chéo M6): reorderTodo/moveTodo vẫn đổi được thứ tự khi order cũ trùng nhau', () => {
+    const state = defaultState(device);
+    const loaded = {
+      ...defaultState(device),
+      todos: [
+        { id: 'a', text: 'A', done: false, order: 0 },
+        { id: 'b', text: 'B', done: false, order: 0 },
+        { id: 'c', text: 'C', done: false, order: 0 },
+      ],
+    };
+    const s0 = reducer(state, { type: 'load', state: loaded });
+
+    // reorderTodo(c, a): kéo C lên trước A -> C,A,B (dù 3 việc cùng order: 0 ban đầu).
+    const s1 = reducer(s0, { type: 'reorderTodo', id: 'c', targetId: 'a' });
+    const order1 = [...s1.todos].sort((x, y) => x.order - y.order).map((t) => t.id);
+    expect(order1).toEqual(['c', 'a', 'b']);
+    // order mới phải khác nhau từng đôi một (không còn trùng như dữ liệu cũ).
+    const values1 = s1.todos.map((t) => t.order);
+    expect(new Set(values1).size).toBe(3);
+
+    // moveTodo(b, -1) trên state gốc (A,B,C cùng order: 0) -> B đổi chỗ lên trước A.
+    const s2 = reducer(s0, { type: 'moveTodo', id: 'b', dir: -1 });
+    const order2 = [...s2.todos].sort((x, y) => x.order - y.order).map((t) => t.id);
+    expect(order2[0]).toBe('b'); // B lên trước A (không còn "không đổi" như lỗi cũ)
+    expect(s2.todos.find((t) => t.id === 'b')!.order).not.toBe(s2.todos.find((t) => t.id === 'a')!.order);
+  });
+
   it('addNote/updateNote/deleteNote CRUD ghi chú, không mutate state cũ', () => {
     const state = defaultState(device);
     const note = { id: 'n1', title: 'T', body: 'B', pinned: false, updated: 1 };

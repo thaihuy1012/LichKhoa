@@ -151,3 +151,66 @@ test('Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload gi�
   await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('A');
   await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('B');
 });
+
+test('T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất', async ({ page }) => {
+  await page.goto('/?test=1');
+  await openTodos(page);
+  await addTodo(page, 'Việc A');
+  await expect(page.getByTestId('todo-item')).toHaveCount(1);
+
+  const wrap = await swipeLeft(page, page.getByTestId('todo-item').nth(0));
+  await wrap.getByTestId('todo-swipe-archive').click();
+  await expect(page.getByTestId('todo-item')).toHaveCount(0);
+  await expect(page.getByTestId('todo-archived-toggle')).toContainText('1');
+
+  // Trước T-6.3 (#1): callback Hoàn tác gọi `restoreTodo` -> không làm gì (id vẫn còn trong state,
+  // chỉ mang cờ `archived: true`) -> việc KHÔNG trở lại. Phải gọi `archiveTodo … archived: false`.
+  await page.getByTestId('toast-undo').click();
+  await expect(page.getByTestId('todo-item')).toHaveCount(1);
+  await expect(page.getByTestId('todo-item').filter({ hasText: 'Việc A' })).toBeVisible();
+  await expect(page.getByTestId('todo-archived-toggle')).toHaveCount(0);
+});
+
+test('T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0', async ({ page }) => {
+  await page.goto('/?test=1');
+  await openTodos(page);
+  await addTodo(page, 'Việc A');
+
+  const row = page.getByTestId('todo-item').nth(0);
+  const wrap = await swipeLeft(page, row);
+  await expect(wrap.getByTestId('todo-swipe-archive')).toBeVisible();
+  const openBox = (await row.boundingBox())!; // x sau khi mở hẳn (~ -160px so với đóng)
+
+  const wrapBox = (await wrap.boundingBox())!;
+  const y = wrapBox.y + wrapBox.height / 2;
+  await page.mouse.move(wrapBox.x + wrapBox.width - 10, y);
+  await page.mouse.down();
+  // Vuốt tiếp một khoảng nhỏ (~8px): trước T-6.3 (#2), dx bắt đầu lại từ 0 -> hàng giật về gần vị
+  // trí đóng (x tăng vọt) rồi mới chạy tiếp theo ngón tay. Đúng: tiếp tục mượt từ vị trí đang mở.
+  await page.mouse.move(wrapBox.x + wrapBox.width - 18, y);
+  const midBox = (await row.boundingBox())!;
+  await page.mouse.up();
+
+  expect(midBox.x).toBeLessThanOrEqual(openBox.x + 5);
+});
+
+test('T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa', async ({ page }) => {
+  await page.goto('/?test=1');
+  await openTodos(page);
+  for (const text of ['A', 'B', 'C']) await addTodo(page, text);
+
+  const rows = page.getByTestId('todo-item');
+  const boxC = (await rows.nth(2).boundingBox())!;
+  const boxA = (await rows.nth(0).boundingBox())!;
+
+  await page.mouse.move(boxC.x + boxC.width / 2, boxC.y + boxC.height / 2);
+  await page.mouse.down();
+  await page.waitForTimeout(600);
+  await page.mouse.move(boxA.x + boxA.width / 2, boxA.y + boxA.height / 2, { steps: 10 });
+  await page.mouse.up();
+  await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('C');
+
+  // Chạm vào chữ ngay sau khi thả tay kéo -> phải mở sửa (không bị `suppressClickRef` kẹt nuốt oan).
+  await rows.nth(0).getByTestId('todo-edit').click();
+  await expect(rows.nth(0).locator('.todo-edit-input')).toBeVisible();
+});

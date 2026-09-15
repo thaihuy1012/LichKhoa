@@ -98,10 +98,21 @@ export function reducer(state: AppState, action: Action): AppState {
       const a = sorted[idx];
       const b = sorted[swapIdx];
       if (!sameTodoGroup(a, b)) return state;
-      const orders = new Map<string, number>([
-        [a.id, b.order],
-        [b.id, a.order],
-      ]);
+      // T-6.3 (#5, soát chéo M6): trước đây chỉ hoán trực tiếp `a.order`/`b.order` cho nhau — nếu 2
+      // giá trị đó TRÙNG NHAU (dữ liệu cũ suy thoái, vd khôi phục JSON cũ) thì hoán xong vẫn trùng,
+      // coi như không đổi. Lấy cả nhóm hiển thị (a,b luôn kề nhau trong nhóm vì kề nhau trong
+      // `sorted` và cùng nhóm), hoán vị a/b trong nhóm rồi gán lại theo tập giá trị `order` hiện có
+      // của nhóm (giữ NGUYÊN giá trị cụ thể nếu vốn đã khác nhau — khớp `test` cũ); chỉ khi tập đó
+      // có trùng lặp mới ép thành dãy tăng ngặt bắt đầu từ giá trị nhỏ nhất.
+      const group = sorted.filter((t) => sameTodoGroup(t, a));
+      const idxInGroup = group.findIndex((t) => t.id === a.id);
+      const swapIdxInGroup = idxInGroup + action.dir;
+      const newGroupOrder = [...group];
+      [newGroupOrder[idxInGroup], newGroupOrder[swapIdxInGroup]] = [newGroupOrder[swapIdxInGroup], newGroupOrder[idxInGroup]];
+      const rawValues = group.map((t) => t.order).sort((x, y) => x - y);
+      const hasDup = rawValues.some((v, i) => i > 0 && v === rawValues[i - 1]);
+      const newValues = hasDup ? rawValues.map((_, i) => rawValues[0] + i) : rawValues;
+      const orders = new Map<string, number>(newGroupOrder.map((t, i) => [t.id, newValues[i]]));
       return { ...state, todos: state.todos.map((t) => (orders.has(t.id) ? { ...t, order: orders.get(t.id)! } : t)) };
     }
     case 'archiveTodo': {
@@ -136,7 +147,14 @@ export function reducer(state: AppState, action: Action): AppState {
       const targetIdxInGroup = withoutA.findIndex((t) => t.id === b.id);
       const insertAt = idx < targetIdx ? targetIdxInGroup + 1 : targetIdxInGroup;
       const newGroupOrder = [...withoutA.slice(0, insertAt), a, ...withoutA.slice(insertAt)];
-      const orders = new Map<string, number>(newGroupOrder.map((t, i) => [t.id, group[i].order]));
+      // T-6.3 (#5, soát chéo M6): trước đây tái dùng nguyên `group[i].order` cũ theo VỊ TRÍ — nếu dữ
+      // liệu cũ suy thoái có `order` trùng nhau (vd khôi phục JSON cũ), hoán vị các giá trị trùng đó
+      // vẫn ra trùng, không đổi thứ tự hiển thị. Giữ nguyên tập giá trị cũ khi vốn đã khác nhau (khớp
+      // `test` cũ); chỉ ép thành dãy tăng ngặt khi tập đó có trùng lặp.
+      const rawValues = group.map((t) => t.order).sort((x, y) => x - y);
+      const hasDup = rawValues.some((v, i) => i > 0 && v === rawValues[i - 1]);
+      const newValues = hasDup ? rawValues.map((_, i) => rawValues[0] + i) : rawValues;
+      const orders = new Map<string, number>(newGroupOrder.map((t, i) => [t.id, newValues[i]]));
       return { ...state, todos: state.todos.map((t) => (orders.has(t.id) ? { ...t, order: orders.get(t.id)! } : t)) };
     }
     case 'setTodoDue': {

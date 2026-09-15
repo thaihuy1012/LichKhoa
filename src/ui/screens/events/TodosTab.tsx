@@ -17,6 +17,7 @@ interface Props {
 const LONG_PRESS_MS = 450;
 const MOVE_CANCEL_PX = 8;
 const SWIPE_ACTIVATE_PX = 16;
+const EARLY_SWIPE_PX = 4; // T-6.3 (#4): ngưỡng chặn cuộn sớm trong touchmove, thấp hơn SWIPE_ACTIVATE_PX
 const SWIPE_PANEL_PX = 160;
 const SWIPE_OPEN_RATIO = 0.4;
 
@@ -87,8 +88,9 @@ interface GestureCallbacks {
   onDragCancel: () => void;
 }
 
-/** Bộ nhận cử chỉ dùng chung cho hàng thường và hàng đã lưu trữ (T-6.2). `canDrag` tắt cho hàng lưu trữ. */
-function useRowGesture(canDrag: boolean, cb: GestureCallbacks) {
+/** Bộ nhận cử chỉ dùng chung cho hàng thường và hàng đã lưu trữ (T-6.2). `canDrag` tắt cho hàng lưu trữ.
+ * `isOpen`: hàng đang mở sẵn (panel lộ ra) hay không, để vuốt tiếp từ vị trí mở không giật về 0 (T-6.3 #2). */
+function useRowGesture(canDrag: boolean, isOpen: boolean, cb: GestureCallbacks) {
   const phaseRef = useRef<Phase>('idle');
   const startRef = useRef({ x: 0, y: 0 });
   const pointerIdRef = useRef<number | null>(null);
@@ -117,7 +119,19 @@ function useRowGesture(canDrag: boolean, cb: GestureCallbacks) {
     const el = rowElRef.current;
     if (!el) return;
     function onTouchMove(e: TouchEvent) {
-      if (phaseRef.current === 'swipe' || phaseRef.current === 'drag') e.preventDefault();
+      if (phaseRef.current === 'swipe' || phaseRef.current === 'drag') {
+        e.preventDefault();
+        return;
+      }
+      // T-6.3 (#4, soát chéo M6): còn `pending` (chưa qua ngưỡng SWIPE_ACTIVATE_PX=16 để JS tự
+      // chuyển phase) nhưng đã thấy rõ hướng ngang (|dx|>|dy|) từ vài px đầu -> chặn cuộn NGAY,
+      // không đợi đủ 16px, vì WebKit chốt quyền cuộn/vuốt-lùi từ những pixel di chuyển đầu tiên.
+      if (phaseRef.current === 'pending' && e.touches.length === 1) {
+        const touch = e.touches[0];
+        const dxNow = touch.clientX - startRef.current.x;
+        const dyNow = touch.clientY - startRef.current.y;
+        if (Math.abs(dxNow) > EARLY_SWIPE_PX && Math.abs(dxNow) > Math.abs(dyNow)) e.preventDefault();
+      }
     }
     el.addEventListener('touchmove', onTouchMove, { passive: false });
     return () => el.removeEventListener('touchmove', onTouchMove);
@@ -165,7 +179,10 @@ function useRowGesture(canDrag: boolean, cb: GestureCallbacks) {
             /* ignore */
           }
         }
-        setDx(0);
+        // T-6.3 (#2, soát chéo M6): hàng đang mở sẵn (isOpen) -> điểm bắt đầu của dx là -PANEL_PX,
+        // không phải 0, nếu không hàng giật về 0 rồi mới chạy theo ngón tay tiếp.
+        const base = isOpen ? -SWIPE_PANEL_PX : 0;
+        setDx(Math.min(0, Math.max(-SWIPE_PANEL_PX - 24, base + dxNow)));
       } else if (Math.abs(dyNow) > MOVE_CANCEL_PX) {
         clearTimer();
         phaseRef.current = 'idle';
@@ -174,7 +191,8 @@ function useRowGesture(canDrag: boolean, cb: GestureCallbacks) {
     }
     if (phaseRef.current === 'swipe') {
       e.preventDefault();
-      setDx(Math.min(0, Math.max(-SWIPE_PANEL_PX - 24, dxNow)));
+      const base = isOpen ? -SWIPE_PANEL_PX : 0;
+      setDx(Math.min(0, Math.max(-SWIPE_PANEL_PX - 24, base + dxNow)));
       return;
     }
     if (phaseRef.current === 'drag') {
@@ -197,6 +215,12 @@ function useRowGesture(canDrag: boolean, cb: GestureCallbacks) {
     }
     phaseRef.current = 'idle';
     pointerIdRef.current = null;
+    // T-6.3 (#3, soát chéo M6): dọn cờ suppressClick kể cả khi không có `click` nào theo sau (đề
+    // phòng thêm, ngoài chỗ `onPointerCancel` đã tự dọn) — chạy sau tick hiện tại nên vẫn kịp nuốt
+    // đúng 1 lần click "ma" phát sinh ngay sau cử chỉ (nếu có) trước khi tự dọn.
+    setTimeout(() => {
+      suppressClickRef.current = false;
+    }, 0);
   }
 
   function onPointerUp(e: JSX.TargetedPointerEvent<HTMLDivElement>) {
@@ -257,7 +281,7 @@ function SwipeRow({
   actions: JSX.Element;
   children: JSX.Element;
 }) {
-  const { dx, dragging, rowElRef, handlers } = useRowGesture(canDrag, {
+  const { dx, dragging, rowElRef, handlers } = useRowGesture(canDrag, isOpen, {
     onSwipeSettle: (open) => setOpen(open),
     onBeginDrag: (rowEl) => {
       const rect = rowEl.getBoundingClientRect();
@@ -371,9 +395,12 @@ export function TodosTab({ store, state, showToast }: Props) {
   function handleArchive(todo: Todo) {
     setSwipeOpenId(null);
     store.dispatch({ type: 'archiveTodo', id: todo.id, archived: true });
+    // T-6.3 (#1, soát chéo M6): việc lưu trữ vẫn còn trong state (chỉ mang cờ `archived: true`) ->
+    // Hoàn tác phải BỎ cờ đó (`archiveTodo … archived: false`), không phải `restoreTodo` (dùng cho
+    // việc đã XÓA hẳn khỏi mảng, `restoreTodo` không làm gì nếu id vẫn còn trong state).
     showToast(t('events.todoArchivedToast', lang), {
       label: t('events.undo', lang),
-      onClick: () => store.dispatch({ type: 'restoreTodo', todo }),
+      onClick: () => store.dispatch({ type: 'archiveTodo', id: todo.id, archived: false }),
     });
   }
 
