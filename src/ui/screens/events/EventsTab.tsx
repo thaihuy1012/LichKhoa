@@ -138,7 +138,7 @@ export function EventsTab({ store, state, showToast }: Props) {
   function save() {
     const ev = buildEvent();
     if (editingId) store.dispatch({ type: 'updateEvent', event: ev });
-    else store.dispatch({ type: 'addEvent', event: ev });
+    else store.dispatch({ type: 'addEvent', event: { ...ev, createdAt: Date.now() } });
     setSelected(ev.date);
     const p = parseISODate(ev.date);
     setYm({ y: p.y, m0: p.m0 });

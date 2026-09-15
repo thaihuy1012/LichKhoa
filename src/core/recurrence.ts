@@ -77,6 +77,7 @@ export function expandOccurrences(events: LocalEvent[], from: ISODate, to: ISODa
           allDay: !ev.time,
           color: ev.color,
           ...(endTime != null ? { endTime } : {}),
+          ...(ev.createdAt != null ? { createdAt: ev.createdAt } : {}),
         });
       }
     }

@@ -132,6 +132,29 @@ describe('normalize (thuần)', () => {
     expect(result[0].endTime).toBeUndefined();
   });
 
+  it('B-003: `created` hợp lệ → createdAt = Date.parse(created)', () => {
+    const raw: RawGoogleEvent[] = [
+      {
+        id: 'ev-created',
+        summary: 'Co created',
+        start: { date: '2026-01-01' },
+        created: '2026-01-01T00:00:00Z',
+      },
+    ];
+    const result = normalize('cal1', '#4285F4', raw);
+    expect(result[0].createdAt).toBe(Date.parse('2026-01-01T00:00:00Z'));
+  });
+
+  it('B-003: `created` thiếu hoặc không hợp lệ → không có trường createdAt', () => {
+    const raw: RawGoogleEvent[] = [
+      { id: 'ev-no-created', summary: 'Khong created', start: { date: '2026-01-02' } },
+      { id: 'ev-bad-created', summary: 'Created hong', start: { date: '2026-01-03' }, created: 'khong-hop-le' },
+    ];
+    const result = normalize('cal1', '#4285F4', raw);
+    expect(result[0]).not.toHaveProperty('createdAt');
+    expect(result[1]).not.toHaveProperty('createdAt');
+  });
+
   it('T-3.4 yêu cầu 1: khoảng vượt timeMax bị chặn khi truyền range', () => {
     const raw: RawGoogleEvent[] = (eventsMultiday.items as RawGoogleEvent[]).filter((e) => e.id === 'ev-multi');
     const result = normalize('cal1', '#4285F4', raw, { min: '2026-09-14', max: '2026-09-15' });

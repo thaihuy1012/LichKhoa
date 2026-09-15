@@ -13,6 +13,7 @@ export interface LocalEvent {
   until?: ISODate;
   color?: string;
   alarmMin?: number; // v1.3: phút nhắc trước, 0/thiếu = không nhắc -> VALARM trong .ics
+  createdAt?: number; // v1.6 (B-003): mốc tạo (ms), dùng để chọn cái tạo sau khi trùng local/Google
 }
 
 export interface Todo {
@@ -41,6 +42,7 @@ export interface Occurrence {
   allDay: boolean;
   color?: string;
   endTime?: string; // v1.5 D-024: 'HH:mm' giờ kết thúc, chỉ khi có time, kết thúc cùng ngày và sau time
+  createdAt?: number; // v1.6 (B-003): mốc tạo (ms), dùng để chọn cái tạo sau khi trùng local/Google
 }
 
 export interface DeviceSpec {

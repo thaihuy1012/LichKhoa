@@ -68,6 +68,25 @@ describe('reducer', () => {
     expect(s3.events).toEqual([]);
   });
 
+  it('B-003: updateEvent với event mới không có createdAt -> giữ createdAt cũ', () => {
+    const state = defaultState(device);
+    const ev = { id: 'e1', title: 'Họp', date: '2026-02-15', repeat: 'none' as const, createdAt: 1000 };
+    const s1 = reducer(state, { type: 'addEvent', event: ev });
+    const evNoCreatedAt = { id: 'e1', title: 'Họp sửa', date: '2026-02-15', repeat: 'none' as const };
+    const s2 = reducer(s1, { type: 'updateEvent', event: evNoCreatedAt });
+    expect(s2.events[0].createdAt).toBe(1000);
+    expect(s2.events[0].title).toBe('Họp sửa');
+  });
+
+  it('B-003: updateEvent, event cũ không có createdAt -> không thêm', () => {
+    const state = defaultState(device);
+    const ev = { id: 'e1', title: 'Họp', date: '2026-02-15', repeat: 'none' as const };
+    const s1 = reducer(state, { type: 'addEvent', event: ev });
+    const evNoCreatedAt = { id: 'e1', title: 'Họp sửa', date: '2026-02-15', repeat: 'none' as const };
+    const s2 = reducer(s1, { type: 'updateEvent', event: evNoCreatedAt });
+    expect(s2.events[0]).not.toHaveProperty('createdAt');
+  });
+
   it('addTodo tạo id, done:false; toggleTodo/updateTodo/deleteTodo hoạt động, không mutate', () => {
     const state = defaultState(device);
     const s1 = reducer(state, { type: 'addTodo', text: 'Việc 1' });

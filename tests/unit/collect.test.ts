@@ -151,6 +151,104 @@ describe('collectRenderData', () => {
     expect(titles).not.toContain('OutWeek');
   });
 
+  it('B-003: local + Google trùng (ngày/giờ/tên chuẩn hóa) -> giữ cái createdAt lớn hơn', () => {
+    const state = defaultState(device);
+    state.events = [
+      { id: 'local1', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none', createdAt: 2000 },
+    ];
+    state.google.cache = {
+      fetchedAt: 0,
+      events: [
+        { id: 'g1', sourceId: 'g1', source: 'google', title: 'họp  nhóm ', date: '2026-03-15', time: '09:00', allDay: false, createdAt: 1000 },
+      ],
+    };
+    const data = collectRenderData(state, '2026-03-15');
+    expect(data.occurrences.length).toBe(1);
+    expect(data.occurrences[0].source).toBe('local');
+  });
+
+  it('B-003: đảo createdAt -> chỉ còn Google', () => {
+    const state = defaultState(device);
+    state.events = [
+      { id: 'local1', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none', createdAt: 1000 },
+    ];
+    state.google.cache = {
+      fetchedAt: 0,
+      events: [
+        { id: 'g1', sourceId: 'g1', source: 'google', title: 'họp  nhóm ', date: '2026-03-15', time: '09:00', allDay: false, createdAt: 2000 },
+      ],
+    };
+    const data = collectRenderData(state, '2026-03-15');
+    expect(data.occurrences.length).toBe(1);
+    expect(data.occurrences[0].source).toBe('google');
+  });
+
+  it('B-003: local không có createdAt -> giữ Google', () => {
+    const state = defaultState(device);
+    state.events = [{ id: 'local1', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none' }];
+    state.google.cache = {
+      fetchedAt: 0,
+      events: [
+        { id: 'g1', sourceId: 'g1', source: 'google', title: 'họp nhóm', date: '2026-03-15', time: '09:00', allDay: false, createdAt: 1000 },
+      ],
+    };
+    const data = collectRenderData(state, '2026-03-15');
+    expect(data.occurrences.length).toBe(1);
+    expect(data.occurrences[0].source).toBe('google');
+  });
+
+  it('B-003: createdAt bằng nhau -> ưu tiên Google', () => {
+    const state = defaultState(device);
+    state.events = [
+      { id: 'local1', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none', createdAt: 1000 },
+    ];
+    state.google.cache = {
+      fetchedAt: 0,
+      events: [
+        { id: 'g1', sourceId: 'g1', source: 'google', title: 'họp nhóm', date: '2026-03-15', time: '09:00', allDay: false, createdAt: 1000 },
+      ],
+    };
+    const data = collectRenderData(state, '2026-03-15');
+    expect(data.occurrences.length).toBe(1);
+    expect(data.occurrences[0].source).toBe('google');
+  });
+
+  it('B-003: khác giờ hoặc khác tên -> giữ cả hai', () => {
+    const state = defaultState(device);
+    state.events = [{ id: 'local1', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none' }];
+    state.google.cache = {
+      fetchedAt: 0,
+      events: [
+        occ('2026-03-15', '10:00', 'Họp nhóm', 'g1'),
+        occ('2026-03-15', '09:00', 'Khác tên', 'g2'),
+      ].map((o) => ({ ...o, source: 'google' as const })),
+    };
+    const data = collectRenderData(state, '2026-03-15');
+    expect(data.occurrences.length).toBe(3);
+  });
+
+  it('B-003: hai local trùng nhau -> giữ cả hai (không gộp cùng nguồn)', () => {
+    const state = defaultState(device);
+    state.events = [
+      { id: 'local1', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none' },
+      { id: 'local2', title: 'Họp nhóm', date: '2026-03-15', time: '09:00', repeat: 'none' },
+    ];
+    const data = collectRenderData(state, '2026-03-15');
+    expect(data.occurrences.length).toBe(2);
+  });
+
+  it('B-003: cả ngày cùng tên -> lọc', () => {
+    const state = defaultState(device);
+    state.events = [{ id: 'local1', title: 'Nghỉ lễ', date: '2026-03-15', repeat: 'none', createdAt: 1 }];
+    state.google.cache = {
+      fetchedAt: 0,
+      events: [{ id: 'g1', sourceId: 'g1', source: 'google', title: 'Nghỉ lễ', date: '2026-03-15', allDay: true, createdAt: 2 }],
+    };
+    const data = collectRenderData(state, '2026-03-15');
+    expect(data.occurrences.length).toBe(1);
+    expect(data.occurrences[0].source).toBe('google');
+  });
+
   it('2 TZ giả lập: sự kiện đầu tháng và cuối agenda vẫn nằm trong khoảng expand', () => {
     const state = defaultState(device);
     state.design.agendaDays = 10;

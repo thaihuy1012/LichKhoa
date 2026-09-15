@@ -30,6 +30,7 @@ export interface RawGoogleEvent {
   summary?: string;
   start?: RawGoogleEventTime;
   end?: RawGoogleEventTime;
+  created?: string; // RFC3339, v1.6 (B-003): dùng để so trùng local/Google
 }
 
 async function googleGet(url: string, token: string): Promise<any> {
@@ -113,6 +114,8 @@ export function normalize(
   const inRange = (date: ISODate): boolean => !range || (date >= range.min && date <= range.max);
   for (const ev of events) {
     if (ev.status === 'cancelled' || !ev.start) continue;
+    const createdAt = ev.created != null ? Date.parse(ev.created) : NaN;
+    const createdAtValid = !Number.isNaN(createdAt);
     if (ev.start.date) {
       const dates = ev.end?.date ? expandAllDayDates(ev.start.date, ev.end.date) : [ev.start.date];
       for (const date of dates) {
@@ -125,6 +128,7 @@ export function normalize(
           date,
           allDay: true,
           color,
+          ...(createdAtValid ? { createdAt } : {}),
         });
       }
     } else if (ev.start.dateTime) {
@@ -149,6 +153,7 @@ export function normalize(
         allDay: false,
         color,
         ...(endTime != null ? { endTime } : {}),
+        ...(createdAtValid ? { createdAt } : {}),
       });
     }
   }

@@ -12,6 +12,51 @@ export function cmpOccurrence(a: Occurrence, b: Occurrence): number {
   return 0;
 }
 
+function normalizeTitleKey(title: string): string {
+  return title.normalize('NFC').trim().replace(/\s+/g, ' ').toLowerCase();
+}
+
+function dedupKey(o: Occurrence): string {
+  return `${o.date}|${o.allDay ? '*' : (o.time ?? '')}|${normalizeTitleKey(o.title)}`;
+}
+
+/**
+ * v1.6 (B-003, D-026): sự kiện local và Google trùng nhau (cùng ngày + giờ/`allDay` +
+ * tên chuẩn hóa) -> chỉ giữ 1 (cái `createdAt` lớn hơn; thiếu = 0; bằng nhau ưu tiên
+ * Google). Nhóm chỉ 1 nguồn (toàn local hoặc toàn Google) giữ nguyên, không gộp.
+ */
+export function dedupOccurrences(occs: Occurrence[]): Occurrence[] {
+  const groups = new Map<string, Occurrence[]>();
+  const order: string[] = [];
+  for (const o of occs) {
+    const k = dedupKey(o);
+    if (!groups.has(k)) {
+      groups.set(k, []);
+      order.push(k);
+    }
+    groups.get(k)!.push(o);
+  }
+  const result: Occurrence[] = [];
+  for (const k of order) {
+    const list = groups.get(k)!;
+    const hasLocal = list.some((o) => o.source === 'local');
+    const hasGoogle = list.some((o) => o.source === 'google');
+    if (hasLocal && hasGoogle) {
+      const winner = list.reduce((best, cur) => {
+        const bs = best.createdAt ?? 0;
+        const cs = cur.createdAt ?? 0;
+        if (cs > bs) return cur;
+        if (cs === bs && cur.source === 'google' && best.source !== 'google') return cur;
+        return best;
+      });
+      result.push(winner);
+    } else {
+      result.push(...list);
+    }
+  }
+  return result;
+}
+
 /** v1.3: chưa xong có `due` (tăng dần) -> chưa xong không `due` (theo `order`) -> đã xong (theo `order`). */
 export function cmpTodo(a: Todo, b: Todo): number {
   if (a.done !== b.done) return a.done ? 1 : -1;
@@ -46,7 +91,7 @@ export function collectRenderData(state: AppState, today: ISODate): RenderData {
   const localOcc = expandOccurrences(state.events, from, to);
   const googleOcc = state.google.cache?.events ?? [];
 
-  const occurrences = [...localOcc, ...googleOcc].sort(cmpOccurrence);
+  const occurrences = dedupOccurrences([...localOcc, ...googleOcc]).sort(cmpOccurrence);
 
   const todos = [...state.todos].sort(cmpTodo);
 

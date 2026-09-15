@@ -57,7 +57,17 @@ export function reducer(state: AppState, action: Action): AppState {
     case 'addEvent':
       return { ...state, events: [...state.events, action.event] };
     case 'updateEvent':
-      return { ...state, events: state.events.map((e) => (e.id === action.event.id ? action.event : e)) };
+      // v1.6 (B-003): event mới không mang createdAt -> giữ createdAt của event cũ (nếu có).
+      return {
+        ...state,
+        events: state.events.map((e) =>
+          e.id === action.event.id
+            ? action.event.createdAt == null && e.createdAt != null
+              ? { ...action.event, createdAt: e.createdAt }
+              : action.event
+            : e
+        ),
+      };
     case 'deleteEvent':
       return { ...state, events: state.events.filter((e) => e.id !== action.id) };
     case 'addTodo': {

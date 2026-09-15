@@ -96,6 +96,18 @@ describe('expandOccurrences', () => {
     expect(occ.every((o) => o.endTime === '09:40')).toBe(true);
   });
 
+  it('B-003: event có createdAt -> mọi occurrence có cùng createdAt', () => {
+    const e = ev({ id: 'a', date: '2026-03-01', repeat: 'daily', createdAt: 1234 });
+    const occ = expandOccurrences([e], '2026-03-01', '2026-03-03');
+    expect(occ.every((o) => o.createdAt === 1234)).toBe(true);
+  });
+
+  it('B-003: event không có createdAt -> occurrence không có trường createdAt', () => {
+    const e = ev({ id: 'a', date: '2026-03-01', repeat: 'none' });
+    const occ = expandOccurrences([e], '2026-03-01', '2026-03-01');
+    expect(occ[0]).not.toHaveProperty('createdAt');
+  });
+
   it('sắp theo ngày rồi giờ, cả ngày (allDay) đứng trước sự kiện có giờ', () => {
     const e1 = ev({ id: 'late', date: '2026-03-01', repeat: 'none', time: '10:00' });
     const e2 = ev({ id: 'allday', date: '2026-03-01', repeat: 'none' });
