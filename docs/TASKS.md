@@ -1,10 +1,11 @@
 # TASKS — bảng giao việc
 (Quản lý duy trì. Trạng thái: TODO | DOING | REVIEW | DONE | BLOCKED. Ghi ngay sau mỗi bước.)
-Nguồn sự thật: `docs/SPEC.md` (v1.4 — D-018/D-020, Kiến trúc sư soát D-021; v1.0 Chủ dự án duyệt 2026-09-13; v1.1 Âm lịch D-006; v1.2 iPhone 13 Pro Max D-007; v1.3 T2–T6/nhắc trước/hạn to-do/nhiều ghi chú D-011). Hợp đồng TypeScript ở SPEC mục 5 — không đổi nếu không PHẢN BIỆN.
+Nguồn sự thật: `docs/SPEC.md` (v1.5 — D-024 bố cục Tuần; v1.4 — D-018/D-020, Kiến trúc sư soát D-021; v1.0 Chủ dự án duyệt 2026-09-13; v1.1 Âm lịch D-006; v1.2 iPhone 13 Pro Max D-007; v1.3 T2–T6/nhắc trước/hạn to-do/nhiều ghi chú D-011). Hợp đồng TypeScript ở SPEC mục 5 — không đổi nếu không PHẢN BIỆN.
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 12/12 ✔ tag `M4-ok` (D-021 — DUYỆT M4 + nghiệm thu cuối, gộp)
+- **M5 (SPEC v1.5, D-024) — Bố cục Tuần giống Inks: 0/4.** Thứ tự 5.1 → 5.2 → 5.3 → 5.END → ảnh mẫu cho Chủ dự án → soát chéo Gemini `M5-soat` → Kiến trúc sư duyệt M5 → tag `M5-ok`. Xem mục "M5" cuối file. Làn Gemini: BẬT mức NHIỀU ở checkout chính (không chạy trong worktree — BAI-HOC); T-5.3 đủ điều kiện → tho-gemini.
 - 2026-09-15: ĐỢT BẢO TRÌ D-023 XONG (B-001, B-002) — Quản lý phiên chính dọn rác Gemini ở checkout chính, `merge --ff-only` nhánh worktree → `main` 6fec4b5, `npm run check` pass (211×2 unit, 64 e2e, 6 skip có từ trước). Chủ dự án `git push` (e954b16..6fec4b5) → Actions run 34911429434 success, trang 200, CSS `.color-input` mới đã lên. Chờ Chủ dự án xem ô màu trên iPhone. Dự án trở lại trạng thái ĐÓNG (D-022).
 - Trước đó (2026-09-15): ĐỢT BẢO TRÌ D-023 — B-001 (Gemini) → B-002 (sonnet). Xem mục "Bảo trì 2026-09-15" cuối file.
 - 2026-09-15 phiên 2 (nền): làm trong worktree `.claude/worktrees/bao-tri-D-023`, nhánh `worktree-bao-tri-D-023` (từ `main` fd17357) — commit ở nhánh này, Chủ dự án gộp về `main` (`git merge --ff-only worktree-bao-tri-D-023`). Lượt Gemini `B-001` vòng 1 phiên trước chết khi dừng phiên (`DONE 255`, đầu ra rỗng, không đổi `src/`) → `huy B-001`, giao lại vòng 1 (không tính Lần thử, không tính lỗi làn). Lưu ý: `agy-run.sh huy` hoàn tác MỌI thay đổi chưa commit, kể cả sổ sách → commit sổ trước khi giao Gemini.
@@ -575,3 +576,74 @@ Thứ tự: B-001 (Gemini) → B-002 (sonnet). Không song song (Gemini và th�
 - Lệnh kiểm tra: `npm run check`
 - Nhật ký: 2026-09-15 lượt 1: DONE (`.color-input`: `color: transparent; font-size: 0`, nền `none` → `rgba(255,255,255,0.12)`; ảnh `docs/test-log/B-002-truoc.png`, `-sau.png`, `-sau-chromium.png`) → kiem-thu PASS (211×2 unit; e2e 64/6 skip/0 fail; T-4.6 `design.spec.ts:79` pass 2 trình duyệt; chỉ styles.css +10/−1) → review ảnh đạt: webkit hết chữ trong ô (ô xám 44px), chromium vẫn hiện đúng màu. Ghi nhận: nền 0.12 lộ qua padding mặc định của `::-webkit-color-swatch-wrapper` → Chromium (có lẽ cả iPhone) có thêm viền mờ bo góc quanh ô màu — chấp nhận (thẩm mỹ, cùng tông nút); Chủ dự án xem trên máy thật, không thích thì đổi lại `background: none` (1 dòng) → commit.
 - Model: sonnet (không đủ điều kiện Gemini: tiêu chí chính kiểm bằng mắt, không có lệnh test tự động) · Lần thử: 0/3 · Trạng thái: DONE
+
+---
+## M5 — Bố cục Tuần giống app Inks (SPEC v1.5, D-024)
+Mẫu: `docs/tham-khao/inks-tuan.PNG`. Thứ tự: 5.1 → 5.2 → 5.3 → 5.END (tuần tự: 5.2 cần hợp đồng 5.1; 5.3 cần `buildOps` của 5.2; Gemini không ghi cùng lúc thợ Claude).
+
+### T-5.1 — Lõi: `Occurrence.endTime` + dữ liệu đủ cả tuần
+- Mục tiêu: sự kiện có giờ kết thúc (để chip hiện "06:00 - 06:40" như Inks); dữ liệu render và cache Google phủ đủ tuần chứa hôm nay; hợp đồng `layout: 'week'` có sẵn cho T-5.2/5.3.
+- Phạm vi file (chỉ được sửa): `src/core/model.ts`, `src/core/recurrence.ts`, `src/google/calendar.ts` (chỉ `normalize`), `src/core/collect.ts`, `src/ui/sync.ts` (chỉ `syncRange`), `tests/unit/recurrence.test.ts`, `tests/unit/collect.test.ts`, `tests/unit/google-normalize.test.ts`, `tests/unit/store.test.ts` (CHỈ test `syncRange` L251–252 — khai báo).
+- Giao diện / đầu vào có sẵn: SPEC v1.5 §5 (`Occurrence.endTime?`, `DesignConfig.layout` có `'week'`), §3 IN-5, §9.
+- Yêu cầu:
+  - `model.ts`: `Occurrence.endTime?: string` ('HH:mm'); `DesignConfig.layout: 'month'|'agenda'|'todo'|'week'`. Không đổi gì khác (`normalizeState` không kiểm layout — giữ).
+  - `recurrence.ts` `expandOccurrences`: có `time` và `durationMin > 0` → `endTime = time + durationMin`; tổng ≥ 24:00 (qua nửa đêm) → không đặt `endTime`. Không có `durationMin` → không đặt.
+  - `calendar.ts` `normalize`: sự kiện `start.dateTime` có `end.dateTime` → `endTime` giờ địa phương 'HH:mm' khi ngày địa phương của end = ngày của start và end > start; ngược lại không đặt. All-day không đặt.
+  - `collect.ts`: expand sự kiện local từ `min(ngày 1 tháng chứa today, today − 6 ngày)` (so chuỗi ISODate) để tuần bắt đầu ở tháng trước vẫn có sự kiện; cập nhật comment. Phần còn lại giữ nguyên.
+  - `sync.ts` `syncRange`: `[today − 7, today + 60]`; sửa comment; test L251–252 đổi đúng giá trị mong đợi (`'2026-03-03'`) + tên test.
+  - Test khóa khác so `toEqual` nguyên `Occurrence` mà nay có thêm `endTime` → chỉ được thêm `endTime` vào giá trị mong đợi, khai báo từng dòng; thấy phải sửa nhiều hơn → PHẢN BIỆN.
+- Tiêu chí nghiệm thu:
+  [ ] recurrence: 09:00 + 40 → `endTime '09:40'`; 23:30 + 60 → không có `endTime`; không `durationMin` → không có; sự kiện lặp mọi occurrence cùng `endTime`.
+  [ ] google-normalize: dateTime 06:00–06:40 cùng ngày → `endTime '06:40'` (cả 2 TZ — dựng chuỗi RFC3339 theo offset máy hoặc kiểm bằng `new Date` địa phương như test cũ); end sang ngày sau → không có; all-day → không có.
+  [ ] collect: today `2026-09-01` (T3), sự kiện không lặp ngày `2026-08-31` → có trong `occurrences`; sự kiện ngày `2026-08-25` (ngoài tuần, trước đầu tháng > 6 ngày) → không có.
+  [ ] `syncRange('2026-03-10')` → `{ timeMin: '2026-03-03', timeMax: '2026-05-09' }`.
+  [ ] `npm run check` pass; test khóa chỉ đổi đúng chỗ đã khai.
+- Lệnh kiểm tra: `npx tsc --noEmit; npm run test` rồi `npm run check`
+- Model: sonnet (đổi hợp đồng dùng chung → không giao Gemini) · Lần thử: 0/3 · Trạng thái: DOING (giao tho-sonnet 2026-09-15)
+
+### T-5.2 — `layoutWeek`: hình nền bố cục Tuần giống Inks
+- Mục tiêu: `layoutWeek(d, c, dev): DrawOp[]` thuần, nhìn giống mẫu `docs/tham-khao/inks-tuan.PNG` (thợ mở ảnh bằng Read).
+- Phạm vi file (chỉ được sửa): `src/render/layout/week.ts` (mới), `src/render/layout/common.ts` (chỉ THÊM helper, không đổi helper cũ), `src/render/wallpaper.ts` (`buildOps`: `'week'` → `layoutWeek`), `src/core/i18n/vi.json`, `src/core/i18n/en.json` (khóa mới nếu cần, 2 file khớp), `scripts/mau-anh.cjs` (thêm `'week'` + dữ liệu mẫu có sự kiện nhiều ngày trong tuần, có giờ kết thúc, to-do có hạn/quá hạn), `tests/unit/layout-week.test.ts` (mới).
+- Giao diện / đầu vào có sẵn: T-5.1 (`endTime`, `layout: 'week'`); `common.ts`: `weekdayLabels`, `safeArea`, `blockStartY`, `fontSize`, `mainArea`, `noteArea`, `fmtTime`, `lunarCellLabel`, `truncate`, `wrapText`, `todoDueLabel`; cách vẽ hộp `boxAlpha`, lề, co chữ: xem `agenda.ts`, `month.ts`. SPEC v1.5 §3 IN-2 (mô tả Tuần).
+- Yêu cầu:
+  - Ngày: 7 ngày của tuần chứa `d.today` theo `c.weekStart` (1: T2…CN, 0: CN…T7) — helper `weekDates(today, weekStart): ISODate[]` trong common.ts.
+  - Mục mỗi ngày theo thứ tự: sự kiện cả ngày → sự kiện có giờ (thứ tự `d.occurrences`) → to-do chưa xong `due === ngày`; riêng cột hôm nay: to-do chưa xong `due < today` (quá hạn) đứng trước to-do đúng hạn. To-do không `due` và to-do đã xong không hiện.
+  - Khối (dải tuần + danh sách hôm nay) nằm trọn trong `mainArea(dev, c)`, đặt theo `position` (`blockStartY`); hộp nền `boxAlpha` như các bố cục khác (0 → không vẽ); lề ngang như agenda/month.
+  - Dải tuần: 7 cột bằng nhau, khe nhỏ. Đầu cột căn giữa: thứ viết tắt (`weekdayLabels`) rồi số ngày dương (không số 0 đầu), `textColor`; hôm nay weight 700. `showLunar` → thêm số âm nhỏ (`lunarCellLabel`) dưới số dương; `false` → không op âm lịch nào.
+  - Cột hôm nay: 1 rect bo góc `accentColor`, alpha ≈ 0.25, phủ từ đỉnh đầu cột tới đáy dải chip (như Inks).
+  - Chip: rect bo góc gần rộng bằng cột; fill `pastel(màu)` = trộn màu với trắng ~55–65% (helper trong common.ts; không có màu → nền mặc định `#60a5fa`); to-do fill pastel vàng cố định (vd `#fde68a`). Chữ chip màu tối cố định (vd `#1c1c1e`), căn trái, 2 dòng: dòng 1 giờ `"HH:mm - HH:mm"` (hour12: `"6:00 - 6:40 AM"`; không vừa → chỉ giờ bắt đầu; không `endTime` → giờ bắt đầu; cả ngày → `t('events.allDay')`); to-do dòng 1 `"☐"` + (quá hạn: nhãn Quá hạn màu đỏ tối, vd `#b42318`); dòng 2 tên, `truncate` "…". Cỡ chữ chip ≥ 24 px ở 1284×2778, scale 1 (qua `fontSize`).
+  - ≤ 4 mục → vẽ hết; > 4 → 3 chip + chip thứ 4 `"+N"` (N = tổng − 3), fill trung tính (vd `textColor` alpha thấp), chữ căn giữa. Chiều cao dải = đầu cột + số slot lớn nhất của tuần (tối thiểu 1) × chip; ngày trống không vẽ chip.
+  - Danh sách hôm nay dưới dải (cách một khoảng rõ): mỗi mục = vạch màu dọc bên trái (rect hẹp bo góc, cùng màu pastel của chip), tên cỡ lớn (≥ 40 px ở 1284, weight 700, `textColor`, `truncate`), dòng 2 nhỏ hơn: sự kiện `"◷ "` + giờ như chip (cả ngày → `t('events.allDay')`); to-do: `todoDueLabel` (quá hạn tô `accentColor` — IN-10). Không đủ chỗ → cắt, dòng cuối `"+N"` (i18n). Hôm nay không có mục → một dòng trạng thái rỗng (khóa rỗng có sẵn nếu hợp).
+  - Tràn `mainArea` (máy nhỏ / scale lớn / `showNote`): giữ dải tuần, co danh sách hôm nay (có thể chỉ còn "+N"); vẫn tràn → giảm số slot chip (giữ quy tắc "+N"). Không op nào ra ngoài `mainArea`.
+  - Xem bằng mắt trước khi báo DONE: `npm run build` → `node scripts/mau-anh.cjs docs/test-log/T-5.2` → mở ảnh Tuần 1284×2778 bằng Read, đối chiếu mẫu Inks, chỉnh tới khi giống; báo cáo ghi đường dẫn ảnh.
+- Tiêu chí nghiệm thu:
+  [ ] `layout-week.test.ts` (2 TZ): 7 nhãn đầu cột đúng thứ tự cho `weekStart` 1 và 0; today `2026-09-01` weekStart 1 → cột đầu là 31/8.
+  [ ] Ngày có 6 mục → đúng 3 chip mục + chip "+3"; ngày có 4 mục → 4 chip, không "+N".
+  [ ] To-do quá hạn chưa xong nằm ở cột hôm nay; to-do không hạn / đã xong không có op nào; chip sự kiện có `endTime` chứa "09:00 - 09:40".
+  [ ] Rect tô cột hôm nay có `fill === accentColor`, nằm đúng cột hôm nay.
+  [ ] Danh sách hôm nay: 2 mục → có đủ 2 tên; 30 mục → có dòng "+N" và (số hiện + N) = 30.
+  [ ] `showLunar` true có op âm lịch, false không có.
+  [ ] Mọi op trong `mainArea` với 1284×2778 và 1179×2556 × 3 `position` × `showNote` × `showLunar`; `showNote` → bbox khối Tuần không giao bbox `layoutNote`.
+  [ ] `npm run check` pass; ảnh `docs/test-log/T-5.2/…` 1284×2778 đã dựng (Quản lý xem bằng mắt khi review).
+- Lệnh kiểm tra: `npx tsc --noEmit; npm run test` rồi `npm run check`
+- Model: sonnet (tiêu chí chính "giống Inks" kiểm bằng mắt — như B-002, không giao Gemini) · Lần thử: 0/3 · Trạng thái: TODO
+
+### T-5.3 — Chọn bố cục "Tuần" trong app
+- Mục tiêu: người dùng chọn được bố cục Tuần ở màn Xem trước; lựa chọn được lưu.
+- Phạm vi file (chỉ được sửa): `src/ui/screens/Preview.tsx` (mảng `LAYOUTS` L20–24: thêm `{ id: 'week', testid: 'layout-week', key: 'settings.layoutWeek' }` cuối mảng), `src/core/i18n/vi.json` (`"settings.layoutWeek": "Tuần"`), `src/core/i18n/en.json` (`"settings.layoutWeek": "Week"`), `tests/e2e/week.spec.ts` (mới).
+- Giao diện / đầu vào có sẵn: T-5.1 (`layout: 'week'`), T-5.2 (`buildOps` vẽ Tuần); cách viết E2E và `?test=1` / `window.__lastOps`: xem `tests/e2e/settings.spec.ts` (test "Preview: chọn bố cục…").
+- Tiêu chí nghiệm thu:
+  [ ] `week.spec.ts` (chromium + webkit): mở `?test=1` → bấm `layout-week` → nút ở trạng thái chọn giống các nút bố cục khác; preview `naturalWidth` 1284 / `naturalHeight` 2778; `__lastOps` có đủ 7 nhãn thứ của tuần (VI mặc định, T2 đầu); reload → vẫn chọn Tuần.
+  [ ] Ở 428×926: 4 nút bố cục nằm trên một hàng, không cuộn ngang (`scrollWidth <= clientWidth`), mỗi nút cao ≥ 44 px.
+  [ ] `npm run check` pass, không test cũ nào bị sửa/skip; tập khóa vi = en.
+- Lệnh kiểm tra: `npm run check`
+- Model: gemini (làn code — 4 file, tiêu chí đo bằng lệnh, không đổi hợp đồng) · Lần thử: 0/3 · Trạng thái: TODO
+
+### T-5.END — Kiểm thử tích hợp M5
+- Mục tiêu: E2E luồng chính M5 theo SPEC v1.5 §6 M5.
+- Phạm vi file: `tests/e2e/m5-week.spec.ts` (mới); được sửa lỗi tích hợp nhỏ trong `src/**` nhưng phải khai báo từng file.
+- Tiêu chí nghiệm thu:
+  [ ] chromium + webkit (`?test=1`, IndexedDB trống): tab Sự kiện tạo sự kiện hôm nay 09:00 thời lượng 40 phút + sự kiện ngày khác trong tuần; tạo to-do có hạn hôm nay → chọn bố cục Tuần → preview 1284×2778; `__lastOps` có chip "09:00 - 09:40" nằm trong cột hôm nay (x trong khoảng rect tô hôm nay), chip sự kiện kia ở cột ngày đó, chip to-do, và tên sự kiện trong danh sách hôm nay (op text cỡ lớn hơn chip); reload vẫn Tuần.
+  [ ] `npm run check` pass toàn bộ.
+- Lệnh kiểm tra: `npx playwright test tests/e2e/m5-week.spec.ts; npm run check`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO

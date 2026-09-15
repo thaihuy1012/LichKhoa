@@ -87,6 +87,17 @@
 - Giao việc: B-001 đủ 4 điều kiện Gemini (≤ 8 file, chữ ký hook cố định trong phiếu, không đổi `Store`, có lệnh `npm run check`) → `tho-gemini` làn code. B-002 tiêu chí chính kiểm bằng mắt → `tho-sonnet`.
 - Xong đợt: không cần Kiến trúc sư duyệt (không đổi SPEC); chuẩn bị commit, Chủ dự án tự `git push` (D-022).
 
+## D-024 — SPEC v1.5: bố cục Tuần giống app Inks (2026-09-15 · người quyết: Chủ dự án)
+- Yêu cầu: "thêm bố cục tuần, dưới các ngày trong tuần hiển thị tối đa 4 việc hoặc sự kiện… tham khảo bố cục app Inks, làm giống y vậy". Ảnh mẫu: `docs/tham-khao/inks-tuan.PNG`.
+- Mẫu Inks (Quản lý đọc ảnh): dải 7 cột theo tuần (Mon…Sun) ngay dưới đồng hồ; đầu cột = thứ viết tắt + số ngày, căn giữa; cột hôm nay có nền tô nhạt phủ cả đầu cột lẫn chip; dưới mỗi ngày là chip bo góc màu pastel, chữ tối nhỏ: dòng 1 giờ bắt đầu–kết thúc, dòng 2 tên; dưới dải tuần là danh sách chi tiết hôm nay: vạch màu dọc bên trái, tên in đậm, biểu tượng đồng hồ + giờ.
+- Chủ dự án chốt 5 điểm (đều theo khuyến nghị):
+  1. To-do: có hạn → dưới đúng ngày hạn; quá hạn chưa xong → dồn vào hôm nay (nhãn Quá hạn); không hạn → không hiện.
+  2. > 4 mục một ngày → 3 chip + chip "+N".
+  3. Có danh sách chi tiết hôm nay dưới dải tuần (như Inks), cắt theo chỗ trống + "+N".
+  4. Màu chip = màu sự kiện/lịch pha trắng thành pastel, chữ tối; to-do một màu pastel vàng cố định.
+  5. `showLunar` bật → số âm lịch nhỏ dưới số ngày dương ở đầu cột.
+- Quản lý: tuần theo `weekStart` (tuần chứa hôm nay, như Inks). Không cần Kiến trúc sư (tiền lệ D-011, D-018: thêm tính năng trong khung kiến trúc sẵn có).
+
 ## D-020 — T-4.10 PHẢN BIỆN lượt 1: CHẤP NHẬN sửa 1 dòng test khóa `notes.spec.ts` (2026-09-14 · người quyết: Quản lý)
 - Ghim → tự bật `showNote` (T-4.10, Chủ dự án xác nhận chưa bật công tắc "Hiện trên hình nền") làm test cũ `notes.spec.ts:10` fail: dòng 33 `note-show.click()` sau khi ghim giờ TẮT công tắc.
 - Quyết định: đổi đúng dòng đó thành `.check()` (đảm bảo bật — idempotent), giữ nguyên mọi assertion và mục đích test. Khai báo trong báo cáo; kiem-thu kiểm diff test khóa chỉ có dòng này.

@@ -1,7 +1,7 @@
 # SPEC — LichKhoa (tái tạo tính năng "Ink: Lockscreen Calendar, Note" dưới dạng PWA)
 (Kiến trúc sư điền ở Giai đoạn 0. Đây là nguồn sự thật; mọi thay đổi phạm vi phải qua Chủ dự án.)
 
-Phiên bản SPEC: 1.4 — 2026-09-14 (v1.4, D-018: bố cục Tháng có danh sách sự kiện + to-do bên dưới `monthList`; tab Sự kiện hiện sự kiện Google chỉ xem). Trước đó 1.3 — 2026-09-13 (v1.0 + Âm lịch D-006 + thiết bị đích iPhone 13 Pro Max D-007 + lặp T2–T6, nhắc giờ qua .ics, hạn chót to-do, nhiều ghi chú D-011). Kiến trúc sư soát v1.3 ngày 2026-09-14 (D-012): chỉ chỉnh chữ §3 (thứ tự IN-10), §5 (cây thư mục, thêm `cmpTodo`/`buildOps`), §9 (trần dòng agenda); không đổi phạm vi. Duyệt M3 (D-015, 2026-09-14): chỉ chỉnh chữ §8 rủi ro 1. Nghiệm thu cuối (D-021, 2026-09-14): Kiến trúc sư soát v1.4 — chỉ chỉnh chữ §2 TH1, §3 IN-10 (D-020), §5 (background.ts, ui/sync.ts, pages.yml, ảnh nền D-017), §6 M4 (tiêu chí v1.4/D-020), §8 rủi ro 3, §9 hosting thực tế (D-019); không đổi phạm vi. App gốc đối chiếu: "Ink: Lockscreen Calendar, Note" (SilverAI JSC, App Store id6769250805, bản 1.2.14). Tính năng gốc đã tra cứu: hình nền màn hình khóa có lịch / agenda / to-do chồng lên ảnh cá nhân; đồng bộ Google Calendar và Apple Calendar; tạo sự kiện lặp có nhắc; tùy chỉnh ảnh, màu, độ mờ, ngôn ngữ; widget lịch và ghi chú; dữ liệu xử lý trên máy. Tên làm việc "LichKhoa" — không dùng tên, logo, ảnh, font của app gốc; chỉ tái tạo tính năng và luồng dùng.
+Phiên bản SPEC: 1.5 — 2026-09-15 (v1.5, D-024: bố cục **Tuần** giống app Inks — IN-2, `Occurrence.endTime`, đồng bộ Google từ hôm nay − 7, milestone M5). Trước đó 1.4 — 2026-09-14 (v1.4, D-018: bố cục Tháng có danh sách sự kiện + to-do bên dưới `monthList`; tab Sự kiện hiện sự kiện Google chỉ xem). Trước đó 1.3 — 2026-09-13 (v1.0 + Âm lịch D-006 + thiết bị đích iPhone 13 Pro Max D-007 + lặp T2–T6, nhắc giờ qua .ics, hạn chót to-do, nhiều ghi chú D-011). Kiến trúc sư soát v1.3 ngày 2026-09-14 (D-012): chỉ chỉnh chữ §3 (thứ tự IN-10), §5 (cây thư mục, thêm `cmpTodo`/`buildOps`), §9 (trần dòng agenda); không đổi phạm vi. Duyệt M3 (D-015, 2026-09-14): chỉ chỉnh chữ §8 rủi ro 1. Nghiệm thu cuối (D-021, 2026-09-14): Kiến trúc sư soát v1.4 — chỉ chỉnh chữ §2 TH1, §3 IN-10 (D-020), §5 (background.ts, ui/sync.ts, pages.yml, ảnh nền D-017), §6 M4 (tiêu chí v1.4/D-020), §8 rủi ro 3, §9 hosting thực tế (D-019); không đổi phạm vi. App gốc đối chiếu: "Ink: Lockscreen Calendar, Note" (SilverAI JSC, App Store id6769250805, bản 1.2.14). Tính năng gốc đã tra cứu: hình nền màn hình khóa có lịch / agenda / to-do chồng lên ảnh cá nhân; đồng bộ Google Calendar và Apple Calendar; tạo sự kiện lặp có nhắc; tùy chỉnh ảnh, màu, độ mờ, ngôn ngữ; widget lịch và ghi chú; dữ liệu xử lý trên máy. Tên làm việc "LichKhoa" — không dùng tên, logo, ảnh, font của app gốc; chỉ tái tạo tính năng và luồng dùng.
 
 ## 1. Mục tiêu
 Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Chủ dự án: (a) dựng ảnh hình nền màn hình khóa đúng kích thước pixel máy, có lịch tháng / agenda / to-do / ghi chú chồng lên ảnh nền tự chọn; (b) trộn sự kiện Google Calendar (chỉ đọc, OAuth thuần client, không backend) với sự kiện lặp và to-do nhập tại chỗ; (c) đặt làm hình nền khóa bằng ≤ 3 chạm mỗi ngày qua Shortcut. Dùng cá nhân, không đăng nhập, dữ liệu nằm trên máy.
@@ -16,10 +16,10 @@ Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Ch�
 ## 3. Phạm vi
 - IN:
   1. Dựng PNG đúng kích thước pixel màn hình iPhone: preset (`devices.ts`, gồm 1284×2778 iPhone 12/13 Pro Max — mặc định khi không nhận ra máy, v1.2), tự phát hiện (`screen × devicePixelRatio`, mặc định), tùy chỉnh; vùng an toàn tránh đồng hồ (trên) và nút đèn pin/camera (dưới).
-  2. Ba bố cục: **Tháng** (lưới 6×7, tô hôm nay, chấm sự kiện; v1.4 D-018: khi `monthList` bật — mặc định — dưới lưới có danh sách sự kiện từ hôm nay trong `agendaDays` ngày + to-do chưa xong, cắt theo chỗ trống kèm dòng "+N"; hình nền là ảnh tĩnh nên không cuộn), **Agenda** (N ngày tới, giờ + tên, màu lịch), **To-do** (checklist). Lớp **Ghi chú** (văn bản tự do) bật/tắt trên mọi bố cục.
+  2. Ba bố cục: **Tháng** (lưới 6×7, tô hôm nay, chấm sự kiện; v1.4 D-018: khi `monthList` bật — mặc định — dưới lưới có danh sách sự kiện từ hôm nay trong `agendaDays` ngày + to-do chưa xong, cắt theo chỗ trống kèm dòng "+N"; hình nền là ảnh tĩnh nên không cuộn), **Agenda** (N ngày tới, giờ + tên, màu lịch), **To-do** (checklist), **Tuần** (v1.5, D-024 — mẫu `docs/tham-khao/inks-tuan.PNG`: 7 cột của tuần chứa hôm nay theo `weekStart`; đầu cột thứ + ngày (+ ngày âm nhỏ khi `showLunar`); cột hôm nay tô nền nhạt; dưới mỗi ngày tối đa 4 chip bo góc màu pastel (màu sự kiện/lịch pha trắng, chữ tối; to-do pastel vàng): giờ bắt đầu–kết thúc + tên; > 4 mục → 3 chip + chip "+N"; to-do có hạn nằm dưới ngày hạn, quá hạn chưa xong dồn hôm nay, không hạn không hiện; dưới dải tuần là danh sách chi tiết hôm nay: vạch màu, tên đậm, "◷ giờ", cắt theo chỗ trống + "+N"). Lớp **Ghi chú** (văn bản tự do) bật/tắt trên mọi bố cục.
   3. Nền: ảnh từ Thư viện (cover-fit, tôn trọng EXIF), màu đơn, gradient; mờ (0–3) + tối (0–0.8); màu chữ / màu nhấn; 3 họ font hệ thống (sans/serif/mono); vị trí khối (trên/giữa/dưới trong vùng an toàn); cỡ chữ (scale); độ trong suốt hộp.
   4. Sự kiện cục bộ: CRUD; cả ngày hoặc có giờ; lặp ngày/**T2–T6**/tuần/tháng/năm + ngày kết thúc; to-do tick/bỏ tick; ghi chú.
-  5. Google Calendar chỉ đọc: OAuth implicit redirect tự viết (không SDK), chọn lịch, tải sự kiện trong [hôm nay − 1 … + 60 ngày], cache cục bộ dùng offline, tự đồng bộ khi mở app nếu token còn hạn và cache cũ hơn 30 phút. (v1.4, D-018) Tab Sự kiện hiện cả sự kiện Google (chấm + danh sách ngày, nhãn "Google"), chỉ xem, không sửa/xóa.
+  5. Google Calendar chỉ đọc: OAuth implicit redirect tự viết (không SDK), chọn lịch, tải sự kiện trong [hôm nay − 7 … + 60 ngày] (v1.5: − 7 để đủ cả tuần của bố cục Tuần; trước là − 1), cache cục bộ dùng offline, tự đồng bộ khi mở app nếu token còn hạn và cache cũ hơn 30 phút. (v1.4, D-018) Tab Sự kiện hiện cả sự kiện Google (chấm + danh sách ngày, nhãn "Google"), chỉ xem, không sửa/xóa.
   6. Xuất: "Lưu ảnh" (Web Share files → fallback tải PNG); "Đặt hình nền" = sao chép PNG vào clipboard rồi mở `shortcuts://run-shortcut?name=<tên>&input=clipboard`; xuất sự kiện `.ics` (Lịch iPhone tự nhắc).
   7. PWA: manifest, service worker (offline app shell), cài Màn hình chính; dữ liệu trong IndexedDB; sao lưu / khôi phục JSON.
   8. Giao diện VI/EN; 12h/24h; tuần bắt đầu T2/CN.
@@ -78,9 +78,10 @@ interface LocalEvent { id: string; title: string; date: ISODate; time?: string /
   alarmMin?: number /* v1.3: phút nhắc trước, 0/thiếu = không nhắc → VALARM trong .ics */ }
 interface Todo { id: string; text: string; done: boolean; order: number; due?: ISODate /* v1.3 */ }
 interface Note { id: string; title: string; body: string; pinned: boolean; updated: number }   // v1.3 — tối đa 1 note pinned
-interface Occurrence { id: string; sourceId: string; source: 'local'|'google'; title: string; date: ISODate; time?: string; allDay: boolean; color?: string }
+interface Occurrence { id: string; sourceId: string; source: 'local'|'google'; title: string; date: ISODate; time?: string; allDay: boolean; color?: string;
+  endTime?: string /* v1.5 D-024: 'HH:mm' giờ kết thúc, chỉ khi có `time`, kết thúc cùng ngày và sau `time`; local = time + durationMin, Google = end.dateTime */ }
 interface DeviceSpec { id: string; label: string; width: number; height: number; safeTop: number; safeBottom: number } // safe* là tỉ lệ 0..1 của height
-interface DesignConfig { layout: 'month'|'agenda'|'todo'; showNote: boolean /* hiện ghi chú ghim */; showLunar: boolean /* v1.1 */;   // v1.3: bỏ noteText → AppState.notes
+interface DesignConfig { layout: 'month'|'agenda'|'todo'|'week' /* v1.5 */; showNote: boolean /* hiện ghi chú ghim */; showLunar: boolean /* v1.1 */;   // v1.3: bỏ noteText → AppState.notes
   monthList: boolean /* v1.4 D-018: danh sách dưới lưới Tháng; normalizeState bù true */;
   bg: { kind: 'photo'|'solid'|'gradient'; color: string; color2?: string }; blur: 0|1|2|3; dim: number;
   textColor: string; accentColor: string; font: 'sans'|'serif'|'mono'; position: 'top'|'middle'|'bottom';
@@ -103,7 +104,7 @@ t(key: string, lang: 'vi'|'en', vars?: Record<string,string|number>): string
 type DrawOp = { op:'rect'; x:number; y:number; w:number; h:number; r?:number; fill:string; alpha?:number }
             | { op:'text'; x:number; y:number; text:string; size:number; weight:400|600|700; color:string; align:'left'|'center'|'right'; font:'sans'|'serif'|'mono' }
             | { op:'dot'; x:number; y:number; r:number; fill:string }
-layoutMonth(d: RenderData, c: DesignConfig, dev: DeviceSpec): DrawOp[]   // layoutAgenda, layoutTodo, layoutNote cùng chữ ký
+layoutMonth(d: RenderData, c: DesignConfig, dev: DeviceSpec): DrawOp[]   // layoutAgenda, layoutTodo, layoutWeek (v1.5, render/layout/week.ts), layoutNote cùng chữ ký
 paint(ctx: CanvasRenderingContext2D, ops: DrawOp[]): void
 buildOps(state: AppState, today: ISODate): DrawOp[]                           // thuần: collect → layout theo design.layout + layoutNote; test/E2E dùng
 renderWallpaper(state: AppState, bg: Blob|null, today: ISODate): Promise<Blob>   // PNG đúng device.width × device.height
@@ -162,6 +163,14 @@ Nội dung: ảnh nền từ Thư viện (EXIF, cover-fit, thu nhỏ), mờ bằ
   - [ ] (D-020) Unit `store.test.ts`: `pinNote(id, true)` khi `showNote=false` → `showNote=true`; bỏ ghim không đổi `showNote`. E2E `notes.spec.ts`: ghim ghi chú → công tắc `note-show` bật và `__lastOps` chứa tiêu đề ghi chú.
   - [ ] Thử tay trên iPhone của Chủ dự án theo HUONG-DAN.md; kết quả ghi vào `docs/bao-cao/M4.md` (không chặn nghiệm thu bằng lệnh, nhưng là điều kiện để đóng dự án).
 
+### M5 — Bố cục Tuần giống app Inks (v1.5, D-024; thêm sau nghiệm thu cuối)
+Nội dung: `Occurrence.endTime` (local + Google), expand/đồng bộ đủ cả tuần chứa hôm nay, `layoutWeek` theo mẫu `docs/tham-khao/inks-tuan.PNG`, chọn bố cục "Tuần" trong app, ảnh mẫu 1284×2778 cho Chủ dự án xem.
+- Tiêu chí nghiệm thu:
+  - [ ] Unit: `endTime` đúng cho local (`durationMin`, qua nửa đêm → không có) và Google (`end.dateTime` cùng ngày); `collectRenderData` có sự kiện của ngày đầu tuần kể cả khi tuần bắt đầu ở tháng trước; `syncRange` = [today − 7, today + 60].
+  - [ ] Unit `layout-week.test.ts`: 7 cột đúng thứ tự theo `weekStart` 0/1; ngày có 6 mục → 3 chip + "+6−3"; ngày 4 mục → 4 chip; to-do quá hạn nằm ở cột hôm nay, không hạn không có; danh sách hôm nay đủ mục hoặc có "+N"; `showLunar` true/false; mọi op trong `mainArea` với 1284×2778 và 1179×2556 × 3 `position` × `showNote`; bbox khối Tuần không giao dải ghi chú.
+  - [ ] E2E luồng chính **T-5.END** (chromium + webkit): tạo sự kiện có giờ + to-do có hạn → chọn bố cục Tuần → preview 1284×2778 và `__lastOps` có chip của sự kiện dưới đúng cột, chip to-do, dòng danh sách hôm nay; reload vẫn giữ bố cục Tuần.
+  - [ ] `npm run check` pass; ảnh mẫu Tuần 1284×2778 được Chủ dự án xem và chấp nhận (thử tay, không chặn nghiệm thu bằng lệnh).
+
 ## 7. Chiến lược test
 - Lệnh chạy test tổng: `npm run check` (PowerShell, tại `E:\DuAn\thu-nghiem`) = `tsc --noEmit && vitest run && playwright test`.
 - Chuẩn bị một lần: `npm install`; `npx playwright install chromium webkit` (~400 MB).
@@ -187,7 +196,7 @@ Nội dung: ảnh nền từ Thư viện (EXIF, cover-fit, thu nhỏ), mờ bằ
 - Google scope chỉ `https://www.googleapis.com/auth/calendar.readonly`; Client ID dán trong UI, lưu localStorage, không commit vào repo.
 - Hosting HTTPS (thực tế từ 2026-09-14, D-019): repo public `github.com/thaihuy1012/LichKhoa`, GitHub Pages `https://thaihuy1012.github.io/LichKhoa/`; workflow `.github/workflows/pages.yml` build `VITE_BASE=/LichKhoa/` khi push `main` (Vite `base` đọc `VITE_BASE`, mặc định `/`; manifest `scope`/`start_url` theo base). Netlify Drop dự phòng; cloudflared quick tunnel cho thử nhanh. `git push` do Chủ dự án tự chạy (`.claude/settings.json` chặn Quản lý push) — mỗi lần deploy = 1 lệnh push của Chủ dự án. Client ID Google đăng ký origin `https://thaihuy1012.github.io` và redirect `https://thaihuy1012.github.io/LichKhoa/`.
 - Mặc định: ngôn ngữ VI, tuần bắt đầu T2, 24h, bố cục Tháng, agenda 7 ngày (tối đa 12 **dòng sự kiện**, tiêu đề ngày không tính — D-012, làm ở T-2.15; không để tiêu đề ngày mồ côi; vượt thì "+N"; hộp tự co nếu tràn vùng an toàn), to-do tối đa 12 dòng, vùng an toàn `safeTop=0.30`, `safeBottom=0.14`, tên Shortcut `DatHinhNen`. Mật độ chữ trên ảnh nền thật xem lại ở M4 (T-4.2) cùng mặc định `boxAlpha`.
-- Khoảng đồng bộ Google cố định [hôm nay − 1, + 60 ngày]; sự kiện Google không chỉnh sửa được trong app.
+- Khoảng đồng bộ Google cố định [hôm nay − 7, + 60 ngày] (v1.5; trước là − 1); sự kiện Google không chỉnh sửa được trong app.
 - Không tối ưu iPad/Android/desktop; không hỗ trợ nhiều người dùng.
 
 ## 10. Việc Chủ dự án tự làm & cách thử trên iPhone
