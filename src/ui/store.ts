@@ -212,6 +212,26 @@ export function createStore(initialState: AppState): Store {
     }, PERSIST_DEBOUNCE_MS);
   }
 
+  function flushPersist(): void {
+    if (timer !== null) {
+      clearTimeout(timer);
+      timer = null;
+      void saveState(state);
+    }
+  }
+
+  if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+    window.addEventListener('pagehide', flushPersist);
+  }
+
+  if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        flushPersist();
+      }
+    });
+  }
+
   return {
     getState: () => state,
     dispatch(action: Action) {

@@ -1,0 +1,25 @@
+
+Running 20 tests using 4 workers
+
+  ✓   1 [chromium] › tests\e2e\persist-flush.spec.ts:52:1 › visibilitychange (hidden): ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (832ms)
+  ✓   2 [chromium] › tests\e2e\persist-flush.spec.ts:39:1 › pagehide: ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (868ms)
+  ✓   4 [chromium] › tests\e2e\persist-flush.spec.ts:39:1 › pagehide: ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (883ms)
+  ✓   3 [chromium] › tests\e2e\persist-flush.spec.ts:52:1 › visibilitychange (hidden): ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (625ms)
+  ✓   5 [chromium] › tests\e2e\persist-flush.spec.ts:39:1 › pagehide: ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (865ms)
+  ✓   6 [chromium] › tests\e2e\persist-flush.spec.ts:52:1 › visibilitychange (hidden): ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (837ms)
+  ✓   8 [chromium] › tests\e2e\persist-flush.spec.ts:39:1 › pagehide: ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (647ms)
+  ✓   7 [chromium] › tests\e2e\persist-flush.spec.ts:52:1 › visibilitychange (hidden): ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (747ms)
+  ✓   9 [chromium] › tests\e2e\persist-flush.spec.ts:39:1 › pagehide: ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (826ms)
+  ✓  10 [chromium] › tests\e2e\persist-flush.spec.ts:52:1 › visibilitychange (hidden): ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (759ms)
+  ✓  12 [webkit] › tests\e2e\persist-flush.spec.ts:39:1 › pagehide: ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (1.6s)
+  ✓  11 [webkit] › tests\e2e\persist-flush.spec.ts:52:1 › visibilitychange (hidden): ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (1.8s)
+  ✓  13 [webkit] › tests\e2e\persist-flush.spec.ts:39:1 › pagehide: ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (1.5s)
+  ✓  14 [webkit] › tests\e2e\persist-flush.spec.ts:52:1 › visibilitychange (hidden): ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (1.5s)
+  ✓  15 [webkit] › tests\e2e\persist-flush.spec.ts:39:1 › pagehide: ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (1.8s)
+  ✓  16 [webkit] › tests\e2e\persist-flush.spec.ts:52:1 › visibilitychange (hidden): ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (2.0s)
+  ✓  17 [webkit] › tests\e2e\persist-flush.spec.ts:39:1 › pagehide: ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (1.8s)
+  ✓  18 [webkit] › tests\e2e\persist-flush.spec.ts:52:1 › visibilitychange (hidden): ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (1.7s)
+  ✓  19 [webkit] › tests\e2e\persist-flush.spec.ts:39:1 › pagehide: ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (1.3s)
+  ✓  20 [webkit] › tests\e2e\persist-flush.spec.ts:52:1 › visibilitychange (hidden): ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (1.3s)
+
+  20 passed (17.2s)
