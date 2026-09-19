@@ -101,6 +101,8 @@
   "events.todoMarkDone": "Đánh dấu đã xong",
   "events.todoMarkUndone": "Đánh dấu chưa xong",
   "events.todoDue": "Hạn",
+  "events.todoDueTime": "Giờ",
+  "events.todoDueDone": "Xong",
   "events.todoEditHint": "Chạm để sửa việc",
   "events.todoEditAction": "Sửa",
   "events.todoArchive": "Lưu trữ",
@@ -129,7 +131,6 @@
   "reminder.statusTooEarly": "Báo thức đúng ngày cần giờ từ 00:30 (Tự động hóa chạy 00:05).",
   "reminder.statusAlarmOk": "Trong 24 giờ tới: cả ba cách đều được.",
   "reminder.statusOver24h": "Quá 24 giờ: dùng Báo thức đúng ngày (kêu to) hoặc Thêm lời nhắc.",
-  "reminder.statusReminderOnly": "Quá 24 giờ: dùng Báo thức đúng ngày (kêu to) hoặc Thêm lời nhắc.",
 
   "notes.add": "Thêm ghi chú",
   "notes.new": "Ghi chú mới",

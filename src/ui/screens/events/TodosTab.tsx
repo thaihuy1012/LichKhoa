@@ -26,44 +26,94 @@ function DueBadge({
   todo,
   today,
   lang,
+  hour12,
   onChange,
 }: {
   todo: Todo;
   today: ISODate;
   lang: 'vi' | 'en';
-  onChange: (due: string | null) => void;
+  hour12?: boolean;
+  onChange: (due: string | null, dueTime?: string) => void;
 }) {
   const [editing, setEditing] = useState(false);
+  const [editDue, setEditDue] = useState(todo.due ?? '');
+  const [editDueTime, setEditDueTime] = useState(todo.dueTime ?? '');
+
+  function startEditing() {
+    setEditDue(todo.due ?? '');
+    setEditDueTime(todo.dueTime ?? '');
+    setEditing(true);
+  }
+
+  function handleDone() {
+    if (editDue) {
+      onChange(editDue, editDueTime || undefined);
+    } else {
+      onChange(null, undefined);
+    }
+    setEditing(false);
+  }
+
   if (editing) {
     return (
-      <input
-        type="date"
-        class="todo-due-input"
-        data-testid="todo-due-edit"
-        value={todo.due ?? ''}
-        onChange={(e) => {
-          const v = (e.target as HTMLInputElement).value;
-          onChange(v || null);
-          setEditing(false);
-        }}
-        onBlur={() => setEditing(false)}
-      />
+      <div class="todo-due-edit-group">
+        <input
+          type="date"
+          class="todo-due-input"
+          data-testid="todo-due-edit"
+          aria-label={t('events.todoDue', lang)}
+          value={editDue}
+          onInput={(e) => {
+            const v = (e.target as HTMLInputElement).value;
+            setEditDue(v);
+            if (!v) setEditDueTime('');
+          }}
+          onChange={(e) => {
+            const v = (e.target as HTMLInputElement).value;
+            setEditDue(v);
+            if (!v) setEditDueTime('');
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleDone();
+          }}
+        />
+        <input
+          type="time"
+          class="todo-due-time-input"
+          data-testid="todo-due-time-edit"
+          aria-label={t('events.todoDueTime', lang)}
+          value={editDueTime}
+          onInput={(e) => setEditDueTime((e.target as HTMLInputElement).value)}
+          onChange={(e) => setEditDueTime((e.target as HTMLInputElement).value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleDone();
+          }}
+        />
+        <button
+          type="button"
+          class="todo-due-done"
+          data-testid="todo-due-done"
+          onClick={handleDone}
+        >
+          {t('events.todoDueDone', lang)}
+        </button>
+      </div>
     );
   }
   if (!todo.due) {
     return (
-      <button type="button" class="todo-due-add" data-testid="todo-due-label" onClick={() => setEditing(true)}>
+      <button type="button" class="todo-due-add" data-testid="todo-due-label" onClick={startEditing}>
         + {t('events.todoDue', lang)}
       </button>
     );
   }
-  const label = todoDueLabel(todo.due, today, lang);
+  const label = todoDueLabel(todo.due, today, lang, todo.dueTime, hour12);
   return (
     <button
       type="button"
       class={label.overdue ? 'todo-due-label todo-due-overdue' : 'todo-due-label'}
       data-testid="todo-due-label"
-      onClick={() => setEditing(true)}
+      onClick={startEditing}
     >
       {label.text}
     </button>
@@ -458,6 +508,7 @@ export function TodosTab({ store, state, showToast }: Props) {
   const today = toISODate(new Date());
   const [inputText, setInputText] = useState('');
   const [inputDue, setInputDue] = useState('');
+  const [inputDueTime, setInputDueTime] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState('');
   const [showDone, setShowDone] = useState(false);
@@ -479,17 +530,29 @@ export function TodosTab({ store, state, showToast }: Props) {
   function add() {
     const text = inputText.trim();
     if (!text) return;
-    store.dispatch({ type: 'addTodo', text, due: inputDue || undefined });
+    store.dispatch({
+      type: 'addTodo',
+      text,
+      due: inputDue || undefined,
+      dueTime: inputDue && inputDueTime ? inputDueTime : undefined,
+    });
     setInputText('');
     setInputDue('');
+    setInputDueTime('');
   }
 
   function saveForReminder(): boolean {
     const text = inputText.trim();
     if (!text) return false;
-    store.dispatch({ type: 'addTodo', text, due: inputDue || undefined });
+    store.dispatch({
+      type: 'addTodo',
+      text,
+      due: inputDue || undefined,
+      dueTime: inputDue && inputDueTime ? inputDueTime : undefined,
+    });
     setInputText('');
     setInputDue('');
+    setInputDueTime('');
     setReminderOpen(false);
     return true;
   }
@@ -588,7 +651,15 @@ export function TodosTab({ store, state, showToast }: Props) {
           todo={todo}
           today={today}
           lang={lang}
-          onChange={(due) => store.dispatch({ type: 'setTodoDue', id: todo.id, due })}
+          hour12={state.design.hour12}
+          onChange={(due, dueTime) =>
+            store.dispatch({
+              type: 'setTodoDue',
+              id: todo.id,
+              due: due as ISODate | null,
+              dueTime,
+            })
+          }
         />
       </div>
     );
@@ -692,9 +763,32 @@ export function TodosTab({ store, state, showToast }: Props) {
               data-testid="todo-due"
               aria-label={t('events.todoDue', lang)}
               value={inputDue}
-              onInput={(e) => setInputDue((e.target as HTMLInputElement).value)}
+              onInput={(e) => {
+                const v = (e.target as HTMLInputElement).value;
+                setInputDue(v);
+                if (!v) setInputDueTime('');
+              }}
+              onChange={(e) => {
+                const v = (e.target as HTMLInputElement).value;
+                setInputDue(v);
+                if (!v) setInputDueTime('');
+              }}
             />
           </label>
+          {Boolean(inputDue) && (
+            <label class="todo-due-hint">
+              {t('events.todoDueTime', lang)}
+              <input
+                type="time"
+                class="todo-due-time-input"
+                data-testid="todo-due-time"
+                aria-label={t('events.todoDueTime', lang)}
+                value={inputDueTime}
+                onInput={(e) => setInputDueTime((e.target as HTMLInputElement).value)}
+                onChange={(e) => setInputDueTime((e.target as HTMLInputElement).value)}
+              />
+            </label>
+          )}
           <button type="button" data-testid="todo-add" onClick={add}>
             {t('events.todoAdd', lang)}
           </button>
@@ -745,6 +839,7 @@ export function TodosTab({ store, state, showToast }: Props) {
         source={{
           kind: 'todo',
           due: inputDue || undefined,
+          dueTime: inputDue && inputDueTime ? inputDueTime : undefined,
         }}
         title={inputText.trim()}
         alarmShortcutName={state.alarmShortcutName}

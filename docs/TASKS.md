@@ -1186,7 +1186,8 @@ Chủ dự án duyệt 2026-09-19: làm ngay (không chờ G1–G5 của M8); "Q
 - Phạm vi file: `src/ui/screens/events/TodosTab.tsx`, `src/ui/components/ReminderDialog.tsx`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `src/ui/styles.css`.
 - Yêu cầu + tiêu chí: SPEC §6 M9 "Nội dung" (TodosTab, i18n, `color-scheme: dark`, S4-#1 wrapper + Inner, S4-#2 xóa khóa) và gạch tiêu chí 4 (test khóa pass nguyên vẹn). Vùng chạm ≥ 44 px, bề ngang 428 pt.
 - Lệnh kiểm tra: `npx playwright test tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts tests/e2e/m7-reminder.spec.ts tests/e2e/m8-dayalarm.spec.ts` ; `npm run check`.
-- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO — sau T-9.2
+- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-19 vòng 1 (8 phút) XONG, báo cáo Gemini cụt → kiem-thu kiểm kỹ PASS (lệnh phiếu 23/7 skip/0 fail; check 308×2 unit, 102/14 skip; đủ testid, wrapper+Inner, khóa thừa đã xóa) → review diff đạt (giao diện kiểm bằng mắt ở T-9.END + thử tay H1–H2) → commit.
 
 ### T-9.END — E2E `tests/e2e/m9-todo-time.spec.ts`
 - Phạm vi file: `tests/e2e/m9-todo-time.spec.ts` (mới); không sửa src.

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useState } from 'preact/hooks';
 import type { DayAlarmWindow, ReminderSource, ReminderWindow } from '../../export/reminder';
 import { dayAlarmWindow, defaultReminderAt, reminderText, reminderWindow } from '../../export/reminder';
 import { openShortcut } from '../../export/share';
@@ -21,9 +21,14 @@ export interface ReminderDialogProps {
 }
 
 /** Hộp thoại chọn thời điểm nhắc trên iPhone qua Phím tắt (IN-11/IN-12, SPEC §3 IN-12).
- * Dùng chung cho Sự kiện (EventsTab), Việc cần làm (TodosTab) và Ghi chú (NoteTab). */
-export function ReminderDialog({
-  open,
+ * Dùng chung cho Sự kiện (EventsTab), Việc cần làm (TodosTab) và Ghi chú (NoteTab).
+ * (S4-#1) Tách wrapper `if (!open) return null` + `ReminderDialogInner` mount mới mỗi lần mở. */
+export function ReminderDialog(props: ReminderDialogProps) {
+  if (!props.open) return null;
+  return <ReminderDialogInner {...props} />;
+}
+
+function ReminderDialogInner({
   onClose,
   source,
   title,
@@ -36,15 +41,7 @@ export function ReminderDialog({
   showToast,
   lang,
 }: ReminderDialogProps) {
-  const [at, setAt] = useState<string>(() => (open ? defaultReminderAt(source, new Date()) : ''));
-
-  useEffect(() => {
-    if (open) {
-      setAt(defaultReminderAt(source, new Date()));
-    }
-  }, [open]);
-
-  if (!open) return null;
+  const [at, setAt] = useState<string>(() => defaultReminderAt(source, new Date()));
 
   const now = new Date();
   const isValid = Boolean(at && !isNaN(new Date(at).getTime()));

@@ -750,6 +750,11 @@ input[type='datetime-local'] {
   width: 128px;
 }
 
+.addrow input[type='time'] {
+  flex: none;
+  width: 96px;
+}
+
 /* B-013 (lượt 2): "Việc mới…" + "Hạn" + ô ngày + "Thêm" không vừa một hàng ở bề ngang 428pt ->
    xuống 2 dòng CÂN ĐỐI thay vì bọc dòng ngẫu nhiên (flex-wrap cũ làm ô ngày/nút "Thêm" rơi lệch
    hàng, không cùng chiều cao/đường giữa với nhãn "Hạn"). Dòng 1: ô nhập tên việc, full-width, một
@@ -773,9 +778,11 @@ input[type='datetime-local'] {
   flex: 1;
 }
 
-.addrow-todo-due-line input[type='date'] {
+.addrow-todo-due-line input[type='date'],
+.addrow-todo-due-line input[type='time'] {
   flex: 1;
   width: auto;
+  min-width: 0;
 }
 
 .addrow-todo-due-line button {
@@ -815,17 +822,60 @@ input[type='datetime-local'] {
   font-weight: 700;
 }
 
+.todo-due-edit-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+}
+
 .todo-due-input {
   flex: none;
-  width: 128px;
+  width: 116px;
   min-height: 44px;
-  font-size: 14px;
+  font-size: 13px;
   box-sizing: border-box;
   padding: 4px 6px;
   border-radius: 8px;
   border: 1px solid #333;
   background: #0b0b0f;
   color: #f2f2f2;
+  color-scheme: dark;
+}
+
+.todo-due-time-input {
+  flex: none;
+  width: 86px;
+  min-height: 44px;
+  font-size: 13px;
+  box-sizing: border-box;
+  padding: 4px 6px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #0b0b0f;
+  color: #f2f2f2;
+  color-scheme: dark;
+}
+
+.todo-item .todo-due-done {
+  flex: none;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #2a2a33;
+  color: #f2f2f2;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.todo-item .todo-due-done:active {
+  background: #3a3a46;
 }
 
 .todo-list,

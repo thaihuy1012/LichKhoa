@@ -101,6 +101,8 @@
   "events.todoMarkDone": "Mark done",
   "events.todoMarkUndone": "Mark not done",
   "events.todoDue": "Due",
+  "events.todoDueTime": "Time",
+  "events.todoDueDone": "Done",
   "events.todoEditHint": "Tap to edit task",
   "events.todoEditAction": "Edit",
   "events.todoArchive": "Archive",
@@ -129,7 +131,6 @@
   "reminder.statusTooEarly": "Alarm on that day requires time from 00:30 (Automation runs at 00:05).",
   "reminder.statusAlarmOk": "Within the next 24 hours: all three methods work.",
   "reminder.statusOver24h": "Over 24 hours: use Alarm on that day (loud) or Add reminder.",
-  "reminder.statusReminderOnly": "Over 24 hours: use Alarm on that day (loud) or Add reminder.",
 
   "notes.add": "Add note",
   "notes.new": "New note",
