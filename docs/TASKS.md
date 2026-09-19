@@ -1015,3 +1015,37 @@ Phiếu dự kiến (Kiến trúc sư đề xuất; soạn chi tiết khi khởi
 - Thử tay iPhone G1–G5 (sau khi xong A–F của M7).
 
 Lưu ý thiết kế đã chốt (SPEC v1.9 §5, §8.11): payload KHÔNG đổi (`reminderText` giữ nguyên) — danh sách đích do Phím tắt thứ ba ghim, thêm dòng vào payload sẽ phá "Cách B" của mục E. Phím tắt `TaoBaoThucSang` tách khỏi Automation để bấm thử tay được ngay.
+
+---
+
+## Bảo trì 2026-09-19 — Chủ dự án thử tay M7 trên iPhone (iOS 18, máy tiếng Anh)
+Kết quả: A ĐẠT · B/B′/C KHÔNG ĐẠT (SC-003) · D ĐẠT · E chưa kết luận được (phụ thuộc B). Kèm 4 lỗi giao diện tab Việc. Ảnh: `docs/hinh-anh-loi/`.
+
+### B-009 — Sửa hướng dẫn Phím tắt: bước bật nhắc theo THỜI GIAN (đóng SC-003)
+- Mục tiêu: Chủ dự án cài lại `ThemLoiNhac` theo hướng dẫn và tạo được lời nhắc, hết lỗi "No alert location was provided".
+- Nguyên nhân (tra cứu, mức chắc chắn TRUNG BÌNH — Apple Community + Automators + Matthew Cassinelli): trong "Add New Reminder", nếu gán thẳng biến ngày giờ mà không bật kiểu nhắc, iOS hiểu là nhắc theo VỊ TRÍ. Phải: chạm ô **"No Alert"** → chọn **"Alert"** (hoặc "Remind me at a time") → hiện ô **"At Time"** → gán biến ngày giờ vào ô đó.
+- Phạm vi file (chỉ được sửa, đã xác minh): `docs/HUONG-DAN.md`.
+- Tiêu chí nghiệm thu:
+  [ ] Mục E (cả Cách A và Cách B của `ThemLoiNhac`, và phần `ThemBaoThucNgay` nếu có) mô tả rõ 3 bước: chạm **"No Alert"** → chọn **"Alert" / "Remind me at a time"** → gán biến vào ô **"At Time"**. Kèm tên tiếng Anh chính xác vì máy Chủ dự án đang để tiếng Anh.
+  [ ] Cảnh báo riêng: KHÔNG gán biến ngày giờ trực tiếp vào ô "No Alert" — đó chính là nguyên nhân lỗi, kèm nguyên văn thông báo lỗi để người đọc nhận ra.
+  [ ] Ghi chú iOS 18: có hành động mới **"Create Reminder"** tách riêng "All-Day"/"Due Date"; nếu máy hiện hành động này thì dùng nó cũng được — nêu như phương án dự phòng, không bắt buộc.
+  [ ] Mục "Nếu không chạy" thêm gạch đầu dòng cho đúng thông báo lỗi "No alert location was provided" → chỉ thẳng sang bước sửa ở trên.
+  [ ] `Select-String -Path docs/HUONG-DAN.md -Pattern 'No Alert|At Time|Remind me at a time'` ≥ 3 dòng.
+- Lệnh kiểm tra: `npm run check` (phải vẫn pass; đây là sửa tài liệu)
+- Model: sonnet — không giao Gemini: đang có sự cố S2 mở, CLAUDE.md cấm gọi làn Gemini khi sự cố mở. · Lần thử: 0/3 · Trạng thái: DOING
+
+### B-010 — Tab Việc: nhãn lệch, ô ngày giờ trắng-trên-trắng, không rõ chỗ sửa việc
+- Mục tiêu: sửa 3 lỗi giao diện Chủ dự án báo (mục 1, 2, 4), trên iPhone 13 Pro Max nền tối.
+- Bằng chứng: `docs/hinh-anh-loi/IMG_2432.PNG` (nhãn "Hạn" lệch lên so với ô nhập, hàng nhập chật), `IMG_2433.PNG` (ô `rem-at` trong hộp thoại: nền sáng + chữ xám nhạt → gần như không đọc được).
+- Phạm vi file (chỉ được sửa, đã xác minh): `src/ui/styles.css`, `src/ui/screens/events/TodosTab.tsx`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `tests/e2e/todo-gestures.spec.ts`.
+- Tiêu chí nghiệm thu:
+  [ ] **Lỗi 2 (nặng nhất)**: mọi `input[type=date]` và `input[type=datetime-local]` trong app đọc được trên nền tối — đặt `color-scheme: dark` (hoặc màu nền/chữ tường minh) cho các ô này, gồm ô `rem-at` trong `ReminderDialog` và ô `todo-due`. Chữ phải tương phản rõ với nền ô.
+  [ ] **Lỗi 1**: hàng nhập việc (`Việc mới… / Hạn / Thêm`) — nhãn "Hạn" thẳng hàng với ô nhập (cùng đường giữa), không tràn/chật ở bề ngang 428 pt.
+  [ ] **Lỗi 4**: mỗi việc trong danh sách có chỗ SỬA rõ ràng — chạm vào chữ việc mở sửa (hoặc nút sửa riêng), và có dấu hiệu nhìn thấy được rằng chạm được (không chỉ dựa vào cử chỉ ẩn). Không phá cử chỉ M6: `npx playwright test tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts` vẫn pass.
+  [ ] Vùng chạm ≥ 44 px; chữ mới qua `t()` có đủ ở cả `vi.json` và `en.json`.
+  [ ] `npm run check` pass.
+- Lệnh kiểm tra: `npx playwright test tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts; npm run check`
+- Model: sonnet — không giao Gemini (sự cố S2 đang mở). · Lần thử: 0/3 · Trạng thái: DOING
+
+### B-011 — Việc có GIỜ + sửa được sau khi tạo (Chủ dự án chọn) — CHỜ KIẾN TRÚC SƯ
+Chủ dự án chốt 2026-09-19: muốn việc có hạn **ngày + giờ** và sửa lại được sau khi tạo. Đổi `Todo.due` (hiện là ISODate, chỉ ngày) → đụng model, sắp xếp, hình nền, sao lưu JSON, nhãn "Quá hạn/Hôm nay", và `defaultReminderAt` cho việc. **Đổi phạm vi SPEC → phải qua Kiến trúc sư**, gọi sau khi đóng SC-003.
