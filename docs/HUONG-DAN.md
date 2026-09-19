@@ -192,6 +192,11 @@ Bấm **Add Action (Thêm hành động)** và lần lượt thêm các hành đ
 2. Vào mục **Thông báo (Notifications)** → chọn **Lời nhắc (Reminders)**.
 3. Bật mục **Thông báo nhạy cảm về thời gian (Time Sensitive Notifications)**.
 4. *Ý nghĩa*: Khi bật tính năng này, thông báo lời nhắc sẽ luôn xuất hiện ngay lập tức và phát chuông báo trên màn hình khóa, ngay cả khi bạn đang bật chế độ Tập trung (Focus / Không làm phiền).
+5. **Chỉ bật ở bước 3 là CHƯA ĐỦ** (đã thử trên iPhone iOS 18: lời nhắc vẫn im khi bật Tập trung). Làm thêm cho **từng** chế độ Tập trung bạn dùng:
+   - Vào **Cài đặt (Settings) → Tập trung (Focus)** → chọn chế độ (vd **Do Not Disturb / Không làm phiền**).
+   - Mục **Ứng dụng (Apps)** → **Thêm (Add)** → chọn **Lời nhắc (Reminders)**.
+   - Cũng trong chế độ đó, bật **Thông báo nhạy cảm về thời gian (Time Sensitive Notifications)** nếu có.
+   - Thử: đặt một lời nhắc cách 2–3 phút, bật chế độ Tập trung đó rồi chờ — phải có chuông/thông báo.
 
 ---
 

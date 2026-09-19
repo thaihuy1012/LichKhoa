@@ -25,7 +25,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## ĐIỂM DỪNG PHIÊN 2026-09-19 (đọc mục này đầu tiên ở phiên sau)
 
-**Trạng thái**: SC-003 **ĐÃ ĐÓNG** (2026-09-19, Chủ dự án tạo được lời nhắc mục B). Làn Gemini mở lại. Thử tay M7 (2026-09-19): B ✔, B′ ✔, C ✔ (Việc + Ghi chú; Ghi chú nằm ở tab Sự kiện, không phải Xem trước). E ✘ → Chủ dự án chọn: thử 1 lần (Tập trung → Ứng dụng cho phép Lời nhắc + bật Nhạy cảm thời gian trong chế độ Tập trung); vẫn ✘ thì ghi giới hạn đã biết (SPEC §8.10, HUONG-DAN) và đóng M7. B-014 ✔. Hàng chờ: B-011, M8.
+**Trạng thái**: SC-003 **ĐÃ ĐÓNG** (2026-09-19, Chủ dự án tạo được lời nhắc mục B). Làn Gemini mở lại. Thử tay M7 (2026-09-19): B ✔, B′ ✔, C ✔ (Việc + Ghi chú; Ghi chú nằm ở tab Sự kiện, không phải Xem trước). E ✔ (sau khi thêm Lời nhắc vào Ứng dụng được phép + bật Nhạy cảm thời gian trong chế độ Tập trung — ghi HUONG-DAN §E bước 5). **M7 ĐÓNG** (thử tay A–F, B′ đạt). Tiếp: B-011 → Kiến trúc sư. B-014 ✔. Hàng chờ: B-011, M8.
 **Git**: cây sạch; **4 commit chưa push** (B-013 + sổ sách). Chủ dự án tự chạy `git push` khi muốn deploy — cổng bảo mật PHẢI chạy lại trước khi đề nghị push (CLAUDE.md).
 **Nhánh phụ còn sót**: `backup-truoc-go-anh` (sao lưu trước khi gỡ ảnh khỏi lịch sử) — giữ tới khi Chủ dự án yên tâm, rồi xoá.
 **Làn Gemini**: BẬT mức NHIỀU nhưng **đang tạm dừng** vì sự cố S2 mở. Mở lại khi đóng SC-003.
