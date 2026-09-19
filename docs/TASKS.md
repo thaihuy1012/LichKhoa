@@ -974,3 +974,17 @@ Chung cho mọi phiếu M7: không sửa/skip test khóa M1–M6 (ngoại lệ d
   [ ] `npm run check` pass; không sửa/skip test khóa nào khác.
 - Lệnh kiểm tra: `npm run check`
 - Model: sonnet — KHÔNG giao Gemini, lý do cụ thể: đây là đường ghi dữ liệu xuống đĩa, hỏng thì mất dữ liệu người dùng (mức S1 theo CLAUDE.md), và phải sửa đồng thời hợp đồng `createStore` dùng chung toàn app — thuộc loại "đổi interface dùng chung" bị loại theo LAN-GEMINI mục 3 điều kiện 3. · Lần thử: 0/3 (1 phản biện CHẤP NHẬN, D-033) · Trạng thái: DONE
+
+### T-7.6 — Nút "Đặt hình nền" cũng ghi dữ liệu xuống đĩa trước khi rời app (Chủ dự án yêu cầu)
+- Mục tiêu: đóng nốt cùng loại rủi ro mất dữ liệu ở nút "Đặt hình nền" (IN-6), giống T-7.5 đã làm cho nút nhắc.
+- Bằng chứng: `src/ui/screens/Preview.tsx:221-230` — `onSetWallpaper` gọi `openShortcut(state.shortcutName)` ngay sau `copyPng`, không `flush()`; thay đổi thiết kế/ảnh nền vừa chỉnh còn nằm trong debounce 300 ms của `createStore`.
+- Phạm vi file (chỉ được sửa, đã xác minh): `src/ui/screens/Preview.tsx`, `tests/e2e/share.spec.ts`.
+- Giao diện có sẵn: `store.flush(): Promise<void>` (T-7.5, `store.ts`).
+- Tiêu chí nghiệm thu:
+  [ ] `onSetWallpaper`: sau khi `copyPng` thành công → `await store.flush()` → rồi `openShortcut(...)`. `copyPng` thất bại → giữ nguyên hành vi cũ (báo lỗi, không điều hướng, không cần flush).
+  [ ] `flush()` ném lỗi không được chặn việc mở Phím tắt (cùng cách xử lý như `ReminderDialog`: nuốt lỗi, vẫn điều hướng) — trạng thái trong RAM vẫn đúng và `pagehide` còn một lần ghi nữa.
+  [ ] **Rủi ro phải kiểm**: chèn `await` giữa thao tác chạm và `location.href` có thể làm Safari/iOS coi là mất "user activation" và chặn mở `shortcuts://`. Kiểm `tests/e2e/share.spec.ts` vẫn pass trên cả chromium và webkit; nếu thấy dấu hiệu bị chặn → PHẢN BIỆN, đừng tự đổi thiết kế.
+  [ ] `tests/e2e/share.spec.ts`: thêm kiểm chứng sau khi bấm "Đặt hình nền", đọc IndexedDB NGAY thấy trạng thái đã lưu (dùng lại cách `readSavedState` trong `tests/e2e/m7-reminder.spec.ts`). Giữ nguyên các ca cũ.
+  [ ] `npm run check` pass.
+- Lệnh kiểm tra: `npx playwright test tests/e2e/share.spec.ts; npm run check`
+- Model: sonnet — KHÔNG giao Gemini, lý do: Kiến trúc sư đang chạy duyệt M7 và có thể ghi `docs/SPEC.md` bất cứ lúc nào → không đảm bảo được "cây git sạch" mà làn Gemini đòi (điều kiện 4), giao Gemini lúc này có nguy cơ script hoàn tác mất phần Kiến trúc sư vừa sửa. · Lần thử: 0/3 · Trạng thái: DOING
