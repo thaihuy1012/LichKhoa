@@ -500,6 +500,7 @@ select option {
 .field input[type='text'],
 .field input[type='date'],
 .field input[type='time'],
+.field input[type='datetime-local'],
 .field textarea {
   width: 100%;
   padding: 10px 12px;
@@ -510,6 +511,17 @@ select option {
   font-size: 16px;
   box-sizing: border-box;
   min-height: 44px;
+}
+
+/* B-010 lỗi 2: `#rem-at` (datetime-local, ReminderDialog) trước đây không khớp selector nào ở trên
+   (thiếu type='datetime-local') -> rơi về giao diện mặc định của WebKit iOS: NỀN SÁNG + CHỮ XÁM NHẠT
+   trên nền tối của app, gần như không đọc được. `color-scheme: dark` áp dụng chung cho mọi ô ngày/giờ
+   trong app (kể cả ô đã có nền/màu tường minh) để cả khung nền lẫn icon lịch/đồng hồ gốc của hệ điều
+   hành cũng theo tông tối, không chỉ riêng rem-at. */
+input[type='date'],
+input[type='time'],
+input[type='datetime-local'] {
+  color-scheme: dark;
 }
 
 .field select {
@@ -723,6 +735,19 @@ select option {
   width: 128px;
 }
 
+/* B-010 lỗi 1: `.todo-due-hint` (label bọc chữ "Hạn" + ô ngày) không có style riêng trước đây ->
+   rơi về `display: inline` mặc định của <label>, khiến chữ "Hạn" nằm lệch theo baseline dòng chữ
+   thay vì canh giữa theo chiều dọc với ô nhập bên cạnh, và không có khoảng cách nên hàng trông chật. */
+.todo-due-hint {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  color: #f2f2f2;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
 /* `.todo-item button` (0-1-1) tô lại font-size/màu chung cho các nút trong hàng; cần
    `.todo-item .todo-due-*` (0-2-0 hoặc hơn) để nhãn hạn không bị đè. */
 .todo-item .todo-due-label,
@@ -819,6 +844,30 @@ select option {
   border-bottom: 1px solid #4c6ef5;
   font-size: 16px;
   padding: 4px 0;
+}
+
+/* B-010 lỗi 4: chữ việc trước đây trông y hệt chữ thường -> Chủ dự án "không biết bấm vào đâu để
+   sửa việc". Thêm gạch chấm dưới chữ + icon bút chì làm dấu hiệu thị giác "chạm được", chỉ áp cho
+   nút sửa (`.todo-text-editable`), không áp cho hàng đã lưu trữ (span `.todo-text` tĩnh, không sửa được). */
+.todo-text-editable {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.todo-text-editable .todo-text-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  border-bottom: 1px dashed #5a5a66;
+}
+
+.todo-edit-icon {
+  flex: none;
+  font-size: 12px;
+  color: #8b8b95;
 }
 
 .todo-item button {

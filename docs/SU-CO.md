@@ -13,6 +13,8 @@
 - Commit tốt cuối cùng: `e432dce` (bản đang chạy) — không cần lùi, vì lỗi ở tài liệu.
 - Đóng băng: `docs/HUONG-DAN.md` mục E (chỉ phiếu sửa SC-003 được sửa). Làn Gemini tạm dừng tới khi đóng sự cố (CLAUDE.md).
 - Bước 1: tra cứu cách cấu hình đúng trên iOS 18 (giao `khao-sat` + WebSearch) → sửa hướng dẫn → Chủ dự án thử lại B, B', C, E.
+- Sửa lượt 1 (B-009, sonnet): ĐÃ SỬA `docs/HUONG-DAN.md` mục E — thêm 3 bước "No Alert" → "Alert" / "Remind me at a time" → "At Time"; cảnh báo nguyên văn lỗi; phương án dự phòng iOS 18 "Create Reminder"; mục (e) trong "Nếu không chạy". Quản lý tự đọc lại đoạn sửa: đạt. `npm run check` 100 pass. Commit: xem git log "B-009".
+- **CHỜ CHỦ DỰ ÁN xác nhận trên iPhone**: sửa đúng 1 ô trong Phím tắt `ThemLoiNhac` rồi thử lại B, B', C, E. Không cần deploy (chỉ sửa tài liệu).
 
 ## SC-002 — iPhone: không đổi được thứ tự Việc, nút ▲▼× trong hàng không bấm được · Mức S2 · Trạng thái: ĐÃ ĐÓNG
 - Phát hiện: 2026-09-15 · bởi Chủ dự án (iPhone 13 Pro Max, PWA, bản `c9f7b82` = tag `M6-ok`) · sau M6.
