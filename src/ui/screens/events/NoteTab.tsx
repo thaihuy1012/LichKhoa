@@ -3,6 +3,7 @@ import type { Store } from '../../store';
 import type { AppState, Note } from '../../../core/model';
 import { t } from '../../../core/i18n';
 import { Sheet } from '../../components/Sheet';
+import { ReminderDialog } from '../../components/ReminderDialog';
 import { newId } from './util';
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
 export function NoteTab({ store, state, showToast }: Props) {
   const lang = state.design.lang;
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [reminderOpen, setReminderOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [nTitle, setNTitle] = useState('');
   const [nBody, setNBody] = useState('');
@@ -29,6 +31,7 @@ export function NoteTab({ store, state, showToast }: Props) {
     setNTitle('');
     setNBody('');
     setNPin(false);
+    setReminderOpen(false);
     setSheetOpen(true);
   }
 
@@ -37,15 +40,16 @@ export function NoteTab({ store, state, showToast }: Props) {
     setNTitle(n.title);
     setNBody(n.body);
     setNPin(n.pinned);
+    setReminderOpen(false);
     setSheetOpen(true);
   }
 
-  function save() {
+  function save(options?: { suppressToast?: boolean }): boolean {
     const title = nTitle.trim();
     const body = nBody.trim();
     if (!title && !body) {
       showToast(t('notes.emptyToast', lang));
-      return;
+      return false;
     }
     const id = editingId ?? newId();
     const note: Note = { id, title, body, pinned: false, updated: Date.now() };
@@ -53,7 +57,11 @@ export function NoteTab({ store, state, showToast }: Props) {
     else store.dispatch({ type: 'addNote', note });
     if (nPin) store.dispatch({ type: 'pinNote', id, pinned: true });
     setSheetOpen(false);
-    showToast(t('notes.savedToast', lang));
+    setReminderOpen(false);
+    if (!options?.suppressToast) {
+      showToast(t('notes.savedToast', lang));
+    }
+    return true;
   }
 
   function remove() {
@@ -61,6 +69,7 @@ export function NoteTab({ store, state, showToast }: Props) {
     if (!window.confirm(t('notes.deleteConfirm', lang))) return;
     store.dispatch({ type: 'deleteNote', id: editingId });
     setSheetOpen(false);
+    setReminderOpen(false);
     showToast(t('notes.deletedToast', lang));
   }
 
@@ -95,13 +104,13 @@ export function NoteTab({ store, state, showToast }: Props) {
         ))}
       </div>
 
-      <Sheet open={sheetOpen} onClose={() => setSheetOpen(false)}>
+      <Sheet open={sheetOpen} onClose={() => { setSheetOpen(false); setReminderOpen(false); }}>
         <div class="sheet-head">
-          <button type="button" data-testid="nt-cancel" class="link" onClick={() => setSheetOpen(false)}>
+          <button type="button" data-testid="nt-cancel" class="link" onClick={() => { setSheetOpen(false); setReminderOpen(false); }}>
             {t('events.cancel', lang)}
           </button>
           <div class="sheet-title">{editingId ? t('notes.edit', lang) : t('notes.new', lang)}</div>
-          <button type="button" data-testid="nt-save" class="link strong" onClick={save}>
+          <button type="button" data-testid="nt-save" class="link strong" onClick={() => void save()}>
             {t('events.save', lang)}
           </button>
         </div>
@@ -136,14 +145,36 @@ export function NoteTab({ store, state, showToast }: Props) {
             onChange={(e) => setNPin((e.target as HTMLInputElement).checked)}
           />
         </div>
-        {editingId && (
-          <div class="sheet-actions">
+        <div class="sheet-actions">
+          <button
+            type="button"
+            data-testid="rem-open"
+            class="btn block"
+            disabled={!nTitle.trim() && !nBody.trim()}
+            onClick={() => setReminderOpen(true)}
+          >
+            {t('reminder.open', lang)}
+          </button>
+          {editingId && (
             <button type="button" data-testid="nt-delete" class="btn danger block" onClick={remove}>
               {t('notes.delete', lang)}
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </Sheet>
+
+      <ReminderDialog
+        open={reminderOpen}
+        onClose={() => setReminderOpen(false)}
+        source={{ kind: 'note' }}
+        title={nTitle.trim() || nBody.trim().split('\n')[0]?.trim() || ''}
+        note={nBody.trim() || undefined}
+        alarmShortcutName={state.alarmShortcutName}
+        reminderShortcutName={state.reminderShortcutName}
+        onSave={() => save({ suppressToast: true })}
+        showToast={showToast}
+        lang={lang}
+      />
     </div>
   );
 }

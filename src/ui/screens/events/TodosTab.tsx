@@ -4,6 +4,7 @@ import type { Store } from '../../store';
 import type { AppState, ISODate, Todo } from '../../../core/model';
 import { t } from '../../../core/i18n';
 import { toISODate } from '../../../core/calendar';
+import { ReminderDialog } from '../../components/ReminderDialog';
 import { sortTodosForDisplay, todoDueLabel } from './util';
 
 interface Props {
@@ -456,6 +457,7 @@ export function TodosTab({ store, state, showToast }: Props) {
   const [showDone, setShowDone] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
   const [swipeOpenId, setSwipeOpenId] = useState<string | null>(null);
+  const [reminderOpen, setReminderOpen] = useState(false);
   const [dragInfo, setDragInfoState] = useState<DragInfo | null>(null);
 
   function setDragInfo(update: DragInfo | null | ((prev: DragInfo | null) => DragInfo | null)) {
@@ -474,6 +476,16 @@ export function TodosTab({ store, state, showToast }: Props) {
     store.dispatch({ type: 'addTodo', text, due: inputDue || undefined });
     setInputText('');
     setInputDue('');
+  }
+
+  function saveForReminder(): boolean {
+    const text = inputText.trim();
+    if (!text) return false;
+    store.dispatch({ type: 'addTodo', text, due: inputDue || undefined });
+    setInputText('');
+    setInputDue('');
+    setReminderOpen(false);
+    return true;
   }
 
   function startEdit(todo: Todo) {
@@ -633,7 +645,7 @@ export function TodosTab({ store, state, showToast }: Props) {
 
   return (
     <div class="todos-tab" onClick={() => setSwipeOpenId(null)}>
-      <div class="addrow">
+      <div class="addrow" style={{ flexWrap: 'wrap' }}>
         <input
           type="text"
           data-testid="todo-input"
@@ -657,6 +669,21 @@ export function TodosTab({ store, state, showToast }: Props) {
         </label>
         <button type="button" data-testid="todo-add" onClick={add}>
           {t('events.todoAdd', lang)}
+        </button>
+        <button
+          type="button"
+          data-testid="rem-open"
+          class="btn block"
+          disabled={!inputText.trim()}
+          onClick={() => setReminderOpen(true)}
+          style={{
+            background: '#2a2a33',
+            color: '#f2f2f2',
+            opacity: !inputText.trim() ? 0.45 : undefined,
+            cursor: !inputText.trim() ? 'not-allowed' : undefined,
+          }}
+        >
+          {t('reminder.open', lang)}
         </button>
       </div>
       {open.length === 0 && <p class="empty">{t('todo.empty', lang)}</p>}
@@ -682,6 +709,21 @@ export function TodosTab({ store, state, showToast }: Props) {
           {showArchived && <div class="todo-archived-list">{archivedTodos.map((todo) => renderArchivedRow(todo))}</div>}
         </div>
       )}
+
+      <ReminderDialog
+        open={reminderOpen}
+        onClose={() => setReminderOpen(false)}
+        source={{
+          kind: 'todo',
+          due: inputDue || undefined,
+        }}
+        title={inputText.trim()}
+        alarmShortcutName={state.alarmShortcutName}
+        reminderShortcutName={state.reminderShortcutName}
+        onSave={saveForReminder}
+        showToast={showToast}
+        lang={lang}
+      />
     </div>
   );
 }
