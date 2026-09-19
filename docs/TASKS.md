@@ -23,7 +23,6 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - 2026-09-15: Chủ dự án bật làn Gemini **v2 mức NHIỀU** (kit v2.1, `tho-gemini`). `agy-run.sh kiem-tra` → SẴN SÀNG (agy 1.2.2; code `gemini-3.8-flash-high`, soat/doc `gemini-3.1-pro-high`, sinh `gemini-3.8-flash-low`). Dự án vẫn ĐÓNG (D-022) → hỏi Chủ dự án việc tiếp theo.
 
 ## Tồn đọng (S4 — không chặn)
-- S4 · T-7.5 · nút "Đặt hình nền" (IN-6) cũng gọi `openShortcut` sau khi lưu mà chưa `flush()` → cùng loại rủi ro mất dữ liệu, mức nhẹ hơn (chỉ mất thay đổi thiết kế chưa kịp ghi, không mất sự kiện/việc/ghi chú). Mở phiếu riêng nếu Chủ dự án gặp thật.
 - ~~S4 · T-1.2 · mặc định `boxAlpha=1` che ảnh nền~~ → đã sửa T-4.2 (0.35 khi chọn ảnh; D-021 xác nhận).
 - ~~S4 · T-1.7 · normalizeState device thiếu safe*~~ → đã sửa T-2.14.
 - ~~S4 · T-2.7 · `EventsTab.tsx` L93 durationMin ngầm 60~~ → đã sửa trong T-2.12.
@@ -987,7 +986,7 @@ Chung cho mọi phiếu M7: không sửa/skip test khóa M1–M6 (ngoại lệ d
   [ ] `tests/e2e/share.spec.ts`: thêm kiểm chứng sau khi bấm "Đặt hình nền", đọc IndexedDB NGAY thấy trạng thái đã lưu (dùng lại cách `readSavedState` trong `tests/e2e/m7-reminder.spec.ts`). Giữ nguyên các ca cũ.
   [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npx playwright test tests/e2e/share.spec.ts; npm run check`
-- Model: sonnet — KHÔNG giao Gemini, lý do: Kiến trúc sư đang chạy duyệt M7 và có thể ghi `docs/SPEC.md` bất cứ lúc nào → không đảm bảo được "cây git sạch" mà làn Gemini đòi (điều kiện 4), giao Gemini lúc này có nguy cơ script hoàn tác mất phần Kiến trúc sư vừa sửa. · Lần thử: 0/3 · Trạng thái: DOING
+- Model: sonnet — KHÔNG giao Gemini, lý do: Kiến trúc sư đang chạy duyệt M7 và có thể ghi `docs/SPEC.md` bất cứ lúc nào → không đảm bảo được "cây git sạch" mà làn Gemini đòi (điều kiện 4), giao Gemini lúc này có nguy cơ script hoàn tác mất phần Kiến trúc sư vừa sửa. · Lần thử: 0/3 · Trạng thái: DONE
 
 ### T-7.7 — `reminderText` cắt chuỗi làm vỡ emoji → không mở được Phím tắt (Kiến trúc sư duyệt M7)
 - Mục tiêu: tiêu đề/ghi chú có emoji (hoặc ký tự ngoài BMP) ở đúng biên 100/200 ký tự không làm hỏng việc mở Phím tắt.
@@ -999,4 +998,4 @@ Chung cho mọi phiếu M7: không sửa/skip test khóa M1–M6 (ngoại lệ d
   [ ] Các ca cắt 100/200 đã có vẫn pass (không đổi ý nghĩa test cũ).
   [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet — không giao Gemini: phiếu nhỏ, cần chắc tay về UTF-16/cặp thay thế, và đang chạy song song với T-7.6 nên cây git không sạch. · Lần thử: 0/3 · Trạng thái: DOING
+- Model: sonnet — không giao Gemini: phiếu nhỏ, cần chắc tay về UTF-16/cặp thay thế, và đang chạy song song với T-7.6 nên cây git không sạch. · Lần thử: 0/3 · Trạng thái: DONE
