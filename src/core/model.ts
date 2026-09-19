@@ -90,6 +90,7 @@ export interface AppState {
   shortcutName: string;
   alarmShortcutName: string; // v1.8 (IN-11): tên Phím tắt "Thêm báo thức"
   reminderShortcutName: string; // v1.8 (IN-11): tên Phím tắt "Thêm lời nhắc"
+  dayAlarmShortcutName: string; // v1.9 (D-034, IN-12): tên Phím tắt "Báo thức đúng ngày"
 }
 
 export interface RenderData {
@@ -134,6 +135,7 @@ export function defaultState(device: DeviceSpec): AppState {
     shortcutName: 'DatHinhNen',
     alarmShortcutName: 'ThemBaoThuc',
     reminderShortcutName: 'ThemLoiNhac',
+    dayAlarmShortcutName: 'ThemBaoThucNgay',
   };
 }
 
@@ -198,6 +200,11 @@ export function normalizeState(raw: unknown): AppState | null {
     typeof raw['reminderShortcutName'] === 'string' && raw['reminderShortcutName'] !== ''
       ? (raw['reminderShortcutName'] as string)
       : base.reminderShortcutName;
+  // v1.9 (D-034, IN-12): bù mặc định khi thiếu/rỗng/không phải chuỗi.
+  const dayAlarmShortcutName =
+    typeof raw['dayAlarmShortcutName'] === 'string' && raw['dayAlarmShortcutName'] !== ''
+      ? (raw['dayAlarmShortcutName'] as string)
+      : base.dayAlarmShortcutName;
 
   return {
     ...base,
@@ -210,6 +217,7 @@ export function normalizeState(raw: unknown): AppState | null {
     google: { ...base.google, ...rawGoogle } as AppState['google'],
     alarmShortcutName,
     reminderShortcutName,
+    dayAlarmShortcutName,
   } as AppState;
 }
 

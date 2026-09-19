@@ -112,3 +112,28 @@ export function reminderText(at: LocalDateTime, title: string, note?: string): s
   }
   return text;
 }
+
+/** v1.9 (D-034, IN-12): Giờ trong ngày sớm nhất cho "Báo thức đúng ngày". */
+export const DAY_ALARM_MIN_TIME = '00:30';
+
+export type DayAlarmWindow = 'past' | 'today' | 'too-early' | 'ok';
+
+/**
+ * v1.9 (D-034, IN-12): Trạng thái thời điểm cho "Báo thức đúng ngày".
+ * Thứ tự: at ≤ now → past; ngày(at) = ngày(now) → today;
+ * giờ trong ngày(at) < DAY_ALARM_MIN_TIME → too-early; còn lại ok.
+ * Không chặn theo 24 h.
+ */
+export function dayAlarmWindow(at: LocalDateTime, now: Date): DayAlarmWindow {
+  const atDate = parseLocalDateTime(at);
+  if (atDate.getTime() <= now.getTime()) return 'past';
+
+  const [datePart, timePart = '00:00'] = at.split('T');
+  if (datePart === isoDateOf(now)) return 'today';
+
+  const [h, mi] = timePart.split(':').map(Number);
+  const [minH, minM] = DAY_ALARM_MIN_TIME.split(':').map(Number);
+  if (h * 60 + mi < minH * 60 + minM) return 'too-early';
+
+  return 'ok';
+}

@@ -1055,7 +1055,8 @@ Lưu ý thiết kế đã chốt (SPEC v1.9 §5, §8.11): payload KHÔNG đổi 
   [ ] `normalizeState`: thiếu / `42` / `''` → `ThemBaoThucNgay`; `'Hen Bao Thuc'` → giữ. `exportBackup` → `importBackup` giữ tên đã đổi. Reducer `setDayAlarmShortcutName` đặt tên mới, state cũ không đổi.
   [ ] `reminderWindow`, `reminderText` không đổi một dòng; test cũ pass nguyên vẹn.
 - Lệnh kiểm tra: `npx vitest run tests/unit/dayalarm.test.ts` ; `npm run check`.
-- Model: gemini (làn code — 4 file, tiêu chí rõ, test chạy được) · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO
+- Model: gemini (làn code — 4 file, tiêu chí rõ, test chạy được) · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-19 vòng 1 (gemini-3.8-flash-high, 7 phút): XONG → kiem-thu PASS (dayalarm 7/7 ×2 TZ; check 100/14 skip; hàm cũ không đổi) → review đạt → commit.
 
 ### T-8.2 — Nút `rem-dayalarm` + chú thích + dòng trạng thái + ô tên Phím tắt thứ ba
 - Mục tiêu: UI của IN-12 (SPEC §3 IN-12 gạch 1 và 4).

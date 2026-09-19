@@ -45,7 +45,8 @@ export type Action =
   | { type: 'disconnectGoogle' }
   | { type: 'setShortcutName'; shortcutName: string }
   | { type: 'setAlarmShortcutName'; name: string }
-  | { type: 'setReminderShortcutName'; name: string };
+  | { type: 'setReminderShortcutName'; name: string }
+  | { type: 'setDayAlarmShortcutName'; name: string };
 
 function nextId(explicit?: string): string {
   if (explicit) return explicit;
@@ -209,6 +210,8 @@ export function reducer(state: AppState, action: Action): AppState {
       return { ...state, alarmShortcutName: action.name };
     case 'setReminderShortcutName':
       return { ...state, reminderShortcutName: action.name };
+    case 'setDayAlarmShortcutName':
+      return { ...state, dayAlarmShortcutName: action.name };
     default:
       return state;
   }
