@@ -62,6 +62,8 @@ PHÁN QUYẾT: DUYỆT | SỬA | DỪNG — Lý do ≤ 5 dòng · Việc cần l
 ## Làn Gemini (v2)
 - Gemini (Antigravity CLI `agy`; model theo làn trong docs/LAN-GEMINI.md mục 1 và scripts/gemini.env) là thợ chính thức; mọi việc giao Gemini đi qua subagent `tho-gemini`. Quy tắc: docs/LAN-GEMINI.md. Quy tắc Gemini phải theo: AGENTS.md.
 - Gemini không commit, không sửa test cũ, không sửa file ngoài danh sách phiếu. Kết quả Gemini qua kiem-thu → review → commit như thợ Claude.
+- **Ưu tiên Gemini để tiết kiệm token Claude** (Chủ dự án 2026-09-19): việc nào Gemini làm được thì không để Claude làm. Quản lý phải soạn phiếu cho **đủ điều kiện** giao Gemini (tiêu chí rõ + lệnh test + ≤ 8 file; phiếu to thì chia nhỏ), và ghi lý do cụ thể mỗi khi giao một phiếu đủ điều kiện cho thợ Claude. Việc chỉ-đọc ưu tiên làn `doc`/`soat` hơn `khao-sat`. Cổng chất lượng không đổi: `kiem-thu` → review → commit.
+- **Theo dõi lượt Gemini** (LAN-GEMINI.md §5b): cứ ~10 phút gọi `agy-run.sh song <tên>` — `ĐANG LÀM` thì để yên (cấm hủy vì "lâu quá"); `ĐỨNG IM` 2 chu kỳ liên tiếp thì hủy và chạy lại đúng prompt cũ một lần; chạm hạn giờ mà vẫn đang làm thì `gia-han` (trần 2 lần/lượt) thay vì cắt ngang.
 - Gemini và thợ Claude không ghi file cùng lúc. Thư mục docs/gemini-out là kết quả Gemini; docs/tasks là prompt.
 
 ## Cấm

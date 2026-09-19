@@ -45,6 +45,15 @@ Tự hạ NHIỀU → VỪA (tới hết milestone hiện tại; milestone sau t
 Tự TẮT tới hết phiên: script báo `HẾT HẠN MỨC` / `CHƯA ĐĂNG NHẬP` / `TRỐNG` / `LỖI` / `QUÁ GIỜ` 2 lần liên tiếp. Việc đang dở chuyển ngay sang thợ Claude, không chờ, không thử tiếp.
 Khi hạ mức hay tắt: Quản lý ghi một dòng vào `TASKS.md` và nói cho người dùng ở lần báo cáo gần nhất.
 
+### 4b. Ưu tiên Gemini để tiết kiệm token Claude (2026-09-19, Chủ dự án yêu cầu)
+
+Nguyên tắc: **việc nào Gemini làm được thì đừng để Claude làm.** Token Claude dành cho việc chỉ Claude làm được (quyết định, trọng tài, sự cố, review).
+- Khi soạn phiếu, Quản lý phải soạn sao cho phiếu **đủ điều kiện mục 3** (tiêu chí rõ, lệnh test chạy được, danh sách file cố định ≤ 8) — thay vì viết phiếu mơ hồ rồi kết luận "không đủ điều kiện, giao Claude". Phiếu to quá 8 file → chia đôi, đừng chuyển sang Claude.
+- Mặc định mức NHIỀU: mọi phiếu đủ điều kiện → `tho-gemini`. Quản lý phải nêu **lý do cụ thể** (ghi vào dòng Model của phiếu trong `TASKS.md`) mỗi khi giao một phiếu đủ điều kiện cho thợ Claude.
+- Việc chỉ-đọc (khảo sát rộng, soát chéo, tra tài liệu, đọc log dài) ưu tiên làn `doc`/`soat` của Gemini hơn `khao-sat` của Claude, trừ khi cần kết quả trong vài giây.
+- Vẫn giữ nguyên mọi cổng chất lượng: kết quả Gemini luôn qua `kiem-thu` → Quản lý review → commit. Tiết kiệm token không được đổi bằng bỏ cổng.
+- Không bao giờ giao Gemini (không đổi): sự cố S1/S2, phiếu đổi thiết kế / interface dùng chung, việc khi có thợ Claude đang sửa dở, khi cầu dao tổng đang mở.
+
 ## 5. Vòng đời một phiếu Gemini
 
 1. Quản lý giao cho `tho-gemini`: làn, mã phiếu, nội dung phiếu, file được phép, lệnh test, file cần đọc, vòng số mấy.
@@ -56,6 +65,21 @@ Khi hạ mức hay tắt: Quản lý ghi một dòng vào `TASKS.md` và nói ch
 
 Gemini và thợ Claude **không ghi file cùng lúc**: trong lúc một lượt Gemini chạy, Quản lý chỉ làm việc chỉ đọc (khảo sát, soạn phiếu kế tiếp). Nếu Claude Code cho phép chạy subagent ở nền, chạy `tho-gemini` ở nền và soạn phiếu tiếp theo trong lúc chờ.
 
+
+## 5b. Theo dõi lượt Gemini — kiểm mỗi 10 phút, gia hạn nếu đang làm thật (2026-09-19, Chủ dự án yêu cầu)
+
+Gemini chạy nền, không nói chuyện được → phải phân biệt **đang làm** với **đã treo**. Quy tắc bắt buộc cho `tho-gemini`:
+
+1. Trong lúc đợi, cứ gọi `cho <tên>` liên tiếp (mỗi lần ≤ 100 giây).
+2. **Mỗi ~10 phút** (tức sau mỗi 6 lần `cho` trả `ĐANG CHẠY`), gọi đúng một lần `bash scripts/agy-run.sh song <tên>`. Lệnh này trả một trong ba kết luận:
+   - `ĐANG LÀM` — tiến trình sống **và** có thay đổi trong 10 phút qua (đầu ra dài thêm, hoặc file trong cây làm việc đổi) → **để yên, đợi tiếp**. Không hủy, không giục, không hỏi Quản lý.
+   - `ĐỨNG IM` — tiến trình còn sống nhưng 10 phút không sinh thêm gì → đợi thêm một chu kỳ; **2 lần `ĐỨNG IM` liên tiếp (≈ 20 phút)** → `huy <tên>` rồi chạy lại **đúng prompt cũ một lần duy nhất** (không tính vòng 2/3, không tính vào "2 lần lỗi làn"). Lần chạy lại vẫn `ĐỨNG IM` 2 chu kỳ → báo Quản lý trạng thái `LỖI`, chuyển việc sang thợ Claude.
+   - `KHÔNG CHẠY` — tiến trình chết → `ket-qua <tên>` ngay, phân loại như thường.
+3. **Chạm giới hạn giờ mà `song` vẫn là `ĐANG LÀM`** → không được cắt ngang: gọi `bash scripts/agy-run.sh gia-han <tên> 15` (thêm 15 phút), ghi vào báo cáo "đã gia hạn n lần". Trần gia hạn: **2 lần** mỗi lượt (làn code tối đa 60 phút, làn khác tối đa 45 phút). Hết trần mà chưa xong → để script kết thúc `QUÁ GIỜ`, báo Quản lý.
+4. `ĐANG LÀM` thì **không bao giờ** hủy vì "lâu quá". Chỉ hủy khi `ĐỨNG IM` đủ 2 chu kỳ, hết trần gia hạn, hoặc Quản lý yêu cầu.
+5. Báo cáo của `tho-gemini` phải có một dòng: `Theo dõi: <số lần kiểm>, đứng im <n> lần, gia hạn <m> lần`.
+
+Quản lý: `QUÁ GIỜ` sau khi đã gia hạn hết trần **không** tính vào "2 lần lỗi làn liên tiếp → tắt làn" — đó là phiếu quá to, hãy chia nhỏ phiếu rồi giao lại Gemini.
 ## 6. Cách gọi script (`tho-gemini` dùng; Quản lý chỉ cần biết để đọc báo cáo)
 
 ```
@@ -65,9 +89,11 @@ bash scripts/agy-run.sh cho <tên> [giây]                  # đợi tối đa N
 bash scripts/agy-run.sh ket-qua <tên>                     # phân loại kết quả, liệt kê file đổi, hoàn tác ngoài phạm vi, in 40 dòng cuối báo cáo
 bash scripts/agy-run.sh huy <tên>                         # hủy lượt đang chạy, hoàn tác toàn bộ
 bash scripts/agy-run.sh trang-thai                        # liệt kê các lượt
+bash scripts/agy-run.sh song <tên>                        # NÓ CÓ ĐANG LÀM KHÔNG: ĐANG LÀM / ĐỨNG IM / KHÔNG CHẠY (mục 5b)
+bash scripts/agy-run.sh gia-han <tên> [phút]              # nới hạn giờ cho lượt đang chạy (mặc định 15; trần 2 lần/lượt)
 ```
 
-- Mỗi lượt chạy nền có giới hạn cứng: code 30 phút, làn khác 15 phút → quá giờ tự bị giết, báo `QUÁ GIỜ`. Không có vòng lặp vô hạn.
+- Mỗi lượt chạy nền có hạn giờ: code 30 phút, làn khác 15 phút — **nới được bằng `gia-han`** khi `song` báo `ĐANG LÀM` (trần 2 lần, tối đa 60 phút làn code / 45 phút làn khác). Hết hạn mới bị giết, báo `QUÁ GIỜ`. Không có vòng lặp vô hạn.
 - `ket-qua` in dòng đầu gồm trạng thái, làn, model và effort đã dùng. Phân loại: `XONG` · `TRỐNG` · `LỖI` · `HẾT HẠN MỨC` · `CHƯA ĐĂNG NHẬP` · `QUÁ GIỜ` · `ĐÃ HỦY`. Chỉ `XONG` mới đưa sang `kiem-thu`.
 - Kết quả ở `docs/gemini-out/<tên>.md`; log ở `.err`; trạng thái ở `.status`. Quản lý và `tho-gemini` không đọc `.err` trừ khi `ket-qua` in ra.
 - Gemini được chạy với `--dangerously-skip-permissions` (chế độ headless của agy sẽ treo ở mọi lời hỏi quyền nếu không có cờ này). An toàn dựa vào: cây git sạch trước khi chạy, hoàn tác ngoài phạm vi, giới hạn giờ, và quy tắc trong `AGENTS.md`. Đây là quy tắc, không phải rào chắn kỹ thuật — không dùng làn Gemini trên repo chứa bí mật hay dữ liệu thật.

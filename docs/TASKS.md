@@ -861,7 +861,7 @@ Chung cho mọi phiếu M7: không sửa/skip test khóa M1–M6 (ngoại lệ d
   [ ] `?test=1` → `openShortcut` ghi `window.__lastNav` thay vì điều hướng thật (không đổi hành vi ngoài test).
   [ ] `npm run check` pass; unit pass ở cả 2 múi giờ (script `test` đã chạy 2 lần).
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: DOING
 
 ### T-7.2 — ReminderDialog + gắn vào form Sự kiện + 2 ô tên ở tab Xem trước
 - Mục tiêu: hộp thoại chọn thời điểm dùng chung theo IN-11 (SPEC L30, L32), dùng thật ở Sheet sửa/thêm sự kiện.
