@@ -947,3 +947,15 @@ Chung cho mọi phiếu M7: không sửa/skip test khóa M1–M6 (ngoại lệ d
   [ ] `bash -n` sạch cả 2 file; `bash scripts/test-kiem-bao-mat.sh` → `OK 6/6`; chạy `bash scripts/kiem-bao-mat.sh` trên kho hiện tại phải ra `BẢO MẬT: SẠCH` (nếu không sạch → dừng, báo Quản lý, KHÔNG tự xóa gì).
 - Lệnh kiểm tra: `bash -n scripts/kiem-bao-mat.sh; bash -n scripts/test-kiem-bao-mat.sh; bash scripts/test-kiem-bao-mat.sh; bash scripts/kiem-bao-mat.sh`
 - Model: gemini (làn code — đủ điều kiện §4b: tiêu chí rõ, có test chạy được, 2 file, không đụng thiết kế) · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO — chờ T-7.2 xong (Gemini chỉ chạy một lượt mỗi lần, cây phải sạch)
+
+### T-7.2b — Bổ sung i18n + CSS cho ReminderDialog (vá hậu quả phiếu T-7.2 ghi sai đường dẫn)
+- Mục tiêu: hộp thoại nhắc hiện đúng chữ VI/EN và có kiểu dáng dùng được trên iPhone; hoàn tất T-7.2.
+- Phạm vi file (chỉ được sửa): `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `src/ui/styles.css`. (Đường dẫn đã xác minh bằng `git ls-files` — BAI-HOC 2026-09-19.)
+- Giao diện / đầu vào có sẵn: `src/ui/components/ReminderDialog.tsx`, `src/ui/screens/events/EventsTab.tsx`, `src/ui/screens/Preview.tsx` (đã có, KHÔNG sửa) — đọc để lấy đúng khóa và tên class đang dùng.
+- Tiêu chí nghiệm thu:
+  [ ] 12 khóa có đủ ở CẢ `vi.json` và `en.json`: `reminder.open`, `reminder.title`, `reminder.at`, `reminder.alarm`, `reminder.reminder`, `reminder.none`, `reminder.openedToast`, `reminder.statusPast`, `reminder.statusAlarmOk`, `reminder.statusReminderOnly`, `preview.shortcutAlarmName`, `preview.shortcutReminderName`.
+  [ ] 4 class có trong `src/ui/styles.css`: `rem-backdrop`, `rem-dialog`, `rem-actions`, `rem-none-btn`; hộp thoại nổi trên Sheet (z-index cao hơn), nền mờ, bo góc, rộng tối đa 92vw, nằm trong vùng an toàn iPhone; mỗi nút cao ≥ 44 px; nút vô hiệu thấy rõ là vô hiệu (mờ + `cursor:not-allowed`).
+  [ ] `grep -o "t('[a-zA-Z.]*'" src/ui/components/ReminderDialog.tsx src/ui/screens/Preview.tsx src/ui/screens/events/EventsTab.tsx` → mọi khóa đều có trong cả 2 file json (tự kiểm, ghi kết quả vào báo cáo).
+  [ ] `npm run check` pass.
+- Lệnh kiểm tra: `npm run check`
+- Model: sonnet — không giao Gemini, lý do: cây git đang có thay đổi chưa commit của T-7.2, làn Gemini đòi cây sạch (điều kiện 4). · Lần thử: 0/3 · Trạng thái: DOING
