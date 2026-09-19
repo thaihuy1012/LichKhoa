@@ -4,6 +4,16 @@
 ## Đang mở
 - (không)
 
+## SC-003 — Phím tắt Lời nhắc lỗi "No alert location was provided" · Mức S2 · Trạng thái: ĐANG SỬA
+- Phát hiện: 2026-09-19 · Chủ dự án thử tay M7 trên iPhone, iOS 18, ngôn ngữ máy Tiếng Anh · sau deploy e432dce.
+- Triệu chứng: bấm "Thêm lời nhắc" → Phím tắt `ThemLoiNhac` chạy rồi báo lỗi "No alert location was provided. Please provide a location for this reminder's alert." → không tạo được lời nhắc. Xảy ra ở cả 3 nguồn: Việc (B), Sự kiện (B'), Ghi chú (C). Ảnh: `docs/hinh-anh-loi/IMG_2434.PNG`.
+- Mục E cũng KHÔNG ĐẠT (lời nhắc không kêu khi bật Tập trung) — nhưng **phụ thuộc**: chưa tạo được lời nhắc nào thì chưa kết luận được, phải thử lại sau khi đóng SC-003.
+- Mục A (báo thức) ĐẠT, D (không báo thức) ĐẠT → phần app và deep link chạy đúng; lỗi nằm ở **hướng dẫn cấu hình Phím tắt** (`docs/HUONG-DAN.md` mục E), không phải mã nguồn.
+- Nghi nguyên nhân: hướng dẫn viết "Bật mục **Remind Me (Nhắc tôi)** hoặc **Due Date (Đến hạn vào)**" — mơ hồ. Trên iOS 18, hành động "Add New Reminder" khi bật Alert mặc định có thể là nhắc theo VỊ TRÍ; phải chọn rõ kiểu nhắc theo THỜI GIAN rồi mới gán biến ngày giờ.
+- Commit tốt cuối cùng: `e432dce` (bản đang chạy) — không cần lùi, vì lỗi ở tài liệu.
+- Đóng băng: `docs/HUONG-DAN.md` mục E (chỉ phiếu sửa SC-003 được sửa). Làn Gemini tạm dừng tới khi đóng sự cố (CLAUDE.md).
+- Bước 1: tra cứu cách cấu hình đúng trên iOS 18 (giao `khao-sat` + WebSearch) → sửa hướng dẫn → Chủ dự án thử lại B, B', C, E.
+
 ## SC-002 — iPhone: không đổi được thứ tự Việc, nút ▲▼× trong hàng không bấm được · Mức S2 · Trạng thái: ĐÃ ĐÓNG
 - Phát hiện: 2026-09-15 · bởi Chủ dự án (iPhone 13 Pro Max, PWA, bản `c9f7b82` = tag `M6-ok`) · sau M6.
 - Triệu chứng: (1) nhấn giữ kéo → 2 hàng chồng nhau không nhìn thấy, thả tay thứ tự như cũ; (2) nút ▲ ▼ × trong hàng không hoạt động — "không thể thay đổi thứ tự việc". Vuốt trái, Xóa/Hoàn tác qua vuốt, Lưu trữ vẫn đạt.
