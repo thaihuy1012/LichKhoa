@@ -22,3 +22,7 @@ secrets.*
 lichkhoa-backup*.json
 backup-*.json
 docs/gemini-out/*.deadline
+
+# Ảnh chụp màn hình máy thật của Chủ dự án (kho CÔNG KHAI — CLAUDE.md, Cổng bảo mật):
+# chứa thông báo, tên danh sách, tên phím tắt cá nhân → giữ ở máy, KHÔNG đẩy lên kho.
+docs/hinh-anh-loi/
