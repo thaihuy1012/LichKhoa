@@ -101,6 +101,7 @@
   "events.todoMarkUndone": "Mark not done",
   "events.todoDue": "Due",
   "events.todoEditHint": "Tap to edit task",
+  "events.todoEditAction": "Edit",
   "events.todoArchive": "Archive",
   "events.todoDelete": "Delete",
   "events.todoRestore": "Restore",

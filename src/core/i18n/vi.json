@@ -101,6 +101,7 @@
   "events.todoMarkUndone": "Đánh dấu chưa xong",
   "events.todoDue": "Hạn",
   "events.todoEditHint": "Chạm để sửa việc",
+  "events.todoEditAction": "Sửa",
   "events.todoArchive": "Lưu trữ",
   "events.todoDelete": "Xóa",
   "events.todoRestore": "Khôi phục",

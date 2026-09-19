@@ -18,7 +18,8 @@ const LONG_PRESS_MS = 450;
 const MOVE_CANCEL_PX = 8;
 const SWIPE_ACTIVATE_PX = 16;
 const EARLY_SWIPE_PX = 4; // T-6.3 (#4): ngưỡng chặn cuộn sớm trong touchmove, thấp hơn SWIPE_ACTIVATE_PX
-const SWIPE_PANEL_PX = 160;
+const SWIPE_PANEL_PX = 160; // B-013: giữ làm bề rộng mặc định (hàng lưu trữ, 2 nút: Khôi phục/Xóa).
+const SWIPE_PANEL_PX_3 = 228; // B-013: hàng thường có 3 nút (Sửa/Lưu trữ/Xóa) -> panel rộng hơn.
 const SWIPE_OPEN_RATIO = 0.4;
 
 function DueBadge({
@@ -113,7 +114,7 @@ function findTouch(list: TouchList, id: number | null): Touch | null {
  * `isOpen`: hàng đang mở sẵn (panel lộ ra) hay không, để vuốt tiếp từ vị trí mở không giật về 0 (T-6.3 #2).
  * Một máy trạng thái (`begin`/`move`/`endGesture`) nhận dữ liệu từ 2 nguồn: Pointer Events (chuột/bút)
  * hoặc Touch Events (ngón tay, xem HAS_TOUCH_EVENTS). */
-function useRowGesture(canDrag: boolean, isOpen: boolean, cb: GestureCallbacks) {
+function useRowGesture(canDrag: boolean, isOpen: boolean, panelWidth: number, cb: GestureCallbacks) {
   const phaseRef = useRef<Phase>('idle');
   const startRef = useRef({ x: 0, y: 0 });
   const sourceRef = useRef<'pointer' | 'touch' | null>(null);
@@ -127,8 +128,8 @@ function useRowGesture(canDrag: boolean, isOpen: boolean, cb: GestureCallbacks) 
   const [dragging, setDragging] = useState(false);
   const rowElRef = useRef<HTMLDivElement | null>(null);
   // Listener touch gốc đăng ký 1 lần (xem effect dưới) -> luôn đọc props mới nhất qua ref.
-  const latestRef = useRef({ canDrag, isOpen, cb });
-  latestRef.current = { canDrag, isOpen, cb };
+  const latestRef = useRef({ canDrag, isOpen, panelWidth, cb });
+  latestRef.current = { canDrag, isOpen, panelWidth, cb };
 
   function clearTimer() {
     if (timerRef.current) {
@@ -180,16 +181,16 @@ function useRowGesture(canDrag: boolean, isOpen: boolean, cb: GestureCallbacks) 
   function move(x: number, y: number): boolean {
     const dxNow = x - startRef.current.x;
     const dyNow = y - startRef.current.y;
-    const { isOpen: open, cb: callbacks } = latestRef.current;
+    const { isOpen: open, panelWidth: panelPx, cb: callbacks } = latestRef.current;
     // T-6.3 (#2, soát chéo M6): hàng đang mở sẵn -> điểm bắt đầu của dx là -PANEL_PX, không phải 0.
-    const base = open ? -SWIPE_PANEL_PX : 0;
+    const base = open ? -panelPx : 0;
     if (phaseRef.current === 'pending') {
       if (Math.abs(dxNow) > SWIPE_ACTIVATE_PX && Math.abs(dxNow) > Math.abs(dyNow)) {
         clearTimer();
         phaseRef.current = 'swipe';
         suppressClickRef.current = true;
         capturePointer();
-        updateDx(Math.min(0, Math.max(-SWIPE_PANEL_PX - 24, base + dxNow)));
+        updateDx(Math.min(0, Math.max(-panelPx - 24, base + dxNow)));
         return true;
       }
       if (Math.abs(dyNow) > MOVE_CANCEL_PX) {
@@ -199,7 +200,7 @@ function useRowGesture(canDrag: boolean, isOpen: boolean, cb: GestureCallbacks) 
       return false;
     }
     if (phaseRef.current === 'swipe') {
-      updateDx(Math.min(0, Math.max(-SWIPE_PANEL_PX - 24, base + dxNow)));
+      updateDx(Math.min(0, Math.max(-panelPx - 24, base + dxNow)));
       return true;
     }
     if (phaseRef.current === 'drag') {
@@ -213,7 +214,7 @@ function useRowGesture(canDrag: boolean, isOpen: boolean, cb: GestureCallbacks) 
     clearTimer();
     const callbacks = latestRef.current.cb;
     if (phaseRef.current === 'swipe') {
-      const openThreshold = -SWIPE_PANEL_PX * SWIPE_OPEN_RATIO;
+      const openThreshold = -latestRef.current.panelWidth * SWIPE_OPEN_RATIO;
       const cur = dxRef.current ?? 0;
       callbacks.onSwipeSettle(!cancelled && cur <= openThreshold);
       updateDx(null);
@@ -346,6 +347,7 @@ function SwipeRow({
   isOpen,
   setOpen,
   canDrag,
+  panelWidth,
   dragInfo,
   setDragInfo,
   listKey,
@@ -359,6 +361,7 @@ function SwipeRow({
   isOpen: boolean;
   setOpen: (open: boolean) => void;
   canDrag: boolean;
+  panelWidth: number;
   dragInfo: DragInfo | null;
   setDragInfo: (update: DragInfo | null | ((prev: DragInfo | null) => DragInfo | null)) => void;
   listKey: 'open' | 'done';
@@ -368,7 +371,7 @@ function SwipeRow({
   actions: JSX.Element;
   children: JSX.Element;
 }) {
-  const { dx, dragging, rowElRef, handlers } = useRowGesture(canDrag, isOpen, {
+  const { dx, dragging, rowElRef, handlers } = useRowGesture(canDrag, isOpen, panelWidth, {
     onSwipeSettle: (open) => setOpen(open),
     onBeginDrag: (rowEl) => {
       const rect = rowEl.getBoundingClientRect();
@@ -414,7 +417,7 @@ function SwipeRow({
     innerStyle.transform = `translateX(${dx}px)`;
     innerStyle.transition = 'none';
   } else if (isOpen && !isDraggedRow) {
-    innerStyle.transform = `translateX(-${SWIPE_PANEL_PX}px)`;
+    innerStyle.transform = `translateX(-${panelWidth}px)`;
   }
 
   // Đóng hẳn (không vuốt, không mở) -> ẩn hẳn panel nút (không chỉ che bằng transform): review
@@ -434,7 +437,10 @@ function SwipeRow({
       onPointerCancel={handlers.onPointerCancel}
       onClickCapture={handlers.onClickCapture}
     >
-      <div class="todo-swipe-actions" style={{ visibility: showActions ? 'visible' : 'hidden' }}>
+      <div
+        class="todo-swipe-actions"
+        style={{ width: `${panelWidth}px`, visibility: showActions ? 'visible' : 'hidden' }}
+      >
         {actions}
       </div>
       <div
@@ -593,6 +599,7 @@ export function TodosTab({ store, state, showToast }: Props) {
         isOpen={swipeOpenId === todo.id}
         setOpen={(open) => setSwipeOpenId(open ? todo.id : null)}
         canDrag={true}
+        panelWidth={SWIPE_PANEL_PX_3}
         dragInfo={dragInfo}
         setDragInfo={setDragInfo}
         listKey={listKey}
@@ -601,6 +608,17 @@ export function TodosTab({ store, state, showToast }: Props) {
         onDragCommit={() => handleDragEnd(list, listKey)}
         actions={
           <>
+            <button
+              type="button"
+              data-testid="todo-swipe-edit"
+              class="todo-swipe-edit"
+              onClick={() => {
+                setSwipeOpenId(null);
+                startEdit(todo);
+              }}
+            >
+              {t('events.todoEditAction', lang)}
+            </button>
             <button type="button" data-testid="todo-swipe-archive" class="todo-swipe-archive" onClick={() => handleArchive(todo)}>
               {t('events.todoArchive', lang)}
             </button>
@@ -628,6 +646,7 @@ export function TodosTab({ store, state, showToast }: Props) {
         isOpen={swipeOpenId === todo.id}
         setOpen={(open) => setSwipeOpenId(open ? todo.id : null)}
         canDrag={false}
+        panelWidth={SWIPE_PANEL_PX}
         dragInfo={null}
         setDragInfo={() => {}}
         listKey="open"
@@ -652,9 +671,10 @@ export function TodosTab({ store, state, showToast }: Props) {
 
   return (
     <div class="todos-tab" onClick={() => setSwipeOpenId(null)}>
-      <div class="addrow" style={{ flexWrap: 'wrap' }}>
+      <div class="addrow addrow-todo">
         <input
           type="text"
+          class="addrow-todo-input"
           data-testid="todo-input"
           placeholder={t('events.todoNew', lang)}
           aria-label={t('events.todoNew', lang)}
@@ -664,19 +684,21 @@ export function TodosTab({ store, state, showToast }: Props) {
             if (e.key === 'Enter') add();
           }}
         />
-        <label class="todo-due-hint">
-          {t('events.todoDue', lang)}
-          <input
-            type="date"
-            data-testid="todo-due"
-            aria-label={t('events.todoDue', lang)}
-            value={inputDue}
-            onInput={(e) => setInputDue((e.target as HTMLInputElement).value)}
-          />
-        </label>
-        <button type="button" data-testid="todo-add" onClick={add}>
-          {t('events.todoAdd', lang)}
-        </button>
+        <div class="addrow-todo-due-line">
+          <label class="todo-due-hint">
+            {t('events.todoDue', lang)}
+            <input
+              type="date"
+              data-testid="todo-due"
+              aria-label={t('events.todoDue', lang)}
+              value={inputDue}
+              onInput={(e) => setInputDue((e.target as HTMLInputElement).value)}
+            />
+          </label>
+          <button type="button" data-testid="todo-add" onClick={add}>
+            {t('events.todoAdd', lang)}
+          </button>
+        </div>
         <button
           type="button"
           data-testid="rem-open"

@@ -735,6 +735,38 @@ input[type='datetime-local'] {
   width: 128px;
 }
 
+/* B-013 (lượt 2): "Việc mới…" + "Hạn" + ô ngày + "Thêm" không vừa một hàng ở bề ngang 428pt ->
+   xuống 2 dòng CÂN ĐỐI thay vì bọc dòng ngẫu nhiên (flex-wrap cũ làm ô ngày/nút "Thêm" rơi lệch
+   hàng, không cùng chiều cao/đường giữa với nhãn "Hạn"). Dòng 1: ô nhập tên việc, full-width, một
+   dòng. Dòng 2: nhãn "Hạn" + ô ngày + nút "Thêm", canh giữa theo chiều dọc, khoảng cách đều. */
+.addrow-todo {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.addrow-todo-input {
+  width: 100%;
+}
+
+.addrow-todo-due-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.addrow-todo-due-line .todo-due-hint {
+  flex: 1;
+}
+
+.addrow-todo-due-line input[type='date'] {
+  flex: 1;
+  width: auto;
+}
+
+.addrow-todo-due-line button {
+  flex: none;
+}
+
 /* B-010 lỗi 1: `.todo-due-hint` (label bọc chữ "Hạn" + ô ngày) không có style riêng trước đây ->
    rơi về `display: inline` mặc định của <label>, khiến chữ "Hạn" nằm lệch theo baseline dòng chữ
    thay vì canh giữa theo chiều dọc với ô nhập bên cạnh, và không có khoảng cách nên hàng trông chật. */
@@ -846,14 +878,15 @@ input[type='datetime-local'] {
   padding: 4px 0;
 }
 
-/* B-010 lỗi 4: chữ việc trước đây trông y hệt chữ thường -> Chủ dự án "không biết bấm vào đâu để
-   sửa việc". Thêm gạch chấm dưới chữ + icon bút chì (`::after`, KHÔNG phải node DOM thật, để không
-   đổi `textContent`/`toHaveText` của các test cũ ngoài phạm vi phiếu này) làm dấu hiệu thị giác
-   "chạm được", chỉ áp cho nút sửa (`.todo-text-editable`), không áp cho hàng đã lưu trữ (span
-   `.todo-text` tĩnh, không sửa được). */
+/* B-010 lỗi 4 / B-013 (lượt 2): chữ việc trước đây trông y hệt chữ thường -> Chủ dự án "không biết
+   bấm vào đâu để sửa việc"; lượt 1 thêm icon bút chì nhưng quá nhỏ/mờ (12px, xám #8b8b95) -> vẫn
+   không thấy. Icon bút chì (`::after`, KHÔNG phải node DOM thật, để không đổi `textContent`/
+   `toHaveText` của test cũ) giờ to hơn hẳn (18px) + đặt trong khung tròn nền vàng (cùng tông với
+   nút Sửa trong dải vuốt, B-013) để nổi bật trên nền tối, chỉ áp cho nút sửa (`.todo-text-editable`),
+   không áp cho hàng đã lưu trữ (span `.todo-text` tĩnh, không sửa được). */
 .todo-text-editable {
   border-bottom: 1px dashed #5a5a66;
-  padding-right: 16px;
+  padding-right: 26px;
   position: relative;
 }
 
@@ -863,8 +896,14 @@ input[type='datetime-local'] {
   right: 0;
   top: 50%;
   transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 50%;
+  background: #f7c948;
   font-size: 12px;
-  color: #8b8b95;
+  color: #1a1500;
 }
 
 .todo-item button {
@@ -905,8 +944,10 @@ input[type='datetime-local'] {
   top: 0;
   bottom: 0;
   right: 0;
-  width: 160px;
   display: flex;
+  /* B-013: bề rộng thật đặt qua style inline theo `panelWidth` (JS) — 2 nút (lưu trữ) hay 3 nút
+     (sửa/lưu trữ/xóa) cần bề rộng khác nhau; `width` ở đây chỉ là dự phòng nếu JS không set kịp. */
+  width: 160px;
 }
 
 .todo-swipe-actions button {
@@ -917,6 +958,7 @@ input[type='datetime-local'] {
   border-radius: 0;
   color: #fff;
   font-size: 13px;
+  font-weight: 600;
   white-space: nowrap;
   padding: 0 6px;
   box-sizing: border-box;
@@ -932,6 +974,14 @@ input[type='datetime-local'] {
 
 .todo-swipe-restore {
   background: #2f9e44;
+}
+
+/* B-013: nút Sửa trong dải vuốt trái từng dùng nền tối (#2a2a33 hay tương tự) trên nền tối chung
+   -> không phân biệt được với nền hàng. Đổi hẳn sang nền sáng (vàng/hổ phách) + chữ tối, khác hẳn
+   xanh dương (Lưu trữ) và đỏ (Xóa) về cả sắc lẫn độ sáng -> 3 nút nhìn ra ngay 3 chức năng khác nhau. */
+.todo-swipe-edit {
+  background: #f7c948;
+  color: #1a1500;
 }
 
 .todo-item-inner {
