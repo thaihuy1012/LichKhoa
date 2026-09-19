@@ -69,7 +69,7 @@ LichKhoa hỗ trợ mở nhanh Phím tắt trên iPhone để tạo **Báo thứ
      - Tại mục **Separator (Dấu phân tách)** hoặc **By (Theo)**: chọn **New Lines (Dòng mới)** (đây là lựa chọn chuẩn có sẵn trong app Phím tắt). Nếu máy không hiện tùy chọn này thì mới chọn **Custom (Tùy chỉnh)** và gõ phím Return (Xuống dòng) vào ô phân tách làm phương án dự phòng.
    - **Hành động 2: Get Item from List (Lấy mục từ danh sách)**
      - Chọn danh sách đầu vào là kết quả từ **Split Text (Văn bản đã tách)** ở Hành động 1.
-     - Tại mục **Get (Lấy)**: chọn **Item at Index (Mục tại chỉ mục)** và nhập số `1` (đây là Item 1 — dòng chứa ngày giờ dạng `YYYY-MM-DD HH:mm`).
+     - Tại mục **Get (Lấy)**: chọn **Item at Index (Mục tại chỉ mục)** và nhập số `1` (đây là Item 1 — dòng chứa ngày giờ dạng `d MMM yyyy HH:mm`, vd `23 Sep 2026 14:00`).
    - **Hành động 3: Get Dates from Input (Lấy ngày từ đầu vào)**
      - Chọn đầu vào là kết quả **Item from List (Mục từ danh sách)** vừa lấy ở Hành động 2 (Item 1). Hành động này sẽ nhận diện và chuyển văn bản thành ngày giờ hệ thống.
    - **Hành động 4: Get Item from List (Lấy mục từ danh sách)**
@@ -99,7 +99,7 @@ Bấm **Add Action (Thêm hành động)** và lần lượt thêm các hành đ
   - Tại mục **Separator (Dấu phân tách)** hoặc **By (Theo)**: chọn **New Lines (Dòng mới)** (nếu máy không hiện tùy chọn này, chọn **Custom (Tùy chỉnh)** rồi gõ phím Return/Xuống dòng làm phương án dự phòng).
 - **Hành động 2: Get Item from List (Lấy mục từ danh sách)**
   - Đầu vào: danh sách từ **Split Text (Văn bản đã tách)** ở Hành động 1.
-  - Chọn **Item at Index (Mục tại chỉ mục)** và nhập số `1` (Item 1: ngày giờ dạng `YYYY-MM-DD HH:mm`).
+  - Chọn **Item at Index (Mục tại chỉ mục)** và nhập số `1` (Item 1: ngày giờ dạng `d MMM yyyy HH:mm`, vd `23 Sep 2026 14:00`).
 - **Hành động 3: Get Dates from Input (Lấy ngày từ đầu vào)**
   - Đầu vào: kết quả của Hành động 2 (Item 1).
 - **Hành động 4: Get Item from List (Lấy mục từ danh sách)**
@@ -171,7 +171,7 @@ Bấm **Add Action (Thêm hành động)** và lần lượt thêm các hành đ
 Nếu khi bấm "Thêm báo thức" hoặc "Thêm lời nhắc" từ LichKhoa mà iPhone không hoạt động như ý:
 - **(a) iOS báo không tìm thấy Phím tắt**: Tên phím tắt đặt bị sai lệch. Hãy kiểm tra lại tên của 2 phím tắt trong app Shortcuts trên máy bạn để đảm bảo đúng chữ hoa chữ thường là `ThemBaoThuc` và `ThemLoiNhac`. Nếu muốn đặt tên khác (ví dụ "Báo thức" hay "Lời nhắc"), bạn chỉ cần vào tab **Xem trước** của LichKhoa, cuộn xuống phần cài đặt và sửa lại 2 ô "Tên Phím tắt báo thức" và "Tên Phím tắt lời nhắc" cho khớp đúng 100% với tên trên iPhone.
 - **(b) Phím tắt không tách được dòng**: Mở phím tắt trong app Shortcuts, kiểm tra lại hành động **Split Text (Tách văn bản)**. Đảm bảo đã chọn phân tách theo **New Lines (Dòng mới)** (nếu máy không có lựa chọn này thì mới chuyển sang chọn **Custom (Tùy chỉnh)** và gõ phím Return/Xuống dòng vào ô).
-- **(c) Ngày giờ bị hiểu sai**: Hành động **Get Dates from Input (Lấy ngày từ đầu vào)** tự động nhận diện định dạng số chuẩn `YYYY-MM-DD HH:mm`. Trên một số cài đặt vùng/ngôn ngữ đặc biệt, nếu iOS hiểu sai ngày và giờ (ví dụ nhầm ngày thành tháng hoặc giờ bị lệch), hãy báo lại cho đội phát triển để điều chỉnh định dạng chuỗi dòng 1 cho phù hợp với máy của bạn.
+- **(c) Ngày giờ bị hiểu sai**: Hành động **Get Dates from Input (Lấy ngày từ đầu vào)** nhận diện dòng 1 ở dạng `d MMM yyyy HH:mm` (đúng là dạng như `23 Sep 2026 14:00`, tháng viết tắt tiếng Anh). Nếu "Get dates from Input" trả về rỗng hoặc iOS hiểu sai ngày giờ, hãy báo lại cho đội phát triển để điều chỉnh định dạng chuỗi dòng 1 cho phù hợp với máy của bạn.
 - **(d) Lời nhắc tạo từ Sự kiện hoặc Việc báo lỗi**: Nhiều khả năng do phím tắt đang cố lấy dòng 3 không tồn tại (vì Sự kiện và Việc chỉ gửi 2 dòng gồm ngày giờ và tiêu đề, không có ghi chú). Hãy chuyển sang cài đặt theo **Cách A** (không lấy Item 3 và không gắn trường Notes) để phím tắt hoạt động ổn định cho mọi trường hợp.
 - **(e) Báo lỗi "No alert location was provided. Please provide a location for this reminder's alert."**: Bạn đang gán biến ngày giờ trực tiếp vào ô **"No Alert"** của hành động Add New Reminder/Create Reminder. Sửa theo bước ở Cách A/Cách B: chạm ô **"No Alert"** → chọn **"Alert"** (hoặc **"Remind me at a time"**) → ô **"At Time"** hiện ra mới gán biến ngày giờ vào đó.
 - **Mức độ chắc chắn về các hành động trên iOS 17+**: Các hành động `Split Text (Tách văn bản)`, `Get Item from List (Lấy mục từ danh sách)`, `Get Dates from Input (Lấy ngày từ đầu vào)`, `Create Alarm (Tạo báo thức)`, và `Add New Reminder (Thêm lời nhắc mới)` là các hành động tiêu chuẩn có thật và đã ổn định trên iOS 17+. Tùy vào phiên bản ngôn ngữ máy của bạn (tiếng Việt hoặc tiếng Anh), nhãn của các trường cấu hình con (ví dụ *Label*, *Name*, *Remind Me*, *Due Date*) có thể được Apple dịch hơi khác một chút, bạn hãy chọn trường tương ứng theo ngữ cảnh mô tả ở trên.

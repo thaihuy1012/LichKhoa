@@ -3,8 +3,8 @@ import { defaultReminderAt, reminderWindow, reminderText } from '../../src/expor
 import type { ReminderSource } from '../../src/export/reminder';
 
 describe('reminderText', () => {
-  it("reminderText('2026-09-20T07:30','Họp nhóm') = '2026-09-20 07:30\\nHọp nhóm'", () => {
-    expect(reminderText('2026-09-20T07:30', 'Họp nhóm')).toBe('2026-09-20 07:30\nHọp nhóm');
+  it("reminderText('2026-09-20T07:30','Họp nhóm') = '20 Sep 2026 07:30\\nHọp nhóm'", () => {
+    expect(reminderText('2026-09-20T07:30', 'Họp nhóm')).toBe('20 Sep 2026 07:30\nHọp nhóm');
   });
 
   it('ghi chú 2 dòng -> đúng 3 dòng, dòng 2-3 không chứa \\n', () => {
@@ -17,7 +17,27 @@ describe('reminderText', () => {
   });
 
   it('tiêu đề rỗng -> LichKhoa', () => {
-    expect(reminderText('2026-09-20T07:30', '')).toBe('2026-09-20 07:30\nLichKhoa');
+    expect(reminderText('2026-09-20T07:30', '')).toBe('20 Sep 2026 07:30\nLichKhoa');
+  });
+
+  it('ngày 1 chữ số không đệm 0', () => {
+    expect(reminderText('2026-09-03T07:30', 'X')).toBe('3 Sep 2026 07:30\nX');
+  });
+
+  it('tháng đầu năm -> Jan', () => {
+    expect(reminderText('2027-01-03T08:05', 'X')).toBe('3 Jan 2027 08:05\nX');
+  });
+
+  it('tháng cuối năm -> Dec', () => {
+    expect(reminderText('2026-12-25T14:00', 'X')).toBe('25 Dec 2026 14:00\nX');
+  });
+
+  it('giờ có đệm 0', () => {
+    expect(reminderText('2026-09-03T08:05', 'X')).toBe('3 Sep 2026 08:05\nX');
+  });
+
+  it('nửa đêm', () => {
+    expect(reminderText('2026-09-03T00:00', 'X')).toBe('3 Sep 2026 00:00\nX');
   });
 
   it('cắt 100/200 ký tự', () => {

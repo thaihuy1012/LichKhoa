@@ -25,6 +25,16 @@ function formatIsoDate(d: Date): string {
   return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 }
 
+const MONTH_ABBR = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
+/** Định dạng payload dòng 1 mong đợi: `d MMM yyyy HH:mm` từ 'YYYY-MM-DD' + 'HH:mm'. */
+function formatExpectedReminderLine(isoDate: string, time: string): string {
+  const [y, m, d] = isoDate.split('-').map(Number);
+  return `${d} ${MONTH_ABBR[m - 1]} ${y} ${time}`;
+}
+
 function extractDecodedPayload(navUrl: string): string {
   const match = navUrl.match(/[?&]text=([^&]*)/);
   if (!match) {
@@ -107,7 +117,7 @@ test('T-7.END luồng chính M7: 6 kịch bản nhắc Phím tắt (Báo thức 
     await expect.poll(() => getLastNav(page)).toContain('name=ThemLoiNhac&input=text&text=');
     const nav1 = (await getLastNav(page))!;
     const payload1 = extractDecodedPayload(nav1);
-    expect(payload1).toBe(`${tomorrowDateStr} 07:30\n${eventTitle}`);
+    expect(payload1).toBe(`${formatExpectedReminderLine(tomorrowDateStr, '07:30')}\n${eventTitle}`);
 
     // Sheet đóng; danh sách vẫn đúng 1 sự kiện
     await expect(page.locator('.sheet')).not.toBeVisible();
@@ -187,7 +197,7 @@ test('T-7.END luồng chính M7: 6 kịch bản nhắc Phím tắt (Báo thức 
     expect(lines3[1]).toBe('Mua sữa');
 
     const [dPart, tPart] = atTwoHours.split('T');
-    expect(payload3).toBe(`${dPart} ${tPart}\nMua sữa`);
+    expect(payload3).toBe(`${formatExpectedReminderLine(dPart, tPart)}\nMua sữa`);
 
     // T-7.5: đọc IndexedDB NGAY (không chờ debounce 300ms) — flush() đã ghi trước khi rời app.
     const savedRightAfterClick = await readSavedState(page);
@@ -261,10 +271,10 @@ test('T-7.END luồng chính M7: 6 kịch bản nhắc Phím tắt (Báo thức 
     const payload5 = extractDecodedPayload(nav5);
     const lines5 = payload5.split('\n');
     expect(lines5).toHaveLength(3);
-    expect(lines5[0]).toBe(`${noteDPart} ${noteTPart}`);
+    expect(lines5[0]).toBe(formatExpectedReminderLine(noteDPart, noteTPart));
     expect(lines5[1]).toBe(noteTitle);
     expect(lines5[2]).toBe('Dòng một · Dòng hai');
-    expect(payload5).toBe(`${noteDPart} ${noteTPart}\n${noteTitle}\nDòng một · Dòng hai`);
+    expect(payload5).toBe(`${formatExpectedReminderLine(noteDPart, noteTPart)}\n${noteTitle}\nDòng một · Dòng hai`);
 
     // Ghi chú đã được lưu (sheet đóng, ghi chú xuất hiện trong danh sách)
     await expect(page.locator('.sheet')).not.toBeVisible();

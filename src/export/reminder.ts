@@ -86,12 +86,26 @@ function truncate(s: string, max: number): string {
   return chars.length > max ? chars.slice(0, max).join('') : s;
 }
 
+const MONTH_ABBR = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
+/**
+ * Định dạng `d MMM yyyy HH:mm` (vd `23 Sep 2026 14:00`), tháng viết tắt tiếng Anh
+ * cố định trong mã — KHÔNG dùng `toLocaleDateString`/`Intl` vì phụ thuộc locale máy chạy.
+ * Máy thật iOS 18 không nhận dạng được `YYYY-MM-DD HH:mm` (SC-003, 2026-09-19).
+ */
+function formatReminderDateTime(datePart: string, timePart: string): string {
+  const [y, m, d] = datePart.split('-').map(Number);
+  return `${d} ${MONTH_ABBR[m - 1]} ${y} ${timePart}`;
+}
+
 /** v1.8 (IN-11): payload gửi qua Phím tắt — hợp đồng SPEC §5/§8.11. */
 export function reminderText(at: LocalDateTime, title: string, note?: string): string {
   const [datePart, timePart] = at.split('T');
   const titleLine = truncate(title.replace(/\n/g, ' ').trim(), 100);
   const line2 = titleLine === '' ? 'LichKhoa' : titleLine;
-  let text = `${datePart} ${timePart}\n${line2}`;
+  let text = `${formatReminderDateTime(datePart, timePart)}\n${line2}`;
   if (note) {
     const noteLine = truncate(note.replace(/\n/g, ' · ').trim(), 200);
     text += `\n${noteLine}`;
