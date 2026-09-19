@@ -15,6 +15,9 @@
 - Bước 1: tra cứu cách cấu hình đúng trên iOS 18 (giao `khao-sat` + WebSearch) → sửa hướng dẫn → Chủ dự án thử lại B, B', C, E.
 - Sửa lượt 1 (B-009, sonnet): ĐÃ SỬA `docs/HUONG-DAN.md` mục E — thêm 3 bước "No Alert" → "Alert" / "Remind me at a time" → "At Time"; cảnh báo nguyên văn lỗi; phương án dự phòng iOS 18 "Create Reminder"; mục (e) trong "Nếu không chạy". Quản lý tự đọc lại đoạn sửa: đạt. `npm run check` 100 pass. Commit: xem git log "B-009".
 - **CHỜ CHỦ DỰ ÁN xác nhận trên iPhone**: sửa đúng 1 ô trong Phím tắt `ThemLoiNhac` rồi thử lại B, B', C, E. Không cần deploy (chỉ sửa tài liệu).
+- Lượt 2 (B-012): đổi định dạng dòng 1 sang `d MMM yyyy HH:mm`. Chủ dự án kiểm bằng Quick Look đặt sau `Get Item at Index 1`, chạy THẬT từ app: hiện `23 Sep 2026 08:00` → app gửi đúng, máy đã nạp bản mới. **Nhưng bấm Done xong VẪN lỗi "No alert location was provided"** → nguyên nhân KHÔNG phải định dạng ngày.
+- Nghi mới (lượt 3): hành động `Add New Reminder` trên iOS 18 lỗi ở tham số cảnh báo (Apple đang thay bằng `Create Reminder`), hoặc ô Trigger nhận `Dates` là DANH SÁCH ngày thay vì một ngày đơn. Đã đề nghị Chủ dự án: (1) thay bằng hành động `Create Reminder` (có ô Due Date riêng); (2) nếu không có thì chèn `Get Item at Index 1` từ `Dates` rồi mới gán vào Trigger. ĐANG CHỜ kết quả.
+- Nếu cả hai hỏng → đổi hướng thiết kế: app tạo SỰ KIỆN LỊCH có cảnh báo thay cho Lời nhắc (cần Kiến trúc sư + Chủ dự án duyệt).
 
 ## SC-002 — iPhone: không đổi được thứ tự Việc, nút ▲▼× trong hàng không bấm được · Mức S2 · Trạng thái: ĐÃ ĐÓNG
 - Phát hiện: 2026-09-15 · bởi Chủ dự án (iPhone 13 Pro Max, PWA, bản `c9f7b82` = tag `M6-ok`) · sau M6.

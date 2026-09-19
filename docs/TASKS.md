@@ -1032,7 +1032,7 @@ Kết quả: A ĐẠT · B/B′/C KHÔNG ĐẠT (SC-003) · D ĐẠT · E chưa 
   [ ] Mục "Nếu không chạy" thêm gạch đầu dòng cho đúng thông báo lỗi "No alert location was provided" → chỉ thẳng sang bước sửa ở trên.
   [ ] `Select-String -Path docs/HUONG-DAN.md -Pattern 'No Alert|At Time|Remind me at a time'` ≥ 3 dòng.
 - Lệnh kiểm tra: `npm run check` (phải vẫn pass; đây là sửa tài liệu)
-- Model: sonnet — không giao Gemini: đang có sự cố S2 mở, CLAUDE.md cấm gọi làn Gemini khi sự cố mở. · Lần thử: 0/3 · Trạng thái: DOING
+- Model: sonnet — không giao Gemini: đang có sự cố S2 mở, CLAUDE.md cấm gọi làn Gemini khi sự cố mở. · Lần thử: 0/3 · Trạng thái: DONE
 
 ### B-010 — Tab Việc: nhãn lệch, ô ngày giờ trắng-trên-trắng, không rõ chỗ sửa việc
 - Mục tiêu: sửa 3 lỗi giao diện Chủ dự án báo (mục 1, 2, 4), trên iPhone 13 Pro Max nền tối.
@@ -1045,7 +1045,7 @@ Kết quả: A ĐẠT · B/B′/C KHÔNG ĐẠT (SC-003) · D ĐẠT · E chưa 
   [ ] Vùng chạm ≥ 44 px; chữ mới qua `t()` có đủ ở cả `vi.json` và `en.json`.
   [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npx playwright test tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts; npm run check`
-- Model: sonnet — không giao Gemini (sự cố S2 đang mở). · Lần thử: 0/3 · Trạng thái: DOING
+- Model: sonnet — không giao Gemini (sự cố S2 đang mở). · Lần thử: 0/3 · Trạng thái: DONE
 
 ### B-011 — Việc có GIỜ + sửa được sau khi tạo (Chủ dự án chọn) — CHỜ KIẾN TRÚC SƯ
 Chủ dự án chốt 2026-09-19: muốn việc có hạn **ngày + giờ** và sửa lại được sau khi tạo. Đổi `Todo.due` (hiện là ISODate, chỉ ngày) → đụng model, sắp xếp, hình nền, sao lưu JSON, nhãn "Quá hạn/Hôm nay", và `defaultReminderAt` cho việc. **Đổi phạm vi SPEC → phải qua Kiến trúc sư**, gọi sau khi đóng SC-003.
@@ -1063,7 +1063,7 @@ Chủ dự án chốt 2026-09-19: muốn việc có hạn **ngày + giờ** và 
   [ ] `docs/HUONG-DAN.md`: sửa các ví dụ payload sang định dạng mới; mục "Nếu không chạy" (c) nói rõ dạng mới là `23 Sep 2026 14:00`.
   [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet — không giao Gemini (sự cố S2 đang mở). · Lần thử: 0/3 · Trạng thái: DOING
+- Model: sonnet — không giao Gemini (sự cố S2 đang mở). · Lần thử: 0/3 · Trạng thái: DONE (định dạng đúng — Chủ dự án xác nhận Quick Look hiện `23 Sep 2026 08:00`; nhưng SC-003 CHƯA đóng: hành động Add New Reminder của iOS 18 vẫn đòi location)
 
 ### B-013 — Tab Việc lượt 2: hàng nhập vẫn lệch, nút Sửa khó thấy (Chủ dự án báo 2026-09-19, sau B-010)
 - Mục tiêu: nhìn là biết sửa việc ở đâu; hàng nhập gọn gàng. Chủ dự án nói nguyên văn: "Ô việc mới và ô hạn vẫn bị lệch nhìn mất thẩm mỹ. Việc đã tạo khó sửa lại. Nút sửa hiện ra sau khi vuốt sang trái, nằm cạnh nút xóa/lưu trữ, nhưng màu tối nhìn không rõ. Có hình cây bút để sửa nhưng nhìn nhỏ xíu, nhìn không rõ."
@@ -1077,4 +1077,4 @@ Chủ dự án chốt 2026-09-19: muốn việc có hạn **ngày + giờ** và 
   [ ] Chụp webkit 428×926 trước/sau (tab Việc có ≥ 3 việc, 1 việc đang mở dải vuốt trái) để Quản lý xem bằng mắt; ghi đường dẫn ảnh vào báo cáo (ảnh để trong thư mục tạm, KHÔNG commit vào kho).
   [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npx playwright test tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts; npm run check`
-- Model: sonnet — không giao Gemini (sự cố SC-003 còn mở). · Lần thử: 0/3 · Trạng thái: DOING
+- Model: sonnet — không giao Gemini (sự cố SC-003 còn mở). · Lần thử: 0/3 · Trạng thái: DONE
