@@ -25,7 +25,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## ĐIỂM DỪNG PHIÊN 2026-09-19 (đọc mục này đầu tiên ở phiên sau)
 
-**Trạng thái**: SC-003 **ĐÃ ĐÓNG** (2026-09-19, Chủ dự án tạo được lời nhắc mục B). Làn Gemini mở lại. Thử tay M7 (2026-09-19): B ✔, B′ ✔, C ✔ (Việc + Ghi chú; Ghi chú nằm ở tab Sự kiện, không phải Xem trước). E ✔ (sau khi thêm Lời nhắc vào Ứng dụng được phép + bật Nhạy cảm thời gian trong chế độ Tập trung — ghi HUONG-DAN §E bước 5). **M7 ĐÓNG** (thử tay A–F, B′ đạt). Tiếp: B-011 → Kiến trúc sư. B-014 ✔. Hàng chờ: B-011, M8.
+**Trạng thái**: SC-003 **ĐÃ ĐÓNG** (2026-09-19, Chủ dự án tạo được lời nhắc mục B). Làn Gemini mở lại. Thử tay M7 (2026-09-19): B ✔, B′ ✔, C ✔ (Việc + Ghi chú; Ghi chú nằm ở tab Sự kiện, không phải Xem trước). E ✔ (sau khi thêm Lời nhắc vào Ứng dụng được phép + bật Nhạy cảm thời gian trong chế độ Tập trung — ghi HUONG-DAN §E bước 5). **M7 ĐÓNG** (thử tay A–F, B′ đạt). B-014 ✔. Chủ dự án (2026-09-19): **M8 trước**, rồi B-011 (bỏ "nhắc 2 lần"; cần sửa được hạn NGÀY + GIỜ của việc đã tạo) → Kiến trúc sư.
 **Git**: cây sạch; **4 commit chưa push** (B-013 + sổ sách). Chủ dự án tự chạy `git push` khi muốn deploy — cổng bảo mật PHẢI chạy lại trước khi đề nghị push (CLAUDE.md).
 **Nhánh phụ còn sót**: `backup-truoc-go-anh` (sao lưu trước khi gỡ ảnh khỏi lịch sử) — giữ tới khi Chủ dự án yên tâm, rồi xoá.
 **Làn Gemini**: BẬT mức NHIỀU nhưng **đang tạm dừng** vì sự cố S2 mở. Mở lại khi đóng SC-003.
@@ -1028,7 +1028,7 @@ Chung cho mọi phiếu M7: không sửa/skip test khóa M1–M6 (ngoại lệ d
 
 ---
 
-## M8 — Báo thức đúng ngày qua Lời nhắc + Tự động hóa (SPEC v1.9, D-034) — CHỜ
+## M8 — Báo thức đúng ngày qua Lời nhắc + Tự động hóa (SPEC v1.9, D-034) — ĐANG LÀM (bắt đầu 2026-09-19, M7 đã đóng; Chủ dự án chọn M8 trước B-011)
 **Điều kiện bắt đầu (Chủ dự án chốt 2026-09-19): chỉ soạn phiếu chi tiết và giao thợ SAU KHI Chủ dự án thử tay M7 (A–F, B′) trên iPhone xong và M7 đã đóng.** Lý do: M8 xây trên đúng cơ chế Phím tắt của M7 — nền hỏng thì xây tiếp là phí.
 
 Chủ dự án đã duyệt SPEC v1.9 và chốt: lời nhắc trong danh sách `BaoThuc` **được đánh dấu hoàn thành** ngay khi sinh báo thức (chống tạo trùng; đánh đổi: hôm đó chỉ báo thức kêu, lời nhắc không báo nữa) — khớp giả định Kiến trúc sư, không phải sửa SPEC.
@@ -1041,6 +1041,42 @@ Phiếu dự kiến (Kiến trúc sư đề xuất; soạn chi tiết khi khởi
 - Thử tay iPhone G1–G5 (sau khi xong A–F của M7).
 
 Lưu ý thiết kế đã chốt (SPEC v1.9 §5, §8.11): payload KHÔNG đổi (`reminderText` giữ nguyên) — danh sách đích do Phím tắt thứ ba ghim, thêm dòng vào payload sẽ phá "Cách B" của mục E. Phím tắt `TaoBaoThucSang` tách khỏi Automation để bấm thử tay được ngay.
+
+### T-8.1 — Lõi `dayAlarmWindow` + `AppState.dayAlarmShortcutName` + action
+- Mục tiêu: phần thuần + trạng thái của IN-12 (SPEC §3 IN-12, §6 M8).
+- Phạm vi file (chỉ được sửa, đã xác minh `git ls-files`): `src/export/reminder.ts`, `src/core/model.ts`, `src/ui/store.ts`, `tests/unit/dayalarm.test.ts` (mới). KHÔNG sửa test cũ.
+- Giao diện / đầu vào có sẵn: `reminder.ts` có `LocalDateTime` (`YYYY-MM-DDTHH:mm` giờ máy), `reminderWindow(at, now)` — đọc để lấy cách parse `at`, KHÔNG sửa. `model.ts`: `AppState.alarmShortcutName`/`reminderShortcutName` (L91–92), `defaultState` (~L136), `normalizeState` (~L193–213) — lặp đúng mẫu. `store.ts`: action `setReminderShortcutName` (~L210) — lặp đúng mẫu (kiểu action + case). Sao lưu: `src/storage/backup.ts` (`exportBackup`/`importBackup`, đi qua `normalizeState`) — KHÔNG sửa.
+- Yêu cầu:
+  - `reminder.ts`: `export const DAY_ALARM_MIN_TIME = '00:30'`; `export type DayAlarmWindow = 'past' | 'today' | 'too-early' | 'ok'`; `export function dayAlarmWindow(at: LocalDateTime, now: Date): DayAlarmWindow` — thứ tự: `at` ≤ now → `past`; ngày của `at` = ngày của `now` (giờ máy) → `today`; giờ trong ngày của `at` < `DAY_ALARM_MIN_TIME` → `too-early`; còn lại `ok`. Không chặn theo 24 h.
+  - `model.ts`: `dayAlarmShortcutName: string` (mặc định `'ThemBaoThucNgay'`), `normalizeState` bù mặc định khi thiếu / rỗng / không phải chuỗi.
+  - `store.ts`: action `{ type: 'setDayAlarmShortcutName'; name: string }`.
+- Tiêu chí nghiệm thu:
+  [ ] `dayalarm.test.ts` với `now = new Date(2026, 9, 5, 10, 0)`: `at`=`2026-10-05T10:00` → past; `2026-10-05T23:59` → today; `2026-10-06T00:29` → too-early; `2026-10-06T00:30` → ok; `2026-10-06T09:00` → ok; `2026-10-08T07:00` → ok; `now = new Date(2026, 9, 5, 23, 50)` + `2026-10-06T00:40` → ok.
+  [ ] `normalizeState`: thiếu / `42` / `''` → `ThemBaoThucNgay`; `'Hen Bao Thuc'` → giữ. `exportBackup` → `importBackup` giữ tên đã đổi. Reducer `setDayAlarmShortcutName` đặt tên mới, state cũ không đổi.
+  [ ] `reminderWindow`, `reminderText` không đổi một dòng; test cũ pass nguyên vẹn.
+- Lệnh kiểm tra: `npx vitest run tests/unit/dayalarm.test.ts` ; `npm run check`.
+- Model: gemini (làn code — 4 file, tiêu chí rõ, test chạy được) · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO
+
+### T-8.2 — Nút `rem-dayalarm` + chú thích + dòng trạng thái + ô tên Phím tắt thứ ba
+- Mục tiêu: UI của IN-12 (SPEC §3 IN-12 gạch 1 và 4).
+- Phạm vi file (chỉ được sửa, đã xác minh): `src/ui/components/ReminderDialog.tsx`, `src/ui/screens/events/EventsTab.tsx`, `src/ui/screens/events/TodosTab.tsx`, `src/ui/screens/events/NoteTab.tsx`, `src/ui/screens/Preview.tsx`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `src/ui/styles.css`.
+- Giao diện / đầu vào có sẵn: T-8.1 (`dayAlarmWindow`, `state.dayAlarmShortcutName`, action `setDayAlarmShortcutName`). `ReminderDialog` hiện có `handleAction(kind)` (lưu form → `await flush()` → đóng → toast → `openShortcut`) — dùng lại, chỉ thêm kind thứ ba chọn `dayAlarmShortcutName`.
+- Yêu cầu: (1) prop BẮT BUỘC `dayAlarmShortcutName` của `ReminderDialog`; 3 form mỗi form thêm đúng 1 dòng truyền `state.dayAlarmShortcutName`. (2) Thứ tự nút: `rem-alarm` · `rem-dayalarm` · `rem-reminder` · không báo thức. `rem-dayalarm` bật chỉ khi `dayAlarmWindow` = `ok`; 2 nút cũ giữ quy tắc `reminderWindow`. (3) Dưới mỗi nút hành động 1 dòng chú thích tĩnh `rem-hint-alarm` / `rem-hint-dayalarm` / `rem-hint-reminder` (VI: "Đồng hồ, kêu to · chỉ trong 24 giờ tới" / "Kêu to vào ngày xa hơn · cần Tự động hóa (§E.3)" / "Thông báo nhẹ · mọi ngày"; EN tương đương, ≤ 45 ký tự). (4) `rem-status` một câu, ưu tiên: past → "Thời điểm này đã qua…"; today → "Hôm nay: dùng Thêm báo thức (kêu to) hoặc Thêm lời nhắc."; too-early → "Báo thức đúng ngày cần giờ từ 00:30 (Tự động hóa chạy 00:05)."; alarm-ok → "Trong 24 giờ tới: cả ba cách đều được."; còn lại → "Quá 24 giờ: dùng Báo thức đúng ngày (kêu to) hoặc Thêm lời nhắc.". Nhãn nút VI "Báo thức đúng ngày", EN "Alarm on that day". (5) Preview: ô `shortcut-dayalarm-name` thứ ba, lặp đúng mẫu ô `reminderShortcutName` (~L40, L62, L298). (6) Mọi chữ qua `t()`, đủ VI + EN; vùng chạm ≥ 44 px; chữ đọc được trên nền tối ở 428 pt.
+- Tiêu chí nghiệm thu: [ ] các yêu cầu (1)–(6) · [ ] `m7-reminder.spec.ts` pass nguyên vẹn · [ ] `npm run check` pass.
+- Lệnh kiểm tra: `npx playwright test tests/e2e/m7-reminder.spec.ts` ; `npm run check`.
+- Model: gemini (8 file) · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO — sau T-8.1
+
+### T-8.3 — `docs/HUONG-DAN.md` §E.3 + thẻ Hướng dẫn
+- Phạm vi file: `docs/HUONG-DAN.md` (thêm §E.3 sau §E.2 và phần "Bật Nhạy cảm…"/"Nếu không chạy" của E; thêm 4 rủi ro §8.11(a)–(d) vào "Giới hạn đã biết"), `src/ui/screens/Guide.tsx`, `src/core/i18n/vi.json`, `src/core/i18n/en.json` (`guide.dayAlarmTitle`, `guide.dayAlarmBody`).
+- Nội dung §E.3 theo SPEC §3 IN-12 gạch "Phía iPhone" + §10.E: tạo danh sách Reminders `BaoThuc`; `ThemBaoThucNgay` = Duplicate `ThemLoiNhac` (bản đã sửa B-014, dùng `GioNhac`/`TieuDe`) chỉ đổi danh sách thành `BaoThuc`; `TaoBaoThucSang` (Find Reminders: List is BaoThuc, Due Date is Today, Is Completed is No, sort Due Date → Repeat with Each → If Due Date is after Current Date → Create Alarm (Time = Due Date, Label = Title) → Edit Reminder: Is Completed = Yes → End If → End Repeat); Tự động hóa "Time of Day" 00:05 Daily, Run Immediately, tắt Notify When Run → Run Shortcut `TaoBaoThucSang`. Mục "Thử ngay" (G1) và "Nếu không chạy" (G5: thêm Edit Reminder Set Due Date = GioNhac). Văn phong song ngữ như E.2; ưu tiên `Set Variable` đặt tên, không dùng Select Variable.
+- Tiêu chí nghiệm thu: [ ] `Select-String` 10 mẫu trong SPEC §6 M8 ≥ 9 dòng · [ ] có "Thử ngay" và "Nếu không chạy" · [ ] 4 rủi ro (a)–(d) · [ ] `guide.dayAlarmTitle`/`Body` đủ VI/EN, hiện trong tab Hướng dẫn · [ ] `npm run check` pass.
+- Lệnh kiểm tra: `grep -c -E "ThemBaoThucNgay|TaoBaoThucSang|BaoThuc|Find Reminders|Repeat with Each|Create Alarm|Edit Reminder|Run Immediately|Notify When Run|00:05" docs/HUONG-DAN.md` ; `npm run check`.
+- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO — sau T-8.2 (chung file i18n)
+
+### T-8.END — E2E `tests/e2e/m8-dayalarm.spec.ts`
+- Phạm vi file: `tests/e2e/m8-dayalarm.spec.ts` (mới). Không sửa src.
+- Tiêu chí nghiệm thu: đúng 7 kịch bản SPEC §6 M8 (E2E T-8.END), chromium + webkit, `page.clock.setFixedTime(new Date('2026-10-05T10:00:00'))`; `npx playwright test tests/e2e/m8-dayalarm.spec.ts --repeat-each=3` pass; `npm run check` pass; `node scripts/size.mjs` JS gzip < 150 KB.
+- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO — sau T-8.2
 
 ---
 
