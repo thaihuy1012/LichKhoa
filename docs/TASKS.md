@@ -1195,3 +1195,10 @@ Chủ dự án duyệt 2026-09-19: làm ngay (không chờ G1–G5 của M8); "Q
 - Lệnh kiểm tra: `npx playwright test tests/e2e/m9-todo-time.spec.ts --repeat-each=5` (cả chromium + webkit) ; `npm run check` ; `npm run build && node scripts/size.mjs`.
 - Model: gemini · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DONE
 - Nhật ký: 2026-09-19 — PHÁT HIỆN: không có `docs/tasks/T-9.END.md` / `gemini-out` → người liên lạc `tho-gemini` (Haiku) TỰ viết test, không chạy Gemini (vi phạm làn, như M6-soat lượt 1). Quản lý vẫn nhận vì cổng chất lượng độc lập đạt: kiem-thu PASS (repeat-each=5: 5 chromium + 5 webkit; check 104/14 skip; size 46,1 KB; (6) đọc rem-at thường) + Quản lý tự đọc assert (IndexedDB poll, `__lastOps` poll, thứ tự). Ghi BAI-HOC → commit.
+
+### T-9.4 — Sửa SC-004 (hàng thêm việc tràn 428 pt) + làm chặt E2E M9 (Kiến trúc sư: SỬA M9)
+- Phạm vi file: `src/ui/styles.css`, `src/ui/screens/events/TodosTab.tsx`, `tests/e2e/m9-todo-time.spec.ts`.
+- Việc: (1) `styles.css:777` thêm `min-width: 0` vào `.addrow-todo-due-line .todo-due-hint`; (2) `TodosTab.tsx:80–91` bọc `todo-due-time-edit` trong `{Boolean(editDue) && …}`; (3) E2E: (1) sau khi `todo-due-time` hiện, `todo-add` boundingBox `x + width ≤ 428` và `.addrow-todo-due-line` `scrollWidth ≤ clientWidth`; (5) `window.__lastOps = undefined` trước khi bấm `layout-todo` và `layout-week`; (6) dòng 305/322 → `expect(await page.getByTestId('rem-at').inputValue()).toBe(…)`; (7) assert nhãn Họp `6/10 09:00`, Nộp báo cáo `6/10 14:00`, Đọc `+ Hạn`.
+- Tiêu chí: assert (1) FAIL trước khi sửa CSS (ghi log), PASS sau; `m9-todo-time.spec.ts --repeat-each=3` pass 2 trình duyệt; `npm run check` pass; test khóa nguyên vẹn.
+- Model: sua-loi (opus — sự cố S2) · Lần thử: 0/3 · Trạng thái: DOING
+- S4 (Kiến trúc sư): `sameTodoGroup` (store.ts:13–14) coi `due: ''` là có hạn, `cmpTodo` (collect.ts:71) coi không — chỉ với JSON nhập tay.
