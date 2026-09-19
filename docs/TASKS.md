@@ -1121,4 +1121,5 @@ Chủ dự án chốt 2026-09-19: muốn việc có hạn **ngày + giờ** và 
   [ ] Mục "Nếu không chạy" (e) viết lại cùng nội dung; (d) giữ; mục "Mức độ chắc chắn" bỏ nhắc `Create Reminder`.
   [ ] Không có dữ liệu thật của Chủ dự án (không ảnh, không tên việc thật).
 - Lệnh kiểm tra: `grep -c "GioNhac" docs/HUONG-DAN.md` ≥ 4 · `grep -n "Create Reminder\|Remind me at a time\|Due Date" docs/HUONG-DAN.md` rỗng · `git diff --stat` chỉ `docs/HUONG-DAN.md` · `npm run check` pass.
-- Model: gemini (làn code — đủ điều kiện: 1 file, tiêu chí rõ, lệnh kiểm tra chạy được, không đổi thiết kế) · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO
+- Model: gemini (làn code — đủ điều kiện: 1 file, tiêu chí rõ, lệnh kiểm tra chạy được, không đổi thiết kế) · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-19 vòng 1 (gemini-3.8-flash-high, 6 phút): XONG → kiem-thu PASS (GioNhac ×9; grep cấm rỗng; diff chỉ HUONG-DAN trong phạm vi; check 100/14 skip) → review đạt (8 hành động, Set Variable, Trigger/chữ xám, cảnh báo mới) → commit.
