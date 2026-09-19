@@ -875,7 +875,7 @@ Chung cho mọi phiếu M7: không sửa/skip test khóa M1–M6 (ngoại lệ d
   [ ] Mọi chữ mới qua `t()`, có đủ khóa ở cả `vi.json` và `en.json`; vùng chạm nút ≥ 44 px (iPhone 13 Pro Max).
   [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Model: gemini (làn code, quy định §4b: đủ điều kiện → Gemini trước) · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
 
 ### T-7.3 — Gắn ReminderDialog vào form Việc và form Ghi chú
 - Mục tiêu: nút "Nhắc trên iPhone" hoạt động ở hàng nhập Việc và Sheet Ghi chú.
