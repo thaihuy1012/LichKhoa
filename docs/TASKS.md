@@ -959,3 +959,17 @@ Chung cho mọi phiếu M7: không sửa/skip test khóa M1–M6 (ngoại lệ d
   [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npm run check`
 - Model: sonnet — không giao Gemini, lý do: cây git đang có thay đổi chưa commit của T-7.2, làn Gemini đòi cây sạch (điều kiện 4). · Lần thử: 0/3 · Trạng thái: DONE
+
+### T-7.5 — Ghi dữ liệu xuống đĩa TRƯỚC khi rời app sang Phím tắt (soát chéo M7 #1)
+- Mục tiêu: đóng nguy cơ mất dữ liệu khi bấm "Thêm báo thức"/"Thêm lời nhắc" — iOS có thể đóng PWA ngay khi chuyển sang app Phím tắt, trong khi `createStore` còn đang chờ debounce 300 ms.
+- Bằng chứng: `src/ui/store.ts:230-244` — `dispatch` chỉ gọi `schedulePersist()` (chờ 300 ms); `flushPersist()` là hàm NỘI BỘ, không nằm trong object trả về (`store.ts:259-270`) nên UI không gọi được; nó chỉ chạy qua `pagehide`/`visibilitychange` và `void saveState(state)` không được chờ. `src/ui/components/ReminderDialog.tsx:47-58` gọi `openShortcut` ngay sau `onSave()`.
+- Phạm vi file (chỉ được sửa, đã xác minh bằng `git ls-files`): `src/ui/store.ts`, `src/ui/components/ReminderDialog.tsx`, `tests/unit/store.test.ts`, `tests/e2e/m7-reminder.spec.ts`.
+- Giao diện / đầu vào có sẵn: `saveState` (đã dùng trong store), `PERSIST_DEBOUNCE_MS = 300`, `window.__lastNav` khi `?test=1`.
+- Tiêu chí nghiệm thu:
+  [ ] `createStore` trả thêm `flush(): Promise<void>` — hủy timer đang chờ (nếu có) và **await** `saveState(state)`; gọi khi không có gì chờ cũng an toàn (vẫn ghi trạng thái hiện tại hoặc trả về ngay, tự chọn và ghi rõ trong báo cáo). `pagehide`/`visibilitychange` vẫn hoạt động như cũ.
+  [ ] `ReminderDialog.handleAction`: sau khi `onSave()` thành công → **await `flush()`** → rồi mới `openShortcut(...)`. Lưu thất bại thì vẫn không điều hướng (giữ hành vi cũ). Thứ tự bắt buộc: lưu → ghi đĩa → điều hướng.
+  [ ] Unit `store.test.ts`: dispatch rồi gọi `flush()` → `saveState` đã được gọi TRƯỚC khi hết 300 ms (dùng fake timers hoặc spy, không dùng `sleep` thật).
+  [ ] E2E `m7-reminder.spec.ts`: thêm kiểm chứng — sau khi bấm `rem-alarm` ở kịch bản 3, đọc IndexedDB NGAY (không chờ 300 ms) và thấy việc "Mua sữa" đã nằm trong trạng thái đã lưu. Giữ nguyên 6 kịch bản cũ, không sửa ý nghĩa của chúng.
+  [ ] `npm run check` pass; không sửa/skip test khóa nào khác.
+- Lệnh kiểm tra: `npm run check`
+- Model: sonnet — KHÔNG giao Gemini, lý do cụ thể: đây là đường ghi dữ liệu xuống đĩa, hỏng thì mất dữ liệu người dùng (mức S1 theo CLAUDE.md), và phải sửa đồng thời hợp đồng `createStore` dùng chung toàn app — thuộc loại "đổi interface dùng chung" bị loại theo LAN-GEMINI mục 3 điều kiện 3. · Lần thử: 0/3 · Trạng thái: DOING
