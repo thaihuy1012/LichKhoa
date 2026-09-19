@@ -62,6 +62,7 @@ Nguyên nhân thật: hành động `Add New Reminder` trên iOS 18 có ô **`At
 - S4 · M5 (D-025): (a)–(d) → ~~phiếu T-5.4~~ ✔ DONE 3b16a76; (e) cache Google cũ thiếu ngày đầu tuần → đóng, không sửa (D-025: cache không có timeMin, tự hết sau 1 lần đồng bộ); (f) "◷" → Chủ dự án xác nhận iOS hiện đúng → đóng.
 - ~~S4 · T-6.2 · `createStore` ghi IndexedDB debounce 300 ms → thao tác rồi thoát app ngay (< 0,3 s) có thể mất thay đổi cuối; đề xuất flush khi `pagehide`/`visibilitychange=hidden` (store.ts) ~~ → đã sửa B-006 (Gemini).
 - S4 · M6 (D-029): (a) toast đè mất Hoàn tác lần trước (#6); (b) listener `createStore` không gỡ (#7); (c) chưa có unit `createStore` (#10); (d) Hoàn tác xóa ngay sau khi thêm việc mới → 2 việc cùng `order`; (e) kéo không tự cuộn khi danh sách dài; (f) kéo sang nhóm khác hàng dịch rồi bật về.
+- S4 · T-8.END · `ReminderDialog` giữ state `at` của lần mở trước; `useEffect([open])` đặt lại mặc định SAU lần vẽ đầu → mở hộp có thể thoáng hiện giờ cũ (test phải dùng `setRemAt` chờ ổn định). Sửa gợi ý: đặt lại bằng `useLayoutEffect` hoặc `key` theo lần mở.
 - S4 · T-3.1 · `parseFragment`: giải mã 2 lần đã sửa ở T-3.4 (`oauth.ts:60`); còn trả `{error}` không kiểm `state` → ~~B-004~~ ✔ DONE (Gemini).
 - ~~S4 · T-2.5 · `eventToIcs` chưa gập dòng > 75 byte~~ → đã sửa T-2.15.
 
@@ -1079,7 +1080,8 @@ Lưu ý thiết kế đã chốt (SPEC v1.9 §5, §8.11): payload KHÔNG đổi 
 ### T-8.END — E2E `tests/e2e/m8-dayalarm.spec.ts`
 - Phạm vi file: `tests/e2e/m8-dayalarm.spec.ts` (mới). Không sửa src.
 - Tiêu chí nghiệm thu: đúng 7 kịch bản SPEC §6 M8 (E2E T-8.END), chromium + webkit, `page.clock.setFixedTime(new Date('2026-10-05T10:00:00'))`; `npx playwright test tests/e2e/m8-dayalarm.spec.ts --repeat-each=3` pass; `npm run check` pass; `node scripts/size.mjs` JS gzip < 150 KB.
-- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO — sau T-8.2
+- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 3/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-19 vòng 1 FAIL 2 kịch bản (Gemini tự báo) → vòng 2 (chờ-fill-xác nhận) Gemini báo PASS nhưng kiem-thu FAIL webkit 3/6 (giá trị `at` cũ bị effect ghi đè; đọc `__lastNav` cũ) → vòng 3: helper `setRemAt` (toPass) + poll `__lastNav` → kiem-thu PASS (repeat-each=5: 5 chromium + 5 webkit; check 102/14 skip; size 39.7 KB gzip) → commit. Cây phải sạch cho agy → Quản lý cất bản test dở vào `docs/tasks/T-8.END-v*.spec.ts.txt` giữa các vòng.
 
 ---
 

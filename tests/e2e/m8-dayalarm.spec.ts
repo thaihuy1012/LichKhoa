@@ -1,0 +1,385 @@
+import { test, expect, type Page } from '@playwright/test';
+
+/**
+ * T-8.END: Kiểm thử tích hợp E2E luồng chính M8 (SPEC v1.9 §6 ### M8 dòng 225, docs/tasks/T-8.END-v3.md).
+ * 7 kịch bản Báo thức đúng ngày qua Phím tắt:
+ * (1) Sự kiện có giờ ngày mai 07:30 → mở sửa → rem-open → rem-dayalarm bật → bấm
+ *     → __lastNav có name=ThemBaoThucNgay&input=text&text=, payload = '6 Oct 2026 07:30\n<tên>';
+ *     Sheet đóng; danh sách vẫn 1 sự kiện; IndexedDB đã chứa sự kiện ngay sau khi bấm.
+ * (2) Mở lại → rem-at = 2026-10-05T23:59 → rem-dayalarm disabled, rem-alarm và rem-reminder enabled, rem-status chứa "Hôm nay".
+ * (3) rem-at = 2026-10-06T00:10 → rem-dayalarm disabled, rem-status chứa "00:30"; 2026-10-06T00:30 → enabled.
+ * (4) rem-at = 2026-10-08T10:00 → rem-alarm disabled, rem-dayalarm và rem-reminder enabled; 2026-10-05T09:00 → cả ba disabled.
+ * (5) Nhập việc "Mua sữa" (chưa bấm Thêm) → rem-open → rem-at = 2026-10-06T08:00 → rem-dayalarm
+ *     → việc trong danh sách, ô nhập rỗng, __lastNav name=ThemBaoThucNgay, payload dòng 2 = Mua sữa.
+ * (6) Hộp có đủ rem-hint-alarm / rem-hint-dayalarm / rem-hint-reminder, không rỗng; đổi ngôn ngữ en → rem-dayalarm có chữ "Alarm on that day".
+ * (7) Tab Xem trước shortcut-dayalarm-name = Hen Bao Thuc → reload giữ → __lastNav chứa name=Hen%20Bao%20Thuc.
+ */
+
+function extractDecodedPayload(navUrl: string): string {
+  const match = navUrl.match(/[?&]text=([^&]*)/);
+  if (!match) {
+    throw new Error(`URL không chứa tham số text=: ${navUrl}`);
+  }
+  return decodeURIComponent(match[1]);
+}
+
+async function getLastNav(page: Page): Promise<string | undefined> {
+  return page.evaluate(() => (window as unknown as { __lastNav?: string }).__lastNav);
+}
+
+/** Helper chống race condition với useEffect([open]) trong ReminderDialog */
+async function setRemAt(page: Page, value: string) {
+  await expect(async () => {
+    await page.getByTestId('rem-at').fill(value);
+    await page.waitForTimeout(150); // đợi effect chạy + ghi đè
+    await expect(page.getByTestId('rem-at')).toHaveValue(value, { timeout: 100 });
+  }).toPass({ timeout: 5000 }); // retry fill tới khi giá trị đứng yên
+}
+
+interface SavedState {
+  events?: { id: string; title: string; date: string; time?: string }[];
+  todos?: { text: string }[];
+  dayAlarmShortcutName?: string;
+}
+
+/** Đọc trực tiếp bản ghi state đã lưu trong IndexedDB (không chờ debounce). */
+async function readSavedState(page: Page): Promise<SavedState | undefined> {
+  return page.evaluate(
+    () =>
+      new Promise((resolve) => {
+        const req = indexedDB.open('keyval-store');
+        req.onerror = () => resolve(undefined);
+        req.onsuccess = () => {
+          const tx = req.result.transaction('keyval', 'readonly');
+          const getReq = tx.objectStore('keyval').get('lichkhoa:state');
+          getReq.onerror = () => resolve(undefined);
+          getReq.onsuccess = () => {
+            const s = getReq.result as SavedState | undefined;
+            req.result.close();
+            resolve(s);
+          };
+        };
+      }),
+  );
+}
+
+test('T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm)', async ({ page }) => {
+  // Cố định giờ trang theo SPEC v1.9 §6 M8: 2026-10-05T10:00:00 trước khi mở app
+  await page.clock.setFixedTime(new Date('2026-10-05T10:00:00'));
+
+  page.on('dialog', (d) => d.accept());
+  await page.goto('/?test=1');
+
+  const eventTitle = 'Họp chiến lược M8';
+
+  // --------------------------------------------------------------------------
+  // Kịch bản 1: Sự kiện có giờ ngày mai 07:30 → mở sửa → rem-open → rem-dayalarm bật → bấm
+  // → __lastNav có name=ThemBaoThucNgay&input=text&text=, payload = '6 Oct 2026 07:30\n<tên>';
+  // Sheet đóng; danh sách vẫn 1 sự kiện; IndexedDB đã chứa sự kiện ngay sau khi bấm.
+  // --------------------------------------------------------------------------
+  await test.step('Kịch bản 1: Sự kiện ngày mai 07:30 → Báo thức đúng ngày', async () => {
+    await page.getByTestId('tab-events').click();
+
+    // Thêm sự kiện có giờ (ngày mai 2026-10-06 lúc 07:30)
+    await page.getByTestId('add-event').click();
+    await expect(page.locator('.sheet')).toBeVisible();
+    await page.getByTestId('ev-title').fill(eventTitle);
+    await page.getByTestId('ev-date').fill('2026-10-06');
+    await page.getByTestId('ev-start').fill('07:30');
+    await page.getByTestId('ev-end').fill('08:30');
+    await page.getByTestId('ev-save').click();
+    await expect(page.locator('.sheet')).not.toBeVisible();
+
+    // Mở sửa
+    const evItem = page.getByTestId('ev-item').filter({ hasText: eventTitle });
+    await expect(evItem).toBeVisible();
+    await evItem.click();
+    await expect(page.locator('.sheet')).toBeVisible();
+
+    // rem-open
+    await page.getByTestId('rem-open').click();
+    await expect(page.locator('.rem-dialog')).toBeVisible();
+    await expect(page.getByTestId('rem-at')).not.toHaveValue('');
+
+    // rem-dayalarm bật (enabled)
+    await expect(page.getByTestId('rem-dayalarm')).toBeEnabled();
+
+    // Trước bấm: lưu __lastNav hiện tại (Lỗi 2 fix)
+    const oldNav = await page.evaluate(() => (window as any).__lastNav);
+
+    // Bấm rem-dayalarm
+    await page.getByTestId('rem-dayalarm').click();
+
+    // Sau bấm: chờ __lastNav thay đổi (không phải cũ)
+    await expect.poll(() => page.evaluate(() => (window as any).__lastNav), { timeout: 5000 })
+      .not.toBe(oldNav);
+
+    // __lastNav có name=ThemBaoThucNgay&input=text&text=, payload = '6 Oct 2026 07:30\n<tên>'
+    await expect.poll(() => getLastNav(page)).toContain('name=ThemBaoThucNgay&input=text&text=');
+    const nav1 = (await getLastNav(page))!;
+    expect(nav1).toBeDefined();
+    const payload1 = extractDecodedPayload(nav1);
+    expect(payload1).toBe(`6 Oct 2026 07:30\n${eventTitle}`);
+
+    // Sheet đóng; danh sách vẫn đúng 1 sự kiện
+    await expect(page.locator('.sheet')).not.toBeVisible();
+    await expect(page.getByTestId('ev-item')).toHaveCount(1);
+
+    // IndexedDB đã chứa sự kiện ngay sau khi bấm (flush() trước khi điều hướng)
+    const savedRightAfterClick = await readSavedState(page);
+    expect(savedRightAfterClick?.events?.some((e) => e.title === eventTitle)).toBe(true);
+  });
+
+  // --------------------------------------------------------------------------
+  // Kịch bản 2: Mở lại → rem-at = 2026-10-05T23:59 → rem-dayalarm disabled,
+  // rem-alarm và rem-reminder enabled, rem-status chứa "Hôm nay".
+  // --------------------------------------------------------------------------
+  await test.step('Kịch bản 2: rem-at = 2026-10-05T23:59 (hôm nay) → rem-dayalarm disabled, rem-status chứa Hôm nay', async () => {
+    const evItem = page.getByTestId('ev-item').filter({ hasText: eventTitle });
+    await evItem.click();
+    await expect(page.locator('.sheet')).toBeVisible();
+
+    await page.getByTestId('rem-open').click();
+    await expect(page.locator('.rem-dialog')).toBeVisible();
+
+    // 1️⃣ Chờ giá trị mặc định được set
+    await expect(page.getByTestId('rem-at')).not.toHaveValue('');
+
+    // 2️⃣ Fill giá trị TEST (Lỗi 1 fix: setRemAt với poll/retry)
+    await setRemAt(page, '2026-10-05T23:59');
+
+    // 3️⃣ XÁC NHẬN giá trị đã set TRƯỚC mọi assert
+    await expect(page.getByTestId('rem-at')).toHaveValue('2026-10-05T23:59');
+
+    // 4️⃣ Rồi mới assert nút
+    await expect(page.getByTestId('rem-dayalarm')).toBeDisabled();
+    await expect(page.getByTestId('rem-alarm')).toBeEnabled();
+    await expect(page.getByTestId('rem-reminder')).toBeEnabled();
+    await expect(page.locator('.rem-status')).toContainText('Hôm nay');
+  });
+
+  // --------------------------------------------------------------------------
+  // Kịch bản 3: rem-at = 2026-10-06T00:10 → rem-dayalarm disabled, rem-status chứa "00:30";
+  // 2026-10-06T00:30 → enabled.
+  // --------------------------------------------------------------------------
+  await test.step('Kịch bản 3: Ngưỡng DAY_ALARM_MIN_TIME 00:30 (00:10 disabled vs 00:30 enabled)', async () => {
+    // 2️⃣ Fill giá trị TEST
+    await setRemAt(page, '2026-10-06T00:10');
+
+    // 3️⃣ XÁC NHẬN giá trị đã set TRƯỚC mọi assert
+    await expect(page.getByTestId('rem-at')).toHaveValue('2026-10-06T00:10');
+
+    // 4️⃣ Assert
+    await expect(page.getByTestId('rem-dayalarm')).toBeDisabled();
+    await expect(page.locator('.rem-status')).toContainText('00:30');
+
+    // 2️⃣ Fill giá trị TEST
+    await setRemAt(page, '2026-10-06T00:30');
+
+    // 3️⃣ XÁC NHẬN giá trị đã set TRƯỚC mọi assert
+    await expect(page.getByTestId('rem-at')).toHaveValue('2026-10-06T00:30');
+
+    // 4️⃣ Assert
+    await expect(page.getByTestId('rem-dayalarm')).toBeEnabled();
+  });
+
+  // --------------------------------------------------------------------------
+  // Kịch bản 4: rem-at = 2026-10-08T10:00 → rem-alarm disabled, rem-dayalarm và rem-reminder enabled;
+  // 2026-10-05T09:00 → cả ba disabled.
+  // --------------------------------------------------------------------------
+  await test.step('Kịch bản 4: Quá 24h (+3 ngày) vs Quá khứ (-1h)', async () => {
+    // 2026-10-08T10:00 (quá 24h)
+    await setRemAt(page, '2026-10-08T10:00');
+    await expect(page.getByTestId('rem-at')).toHaveValue('2026-10-08T10:00');
+    await expect(page.getByTestId('rem-alarm')).toBeDisabled();
+    await expect(page.getByTestId('rem-dayalarm')).toBeEnabled();
+    await expect(page.getByTestId('rem-reminder')).toBeEnabled();
+
+    // 2026-10-05T09:00 (thời điểm đã qua)
+    await setRemAt(page, '2026-10-05T09:00');
+    await expect(page.getByTestId('rem-at')).toHaveValue('2026-10-05T09:00');
+    await expect(page.getByTestId('rem-alarm')).toBeDisabled();
+    await expect(page.getByTestId('rem-dayalarm')).toBeDisabled();
+    await expect(page.getByTestId('rem-reminder')).toBeDisabled();
+
+    // Đóng hộp thoại và sheet sự kiện
+    await page.getByTestId('rem-none').click();
+    await expect(page.locator('.rem-dialog')).not.toBeVisible();
+    await page.getByTestId('ev-cancel').click();
+    await expect(page.locator('.sheet')).not.toBeVisible();
+  });
+
+  // --------------------------------------------------------------------------
+  // Kịch bản 5: Nhập việc "Mua sữa" (chưa bấm Thêm) → rem-open → rem-at = 2026-10-06T08:00
+  // → rem-dayalarm → việc trong danh sách, ô nhập rỗng, __lastNav name=ThemBaoThucNgay, payload dòng 2 = Mua sữa.
+  // --------------------------------------------------------------------------
+  await test.step('Kịch bản 5: Việc Mua sữa (chưa bấm Thêm) → rem-dayalarm', async () => {
+    await page.getByTestId('seg-todos').click();
+
+    // Nhập việc "Mua sữa" (chưa bấm Thêm)
+    await page.getByTestId('todo-input').fill('Mua sữa');
+
+    // rem-open
+    await page.getByTestId('rem-open').click();
+    await expect(page.locator('.rem-dialog')).toBeVisible();
+
+    // 1️⃣ Chờ giá trị mặc định được set
+    await expect(page.getByTestId('rem-at')).not.toHaveValue('');
+
+    // 2️⃣ Fill giá trị TEST (Lỗi 1 fix: setRemAt)
+    await setRemAt(page, '2026-10-06T08:00');
+
+    // 3️⃣ XÁC NHẬN giá trị đã set TRƯỚC mọi assert
+    await expect(page.getByTestId('rem-at')).toHaveValue('2026-10-06T08:00');
+
+    // 4️⃣ Assert
+    await expect(page.getByTestId('rem-dayalarm')).toBeEnabled();
+
+    // Trước bấm: lưu __lastNav hiện tại (Lỗi 2 fix)
+    const oldNav = await page.evaluate(() => (window as any).__lastNav);
+
+    // rem-dayalarm
+    await page.getByTestId('rem-dayalarm').click();
+
+    // Sau bấm: chờ __lastNav thay đổi (không phải cũ)
+    await expect.poll(() => page.evaluate(() => (window as any).__lastNav), { timeout: 5000 })
+      .not.toBe(oldNav);
+
+    await expect(page.locator('.rem-dialog')).not.toBeVisible();
+
+    // Việc trong danh sách
+    const todoItem = page.getByTestId('todo-item').filter({ hasText: 'Mua sữa' });
+    await expect(todoItem).toBeVisible();
+
+    // Ô nhập rỗng
+    await expect(page.getByTestId('todo-input')).toHaveValue('');
+
+    // __lastNav name=ThemBaoThucNgay, payload dòng 2 = Mua sữa
+    await expect.poll(() => getLastNav(page)).toContain('name=ThemBaoThucNgay');
+    const nav5 = (await getLastNav(page))!;
+    expect(nav5).toBeDefined();
+    expect(nav5).toContain('input=text&text=');
+    const payload5 = extractDecodedPayload(nav5);
+    const lines5 = payload5.split('\n');
+    expect(lines5.length).toBeGreaterThanOrEqual(2);
+    expect(lines5[1]).toBe('Mua sữa');
+    expect(payload5).toBe('6 Oct 2026 08:00\nMua sữa');
+  });
+
+  // --------------------------------------------------------------------------
+  // Kịch bản 6: Hộp có đủ rem-hint-alarm / rem-hint-dayalarm / rem-hint-reminder, không rỗng;
+  // đổi ngôn ngữ en → rem-dayalarm có chữ "Alarm on that day".
+  // --------------------------------------------------------------------------
+  await test.step('Kịch bản 6: Đủ 3 rem-hint không rỗng; đổi ngôn ngữ en → Alarm on that day', async () => {
+    // Mở hộp thoại từ form todo
+    await page.getByTestId('todo-input').fill('Kiểm tra nhãn');
+    await page.getByTestId('rem-open').click();
+    await expect(page.locator('.rem-dialog')).toBeVisible();
+    await expect(page.getByTestId('rem-at')).not.toHaveValue('');
+
+    // Đủ 3 rem-hint không rỗng
+    await expect(page.getByTestId('rem-hint-alarm')).toBeVisible();
+    await expect(page.getByTestId('rem-hint-alarm')).not.toBeEmpty();
+    await expect(page.getByTestId('rem-hint-dayalarm')).toBeVisible();
+    await expect(page.getByTestId('rem-hint-dayalarm')).not.toBeEmpty();
+    await expect(page.getByTestId('rem-hint-reminder')).toBeVisible();
+    await expect(page.getByTestId('rem-hint-reminder')).not.toBeEmpty();
+
+    // Đóng hộp thoại
+    await page.getByTestId('rem-none').click();
+    await expect(page.locator('.rem-dialog')).not.toBeVisible();
+    await page.getByTestId('todo-input').fill('');
+
+    // Đổi ngôn ngữ en ở tab Xem trước
+    await page.getByTestId('tab-preview').click();
+    await page.getByTestId('lang').selectOption('en');
+
+    // Mở lại hộp thoại kiểm tra chữ tiếng Anh
+    await page.getByTestId('tab-events').click();
+    await page.getByTestId('seg-todos').click();
+    await page.getByTestId('todo-input').fill('Check English labels');
+    await page.getByTestId('rem-open').click();
+    await expect(page.locator('.rem-dialog')).toBeVisible();
+    await expect(page.getByTestId('rem-at')).not.toHaveValue('');
+
+    // rem-dayalarm có chữ "Alarm on that day"
+    await expect(page.getByTestId('rem-dayalarm')).toContainText('Alarm on that day');
+
+    // Đóng hộp thoại và dọn ô nhập
+    await page.getByTestId('rem-none').click();
+    await expect(page.locator('.rem-dialog')).not.toBeVisible();
+    await page.getByTestId('todo-input').fill('');
+  });
+
+  // --------------------------------------------------------------------------
+  // Kịch bản 7: Tab Xem trước shortcut-dayalarm-name = Hen Bao Thuc → reload giữ
+  // → __lastNav chứa name=Hen%20Bao%20Thuc.
+  // --------------------------------------------------------------------------
+  await test.step('Kịch bản 7: Đổi shortcut-dayalarm-name = Hen Bao Thuc → reload giữ → __lastNav chứa name=Hen%20Bao%20Thuc', async () => {
+    await page.getByTestId('tab-preview').click();
+
+    const dayAlarmInput = page.getByTestId('shortcut-dayalarm-name');
+    await expect(dayAlarmInput).toBeVisible();
+    await dayAlarmInput.fill('Hen Bao Thuc');
+
+    // Chờ lưu vào IndexedDB (debounce 300ms) trước khi reload
+    await expect.poll(async () => {
+      return page.evaluate(() =>
+        new Promise<string | undefined>((resolve) => {
+          const req = indexedDB.open('keyval-store');
+          req.onerror = () => resolve(undefined);
+          req.onsuccess = () => {
+            const tx = req.result.transaction('keyval', 'readonly');
+            const getReq = tx.objectStore('keyval').get('lichkhoa:state');
+            getReq.onerror = () => resolve(undefined);
+            getReq.onsuccess = () => {
+              const s = getReq.result as SavedState | undefined;
+              req.result.close();
+              resolve(s?.dayAlarmShortcutName);
+            };
+          };
+        }),
+      );
+    }).toBe('Hen Bao Thuc');
+
+    // reload vẫn giữ
+    await page.reload();
+    await expect(page.getByTestId('shortcut-dayalarm-name')).toHaveValue('Hen Bao Thuc');
+
+    // Kích hoạt Báo thức đúng ngày để kiểm tra __lastNav chứa name=Hen%20Bao%20Thuc
+    await page.getByTestId('tab-events').click();
+    await page.getByTestId('seg-todos').click();
+    await page.getByTestId('todo-input').fill('Việc kiểm tra phím tắt hẹn báo thức');
+    await page.getByTestId('rem-open').click();
+    await expect(page.locator('.rem-dialog')).toBeVisible();
+
+    // 1️⃣ Chờ giá trị mặc định được set
+    await expect(page.getByTestId('rem-at')).not.toHaveValue('');
+
+    // 2️⃣ Fill giá trị TEST (Lỗi 1 fix: setRemAt)
+    await setRemAt(page, '2026-10-06T08:00');
+
+    // 3️⃣ XÁC NHẬN giá trị đã set TRƯỚC mọi assert
+    await expect(page.getByTestId('rem-at')).toHaveValue('2026-10-06T08:00');
+
+    // 4️⃣ Assert
+    await expect(page.getByTestId('rem-dayalarm')).toBeEnabled();
+
+    // Trước bấm: lưu __lastNav hiện tại (Lỗi 2 fix)
+    const oldNav = await page.evaluate(() => (window as any).__lastNav);
+
+    await page.getByTestId('rem-dayalarm').click();
+
+    // Sau bấm: chờ __lastNav thay đổi (không phải cũ)
+    await expect.poll(() => page.evaluate(() => (window as any).__lastNav), { timeout: 5000 })
+      .not.toBe(oldNav);
+
+    await expect(page.locator('.rem-dialog')).not.toBeVisible();
+
+    // __lastNav chứa name=Hen%20Bao%20Thuc
+    await expect.poll(() => getLastNav(page)).toContain('name=Hen%20Bao%20Thuc');
+    const nav7 = (await getLastNav(page))!;
+    expect(nav7).toBeDefined();
+    expect(nav7).toContain('shortcuts://run-shortcut?name=Hen%20Bao%20Thuc&input=text&text=');
+  });
+});
