@@ -1,0 +1,91 @@
+
+Running 6 tests using 4 workers
+
+  ✘  4 [webkit] › tests\e2e\m8-dayalarm.spec.ts:57:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) (4.2s)
+  ✓  3 [chromium] › tests\e2e\m8-dayalarm.spec.ts:57:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) (3.2s)
+  ✓  2 [chromium] › tests\e2e\m8-dayalarm.spec.ts:57:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) (3.2s)
+  ✓  1 [chromium] › tests\e2e\m8-dayalarm.spec.ts:57:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) (3.3s)
+  ✘  5 [webkit] › tests\e2e\m8-dayalarm.spec.ts:57:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) (8.0s)
+  ✘  6 [webkit] › tests\e2e\m8-dayalarm.spec.ts:57:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) (7.8s)
+
+
+  1) [webkit] › tests\e2e\m8-dayalarm.spec.ts:57:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) › Kịch bản 5: Việc Mua sữa (chưa bấm Thêm) → rem-dayalarm 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "Mua sữa"
+    Received: "Họp chiến lược M8"
+
+      237 |     const lines5 = payload5.split('\n');
+      238 |     expect(lines5.length).toBeGreaterThanOrEqual(2);
+    > 239 |     expect(lines5[1]).toBe('Mua sữa');
+          |                       ^
+      240 |     expect(payload5).toBe('6 Oct 2026 08:00\nMua sữa');
+      241 |   });
+      242 |
+        at E:\DuAn\thu-nghiem\tests\e2e\m8-dayalarm.spec.ts:239:23
+        at E:\DuAn\thu-nghiem\tests\e2e\m8-dayalarm.spec.ts:199:3
+
+    Error Context: test-results\m8-dayalarm-T-8-END-luồng--008f4-thức-đúng-ngày-m8-dayalarm--webkit\error-context.md
+
+  2) [webkit] › tests\e2e\m8-dayalarm.spec.ts:57:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) › Kịch bản 2: rem-at = 2026-10-05T23:59 (hôm nay) → rem-dayalarm disabled, rem-status chứa Hôm nay 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator:  getByTestId('rem-at')
+    Expected: "2026-10-05T23:59"
+    Received: "2026-10-06T07:30"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveValue" getByTestId('rem-at') with timeout 5000ms
+      - waiting for getByTestId('rem-at')
+        14 × locator resolved to <input step="60" id="rem-at" data-testid="rem-at" type="datetime-local"/>
+           - unexpected value "2026-10-06T07:30"
+
+
+      133 |
+      134 |     // 3️⃣ XÁC NHẬN giá trị đã set TRƯỚC mọi assert
+    > 135 |     await expect(page.getByTestId('rem-at')).toHaveValue('2026-10-05T23:59');
+          |                                              ^
+      136 |
+      137 |     // 4️⃣ Rồi mới assert nút
+      138 |     await expect(page.getByTestId('rem-dayalarm')).toBeDisabled();
+        at E:\DuAn\thu-nghiem\tests\e2e\m8-dayalarm.spec.ts:135:46
+        at E:\DuAn\thu-nghiem\tests\e2e\m8-dayalarm.spec.ts:120:3
+
+    Error Context: test-results\m8-dayalarm-T-8-END-luồng--008f4-thức-đúng-ngày-m8-dayalarm--webkit-repeat1\error-context.md
+
+  3) [webkit] › tests\e2e\m8-dayalarm.spec.ts:57:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) › Kịch bản 2: rem-at = 2026-10-05T23:59 (hôm nay) → rem-dayalarm disabled, rem-status chứa Hôm nay 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator:  getByTestId('rem-at')
+    Expected: "2026-10-05T23:59"
+    Received: "2026-10-06T07:30"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveValue" getByTestId('rem-at') with timeout 5000ms
+      - waiting for getByTestId('rem-at')
+        14 × locator resolved to <input step="60" id="rem-at" data-testid="rem-at" type="datetime-local"/>
+           - unexpected value "2026-10-06T07:30"
+
+
+      133 |
+      134 |     // 3️⃣ XÁC NHẬN giá trị đã set TRƯỚC mọi assert
+    > 135 |     await expect(page.getByTestId('rem-at')).toHaveValue('2026-10-05T23:59');
+          |                                              ^
+      136 |
+      137 |     // 4️⃣ Rồi mới assert nút
+      138 |     await expect(page.getByTestId('rem-dayalarm')).toBeDisabled();
+        at E:\DuAn\thu-nghiem\tests\e2e\m8-dayalarm.spec.ts:135:46
+        at E:\DuAn\thu-nghiem\tests\e2e\m8-dayalarm.spec.ts:120:3
+
+    Error Context: test-results\m8-dayalarm-T-8-END-luồng--008f4-thức-đúng-ngày-m8-dayalarm--webkit-repeat2\error-context.md
+
+  3 failed
+    [webkit] › tests\e2e\m8-dayalarm.spec.ts:57:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) 
+    [webkit] › tests\e2e\m8-dayalarm.spec.ts:57:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) 
+    [webkit] › tests\e2e\m8-dayalarm.spec.ts:57:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) 
+  3 passed (19.1s)

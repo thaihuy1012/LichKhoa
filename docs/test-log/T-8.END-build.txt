@@ -1,0 +1,30 @@
+
+> lichkhoa@0.1.0 build
+> tsc --noEmit && vite build
+
+[36mvite v8.3.0 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 50 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/registerSW.js                0.13 kB
+dist/manifest.webmanifest         0.29 kB
+dist/index.html                   0.86 kB │ gzip:  0.41 kB
+dist/assets/index-DfI6nB0q.css   14.39 kB │ gzip:  3.53 kB
+dist/assets/index-xUFFdlKJ.js   127.79 kB │ gzip: 40.94 kB
+
+[32m✓ built in 201ms[39m
+
+PWA v1.3.0
+mode      generateSW
+precache  7 entries (139.83 KiB)
+files generated
+  dist/sw.js
+  dist/workbox-9c191d2f.js
+File sizes (gzip):
+  assets\index-xUFFdlKJ.js: 39.71 KB
+  registerSW.js: 0.12 KB
+  sw.js: 0.74 KB
+  workbox-9c191d2f.js: 5.07 KB
+
+Total: 45.64 KB

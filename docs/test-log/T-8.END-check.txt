@@ -1,0 +1,210 @@
+
+> lichkhoa@0.1.0 check
+> tsc --noEmit && npm run test && npm run build && playwright test
+
+
+> lichkhoa@0.1.0 test
+> cross-env TZ=Asia/Ho_Chi_Minh vitest run && cross-env TZ=UTC vitest run
+
+
+ RUN  v5.0.0 E:/DuAn/thu-nghiem
+
+
+ Test Files  24 passed (24)
+      Tests  290 passed (290)
+   Start at  21:58:35
+   Duration  3.18s (transform 51%, import 31%, tests 13%, worker 4%)
+
+  Transform  transforming modules took 4.19s · 51% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+
+
+ RUN  v5.0.0 E:/DuAn/thu-nghiem
+
+
+ Test Files  24 passed (24)
+      Tests  290 passed (290)
+   Start at  14:58:39
+   Duration  2.37s (transform 39%, import 36%, tests 19%, worker 6%)
+
+  Transform  transforming modules took 2.20s · 39% of tracked time, re-done on every run
+             persist transforms across runs with fsModuleCache: true
+             learn more: https://vitest.dev/guide/improving-performance#caching-between-reruns
+
+
+> lichkhoa@0.1.0 build
+> tsc --noEmit && vite build
+
+[36mvite v8.3.0 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 50 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/registerSW.js                0.13 kB
+dist/manifest.webmanifest         0.29 kB
+dist/index.html                   0.86 kB │ gzip:  0.41 kB
+dist/assets/index-DfI6nB0q.css   14.39 kB │ gzip:  3.53 kB
+dist/assets/index-xUFFdlKJ.js   127.79 kB │ gzip: 40.94 kB
+
+[32m✓ built in 195ms[39m
+
+PWA v1.3.0
+mode      generateSW
+precache  7 entries (139.83 KiB)
+files generated
+  dist/sw.js
+  dist/workbox-9c191d2f.js
+
+Running 116 tests using 4 workers
+
+  ✓    3 [chromium] › tests\e2e\design.spec.ts:79:1 › T-4.6: rãnh trượt có màu + nhãn giá trị, mã hex đọc trọn vẹn, swatch chọn có viền (1.2s)
+  ✓    2 [chromium] › tests\e2e\dedup.spec.ts:48:1 › B-003: sự kiện local trùng Google (cùng tên/giờ hôm nay) -> hình nền chỉ còn 1, tab Sự kiện vẫn 2 (1.6s)
+  ✓    5 [chromium] › tests\e2e\design.spec.ts:161:1 › T-4.7 review: định dạng lưu ảnh nền theo nguồn — JPEG giữ JPEG, PNG giữ PNG (626ms)
+  ✓    7 [chromium] › tests\e2e\events.spec.ts:135:3 › iPhone 13 Pro Max (428x926): không cuộn ngang, ev-save trong viewport › tab Sự kiện + sheet mở (379ms)
+  ✓    4 [chromium] › tests\e2e\design.spec.ts:111:1 › T-4.7 #10: PNG trong suốt không lộ nền đen — vẽ trên màu nền đã chọn (2.2s)
+  ✓    8 [chromium] › tests\e2e\events.spec.ts:161:1 › Sự kiện: lặp Thứ Hai đến Thứ Sáu (v1.3) (575ms)
+  ✓    9 [chromium] › tests\e2e\events.spec.ts:217:1 › Sự kiện qua đêm: Kết thúc < Bắt đầu -> mở lại vẫn giữ giờ Kết thúc (T-2.14) (524ms)
+  ✓   10 [chromium] › tests\e2e\events.spec.ts:197:1 › Sự kiện: Nhắc trước -> .ics có VALARM (801ms)
+  ✓    6 [chromium] › tests\e2e\events.spec.ts:44:1 › Sự kiện: thêm/sửa/xóa, xuất .ics, việc cần làm, ghi chú (2.2s)
+  ✓   12 [chromium] › tests\e2e\events.spec.ts:260:1 › Việc cần làm: hạn quá hạn hiện trước việc không hạn (598ms)
+  ✓   13 [chromium] › tests\e2e\events.spec.ts:284:1 › Sự kiện: tab Sự kiện hiện sự kiện Google (chỉ xem, T-4.9) (782ms)
+  ✓   14 [chromium] › tests\e2e\events.spec.ts:352:1 › 428x926: tab Sự kiện với sự kiện Google không cuộn ngang (399ms)
+  ✓   11 [chromium] › tests\e2e\events.spec.ts:230:1 › Việc cần làm: kéo việc có hạn sang nhóm không hạn -> thứ tự không đổi (T-2.14, B-008) (1.4s)
+  ✓   15 [chromium] › tests\e2e\iphone13pm.spec.ts:4:3 › iPhone 13 Pro Max (D-007) › lần đầu mở: preset 1284x2778, không cuộn, vùng chạm/áp dụng >= 16px/44px (734ms)
+  ✓   16 [chromium] › tests\e2e\m1-render.spec.ts:5:1 › M1: chọn thiết bị, xem preview, lưu ảnh, reload giữ trạng thái (1.9s)
+  ✓    1 [chromium] › tests\e2e\design.spec.ts:26:1 › Thiết kế: đổi từng tùy chọn -> preview đổi; chọn ảnh -> boxAlpha 0.35 (8.9s)
+  ✓   20 [chromium] › tests\e2e\m2-i18n.spec.ts:55:1 › T-2.14: đổi en -> nhãn "Thiết bị"/"Tự phát hiện"/"Tùy chỉnh"/"Lưu ảnh" trên Preview đổi theo (320ms)
+  ✓   18 [chromium] › tests\e2e\m2-events.spec.ts:145:1 › Sự kiện lặp Thứ Hai đến Thứ Sáu (v1.3): hiện đúng ngày trên Agenda (4.1s)
+  ✓   22 [chromium] › tests\e2e\m3-google.spec.ts:157:3 › M3 Google Calendar (mock OAuth + REST) › Tự đồng bộ khi mở app với cache cũ (> 30 phút) (855ms)
+  ✓   17 [chromium] › tests\e2e\m2-events.spec.ts:33:1 › M2 luồng chính: sự kiện lặp tuần + nhắc trước, agenda đổi hash, ghi chú ghim, hạn to-do, sao lưu/khôi phục (5.8s)
+  ✓   21 [chromium] › tests\e2e\m3-google.spec.ts:117:3 › M3 Google Calendar (mock OAuth + REST) › Kết nối → tự về tab Đồng bộ → chọn lịch → Đồng bộ ngay → agenda hiện sự kiện → 401 → Kết nối lại (1.4s)
+  ✓   23 [chromium] › tests\e2e\m3-google.spec.ts:179:3 › M3 Google Calendar (mock OAuth + REST) › T-3.4 yêu cầu 1: sự kiện cả ngày 3 ngày → agenda hiện tiêu đề ở cả 3 ngày (762ms)
+  ✓   24 [chromium] › tests\e2e\m3-google.spec.ts:224:1 › offline + reload vẫn hiện sự kiện Google đã đồng bộ (từ cache IndexedDB) (1.1s)
+  ✓   19 [chromium] › tests\e2e\m2-i18n.spec.ts:11:1 › i18n: đổi ngôn ngữ đổi nhãn tab; 12h -> AM/PM trong agenda; tắt âm lịch -> mất dòng Âm lịch (5.1s)
+  ✓   27 [chromium] › tests\e2e\m4-offline.spec.ts:4:1 › offline: sau lần tải đầu, mở lại app vẫn dùng được (343ms)
+  ✓   26 [chromium] › tests\e2e\m4-export.spec.ts:10:3 › M4: ảnh nền + tùy chỉnh -> Sao chép / Đặt hình nền › sau khi chỉnh ảnh nền, Sao chép ghi image/png; Đặt hình nền điều hướng shortcuts:// (2.4s)
+  ✓   28 [chromium] › tests\e2e\m5-week.spec.ts:49:1 › M5 luồng chính: sự kiện + to-do trong tuần -> bố cục Tuần, chip đúng cột, danh sách hôm nay, reload giữ Tuần (3.2s)
+  ✓   30 [chromium] › tests\e2e\m7-reminder.spec.ts:71:1 › T-7.END luồng chính M7: 6 kịch bản nhắc Phím tắt (Báo thức + Lời nhắc) (2.4s)
+  ✓   29 [chromium] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (6.3s)
+  ✓   25 [chromium] › tests\e2e\m4-design.spec.ts:58:1 › M4: ảnh nền -> blur -> mờ -> vị trí -> font, mỗi bước preview đổi và ops trong vùng an toàn (9.1s)
+  ✓   34 [chromium] › tests\e2e\persist-flush.spec.ts:39:1 › pagehide: ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (365ms)
+  ✓   31 [chromium] › tests\e2e\m8-dayalarm.spec.ts:57:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) (5.4s)
+  ✓   33 [chromium] › tests\e2e\notes.spec.ts:58:1 › T-4.10: ghim ghi chú (nt-pin) tự bật công tắc hiện trên hình nền (1.9s)
+  ✓   35 [chromium] › tests\e2e\persist-flush.spec.ts:52:1 › visibilitychange (hidden): ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (419ms)
+  ✓   32 [chromium] › tests\e2e\notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload (5.0s)
+  ✓   38 [chromium] › tests\e2e\share.spec.ts:36:3 › Sao chép + Đặt hình nền (T-4.3) › Sao chép ghi mục image/png vào clipboard (645ms)
+  ✓   39 [chromium] › tests\e2e\share.spec.ts:53:3 › Sao chép + Đặt hình nền (T-4.3) › Đặt hình nền: __lastNav bắt đầu bằng shortcuts://run-shortcut?name=DatHinhNen&input=clipboard (653ms)
+  ✓   40 [chromium] › tests\e2e\share.spec.ts:69:3 › Sao chép + Đặt hình nền (T-4.3) › tên Shortcut có dấu cách/tiếng Việt được encode trong __lastNav (679ms)
+  ✓   41 [chromium] › tests\e2e\share.spec.ts:84:3 › Sao chép + Đặt hình nền (T-4.3) › Đặt hình nền: trạng thái đã được ghi xuống IndexedDB ngay, không chờ debounce 300ms (T-7.6) (639ms)
+  ✓   42 [chromium] › tests\e2e\share.spec.ts:106:3 › Sao chép + Đặt hình nền (T-4.3) › Sao chép thất bại: hiện toast hướng dẫn thay thế, không mở Shortcut (605ms)
+  ✓   43 [chromium] › tests\e2e\smoke.spec.ts:3:1 › trang có manifest và service worker sẵn sàng (337ms)
+  ✓   37 [chromium] › tests\e2e\settings.spec.ts:171:1 › T-4.7 #4: Xóa dữ liệu dọn ảnh nền — chọn lại Ảnh sau đó không hiện ảnh cũ (3.4s)
+  ✓   44 [chromium] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ (1.8s)
+  ✓   36 [chromium] › tests\e2e\settings.spec.ts:59:1 › Preview: chọn bố cục, cài đặt chung, sao lưu (4.4s)
+  ✓   46 [chromium] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất (948ms)
+  ✓   45 [chromium] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên (2.1s)
+  ✓   47 [chromium] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0 (4.1s)
+  ✓   51 [chromium] › tests\e2e\todo-touch.spec.ts:107:1 › Chạm thật (CDP): chạm nút tick/chữ/+Hạn trong hàng vẫn có tác dụng dù ngón tay xê dịch nhẹ (864ms)
+  ✓   48 [chromium] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa (5.1s)
+  ✓   49 [chromium] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) (5.3s)
+  ✓   52 [chromium] › tests\e2e\todo-touch.spec.ts:159:1 › Chạm thật (CDP): giữ nút tick hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn có tác dụng (1.2s)
+  ✓   50 [chromium] › tests\e2e\todo-touch.spec.ts:40:1 › Chạm thật (CDP): nhấn giữ ~600ms rồi kéo dọc đổi thứ tự, hàng nổi/dịch không chồng nhau (6.0s)
+  ✓   56 [chromium] › tests\e2e\todo-touch.spec.ts:381:1 › Chuỗi sự kiện iOS: chạm nút +Hạn xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click) (514ms)
+  ✓   54 [chromium] › tests\e2e\todo-touch.spec.ts:368:1 › Chuỗi sự kiện iOS: pointercancel giữa lúc kéo, touch vẫn tiếp tục rồi touchend -> vẫn đổi thứ tự C,A,B (1.4s)
+  ✓   53 [chromium] › tests\e2e\todo-touch.spec.ts:203:1 › Chạm thật (CDP): giữa lúc kéo, hàng kéo và hàng nhường chỗ đều NHÌN THẤY (không bị cắt mất) (1.9s)
+  ✓   58 [chromium] › tests\e2e\week.spec.ts:87:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px (447ms)
+  ✓   55 [chromium] › tests\e2e\todo-touch.spec.ts:374:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước (1.5s)
+  ✓   57 [chromium] › tests\e2e\week.spec.ts:12:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái (1.4s)
+  ✓   61 [webkit] › tests\e2e\design.spec.ts:79:1 › T-4.6: rãnh trượt có màu + nhãn giá trị, mã hex đọc trọn vẹn, swatch chọn có viền (2.0s)
+  ✓   59 [webkit] › tests\e2e\dedup.spec.ts:48:1 › B-003: sự kiện local trùng Google (cùng tên/giờ hôm nay) -> hình nền chỉ còn 1, tab Sự kiện vẫn 2 (2.4s)
+  ✓   62 [webkit] › tests\e2e\design.spec.ts:111:1 › T-4.7 #10: PNG trong suốt không lộ nền đen — vẽ trên màu nền đã chọn (3.0s)
+  ✓   63 [webkit] › tests\e2e\design.spec.ts:161:1 › T-4.7 review: định dạng lưu ảnh nền theo nguồn — JPEG giữ JPEG, PNG giữ PNG (2.2s)
+  ✓   65 [webkit] › tests\e2e\events.spec.ts:135:3 › iPhone 13 Pro Max (428x926): không cuộn ngang, ev-save trong viewport › tab Sự kiện + sheet mở (1.4s)
+  ✓   66 [webkit] › tests\e2e\events.spec.ts:161:1 › Sự kiện: lặp Thứ Hai đến Thứ Sáu (v1.3) (2.0s)
+  ✓   67 [webkit] › tests\e2e\events.spec.ts:197:1 › Sự kiện: Nhắc trước -> .ics có VALARM (2.1s)
+  ✓   64 [webkit] › tests\e2e\events.spec.ts:44:1 › Sự kiện: thêm/sửa/xóa, xuất .ics, việc cần làm, ghi chú (5.1s)
+  ✓   68 [webkit] › tests\e2e\events.spec.ts:217:1 › Sự kiện qua đêm: Kết thúc < Bắt đầu -> mở lại vẫn giữ giờ Kết thúc (T-2.14) (1.9s)
+  ✓   70 [webkit] › tests\e2e\events.spec.ts:260:1 › Việc cần làm: hạn quá hạn hiện trước việc không hạn (1.6s)
+  ✓   60 [webkit] › tests\e2e\design.spec.ts:26:1 › Thiết kế: đổi từng tùy chọn -> preview đổi; chọn ảnh -> boxAlpha 0.35 (9.2s)
+  ✓   69 [webkit] › tests\e2e\events.spec.ts:230:1 › Việc cần làm: kéo việc có hạn sang nhóm không hạn -> thứ tự không đổi (T-2.14, B-008) (2.4s)
+  ✓   72 [webkit] › tests\e2e\events.spec.ts:352:1 › 428x926: tab Sự kiện với sự kiện Google không cuộn ngang (986ms)
+  ✓   71 [webkit] › tests\e2e\events.spec.ts:284:1 › Sự kiện: tab Sự kiện hiện sự kiện Google (chỉ xem, T-4.9) (1.9s)
+  ✓   73 [webkit] › tests\e2e\iphone13pm.spec.ts:4:3 › iPhone 13 Pro Max (D-007) › lần đầu mở: preset 1284x2778, không cuộn, vùng chạm/áp dụng >= 16px/44px (1.4s)
+  ✓   74 [webkit] › tests\e2e\m1-render.spec.ts:5:1 › M1: chọn thiết bị, xem preview, lưu ảnh, reload giữ trạng thái (2.6s)
+  ✓   76 [webkit] › tests\e2e\m2-events.spec.ts:145:1 › Sự kiện lặp Thứ Hai đến Thứ Sáu (v1.3): hiện đúng ngày trên Agenda (2.2s)
+  ✓   78 [webkit] › tests\e2e\m2-i18n.spec.ts:55:1 › T-2.14: đổi en -> nhãn "Thiết bị"/"Tự phát hiện"/"Tùy chỉnh"/"Lưu ảnh" trên Preview đổi theo (1.2s)
+  ✓   80 [webkit] › tests\e2e\m3-google.spec.ts:157:3 › M3 Google Calendar (mock OAuth + REST) › Tự đồng bộ khi mở app với cache cũ (> 30 phút) (1.5s)
+  ✓   77 [webkit] › tests\e2e\m2-i18n.spec.ts:11:1 › i18n: đổi ngôn ngữ đổi nhãn tab; 12h -> AM/PM trong agenda; tắt âm lịch -> mất dòng Âm lịch (5.2s)
+  ✓   81 [webkit] › tests\e2e\m3-google.spec.ts:179:3 › M3 Google Calendar (mock OAuth + REST) › T-3.4 yêu cầu 1: sự kiện cả ngày 3 ngày → agenda hiện tiêu đề ở cả 3 ngày (1.2s)
+  ✓   79 [webkit] › tests\e2e\m3-google.spec.ts:117:3 › M3 Google Calendar (mock OAuth + REST) › Kết nối → tự về tab Đồng bộ → chọn lịch → Đồng bộ ngay → agenda hiện sự kiện → 401 → Kết nối lại (3.8s)
+  -   84 [webkit] › tests\e2e\m4-export.spec.ts:10:3 › M4: ảnh nền + tùy chỉnh -> Sao chép / Đặt hình nền › sau khi chỉnh ảnh nền, Sao chép ghi image/png; Đặt hình nền điều hướng shortcuts://
+  -   82 [webkit] › tests\e2e\m3-google.spec.ts:224:1 › offline + reload vẫn hiện sự kiện Google đã đồng bộ (từ cache IndexedDB)
+  -   85 [webkit] › tests\e2e\m4-offline.spec.ts:4:1 › offline: sau lần tải đầu, mở lại app vẫn dùng được
+  ✓   75 [webkit] › tests\e2e\m2-events.spec.ts:33:1 › M2 luồng chính: sự kiện lặp tuần + nhắc trước, agenda đổi hash, ghi chú ghim, hạn to-do, sao lưu/khôi phục (8.7s)
+  ✓   86 [webkit] › tests\e2e\m5-week.spec.ts:49:1 › M5 luồng chính: sự kiện + to-do trong tuần -> bố cục Tuần, chip đúng cột, danh sách hôm nay, reload giữ Tuần (4.7s)
+  ✓   83 [webkit] › tests\e2e\m4-design.spec.ts:58:1 › M4: ảnh nền -> blur -> mờ -> vị trí -> font, mỗi bước preview đổi và ops trong vùng an toàn (8.6s)
+  ✓   88 [webkit] › tests\e2e\m7-reminder.spec.ts:71:1 › T-7.END luồng chính M7: 6 kịch bản nhắc Phím tắt (Báo thức + Lời nhắc) (6.7s)
+  ✓   87 [webkit] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (9.0s)
+  ✓   92 [webkit] › tests\e2e\persist-flush.spec.ts:39:1 › pagehide: ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (1.3s)
+  ✓   91 [webkit] › tests\e2e\notes.spec.ts:58:1 › T-4.10: ghim ghi chú (nt-pin) tự bật công tắc hiện trên hình nền (2.6s)
+  ✓   90 [webkit] › tests\e2e\notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload (3.6s)
+  ✓   93 [webkit] › tests\e2e\persist-flush.spec.ts:52:1 › visibilitychange (hidden): ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (1.3s)
+  -   96 [webkit] › tests\e2e\share.spec.ts:36:3 › Sao chép + Đặt hình nền (T-4.3) › Sao chép ghi mục image/png vào clipboard
+  -   97 [webkit] › tests\e2e\share.spec.ts:53:3 › Sao chép + Đặt hình nền (T-4.3) › Đặt hình nền: __lastNav bắt đầu bằng shortcuts://run-shortcut?name=DatHinhNen&input=clipboard
+  -   98 [webkit] › tests\e2e\share.spec.ts:69:3 › Sao chép + Đặt hình nền (T-4.3) › tên Shortcut có dấu cách/tiếng Việt được encode trong __lastNav
+  ✘   89 [webkit] › tests\e2e\m8-dayalarm.spec.ts:57:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) (7.7s)
+  -   99 [webkit] › tests\e2e\share.spec.ts:84:3 › Sao chép + Đặt hình nền (T-4.3) › Đặt hình nền: trạng thái đã được ghi xuống IndexedDB ngay, không chờ debounce 300ms (T-7.6)
+  ✓  100 [webkit] › tests\e2e\smoke.spec.ts:3:1 › trang có manifest và service worker sẵn sàng (612ms)
+  ✓  102 [webkit] › tests\e2e\share.spec.ts:106:3 › Sao chép + Đặt hình nền (T-4.3) › Sao chép thất bại: hiện toast hướng dẫn thay thế, không mở Shortcut (1.2s)
+  ✓   95 [webkit] › tests\e2e\settings.spec.ts:171:1 › T-4.7 #4: Xóa dữ liệu dọn ảnh nền — chọn lại Ảnh sau đó không hiện ảnh cũ (5.6s)
+  ✓  101 [webkit] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ (3.8s)
+  ✓  104 [webkit] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất (1.9s)
+  ✓  105 [webkit] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0 (1.5s)
+  ✓   94 [webkit] › tests\e2e\settings.spec.ts:59:1 › Preview: chọn bố cục, cài đặt chung, sao lưu (8.5s)
+  -  108 [webkit] › tests\e2e\todo-touch.spec.ts:40:1 › Chạm thật (CDP): nhấn giữ ~600ms rồi kéo dọc đổi thứ tự, hàng nổi/dịch không chồng nhau
+  -  109 [webkit] › tests\e2e\todo-touch.spec.ts:107:1 › Chạm thật (CDP): chạm nút tick/chữ/+Hạn trong hàng vẫn có tác dụng dù ngón tay xê dịch nhẹ
+  ✓  103 [webkit] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên (3.9s)
+  -  110 [webkit] › tests\e2e\todo-touch.spec.ts:159:1 › Chạm thật (CDP): giữ nút tick hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn có tác dụng
+  -  111 [webkit] › tests\e2e\todo-touch.spec.ts:203:1 › Chạm thật (CDP): giữa lúc kéo, hàng kéo và hàng nhường chỗ đều NHÌN THẤY (không bị cắt mất)
+  ✓  106 [webkit] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa (2.7s)
+  -  112 [webkit] › tests\e2e\todo-touch.spec.ts:368:1 › Chuỗi sự kiện iOS: pointercancel giữa lúc kéo, touch vẫn tiếp tục rồi touchend -> vẫn đổi thứ tự C,A,B
+  -  113 [webkit] › tests\e2e\todo-touch.spec.ts:374:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước
+  ✓  107 [webkit] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) (2.8s)
+  ✓  116 [webkit] › tests\e2e\week.spec.ts:87:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px (935ms)
+  -  114 [webkit] › tests\e2e\todo-touch.spec.ts:381:1 › Chuỗi sự kiện iOS: chạm nút +Hạn xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click)
+  ✓  115 [webkit] › tests\e2e\week.spec.ts:12:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái (2.2s)
+
+
+  1) [webkit] › tests\e2e\m8-dayalarm.spec.ts:57:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) › Kịch bản 2: rem-at = 2026-10-05T23:59 (hôm nay) → rem-dayalarm disabled, rem-status chứa Hôm nay 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator:  getByTestId('rem-at')
+    Expected: "2026-10-05T23:59"
+    Received: "2026-10-06T07:30"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveValue" getByTestId('rem-at') with timeout 5000ms
+      - waiting for getByTestId('rem-at')
+        14 × locator resolved to <input step="60" id="rem-at" data-testid="rem-at" type="datetime-local"/>
+           - unexpected value "2026-10-06T07:30"
+
+
+      133 |
+      134 |     // 3️⃣ XÁC NHẬN giá trị đã set TRƯỚC mọi assert
+    > 135 |     await expect(page.getByTestId('rem-at')).toHaveValue('2026-10-05T23:59');
+          |                                              ^
+      136 |
+      137 |     // 4️⃣ Rồi mới assert nút
+      138 |     await expect(page.getByTestId('rem-dayalarm')).toBeDisabled();
+        at E:\DuAn\thu-nghiem\tests\e2e\m8-dayalarm.spec.ts:135:46
+        at E:\DuAn\thu-nghiem\tests\e2e\m8-dayalarm.spec.ts:120:3
+
+    Error Context: test-results\m8-dayalarm-T-8-END-luồng--008f4-thức-đúng-ngày-m8-dayalarm--webkit\error-context.md
+
+  1 failed
+    [webkit] › tests\e2e\m8-dayalarm.spec.ts:57:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) 
+  14 skipped
+  101 passed (1.4m)
