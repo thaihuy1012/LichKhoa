@@ -6,6 +6,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 ## Tiến độ
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 12/12 ✔ tag `M4-ok` (D-021 — DUYỆT M4 + nghiệm thu cuối, gộp)
 - **M5 (SPEC v1.5, D-024) — Bố cục Tuần giống Inks: 4/4 ✔ tag `M5-ok`** (D-025 — Kiến trúc sư DUYỆT sau soát chéo Gemini). Máy thật (Chủ dự án 2026-09-15): chữ chip đọc được ✔, "◷" hiện đúng ✔ → T-5.4 không cần gấp (chỉ còn S4 dọn code). Chủ dự án yêu cầu thêm (D-026, SPEC v1.6): bấm đúp mở Google Calendar → KHÔNG làm (OUT); sự kiện trùng local/Google → B-003 ✔ DONE (chờ Chủ dự án `git push`). Chủ dự án: "xử lý tồn đọng cho xong" → T-5.4 ✔, B-004 ✔ → **HẾT TỒN ĐỌNG**. Chủ dự án `git push` (a173446..bcb4c15) → Actions run 34922820757 success, trang 200. Sau đó Chủ dự án báo: 2 sự kiện trùng trong app vẫn hiện cả 2 → D-027 ẩn trùng mọi nguồn → B-005 ✔ DONE. Chủ dự án `git push` (bcb4c15..3ef433a) → Actions run 34923759379 success, trang 200. Dự án ĐÓNG lại (D-022).
+- **M7 (SPEC v1.8, D-031) — Nhắc trên iPhone qua Phím tắt: 0/5** (T-7.1 … T-7.END) · Chủ dự án DUYỆT SPEC v1.8 ngày 2026-09-19 (cả hai nút Báo thức + Lời nhắc, hỏi giờ mỗi lần + "Không báo thức", ghi chú chọn giờ tại nút, Chủ dự án tự cài 2 Phím tắt). Dự án MỞ LẠI từ trạng thái ĐÓNG (D-022). Làn Gemini chưa bật trong phiên này.
 - **M6 (SPEC v1.7, D-028) — Cử chỉ danh sách Việc cần làm: 3/3 ✔** (T-6.1, T-6.2, T-6.END) + B-006 ✔ (Gemini). Soát chéo `M6-soat` xong (lượt 1 tho-gemini tự soát thay Gemini → bỏ, giao lại; lượt 2 Gemini Pro 10 điểm) → T-6.3 ✔ sửa lỗi thật → Kiến trúc sư DUYỆT (D-029) → tag `M6-ok`. Deploy OK: Chủ dự án `git push` (3ef433a..c9f7b82) → Actions run 34933678053 success, trang 200. Tag `M6-ok` đã lên GitHub. Chủ dự án thử iPhone: vuốt ✔, Xóa/Lưu trữ ✔, nhấn giữ kéo ✘ + nút ▲▼× không bấm được → SỰ CỐ SC-002 (S2) / B-007 ✔ (Chủ dự án xác nhận iPhone 3/3, SC-002 ĐÃ ĐÓNG) → B-008 ✔ bỏ nút ▲▼×. Deploy c318e19 OK (run 34947329366, trang 200). Chủ dự án xác nhận trên iPhone: "Tất cả đã ổn" (2026-09-15) → dự án ĐÓNG (D-022); mở lại khi Chủ dự án yêu cầu. Tồn đọng S4 còn: mục "S4 · M6 (D-029)". → rồi B-008 bỏ nút ▲▼×. Thứ tự 6.1 → 6.2 → 6.END → soát chéo `M6-soat` → Kiến trúc sư duyệt → tag `M6-ok`. Xem mục "M6" cuối file. Không phiếu nào đủ điều kiện Gemini (6.1 đổi hợp đồng; 6.2 cử chỉ cần cảm giác máy thật; 6.END sonnet). Deploy OK: Chủ dự án `git push` (6fec4b5..a173446) → Actions run 34919243300 success, trang 200, JS có `layout-week`. Tag `M5-ok` đã lên GitHub. Chờ Chủ dự án xem trên iPhone 2 ý: (1) chữ chip (~7–8 pt) đọc được không; (2) biểu tượng ◷ có hiện không. Sau đó → phiếu T-5.4 (tồn đọng D-025) nếu cần. Thứ tự 5.1 → 5.2 → 5.3 → 5.END → ảnh mẫu cho Chủ dự án → soát chéo Gemini `M5-soat` → Kiến trúc sư duyệt M5 → tag `M5-ok`. Xem mục "M5" cuối file. Làn Gemini: BẬT mức NHIỀU ở checkout chính (không chạy trong worktree — BAI-HOC); T-5.3 đủ điều kiện → tho-gemini.
 - 2026-09-15: ĐỢT BẢO TRÌ D-023 XONG (B-001, B-002) — Quản lý phiên chính dọn rác Gemini ở checkout chính, `merge --ff-only` nhánh worktree → `main` 6fec4b5, `npm run check` pass (211×2 unit, 64 e2e, 6 skip có từ trước). Chủ dự án `git push` (e954b16..6fec4b5) → Actions run 34911429434 success, trang 200, CSS `.color-input` mới đã lên. Chờ Chủ dự án xem ô màu trên iPhone. Dự án trở lại trạng thái ĐÓNG (D-022).
 - Trước đó (2026-09-15): ĐỢT BẢO TRÌ D-023 — B-001 (Gemini) → B-002 (sonnet). Xem mục "Bảo trì 2026-09-15" cuối file.
@@ -843,3 +844,73 @@ Chủ dự án thử D-029: (1) vuốt trái ✔; (3) Xóa/Hoàn tác, Lưu tr�
 - Lệnh kiểm tra: `npx playwright test tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts tests/e2e/events.spec.ts --repeat-each=3; npm run check`
 - Nhật ký: 2026-09-15 lượt 1: DONE (bỏ 3 nút + import thừa; CSS/i18n không cần đổi; test khóa đổi đúng chỗ đã khai: events.spec L104 kéo thay ▼, L222–243 "kéo khác nhóm không đổi"; todo-touch chạm/giữ áp cho toggle/edit/due-label) → kiem-thu PASS (111/0 fail ×3; unit 252×2; e2e 97/13 skip; grep rỗng) → review ảnh B-008-sau.png đạt → commit.
 - Model: sonnet (sửa test khóa → không giao Gemini) · Lần thử: 0/3 · Trạng thái: DONE
+
+---
+
+## M7 — Nhắc trên iPhone qua Phím tắt (SPEC v1.8, D-031)
+Đọc trước khi làm: `docs/SPEC.md` §3 IN-11 (L28–32), §5 hợp đồng (L62–63, L75, L134–14x), §6 M7 (L203–212), §8.10 rủi ro. Tiêu chí nghiệm thu milestone nằm ở §6 M7 — phiếu dưới đây chỉ chia việc, không thay thế SPEC.
+Chung cho mọi phiếu M7: không sửa/skip test khóa M1–M6 (ngoại lệ duy nhất được phép: thêm 2 trường tên Phím tắt vào fixture/`defaultState`, phải khai báo trong báo cáo). Máy dev không mở được `shortcuts://` → kiểm bằng `window.__lastNav`.
+
+### T-7.1 — Lõi thuần: reminder.ts + shortcutUrl/openShortcut + 2 tên Phím tắt trong state
+- Mục tiêu: dựng toàn bộ phần thuần (không UI) của IN-11 theo hợp đồng §5, có unit test phủ đủ.
+- Phạm vi file (chỉ được sửa): `src/export/reminder.ts` (mới), `src/export/share.ts`, `src/core/model.ts`, `src/ui/store.ts`, `tests/unit/reminder.test.ts` (mới), `tests/unit/share-url.test.ts` (mới), `tests/unit/model.test.ts`, `tests/unit/store.test.ts`, `tests/unit/backup.test.ts`, `tests/fixtures/**`.
+- Giao diện / đầu vào có sẵn: chữ ký hàm ở SPEC §5 L134–14x (`shortcutUrl`, `openShortcut(name, text?)`, `defaultReminderAt`, `reminderWindow`, `reminderText`). Mọi hàm trong `reminder.ts` nhận `now` làm tham số, KHÔNG đọc `Date.now()`. `openShortcut(name)` (1 tham số) phải giữ nguyên hành vi cũ (`input=clipboard`) — IN-6 đang dùng.
+- Tiêu chí nghiệm thu:
+  [ ] Đủ 2 ô dấu đầu dòng unit ở SPEC §6 M7 (`reminder.test.ts`, `share-url.test.ts`, `model.test.ts`, `backup.test.ts`, `store.test.ts`) — chép đúng từng trường hợp trong SPEC, không tự bịa giá trị khác.
+  [ ] `AppState.alarmShortcutName`/`reminderShortcutName` mặc định `ThemBaoThuc`/`ThemLoiNhac`; `normalizeState` bù khi thiếu/rỗng/không phải chuỗi; JSON sao lưu vẫn `version: 1`.
+  [ ] `?test=1` → `openShortcut` ghi `window.__lastNav` thay vì điều hướng thật (không đổi hành vi ngoài test).
+  [ ] `npm run check` pass; unit pass ở cả 2 múi giờ (script `test` đã chạy 2 lần).
+- Lệnh kiểm tra: `npm run check`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+
+### T-7.2 — ReminderDialog + gắn vào form Sự kiện + 2 ô tên ở tab Xem trước
+- Mục tiêu: hộp thoại chọn thời điểm dùng chung theo IN-11 (SPEC L30, L32), dùng thật ở Sheet sửa/thêm sự kiện.
+- Phạm vi file (chỉ được sửa): `src/ui/components/ReminderDialog.tsx` (mới), `src/ui/screens/events/EventsTab.tsx`, `src/ui/screens/Preview.tsx`, `src/i18n/vi.json`, `src/i18n/en.json`, `src/styles.css` (hoặc file CSS tương đương đang dùng).
+- Giao diện / đầu vào có sẵn: `export/reminder.ts` từ T-7.1 (đã DONE); `Sheet`/`Toast` có sẵn; testid bắt buộc: `rem-open`, `rem-at`, `rem-alarm`, `rem-reminder`, `rem-none`, `shortcut-alarm-name`, `shortcut-reminder-name`.
+- Tiêu chí nghiệm thu:
+  [ ] Đúng SPEC L30: `<input type="datetime-local" step="60">` mặc định = `defaultReminderAt`; dòng trạng thái theo `reminderWindow`; đã qua → vô hiệu cả `rem-alarm` + `rem-reminder`; > 24 h → chỉ `rem-alarm` vô hiệu, kèm chữ gợi ý dùng Lời nhắc.
+  [ ] Đúng SPEC L32: bấm `rem-alarm`/`rem-reminder` → LƯU form trước (add/update sự kiện) rồi `openShortcut(tên, reminderText(...))`, đóng hộp + Sheet, toast "Đã mở Phím tắt <tên>"; lưu thất bại → không điều hướng. `rem-none` → chỉ đóng hộp, không điều hướng, không lưu thêm gì ngoài hành vi form cũ.
+  [ ] `rem-open` vô hiệu khi form chưa hợp lệ (thiếu tiêu đề).
+  [ ] Tab Xem trước có 2 ô nhập tên Phím tắt, lưu qua action T-7.1, reload giữ nguyên.
+  [ ] Mọi chữ mới qua `t()`, có đủ khóa ở cả `vi.json` và `en.json`; vùng chạm nút ≥ 44 px (iPhone 13 Pro Max).
+  [ ] `npm run check` pass.
+- Lệnh kiểm tra: `npm run check`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+
+### T-7.3 — Gắn ReminderDialog vào form Việc và form Ghi chú
+- Mục tiêu: nút "Nhắc trên iPhone" hoạt động ở hàng nhập Việc và Sheet Ghi chú.
+- Phạm vi file (chỉ được sửa): `src/ui/screens/events/TodosTab.tsx`, `src/ui/screens/events/NoteTab.tsx`, `src/i18n/vi.json`, `src/i18n/en.json`.
+- Giao diện / đầu vào có sẵn: `ReminderDialog` từ T-7.2 (dùng lại, KHÔNG viết bản thứ hai); `defaultReminderAt`/`reminderText` xử lý sẵn ba loại (sự kiện / việc / ghi chú).
+- Tiêu chí nghiệm thu:
+  [ ] Việc: `rem-open` vô hiệu khi ô nhập rỗng; chọn thời điểm → bấm gửi → `addTodo` chạy trước (việc xuất hiện trong danh sách, ô nhập rỗng) rồi mới mở Phím tắt; mặc định thời điểm = hạn lúc 08:00, không hạn → giờ tròn kế tiếp.
+  [ ] Ghi chú: `rem-open` vô hiệu khi ghi chú trống; gửi → add/update ghi chú trước rồi mở Phím tắt; payload 3 dòng (thời điểm / tiêu đề ≤ 100 / nội dung ≤ 200, không chứa xuống dòng).
+  [ ] Không đụng cử chỉ vuốt / nhấn giữ kéo của M6: `npx playwright test tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts` pass như cũ.
+  [ ] `npm run check` pass.
+- Lệnh kiểm tra: `npx playwright test tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts; npm run check`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+
+### T-7.4 — Hướng dẫn cài 2 Phím tắt (docs + màn Guide)
+- Mục tiêu: Chủ dự án tự cài được 2 Phím tắt mà không cần hỏi lại.
+- Phạm vi file (chỉ được sửa): `docs/HUONG-DAN.md`, `src/ui/screens/Guide.tsx`, `src/i18n/vi.json`, `src/i18n/en.json`.
+- Giao diện / đầu vào có sẵn: tên mặc định `ThemBaoThuc` / `ThemLoiNhac`; payload = 2–3 dòng ngăn bằng xuống dòng, dòng 1 `YYYY-MM-DD HH:mm`; chuỗi hành động Phím tắt: Split Text (Custom = xuống dòng) → Get Dates from Input → Create Alarm / Add New Reminder.
+- Tiêu chí nghiệm thu:
+  [ ] `docs/HUONG-DAN.md` có mục `## E.`: từng bước tạo 2 Phím tắt (đặt đúng tên, thứ tự hành động, chỗ dễ sai), cách bật "Nhạy cảm thời gian" (Cài đặt → Thông báo → Lời nhắc), và phần "Nếu không chạy" ứng với SPEC §8.10(c)(d).
+  [ ] `Select-String -Path docs/HUONG-DAN.md -Pattern 'ThemBaoThuc|ThemLoiNhac|Create Alarm|Add New Reminder|Split Text'` ≥ 5 dòng.
+  [ ] Màn Guide có thẻ Hướng dẫn 7 dùng khóa `guide.reminderTitle` / `guide.reminderBody`, có cả `vi.json` và `en.json`.
+  [ ] `npm run check` pass.
+- Lệnh kiểm tra: `npm run check`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+
+### T-7.END — Kiểm thử tích hợp M7
+- Mục tiêu: E2E luồng chính M7 theo đúng 6 kịch bản ở SPEC §6 M7 (ô dấu đầu dòng E2E).
+- Phạm vi file (chỉ được sửa): `tests/e2e/m7-reminder.spec.ts` (mới). Lỗi phát hiện ở file nguồn → báo cáo, KHÔNG tự sửa ngoài phạm vi.
+- Giao diện / đầu vào có sẵn: `?test=1` + `window.__lastNav`; projects chromium + webkit; thời điểm tính từ `new Date()` trong test, không cắm cứng ngày.
+- Tiêu chí nghiệm thu:
+  [ ] Đủ 6 kịch bản (1)–(6) trong SPEC §6 M7, pass trên cả chromium và webkit; payload so sánh sau khi giải mã tham số `text=`.
+  [ ] `npm run check` pass; không sửa file nguồn, không sửa test cũ.
+- Lệnh kiểm tra: `npx playwright test tests/e2e/m7-reminder.spec.ts; npm run check`
+- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+
+### Sau T-7.END
+- Kiến trúc sư DUYỆT M7 (`docs/bao-cao/M7.md`) → tag `M7-ok` → Chủ dự án `git push` (Quản lý không push được) → Chủ dự án cài 2 Phím tắt theo HUONG-DAN §E và thử tay A–F trên iPhone.
+- Làn Gemini: phiên 2026-09-19 Chủ dự án chưa bật lại → mọi phiếu M7 giao thợ Claude; không soát chéo Gemini cuối M7 trừ khi Chủ dự án bật.
