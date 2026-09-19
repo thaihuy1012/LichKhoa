@@ -29,3 +29,8 @@
 - Chuyện gì: viết `docs/test-log/bao-mat-<commit>.log` để ghi kết quả kiểm toán, trong đó chép thẳng email thật của Chủ dự án vào phần "phát hiện". Kho là kho CÔNG KHAI → chính báo cáo bảo mật lại làm lộ thêm một bản sao PII. Cổng bảo mật trước push bắt được (nhóm 3 — PII trong diff).
 - Bài học: **tài liệu mô tả sự cố lộ dữ liệu không được chép lại dữ liệu đã lộ**. Ghi loại dữ liệu và nơi chứa, không ghi giá trị thật. Áp dụng cho mọi báo cáo, log test, ảnh chụp, phiếu giao việc.
 - Đã sửa: che thành `<email cá nhân của Chủ dự án — đã che, xem git config>` trước khi push.
+
+## 2026-09-19 · Quản lý `git add -A` trong lúc thợ đang sửa → gộp nhầm file vào commit khác
+- Chuyện gì: đang có thợ chạy nền sửa `src/ui/*` và i18n, Quản lý commit sổ sách bằng `git add -A` → 2 file i18n của thợ bị cuốn vào commit `36b1f42` (sổ sách, không liên quan). Nội dung không hỏng nhưng lịch sử lẫn lộn, khó lùi từng phiếu. Lần thứ hai mắc lỗi này trong phiên (lần đầu ở T-7.1).
+- Bài học: **khi còn thợ chạy nền, Quản lý chỉ được `git add <đường dẫn cụ thể>`, cấm `git add -A` / `git add .`**. Muốn commit sổ sách thì add đúng `docs/...`. `git add -A` chỉ dùng khi không có thợ nào đang chạy (kiểm bằng danh sách agent đang chạy, không đoán).
+- Ghi nhận: thợ B-010 tự phát hiện và báo lại — đúng tinh thần "ai thấy bất thường thì nêu".
