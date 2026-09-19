@@ -23,31 +23,26 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - 2026-09-15: Chủ dự án bật làn Gemini **v2 mức NHIỀU** (kit v2.1, `tho-gemini`). `agy-run.sh kiem-tra` → SẴN SÀNG (agy 1.2.2; code `gemini-3.8-flash-high`, soat/doc `gemini-3.1-pro-high`, sinh `gemini-3.8-flash-low`). Dự án vẫn ĐÓNG (D-022) → hỏi Chủ dự án việc tiếp theo.
 
 
-## ĐIỂM DỪNG PHIÊN 2026-09-19 (đọc mục này đầu tiên ở phiên sau)
+## ĐIỂM DỪNG PHIÊN 2026-09-20 (đọc mục này đầu tiên ở phiên sau)
 
-**Trạng thái**: SC-003 **ĐÃ ĐÓNG** (2026-09-19, Chủ dự án tạo được lời nhắc mục B). Làn Gemini mở lại. Thử tay M7 (2026-09-19): B ✔, B′ ✔, C ✔ (Việc + Ghi chú; Ghi chú nằm ở tab Sự kiện, không phải Xem trước). E ✔ (sau khi thêm Lời nhắc vào Ứng dụng được phép + bật Nhạy cảm thời gian trong chế độ Tập trung — ghi HUONG-DAN §E bước 5). **M7 ĐÓNG** (thử tay A–F, B′ đạt). B-014 ✔. **M8 xong 4/4** — Kiến trúc sư DUYỆT bằng lệnh (D-035); tag `M8-ok` chờ Chủ dự án thử tay G1–G5 (sau deploy). B-011 → **M9 (SPEC v1.10, D-035)** Chủ dự án duyệt, đang làm. Deploy M8+M9 gộp một lần (qua Cổng bảo mật). **Deploy 2026-09-20 OK**: Chủ dự án `git push` (a4bca49..2735ed4) → Actions success, trang 200, bản `index-BLKpwWNR.js` có `rem-dayalarm`/`todo-due-time`/`ThemBaoThucNgay`. Kiểm toán `docs/test-log/bao-mat-1e58dfe.log`. **Chờ Chủ dự án thử tay G1–G5 (M8 → tag `M8-ok`) và H1–H4 (M9).**
-**Git**: cây sạch; **4 commit chưa push** (B-013 + sổ sách). Chủ dự án tự chạy `git push` khi muốn deploy — cổng bảo mật PHẢI chạy lại trước khi đề nghị push (CLAUDE.md).
-**Nhánh phụ còn sót**: `backup-truoc-go-anh` (sao lưu trước khi gỡ ảnh khỏi lịch sử) — giữ tới khi Chủ dự án yên tâm, rồi xoá.
-**Làn Gemini**: BẬT mức NHIỀU nhưng **đang tạm dừng** vì sự cố S2 mở. Mở lại khi đóng SC-003.
+**Trạng thái**: KHÔNG có sự cố mở (SC-003, SC-004 đã đóng). Cây git sạch, `main` = `origin/main` (đã push, deploy OK — bản `index-BLKpwWNR.js`).
+**Milestone**: M7 ĐÓNG (thử tay A–F, B′ đạt). M8 xong 4/4, Kiến trúc sư DUYỆT bằng lệnh — **tag `M8-ok` CHƯA gắn, chờ thử tay G1–G5**. M9 xong (T-9.1…T-9.4), tag `M9-ok` đã gắn (theo phán quyết Kiến trúc sư) — thử tay H1–H4 là điều kiện đóng.
+**Làn Gemini**: BẬT mức NHIỀU (sự cố đã đóng). Lỗi làn phiên này: 1 lần TRỐNG (T-8.3). Sau mỗi lượt `tho-gemini` phải kiểm có `docs/tasks/<mã>.md` + `docs/gemini-out/<mã>.md` (BAI-HOC: người liên lạc từng tự viết code T-9.END).
+**Nhánh phụ còn sót**: `backup-truoc-go-anh` — giữ tới khi Chủ dự án yên tâm, rồi xoá.
 
-### Việc đang dở — SC-003 (lời nhắc iPhone không tạo được)
-Đã loại trừ: (a) kiểu Alert — menu chỉ có `Alert`/`No Alert`, không có loại theo vị trí; (b) định dạng ngày — Chủ dự án kiểm Quick Look, app gửi đúng `23 Sep 2026 08:00` (B-012 đã sửa, đã deploy).
-Nguyên nhân thật: hành động `Add New Reminder` trên iOS 18 có ô **`At Time` để TRỐNG** → iOS quay sang đòi vị trí.
-**Bước Chủ dự án đang làm dở** (hướng dẫn đã gửi, chưa có kết quả): chạm ô trống sau `At Time` → chọn **Select Variable** → chạm vào hành động `Get Item at Index 1 from Dates`; kiểm biến ngay sau `Add` phải là kết quả của `Get Item at Index 2 from Split Text` (tiêu đề). Lưu ý: **chạm giữ biến KHÔNG có mục Rename** trên máy Chủ dự án → phải dùng `Select Variable`.
-**Phiên sau hỏi ngay**: "Mục B đã tạo được lời nhắc chưa?"
-- Nếu RỒI → đóng SC-003; mở phiếu viết lại `docs/HUONG-DAN.md` mục E cho khớp giao diện iOS 18 thật (có ô `At Time`, dùng `Select Variable`, bỏ mô tả "No Alert" cũ); rồi thử lại mục E (Tập trung) — nghi cần đặt cờ Time Sensitive cho từng lời nhắc, không chỉ bật trong Cài đặt.
-- Nếu CHƯA → dừng đường Lời nhắc, trình Chủ dự án hướng thay thế: app tạo **sự kiện lịch có cảnh báo** thay cho lời nhắc (đổi SPEC → Kiến trúc sư + Chủ dự án duyệt).
+### Phiên sau hỏi ngay Chủ dự án
+1. Kết quả thử tay **M9 H1–H4** (SPEC §6 M9 cuối mục): hàng nhập không tràn ở iPhone thật; nhãn/hình nền có giờ; đổi giờ → thứ tự đổi; "Nhắc trên iPhone" lấy đúng giờ; sao lưu/khôi phục giữ giờ. Ghi `docs/bao-cao/M9.md`.
+2. Kết quả thử tay **M8 G1–G5** (SPEC §6 M8 dòng ~233; HUONG-DAN §E.3). Làm G1 trước. HUONG-DAN §E.3 viết theo SPEC, chưa theo ảnh máy thật → dự kiến phải chỉnh theo ảnh chụp (bài học SC-003: xin ảnh ngay). Điểm nghi: bộ lọc "Due Date is Today" hay "is on Today" (soát chéo M8 #3). Đạt → `git tag M8-ok`, ghi `docs/bao-cao/M8.md`.
+3. Lỗi phát hiện khi thử → Giai đoạn 5 (phiếu B-xxx).
 
-### Hàng chờ sau khi đóng SC-003 (theo thứ tự)
-1. **B-011** — Việc có **giờ** + sửa lại được sau khi tạo. Chủ dự án đã chốt muốn hạn = ngày + giờ; nhắc 2 lần. Đổi `Todo.due` (ISODate → có giờ) đụng model/sắp xếp/hình nền/sao lưu → **phải qua Kiến trúc sư** trước khi viết phiếu.
-2. **M8** (SPEC v1.9, D-034) — nút "Báo thức đúng ngày" + Tự động hóa. Chủ dự án đã DUYỆT SPEC nhưng hoãn tới khi thử tay M7 xong. Phiếu dự kiến T-8.1…T-8.END đã ghi ở mục "M8 — CHỜ".
-3. Thử tay M7 còn lại: mục **E** (Tập trung), và xác nhận giao diện tab Việc sau B-013.
+### Tồn đọng mới (xem mục Tồn đọng): S4 `sameTodoGroup` vs `cmpTodo` với `due: ''`. (S4 `ReminderDialog` giữ `at` cũ và khóa i18n thừa → đã sửa T-9.3.)
 
 ### Bài học phiên này (đã ghi `docs/BAI-HOC.md`)
-- Phiếu giao Gemini phải xác minh đường dẫn bằng `git ls-files` trước khi giao (script hoàn tác file ngoài danh sách).
-- Cấm `git add -A` khi còn thợ chạy nền.
-- Báo cáo về lộ dữ liệu không được chép lại dữ liệu đã lộ.
-- `git filter-branch` xoá luôn file khỏi cây làm việc → sao lưu ra ngoài repo TRƯỚC khi đụng lịch sử.
+- Lỗi cấu hình trên máy Chủ dự án: xin ảnh chụp ngay lượt đầu; hướng dẫn Phím tắt dùng `Set Variable` đặt tên.
+- `tho-gemini` có thể tự viết code / báo cáo cụt → luôn kiểm file prompt/kết quả và để kiem-thu đối chiếu từng tiêu chí.
+- E2E không bắt lỗi tràn bố cục (Playwright tự cuộn) → assert boundingBox ≤ 428.
+- Agy cần cây sạch giữa các vòng: cất bản test dở vào `docs/tasks/<mã>-v*.spec.ts.txt` thay vì commit test đang fail.
+
 ## Tồn đọng (S4 — không chặn)
 - ~~S4 · T-1.2 · mặc định `boxAlpha=1` che ảnh nền~~ → đã sửa T-4.2 (0.35 khi chọn ảnh; D-021 xác nhận).
 - ~~S4 · T-1.7 · normalizeState device thiếu safe*~~ → đã sửa T-2.14.
@@ -63,6 +58,8 @@ Nguyên nhân thật: hành động `Add New Reminder` trên iOS 18 có ô **`At
 - ~~S4 · T-6.2 · `createStore` ghi IndexedDB debounce 300 ms → thao tác rồi thoát app ngay (< 0,3 s) có thể mất thay đổi cuối; đề xuất flush khi `pagehide`/`visibilitychange=hidden` (store.ts) ~~ → đã sửa B-006 (Gemini).
 - S4 · M6 (D-029): (a) toast đè mất Hoàn tác lần trước (#6); (b) listener `createStore` không gỡ (#7); (c) chưa có unit `createStore` (#10); (d) Hoàn tác xóa ngay sau khi thêm việc mới → 2 việc cùng `order`; (e) kéo không tự cuộn khi danh sách dài; (f) kéo sang nhóm khác hàng dịch rồi bật về.
 - S4 · T-8.END · `ReminderDialog` giữ state `at` của lần mở trước; `useEffect([open])` đặt lại mặc định SAU lần vẽ đầu → mở hộp có thể thoáng hiện giờ cũ (test phải dùng `setRemAt` chờ ổn định). Sửa gợi ý: đặt lại bằng `useLayoutEffect` hoặc `key` theo lần mở.
+- S4 · T-9.4 (Kiến trúc sư) · `sameTodoGroup` (store.ts:13–14) coi `due: ''` là có hạn, `cmpTodo` (collect.ts:71) coi không — chỉ với JSON nhập tay.
+- ~~S4 · T-8.END · ReminderDialog giữ `at` cũ~~ → đã sửa T-9.3 (wrapper + Inner).
 - S4 · T-3.1 · `parseFragment`: giải mã 2 lần đã sửa ở T-3.4 (`oauth.ts:60`); còn trả `{error}` không kiểm `state` → ~~B-004~~ ✔ DONE (Gemini).
 - ~~S4 · T-2.5 · `eventToIcs` chưa gập dòng > 75 byte~~ → đã sửa T-2.15.
 
