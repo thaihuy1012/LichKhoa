@@ -26,9 +26,12 @@ set -u
 OUT=docs/gemini-out
 EXCL=(':!docs/gemini-out' ':!docs/tasks' ':!docs/bao-cao' ':!.claude')
 CLEAN_EX=(-e docs/gemini-out -e docs/tasks -e docs/bao-cao -e .claude -e node_modules -e .env)
-declare -A LIMIT=([doc]=15 [soat]=15 [sinh]=15 [code]=30)   # phút
+declare -A LIMIT=([doc]=15 [soat]=15 [sinh]=15 [code]=30)   # phút — hạn ban đầu
+declare -A TRAN_TONG=([doc]=45 [soat]=45 [sinh]=45 [code]=60)   # phút — trần tổng sau khi gia hạn hết mức (mục 5b)
 declare -A MODEL_LANE=([code]=$GEMINI_CODE [soat]=$GEMINI_SOAT [doc]=$GEMINI_DOC [sinh]=$GEMINI_SINH)
 declare -A EFFORT_LANE=([code]=$EFFORT_CODE [soat]=$EFFORT_SOAT [doc]=$EFFORT_DOC [sinh]=$EFFORT_SINH)
+IM_LANG=600   # giây — ngưỡng "đứng im" cho lệnh song (mục 5b)
+GIA_HAN_TRAN=2   # số lần gia hạn tối đa mỗi lượt
 
 # In "slug|effort": slug đã kèm effort → effort rỗng; 'agy models' có dạng base-effort → dùng dạng đó; còn lại → base + --effort
 resolve_model() {
@@ -71,21 +74,38 @@ kill_tree() {
 # ---------- tiến trình nền (script tự gọi lại chính nó) ----------
 _worker() {
   local name=$1 mode=$2 model=$3 limit=$4 effort=${5:-}
-  local out="$OUT/$name.md" err="$OUT/$name.err" st="$OUT/$name.status" start child code
+  local out="$OUT/$name.md" err="$OUT/$name.err" st="$OUT/$name.status" dl="$OUT/$name.deadline" start child code trancap
   start=$(date +%s)
   echo "RUNNING $BASHPID $start" > "$st"
+  echo "$(( start + limit * 60 ))" > "$dl"
+  trancap=${TRAN_TONG[$mode]:-45}
   local prompt="Đọc AGENTS.md rồi đọc docs/tasks/$name.md và thực hiện đúng nội dung trong đó. Kết thúc bằng mục BÁO CÁO CUỐI theo khung trong file đó."
-  local args=(-p "$prompt" --dangerously-skip-permissions --print-timeout "${limit}m" --model "$model")
+  local args=(-p "$prompt" --dangerously-skip-permissions --print-timeout "${trancap}m" --model "$model")
   [ -n "$effort" ] && args+=(--effort "$effort")
-  if command -v timeout >/dev/null 2>&1; then
-    timeout -k 30 "$((limit + 2))m" agy "${args[@]}" >"$out" 2>"$err" &
-  else
-    agy "${args[@]}" >"$out" 2>"$err" &
-  fi
+  agy "${args[@]}" >"$out" 2>"$err" &
   child=$!
   trap 'kill_tree "$child"; echo "DONE 130 $(( $(date +%s) - start ))" > "$st"; exit 130' TERM INT
+  # deadline mềm: canh mốc trong $dl (gia-han có thể nới mốc này khi đang chạy), tự kill_tree khi quá mốc
+  local now moc
+  while kill -0 "$child" 2>/dev/null; do
+    now=$(date +%s)
+    moc=$(cat "$dl" 2>/dev/null || echo "$(( start + limit * 60 ))")
+    if (( now >= moc )); then
+      kill_tree "$child"
+      echo "DONE 124 $(( $(date +%s) - start ))" > "$st"
+      return
+    fi
+    sleep 5
+  done
   wait "$child"; code=$?
   echo "DONE $code $(( $(date +%s) - start ))" > "$st"
+}
+
+# ---------- giờ đổi lần cuối của một file (giây epoch); GNU stat -c, ngã về date -r ----------
+mtime_of() {
+  local f=$1
+  [ -f "$f" ] || { echo 0; return; }
+  stat -c %Y "$f" 2>/dev/null || date -r "$f" +%s 2>/dev/null || echo 0
 }
 
 # ---------- chạy nền ----------
@@ -107,8 +127,8 @@ chay() {
   [ -z "$model" ] && model=${MODEL_LANE[$mode]}
   r=$(resolve_model "$model" "$effort"); model=${r%%|*}; effort=${r#*|}
   local limit=${LIMIT[$mode]}
-  printf 'mode=%s\nmodel=%s\neffort=%s\nprompt=%s\nstart=%s\n' "$mode" "$model" "$effort" "$pf" "$(date +%s)" > "$OUT/$name.meta"
-  rm -f "$OUT/$name.md" "$OUT/$name.err"
+  printf 'mode=%s\nmodel=%s\neffort=%s\nprompt=%s\nstart=%s\ngia_han=0\n' "$mode" "$model" "$effort" "$pf" "$(date +%s)" > "$OUT/$name.meta"
+  rm -f "$OUT/$name.md" "$OUT/$name.err" "$OUT/$name.deadline"
   echo "RUNNING 0 $(date +%s)" > "$OUT/$name.status"
   if command -v nohup >/dev/null 2>&1; then
     nohup bash "$0" _worker "$name" "$mode" "$model" "$limit" "$effort" >/dev/null 2>&1 &
@@ -133,7 +153,13 @@ cho() {
       RUNNING)
         now=$(date +%s)
         if (( now - t0 >= wait )); then
-          echo "ĐANG CHẠY: $name — đã $(( (now - b) / 60 )) phút (giới hạn ${limit}). Gọi lại: bash scripts/agy-run.sh cho $name"
+          local dl="$OUT/$name.deadline" han_hien con_lai da_chay msg
+          han_hien=$(cat "$dl" 2>/dev/null || echo "$(( b + limit * 60 ))")
+          con_lai=$(( (han_hien - now) / 60 ))
+          da_chay=$(( (now - b) / 60 ))
+          msg="ĐANG CHẠY: $name — đã ${da_chay} phút (giới hạn ${limit}) — còn ${con_lai} phút tới hạn. Gọi lại: bash scripts/agy-run.sh cho $name"
+          (( da_chay >= 10 )) && msg="$msg — đã ≥10 phút: gọi 'bash scripts/agy-run.sh song $name' để kiểm còn đang làm không."
+          echo "$msg"
           exit 3
         fi
         sleep 15 ;;
@@ -277,6 +303,78 @@ kiem_tra() {
   exit $ok
 }
 
+# ---------- song: đang làm / đứng im / không chạy (mục 5b) ----------
+song() {
+  local name=$1 st="$OUT/$1.status" out="$OUT/$1.md" err="$OUT/$1.err" dl="$OUT/$1.deadline"
+  local state a b now mtime_out mtime_err last_out giay changed_n last_tree giay_tree phut_chay mode han_hien han_phut gh
+  local line path m
+  [ -f "$st" ] || die 42 "Không có lượt tên $name."
+  sua_status_chet "$st"
+  read -r state a b < "$st"
+  now=$(date +%s)
+  if [ "$state" != "RUNNING" ] || ! kill -0 "$a" 2>/dev/null; then
+    echo "KHÔNG CHẠY"
+    echo "PID: ${a:-?} đã chết (trạng thái file: $state)"
+    echo "Lượt đã dừng — dùng: bash scripts/agy-run.sh ket-qua $name"
+    return 0
+  fi
+  mtime_out=$(mtime_of "$out"); mtime_err=$(mtime_of "$err")
+  last_out=$mtime_out; [ "$mtime_err" -gt "$last_out" ] && last_out=$mtime_err
+  giay=$(( now - last_out ))
+  changed_n=$(thay_doi | grep -c . || true)
+  last_tree=0
+  if [ "$changed_n" -gt 0 ]; then
+    while IFS= read -r line; do
+      [ -z "$line" ] && continue
+      path=${line:3}
+      [ -f "$path" ] || continue
+      m=$(mtime_of "$path")
+      [ "$m" -gt "$last_tree" ] && last_tree=$m
+    done < <(thay_doi)
+  fi
+  giay_tree=$(( now - last_tree ))
+  phut_chay=$(( (now - b) / 60 ))
+  mode=$(sed -n 's/^mode=//p' "$OUT/$name.meta" 2>/dev/null)
+  han_hien=$(cat "$dl" 2>/dev/null || echo "$b")
+  han_phut=$(( (han_hien - b) / 60 ))
+  gh=$(sed -n 's/^gia_han=//p' "$OUT/$name.meta" 2>/dev/null); gh=${gh:-0}
+  if (( giay < IM_LANG || ( changed_n > 0 && giay_tree < IM_LANG ) )); then echo "ĐANG LÀM"; else echo "ĐỨNG IM"; fi
+  echo "PID: $a sống"
+  echo "Đầu ra ($out/$err) đổi lần cuối: ${giay}s trước (ngưỡng IM_LANG=${IM_LANG}s)"
+  if [ "$changed_n" -gt 0 ]; then
+    echo "Cây làm việc: ${changed_n} file đổi, mới nhất ${giay_tree}s trước"
+  else
+    echo "Cây làm việc: 0 file đổi"
+  fi
+  echo "Đã chạy: ${phut_chay} phút / hạn ${han_phut} phút, đã gia hạn ${gh} lần"
+}
+
+# ---------- gia-han: nới hạn giờ lượt đang chạy (mục 5b) ----------
+gia_han() {
+  local name=$1 phut=${2:-15} st="$OUT/$1.status" dl="$OUT/$1.deadline"
+  local state a b mode trancap gh moc_moi tran_moc con_lai
+  [ -f "$st" ] || die 42 "Không có lượt tên $name."
+  sua_status_chet "$st"
+  read -r state a b < "$st"
+  { [ "$state" = "RUNNING" ] && kill -0 "$a" 2>/dev/null; } || die 1 "Lượt $name không đang chạy — không gia hạn được."
+  [ -f "$dl" ] || die 42 "Không có file hạn cho lượt $name."
+  mode=$(sed -n 's/^mode=//p' "$OUT/$name.meta" 2>/dev/null); mode=${mode:-code}
+  trancap=${TRAN_TONG[$mode]:-45}
+  gh=$(sed -n 's/^gia_han=//p' "$OUT/$name.meta" 2>/dev/null); gh=${gh:-0}
+  [ "$gh" -ge "$GIA_HAN_TRAN" ] && die 1 "Đã gia hạn đủ ${GIA_HAN_TRAN} lần cho lượt $name — từ chối gia hạn thêm."
+  local han_hien=$(cat "$dl")
+  moc_moi=$(( han_hien + phut * 60 ))
+  tran_moc=$(( b + trancap * 60 ))
+  (( moc_moi > tran_moc )) && die 1 "Gia hạn sẽ vượt trần tổng ${trancap} phút của làn ${mode} — từ chối."
+  echo "$moc_moi" > "$dl"
+  gh=$(( gh + 1 ))
+  grep -v '^gia_han=' "$OUT/$name.meta" > "$OUT/$name.meta.tmp" 2>/dev/null || : > "$OUT/$name.meta.tmp"
+  mv "$OUT/$name.meta.tmp" "$OUT/$name.meta"
+  echo "gia_han=$gh" >> "$OUT/$name.meta"
+  con_lai=$(( (moc_moi - $(date +%s)) / 60 ))
+  echo "ĐÃ GIA HẠN: $name +${phut} phút — hạn mới còn ${con_lai} phút tới hạn, đã gia hạn ${gh}/${GIA_HAN_TRAN} lần."
+}
+
 trang_thai() {
   local f
   for f in "$OUT"/*.status; do [ -f "$f" ] || { echo "(chưa có lượt nào)"; return; }; sua_status_chet "$f"; echo "$(basename "$f" .status): $(cat "$f")"; done
@@ -289,6 +387,8 @@ case "${1:-}" in
   huy)        [ -n "${2:-}" ] || die 42 "Cách dùng: agy-run.sh huy <ten>"; huy "$2" ;;
   kiem-tra)   kiem_tra ;;
   trang-thai) trang_thai ;;
+  song)       [ -n "${2:-}" ] || die 42 "Cách dùng: agy-run.sh song <ten>"; song "$2" ;;
+  gia-han)    [ -n "${2:-}" ] || die 42 "Cách dùng: agy-run.sh gia-han <ten> [phut]"; gia_han "$2" "${3:-15}" ;;
   _worker)    _worker "$2" "$3" "$4" "$5" "${6:-}" ;;
   *) sed -n '2,10p' "$0"; exit 42 ;;
 esac
