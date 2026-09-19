@@ -25,7 +25,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## ĐIỂM DỪNG PHIÊN 2026-09-19 (đọc mục này đầu tiên ở phiên sau)
 
-**Trạng thái**: SC-003 **ĐÃ ĐÓNG** (2026-09-19, Chủ dự án tạo được lời nhắc mục B). Làn Gemini mở lại. Thử tay M7 (2026-09-19): B ✔, B′ ✔, C ✔ (Việc + Ghi chú; Ghi chú nằm ở tab Sự kiện, không phải Xem trước). E ✔ (sau khi thêm Lời nhắc vào Ứng dụng được phép + bật Nhạy cảm thời gian trong chế độ Tập trung — ghi HUONG-DAN §E bước 5). **M7 ĐÓNG** (thử tay A–F, B′ đạt). B-014 ✔. Chủ dự án (2026-09-19): **M8 trước**, rồi B-011 (bỏ "nhắc 2 lần"; cần sửa được hạn NGÀY + GIỜ của việc đã tạo) → Kiến trúc sư.
+**Trạng thái**: SC-003 **ĐÃ ĐÓNG** (2026-09-19, Chủ dự án tạo được lời nhắc mục B). Làn Gemini mở lại. Thử tay M7 (2026-09-19): B ✔, B′ ✔, C ✔ (Việc + Ghi chú; Ghi chú nằm ở tab Sự kiện, không phải Xem trước). E ✔ (sau khi thêm Lời nhắc vào Ứng dụng được phép + bật Nhạy cảm thời gian trong chế độ Tập trung — ghi HUONG-DAN §E bước 5). **M7 ĐÓNG** (thử tay A–F, B′ đạt). B-014 ✔. **M8 xong 4/4** — Kiến trúc sư DUYỆT bằng lệnh (D-035); tag `M8-ok` chờ Chủ dự án thử tay G1–G5 (sau deploy). B-011 → **M9 (SPEC v1.10, D-035)** Chủ dự án duyệt, đang làm. Deploy M8+M9 gộp một lần (qua Cổng bảo mật).
 **Git**: cây sạch; **4 commit chưa push** (B-013 + sổ sách). Chủ dự án tự chạy `git push` khi muốn deploy — cổng bảo mật PHẢI chạy lại trước khi đề nghị push (CLAUDE.md).
 **Nhánh phụ còn sót**: `backup-truoc-go-anh` (sao lưu trước khi gỡ ảnh khỏi lịch sử) — giữ tới khi Chủ dự án yên tâm, rồi xoá.
 **Làn Gemini**: BẬT mức NHIỀU nhưng **đang tạm dừng** vì sự cố S2 mở. Mở lại khi đóng SC-003.
@@ -1164,3 +1164,30 @@ Chủ dự án chốt 2026-09-19: muốn việc có hạn **ngày + giờ** và 
 - Lệnh kiểm tra: `grep -c "GioNhac" docs/HUONG-DAN.md` ≥ 4 · `grep -n "Create Reminder\|Remind me at a time\|Due Date" docs/HUONG-DAN.md` rỗng · `git diff --stat` chỉ `docs/HUONG-DAN.md` · `npm run check` pass.
 - Model: gemini (làn code — đủ điều kiện: 1 file, tiêu chí rõ, lệnh kiểm tra chạy được, không đổi thiết kế) · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DONE
 - Nhật ký: 2026-09-19 vòng 1 (gemini-3.8-flash-high, 6 phút): XONG → kiem-thu PASS (GioNhac ×9; grep cấm rỗng; diff chỉ HUONG-DAN trong phạm vi; check 100/14 skip) → review đạt (8 hành động, Set Variable, Trigger/chữ xám, cảnh báo mới) → commit.
+
+## M9 — Việc có giờ hạn + sửa hạn sau khi tạo (SPEC v1.10, D-035) — ĐANG LÀM
+Chủ dự án duyệt 2026-09-19: làm ngay (không chờ G1–G5 của M8); "Quá hạn" theo NGÀY; deploy M8 + M9 gộp một lần. Nguồn chuẩn: SPEC §6 M9 (dòng 245–259) — phiếu dưới chỉ trỏ tới đó, không chép lại. Tuần tự 9.1 → 9.2 → 9.3 → 9.END. Test khóa M1–M8 không sửa/skip.
+
+### T-9.1 — Lõi `Todo.dueTime` + state + `cmpTodo` + `defaultReminderAt`
+- Phạm vi file: `src/core/model.ts`, `src/core/collect.ts`, `src/ui/store.ts`, `src/export/reminder.ts`, `tests/unit/todo-time.test.ts` (mới).
+- Yêu cầu + tiêu chí: SPEC §6 M9 "Nội dung" (phần model/collect/store/reminder) và gạch tiêu chí 1 (unit `todo-time.test.ts`).
+- Lệnh kiểm tra: `npx vitest run tests/unit/todo-time.test.ts` ; `npm run check`.
+- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO
+
+### T-9.2 — `todoDueLabel` có giờ + 3 bố cục
+- Phạm vi file: `src/render/layout/common.ts`, `src/render/layout/month.ts`, `src/render/layout/week.ts`, `src/render/layout/todo.ts`, `tests/unit/layout-todo-time.test.ts` (mới).
+- Yêu cầu + tiêu chí: SPEC §6 M9 "Nội dung" (nhãn, 3 bố cục, chip Tuần `☐ 14:00`) và gạch tiêu chí 2.
+- Lệnh kiểm tra: `npx vitest run tests/unit/layout-todo-time.test.ts` ; `npm run check`.
+- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO — sau T-9.1
+
+### T-9.3 — UI tab Việc (ô giờ, bộ sửa hạn) + i18n + 2 S4 M8
+- Phạm vi file: `src/ui/screens/events/TodosTab.tsx`, `src/ui/components/ReminderDialog.tsx`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `src/ui/styles.css`.
+- Yêu cầu + tiêu chí: SPEC §6 M9 "Nội dung" (TodosTab, i18n, `color-scheme: dark`, S4-#1 wrapper + Inner, S4-#2 xóa khóa) và gạch tiêu chí 4 (test khóa pass nguyên vẹn). Vùng chạm ≥ 44 px, bề ngang 428 pt.
+- Lệnh kiểm tra: `npx playwright test tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts tests/e2e/m7-reminder.spec.ts tests/e2e/m8-dayalarm.spec.ts` ; `npm run check`.
+- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO — sau T-9.2
+
+### T-9.END — E2E `tests/e2e/m9-todo-time.spec.ts`
+- Phạm vi file: `tests/e2e/m9-todo-time.spec.ts` (mới); không sửa src.
+- Tiêu chí: SPEC §6 M9 gạch tiêu chí 3 (7 kịch bản) + gạch 5 (size, check). Bài học T-8.END: đọc `__lastNav`/`__lastOps` phải chờ giá trị MỚI (poll), không đọc ngay sau bấm.
+- Lệnh kiểm tra: `npx playwright test tests/e2e/m9-todo-time.spec.ts --repeat-each=5` (cả chromium + webkit) ; `npm run check` ; `npm run build && node scripts/size.mjs`.
+- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO — sau T-9.3
