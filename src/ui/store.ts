@@ -4,7 +4,7 @@ import { cmpTodo } from '../core/collect';
 import { saveState } from '../storage/db';
 
 /** Cùng nhóm hiển thị theo `cmpTodo`: cùng `done`; nếu chưa xong thì cùng có/không `due`,
- * và nếu có `due` thì cùng ngày. Dùng để `moveTodo` chỉ hoán đổi trong nhóm (T-2.14). */
+ * và nếu có `due` thì cùng ngày và cùng `dueTime` (v1.10). Dùng để `moveTodo` chỉ hoán đổi trong nhóm (T-2.14). */
 export function sameTodoGroup(a: Todo, b: Todo): boolean {
   if (!!a.archived !== !!b.archived) return false;
   if (a.archived) return false;
@@ -14,6 +14,9 @@ export function sameTodoGroup(a: Todo, b: Todo): boolean {
   const bHas = b.due != null;
   if (aHas !== bHas) return false;
   if (aHas && a.due !== b.due) return false;
+  const aTime = a.dueTime || undefined;
+  const bTime = b.dueTime || undefined;
+  if (aTime !== bTime) return false;
   return true;
 }
 
@@ -24,12 +27,12 @@ export type Action =
   | { type: 'addEvent'; event: LocalEvent }
   | { type: 'updateEvent'; event: LocalEvent }
   | { type: 'deleteEvent'; id: string }
-  | { type: 'addTodo'; text: string; id?: string; due?: ISODate }
+  | { type: 'addTodo'; text: string; id?: string; due?: ISODate; dueTime?: string }
   | { type: 'toggleTodo'; id: string }
   | { type: 'updateTodo'; id: string; text: string }
   | { type: 'deleteTodo'; id: string }
   | { type: 'moveTodo'; id: string; dir: -1 | 1 }
-  | { type: 'setTodoDue'; id: string; due: ISODate | null }
+  | { type: 'setTodoDue'; id: string; due: ISODate | null; dueTime?: string }
   | { type: 'archiveTodo'; id: string; archived: boolean }
   | { type: 'restoreTodo'; todo: Todo }
   | { type: 'reorderTodo'; id: string; targetId: string }
@@ -80,7 +83,14 @@ export function reducer(state: AppState, action: Action): AppState {
       return { ...state, events: state.events.filter((e) => e.id !== action.id) };
     case 'addTodo': {
       const order = state.todos.length > 0 ? Math.max(...state.todos.map((t) => t.order)) + 1 : 0;
-      const todo: Todo = { id: nextId(action.id), text: action.text, done: false, order, ...(action.due ? { due: action.due } : {}) };
+      const todo: Todo = {
+        id: nextId(action.id),
+        text: action.text,
+        done: false,
+        order,
+        ...(action.due ? { due: action.due } : {}),
+        ...(action.due && action.dueTime ? { dueTime: action.dueTime } : {}),
+      };
       return { ...state, todos: [...state.todos, todo] };
     }
     case 'toggleTodo':
@@ -166,10 +176,15 @@ export function reducer(state: AppState, action: Action): AppState {
         todos: state.todos.map((t) => {
           if (t.id !== action.id) return t;
           if (action.due === null) {
-            const { due: _due, ...rest } = t;
+            const { due: _due, dueTime: _dueTime, ...rest } = t;
             return rest as Todo;
           }
-          return { ...t, due: action.due };
+          const { dueTime: _dueTime, ...rest } = t;
+          return {
+            ...rest,
+            due: action.due,
+            ...(action.dueTime ? { dueTime: action.dueTime } : {}),
+          };
         }),
       };
     }

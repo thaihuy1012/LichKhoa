@@ -22,6 +22,7 @@ export interface Todo {
   done: boolean;
   order: number;
   due?: ISODate; // v1.3
+  dueTime?: string; // v1.10 D-035: 'HH:mm' giờ hạn, tùy chọn, chỉ khi có due
   archived?: boolean; // v1.7 D-028: ẩn khỏi danh sách chính + RenderData
 }
 
@@ -189,7 +190,19 @@ export function normalizeState(raw: unknown): AppState | null {
     : notesFromLegacy;
 
   const events: unknown[] = Array.isArray(raw['events']) ? (raw['events'] as unknown[]).filter(isPlainObject) : [];
-  const todos: unknown[] = Array.isArray(raw['todos']) ? (raw['todos'] as unknown[]).filter(isPlainObject) : [];
+  const rawTodos: unknown[] = Array.isArray(raw['todos']) ? (raw['todos'] as unknown[]).filter(isPlainObject) : [];
+  const TIME_RE = /^\d{2}:\d{2}$/;
+  const todos: Todo[] = rawTodos.map((t) => {
+    const item = { ...(t as Record<string, unknown>) };
+    if ('dueTime' in item) {
+      const hasDue = typeof item['due'] === 'string' && item['due'] !== '';
+      const hasValidDueTime = typeof item['dueTime'] === 'string' && TIME_RE.test(item['dueTime']);
+      if (!hasDue || !hasValidDueTime) {
+        delete item['dueTime'];
+      }
+    }
+    return item as unknown as Todo;
+  });
 
   // v1.8 (IN-11): bù mặc định khi thiếu/rỗng/không phải chuỗi.
   const alarmShortcutName =

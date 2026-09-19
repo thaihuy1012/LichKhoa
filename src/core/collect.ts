@@ -58,14 +58,28 @@ export function dedupOccurrences(occs: Occurrence[]): Occurrence[] {
   return result;
 }
 
-/** v1.3: chưa xong có `due` (tăng dần) -> chưa xong không `due` (theo `order`) -> đã xong (theo `order`). */
+/**
+ * v1.10 (D-035): thứ tự to-do duy nhất:
+ * chưa xong có `due` (tăng dần; cùng ngày: có `dueTime` trước không có, `dueTime` tăng dần)
+ * -> chưa xong không `due` (theo `order`)
+ * -> đã xong (theo `order`).
+ * Cùng (`due`, `dueTime`) -> theo `order`.
+ */
 export function cmpTodo(a: Todo, b: Todo): number {
   if (a.done !== b.done) return a.done ? 1 : -1;
   if (!a.done) {
-    const aHas = a.due != null;
-    const bHas = b.due != null;
-    if (aHas !== bHas) return aHas ? -1 : 1;
-    if (aHas && bHas && a.due !== b.due) return a.due! < b.due! ? -1 : 1;
+    const aHasDue = a.due != null && a.due !== '';
+    const bHasDue = b.due != null && b.due !== '';
+    if (aHasDue !== bHasDue) return aHasDue ? -1 : 1;
+    if (aHasDue && bHasDue) {
+      if (a.due !== b.due) return a.due! < b.due! ? -1 : 1;
+      const aHasTime = a.dueTime != null && a.dueTime !== '';
+      const bHasTime = b.dueTime != null && b.dueTime !== '';
+      if (aHasTime !== bHasTime) return aHasTime ? -1 : 1;
+      if (aHasTime && bHasTime && a.dueTime !== b.dueTime) {
+        return a.dueTime! < b.dueTime! ? -1 : 1;
+      }
+    }
   }
   return a.order - b.order;
 }

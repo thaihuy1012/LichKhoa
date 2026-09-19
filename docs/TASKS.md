@@ -1172,7 +1172,8 @@ Chủ dự án duyệt 2026-09-19: làm ngay (không chờ G1–G5 của M8); "Q
 - Phạm vi file: `src/core/model.ts`, `src/core/collect.ts`, `src/ui/store.ts`, `src/export/reminder.ts`, `tests/unit/todo-time.test.ts` (mới).
 - Yêu cầu + tiêu chí: SPEC §6 M9 "Nội dung" (phần model/collect/store/reminder) và gạch tiêu chí 1 (unit `todo-time.test.ts`).
 - Lệnh kiểm tra: `npx vitest run tests/unit/todo-time.test.ts` ; `npm run check`.
-- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO
+- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-19 vòng 1 (8 phút) XONG → kiem-thu PASS (todo-time 7/7 ×2 TZ, đủ mọi ca SPEC; check 102/14 skip) → review đạt → commit.
 
 ### T-9.2 — `todoDueLabel` có giờ + 3 bố cục
 - Phạm vi file: `src/render/layout/common.ts`, `src/render/layout/month.ts`, `src/render/layout/week.ts`, `src/render/layout/todo.ts`, `tests/unit/layout-todo-time.test.ts` (mới).

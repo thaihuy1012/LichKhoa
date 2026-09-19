@@ -6,7 +6,7 @@ export type LocalDateTime = string;
 
 export type ReminderSource =
   | { kind: 'event'; date: ISODate; time?: string; repeat: Repeat; until?: ISODate }
-  | { kind: 'todo'; due?: ISODate }
+  | { kind: 'todo'; due?: ISODate; dueTime?: string }
   | { kind: 'note' };
 
 function pad2(n: number): string {
@@ -62,7 +62,7 @@ export function defaultReminderAt(src: ReminderSource, now: Date): LocalDateTime
     return src.time != null ? `${src.date}T${src.time}` : `${src.date}T08:00`;
   }
   if (src.kind === 'todo') {
-    if (src.due != null) return `${src.due}T08:00`;
+    if (src.due != null) return `${src.due}T${src.dueTime ?? '08:00'}`;
     return nextRoundHour(now);
   }
   // note
