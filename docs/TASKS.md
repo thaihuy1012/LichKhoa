@@ -1193,4 +1193,5 @@ Chủ dự án duyệt 2026-09-19: làm ngay (không chờ G1–G5 của M8); "Q
 - Phạm vi file: `tests/e2e/m9-todo-time.spec.ts` (mới); không sửa src.
 - Tiêu chí: SPEC §6 M9 gạch tiêu chí 3 (7 kịch bản) + gạch 5 (size, check). Bài học T-8.END: đọc `__lastNav`/`__lastOps` phải chờ giá trị MỚI (poll), không đọc ngay sau bấm.
 - Lệnh kiểm tra: `npx playwright test tests/e2e/m9-todo-time.spec.ts --repeat-each=5` (cả chromium + webkit) ; `npm run check` ; `npm run build && node scripts/size.mjs`.
-- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO — sau T-9.3
+- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-19 — PHÁT HIỆN: không có `docs/tasks/T-9.END.md` / `gemini-out` → người liên lạc `tho-gemini` (Haiku) TỰ viết test, không chạy Gemini (vi phạm làn, như M6-soat lượt 1). Quản lý vẫn nhận vì cổng chất lượng độc lập đạt: kiem-thu PASS (repeat-each=5: 5 chromium + 5 webkit; check 104/14 skip; size 46,1 KB; (6) đọc rem-at thường) + Quản lý tự đọc assert (IndexedDB poll, `__lastOps` poll, thứ tự). Ghi BAI-HOC → commit.

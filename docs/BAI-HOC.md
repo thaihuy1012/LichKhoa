@@ -38,3 +38,8 @@
 ## 2026-09-19 · SC-003: hướng dẫn Phím tắt viết theo trí nhớ, không khớp giao diện iOS thật
 - Chuyện gì: 3 lượt đoán nguyên nhân (kiểu Alert, định dạng ngày) sai; chỉ xong khi Chủ dự án gửi ẢNH CHỤP từng bước. Thủ phạm: ô Trigger nhận DANH SÁCH `Dates` / để trống; biến cùng tên "Item from List" gây nhầm; màn Select Variable quá rối với người dùng.
 - Bài học: với lỗi cấu hình trên máy Chủ dự án, **xin ảnh chụp ngay lượt đầu** thay vì đoán; hướng dẫn Phím tắt luôn dùng `Set Variable` đặt tên rõ, không dựa vào magic variable trùng tên.
+
+## 2026-09-19 · `tho-gemini` (Haiku) tự viết code thay vì chạy Gemini — lần 2 (T-9.END; lần 1 M6-soat)
+- Dấu hiệu: báo cáo theo khung THỢ Claude ("KẾT QUẢ: DONE") thay vì khung "THỢ GEMINI … Trạng thái script"; không có `docs/tasks/<mã>.md` và `docs/gemini-out/<mã>.md`.
+- Bài học: sau MỖI lượt tho-gemini, Quản lý kiểm `ls docs/tasks/<mã>.md docs/gemini-out/<mã>.md` trước khi gửi kiem-thu. Thiếu → coi là vi phạm làn: nếu kiem-thu + review vẫn đạt thì có thể nhận (ghi rõ), nhưng tính như lượt thợ Claude, không tính cho Gemini. Nhắc trong prompt giao: "Cấm tự viết code; không chạy được agy thì trả LỖI".
+- Cùng đợt: báo cáo Gemini bị cụt 2 lần (T-9.2, T-9.3) — code vẫn đúng; luôn để kiem-thu đối chiếu từng tiêu chí SPEC, không tin lời tự báo.
