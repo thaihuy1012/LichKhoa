@@ -25,7 +25,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## ĐIỂM DỪNG PHIÊN 2026-09-19 (đọc mục này đầu tiên ở phiên sau)
 
-**Trạng thái**: SỰ CỐ **SC-003 (S2) ĐANG MỞ** → xử lý trước mọi việc khác (`docs/SU-CO.md`).
+**Trạng thái**: SC-003 **ĐÃ ĐÓNG** (2026-09-19, Chủ dự án tạo được lời nhắc mục B). Làn Gemini mở lại. Việc tiếp: B-014 (viết lại HUONG-DAN E.2) → Chủ dự án thử B′, C, E → hàng chờ B-011, M8.
 **Git**: cây sạch; **4 commit chưa push** (B-013 + sổ sách). Chủ dự án tự chạy `git push` khi muốn deploy — cổng bảo mật PHẢI chạy lại trước khi đề nghị push (CLAUDE.md).
 **Nhánh phụ còn sót**: `backup-truoc-go-anh` (sao lưu trước khi gỡ ảnh khỏi lịch sử) — giữ tới khi Chủ dự án yên tâm, rồi xoá.
 **Làn Gemini**: BẬT mức NHIỀU nhưng **đang tạm dừng** vì sự cố S2 mở. Mở lại khi đóng SC-003.
@@ -1104,3 +1104,21 @@ Chủ dự án chốt 2026-09-19: muốn việc có hạn **ngày + giờ** và 
   [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npx playwright test tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts; npm run check`
 - Model: sonnet — không giao Gemini (sự cố SC-003 còn mở). · Lần thử: 0/3 · Trạng thái: DONE
+
+### B-014 — Viết lại `docs/HUONG-DAN.md` mục E.2 (`ThemLoiNhac`) khớp iOS 18 thật (sau SC-003)
+- Mục tiêu: hướng dẫn tạo Phím tắt `ThemLoiNhac` đúng giao diện Chủ dự án đã làm thành công (SC-003 ĐÃ ĐÓNG).
+- Phạm vi file (chỉ được sửa): `docs/HUONG-DAN.md` — CHỈ từ dòng `#### Cách A` (mục E.2) tới hết đoạn `### Nếu không chạy` (trước `## Quy trình dùng hằng ngày`). Không sửa chỗ khác.
+- Giao diện / đầu vào có sẵn (sự thật đã kiểm trên iPhone iOS 18, máy tiếng Anh):
+  - Thứ tự hành động đúng của Cách A: (1) `Split [Shortcut Input] by [New Lines]`; (2) `Get [Item at Index] [1] from [Split Text]`; (3) `Get dates from [Item from List]`; (4) `Get [Item at Index] [1] from [Dates]`; (5) `Set variable [GioNhac] to [Item from List]` — thả ngay dưới (4); (6) `Get [Item at Index] [2] from [Split Text]`; (7) `Set variable [TieuDe] to [Item from List]` — thả ngay dưới (6); (8) `Add [TieuDe] to [<danh sách>] with [Alert] [At Time] [GioNhac]`.
+  - Thêm `Set Variable`: gõ "Set Variable" vào ô **Search Actions** ở đáy, kéo thả vào đúng chỗ, chạm **Variable Name** gõ tên.
+  - Gán biến vào ô: chạm ô → hiện danh sách (TieuDe, GioNhac, Split Text, Dates, Item from List, Shortcut Input, Ask Each Time, Select Variable…) hoặc hàng nút trên bàn phím → chạm đúng TÊN biến. KHÔNG hướng dẫn dùng `Select Variable` (rối, và có 2 biến cùng tên "Item from List").
+  - Ô `Alert` chỉ là công tắc Alert / No Alert → chọn **Alert**. Phần giờ nằm sau chữ `At Time`; nếu thẻ thu gọn thì chạm nút mũi tên tròn **›** để mở rộng (khi mở rộng dòng này hiện là **Trigger**). Chữ xám "2:00 PM" là chữ MẪU = ô đang trống → phải chạm vào và chọn **GioNhac**. Nếu ô đang ghi `Dates` (cả danh sách) → bấm vào, chọn **Clear Variable**, rồi chọn **GioNhac**. Bảng Type Date/Time/Name: giữ **Date**, không chọn Time.
+  - Hình dạng đúng cuối cùng: `Add TieuDe to Sẽ làm with Alert At Time GioNhac` (tên danh sách tùy người dùng).
+- Tiêu chí nghiệm thu:
+  [ ] Cách A viết lại theo 8 hành động trên, giữ song ngữ Anh (Việt) như văn phong hiện có; có dòng "Hình dạng đúng cuối cùng".
+  [ ] Cách B: dùng cùng `GioNhac`/`TieuDe` (+ `Set variable GhiChu` cho Item 3) và cách gán ô giờ như Cách A; bỏ mọi chỗ "chạm ô No Alert → chọn Alert / Remind me at a time".
+  [ ] Bỏ khối ⚠️ cũ ("gán vào ô No Alert" + phương án "Create Reminder / Due Date"); thay bằng cảnh báo mới: lỗi "No alert location was provided…" nghĩa là ô giờ sau `At Time` đang TRỐNG (chữ xám) hoặc đang gắn `Dates` → sửa theo cách trên.
+  [ ] Mục "Nếu không chạy" (e) viết lại cùng nội dung; (d) giữ; mục "Mức độ chắc chắn" bỏ nhắc `Create Reminder`.
+  [ ] Không có dữ liệu thật của Chủ dự án (không ảnh, không tên việc thật).
+- Lệnh kiểm tra: `grep -c "GioNhac" docs/HUONG-DAN.md` ≥ 4 · `grep -n "Create Reminder\|Remind me at a time\|Due Date" docs/HUONG-DAN.md` rỗng · `git diff --stat` chỉ `docs/HUONG-DAN.md` · `npm run check` pass.
+- Model: gemini (làn code — đủ điều kiện: 1 file, tiêu chí rõ, lệnh kiểm tra chạy được, không đổi thiết kế) · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO

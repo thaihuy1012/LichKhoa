@@ -34,3 +34,7 @@
 - Chuyện gì: đang có thợ chạy nền sửa `src/ui/*` và i18n, Quản lý commit sổ sách bằng `git add -A` → 2 file i18n của thợ bị cuốn vào commit `36b1f42` (sổ sách, không liên quan). Nội dung không hỏng nhưng lịch sử lẫn lộn, khó lùi từng phiếu. Lần thứ hai mắc lỗi này trong phiên (lần đầu ở T-7.1).
 - Bài học: **khi còn thợ chạy nền, Quản lý chỉ được `git add <đường dẫn cụ thể>`, cấm `git add -A` / `git add .`**. Muốn commit sổ sách thì add đúng `docs/...`. `git add -A` chỉ dùng khi không có thợ nào đang chạy (kiểm bằng danh sách agent đang chạy, không đoán).
 - Ghi nhận: thợ B-010 tự phát hiện và báo lại — đúng tinh thần "ai thấy bất thường thì nêu".
+
+## 2026-09-19 · SC-003: hướng dẫn Phím tắt viết theo trí nhớ, không khớp giao diện iOS thật
+- Chuyện gì: 3 lượt đoán nguyên nhân (kiểu Alert, định dạng ngày) sai; chỉ xong khi Chủ dự án gửi ẢNH CHỤP từng bước. Thủ phạm: ô Trigger nhận DANH SÁCH `Dates` / để trống; biến cùng tên "Item from List" gây nhầm; màn Select Variable quá rối với người dùng.
+- Bài học: với lỗi cấu hình trên máy Chủ dự án, **xin ảnh chụp ngay lượt đầu** thay vì đoán; hướng dẫn Phím tắt luôn dùng `Set Variable` đặt tên rõ, không dựa vào magic variable trùng tên.

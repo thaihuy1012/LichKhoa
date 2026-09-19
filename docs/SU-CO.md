@@ -2,9 +2,12 @@
 (Chỉ Quản lý ghi. Đọc đầu mỗi phiên: sự cố chưa đóng xử lý trước mọi việc khác. Trạng thái: MỞ | ĐANG SỬA | CHỜ CHỦ DỰ ÁN | ĐÃ ĐÓNG.)
 
 ## Đang mở
-- **SC-003** (S2, ĐANG SỬA) — Phím tắt Lời nhắc lỗi "No alert location was provided" → B, B', C KHÔNG ĐẠT trên iPhone thật (2026-09-19)
+- (không)
 
-## SC-003 — Phím tắt Lời nhắc lỗi "No alert location was provided" · Mức S2 · Trạng thái: ĐANG SỬA
+## Đã đóng gần đây
+- **SC-003** (S2, ĐÃ ĐÓNG 2026-09-19) — Phím tắt Lời nhắc lỗi "No alert location was provided" → B, B', C KHÔNG ĐẠT trên iPhone thật (2026-09-19)
+
+## SC-003 — Phím tắt Lời nhắc lỗi "No alert location was provided" · Mức S2 · Trạng thái: ĐÃ ĐÓNG
 - Phát hiện: 2026-09-19 · Chủ dự án thử tay M7 trên iPhone, iOS 18, ngôn ngữ máy Tiếng Anh · sau deploy e432dce.
 - Triệu chứng: bấm "Thêm lời nhắc" → Phím tắt `ThemLoiNhac` chạy rồi báo lỗi "No alert location was provided. Please provide a location for this reminder's alert." → không tạo được lời nhắc. Xảy ra ở cả 3 nguồn: Việc (B), Sự kiện (B'), Ghi chú (C). Ảnh: `docs/hinh-anh-loi/IMG_2434.PNG`.
 - Mục E cũng KHÔNG ĐẠT (lời nhắc không kêu khi bật Tập trung) — nhưng **phụ thuộc**: chưa tạo được lời nhắc nào thì chưa kết luận được, phải thử lại sau khi đóng SC-003.
@@ -18,6 +21,7 @@
 - Lượt 2 (B-012): đổi định dạng dòng 1 sang `d MMM yyyy HH:mm`. Chủ dự án kiểm bằng Quick Look đặt sau `Get Item at Index 1`, chạy THẬT từ app: hiện `23 Sep 2026 08:00` → app gửi đúng, máy đã nạp bản mới. **Nhưng bấm Done xong VẪN lỗi "No alert location was provided"** → nguyên nhân KHÔNG phải định dạng ngày.
 - Nghi mới (lượt 3): hành động `Add New Reminder` trên iOS 18 lỗi ở tham số cảnh báo (Apple đang thay bằng `Create Reminder`), hoặc ô Trigger nhận `Dates` là DANH SÁCH ngày thay vì một ngày đơn. Đã đề nghị Chủ dự án: (1) thay bằng hành động `Create Reminder` (có ô Due Date riêng); (2) nếu không có thì chèn `Get Item at Index 1` từ `Dates` rồi mới gán vào Trigger. ĐANG CHỜ kết quả.
 - Lượt 3b (2026-09-19, phiên mới): Chủ dự án không dùng được màn `Select Variable` (rối). Ảnh `IMG_2444.PNG`: ô ngày sau `At Time` có vẻ trống; có HAI biến cùng tên "Item from List" (từ Dates và từ Split Text) → dễ gán nhầm. Đã gửi cách mới: thêm 2 hành động `Set Variable` đặt tên `GioNhac` (sau Get Item 1 from Dates) và `TieuDe` (sau Get Item 2 from Split Text), rồi gán vào hành động Add qua thanh biến trên bàn phím. CHỜ kết quả + ảnh chụp.
+- ĐÓNG 2026-09-19: Chủ dự án xác nhận mục B ĐẠT (lời nhắc hiện trong Reminders, danh sách "Sẽ làm", đúng giờ). Nguyên nhân gốc: thẻ `Add New Reminder` (iOS 18) — ô **Trigger** (hiện dưới dạng `At Time …` khi mở rộng ›) gắn `Dates` = DANH SÁCH ngày, rồi sau khi Clear thì để trống (chữ xám "2:00 PM" là chữ mẫu) → iOS đòi vị trí. Sửa: 2 hành động `Set Variable` (`GioNhac` sau Get Item 1 from Dates, `TieuDe` sau Get Item 2 from Split Text), gán `TieuDe` vào tiêu đề và `GioNhac` vào ô giờ. Không đổi mã nguồn. Việc tiếp: B-014 viết lại HUONG-DAN mục E; Chủ dự án thử B′, C, E.
 - Nếu cả hai hỏng → đổi hướng thiết kế: app tạo SỰ KIỆN LỊCH có cảnh báo thay cho Lời nhắc (cần Kiến trúc sư + Chủ dự án duyệt).
 
 ## SC-002 — iPhone: không đổi được thứ tự Việc, nút ▲▼× trong hàng không bấm được · Mức S2 · Trạng thái: ĐÃ ĐÓNG
