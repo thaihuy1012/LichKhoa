@@ -49,6 +49,88 @@ Ghi chú: chỉ dùng hành động **"Set Wallpaper"**, không cần và không
 - **Netlify Drop** (không cần tài khoản GitHub): kéo thả thư mục build vào https://app.netlify.com/drop → có ngay `https://<tên>.netlify.app`.
 - **Thử nhanh trong mạng nội bộ**: dùng `cloudflared` tạo đường hầm tạm — không dùng để test Google (địa chỉ đổi mỗi lần chạy).
 
+## E. Cài đặt 2 Phím tắt nhắc trên iPhone (Báo thức & Lời nhắc)
+
+LichKhoa hỗ trợ mở nhanh Phím tắt trên iPhone để tạo **Báo thức** (trong app Đồng hồ — rung chuông lớn, dành cho sự kiện trong vòng 24 giờ tới) hoặc **Lời nhắc** (trong app Lời nhắc / Reminders — có thông báo ngày giờ, hỗ trợ ghi chú).
+
+Để dùng được tính năng này, bạn cần tạo 2 Phím tắt trên iPhone theo hướng dẫn từng bước dưới đây (chỉ làm một lần duy nhất).
+
+---
+
+### 1. Phím tắt `ThemBaoThuc` (Tạo báo thức trong app Đồng hồ)
+
+1. Mở app **Shortcuts (Phím tắt)** trên iPhone.
+2. Bấm dấu **+** ở góc trên cùng bên phải để tạo Phím tắt mới.
+3. Chạm vào tên phím tắt ở đỉnh màn hình (mặc định là "New Shortcut" hoặc "Phím tắt mới") → chọn **Rename (Đổi tên)** → đặt ĐÚNG tên: **`ThemBaoThuc`** (viết hoa/thường chuẩn, không dấu cách).
+4. Thiết lập nhận dữ liệu đầu vào:
+   - Bấm vào biểu tượng **(i)** (Details / Chi tiết) ở cạnh dưới màn hình → bật mục **Show in Share Sheet (Hiện trong bảng chia sẻ)** và kiểm tra phím tắt đã sẵn sàng nhận đầu vào là văn bản.
+5. Bấm **Add Action (Thêm hành động)** và thêm lần lượt các hành động theo đúng thứ tự sau:
+   - **Hành động 1: Split Text (Tách văn bản)**
+     - Chọn đầu vào là **Shortcut Input (Đầu vào phím tắt)**.
+     - Tại mục **By (Theo)**: chọn **Custom (Tùy chỉnh)**.
+     - Tại ô phân tách: gõ phím **Return (Xuống dòng)** trên bàn phím ảo để tạo ký tự dòng mới (hoặc chọn **New Lines (Dòng mới)** nếu máy có sẵn tùy chọn này).
+   - **Hành động 2: Get Item from List (Lấy mục từ danh sách)**
+     - Chọn danh sách đầu vào là kết quả từ **Split Text (Văn bản đã tách)** ở Hành động 1.
+     - Tại mục **Get (Lấy)**: chọn **Item at Index (Mục tại chỉ mục)** và nhập số `1` (đây là Item 1 — dòng chứa ngày giờ dạng `YYYY-MM-DD HH:mm`).
+   - **Hành động 3: Get Dates from Input (Lấy ngày từ đầu vào)**
+     - Chọn đầu vào là kết quả **Item from List (Mục từ danh sách)** vừa lấy ở Hành động 2 (Item 1). Hành động này sẽ nhận diện và chuyển văn bản thành ngày giờ hệ thống.
+   - **Hành động 4: Get Item from List (Lấy mục từ danh sách)**
+     - Thêm tiếp hành động lấy mục, chọn đầu vào là danh sách **Split Text (Văn bản đã tách)** ở Hành động 1.
+     - Tại mục **Get (Lấy)**: chọn **Item at Index (Mục tại chỉ mục)** và nhập số `2` (đây là Item 2 — dòng chứa tiêu đề/tên báo thức).
+   - **Hành động 5: Create Alarm (Tạo báo thức)**
+     - Tại mục **Time (Thời gian)**: chọn biến ngày giờ từ kết quả **Dates (Ngày)** của Hành động 3.
+     - Chạm vào mũi tên mở rộng (>) nếu có: tại ô **Label (Nhãn) / Name (Tên)**: chọn biến văn bản từ kết quả **Item from List (Mục từ danh sách)** thứ hai ở Hành động 4.
+6. Bấm **Done (Xong)** ở góc trên bên phải để lưu phím tắt.
+
+---
+
+### 2. Phím tắt `ThemLoiNhac` (Tạo lời nhắc trong app Lời nhắc / Reminders)
+
+1. Trong app **Shortcuts (Phím tắt)**, bấm dấu **+** để tạo thêm một Phím tắt mới.
+2. Chạm vào tên phím tắt ở đỉnh màn hình → chọn **Rename (Đổi tên)** → đặt ĐÚNG tên: **`ThemLoiNhac`** (viết hoa/thường chuẩn, không dấu cách).
+3. Bấm **Add Action (Thêm hành động)** và lần lượt thêm các hành động theo thứ tự sau:
+   - **Hành động 1: Split Text (Tách văn bản)**
+     - Chọn đầu vào là **Shortcut Input (Đầu vào phím tắt)**.
+     - Tại mục **By (Theo)**: chọn **Custom (Tùy chỉnh)** và gõ phím **Return (Xuống dòng)** làm dấu phân tách dòng mới (hoặc chọn **New Lines (Dòng mới)**).
+   - **Hành động 2: Get Item from List (Lấy mục từ danh sách)**
+     - Đầu vào: danh sách từ **Split Text (Văn bản đã tách)** ở Hành động 1.
+     - Chọn **Item at Index (Mục tại chỉ mục)** và nhập số `1` (Item 1: ngày giờ).
+   - **Hành động 3: Get Dates from Input (Lấy ngày từ đầu vào)**
+     - Đầu vào: kết quả của Hành động 2 (Item 1).
+   - **Hành động 4: Get Item from List (Lấy mục từ danh sách)**
+     - Đầu vào: danh sách từ **Split Text (Văn bản đã tách)** ở Hành động 1.
+     - Chọn **Item at Index (Mục tại chỉ mục)** và nhập số `2` (Item 2: tiêu đề lời nhắc).
+   - **Hành động 5: Get Item from List (Lấy mục từ danh sách)**
+     - Đầu vào: danh sách từ **Split Text (Văn bản đã tách)** ở Hành động 1.
+     - Chọn **Item at Index (Mục tại chỉ mục)** và nhập số `3` (Item 3: ghi chú, nếu có).
+   - **Hành động 6: Add New Reminder (Thêm lời nhắc mới)**
+     - Tại mục **Title (Tiêu đề)**: chọn biến tiêu đề từ Hành động 4 (Item 2).
+     - Tại mục **List (Danh sách)**: chọn danh sách mong muốn (mặc định là *Reminders* hoặc *Lời nhắc*).
+     - Chạm vào mũi tên mở rộng (>):
+       - Bật mục **Remind Me (Nhắc tôi)** hoặc **Due Date (Đến hạn vào)**: chọn biến ngày giờ từ kết quả **Dates (Ngày)** của Hành động 3.
+       - Tại mục **Notes (Ghi chú)**: chọn biến nội dung ghi chú từ Hành động 5 (Item 3).
+4. Bấm **Done (Xong)** ở góc trên bên phải để lưu lại.
+
+---
+
+### Bật Nhạy cảm về thời gian
+
+Để thông báo từ app Lời nhắc không bị bỏ lỡ:
+1. Mở **Cài đặt (Settings)** trên iPhone.
+2. Vào mục **Thông báo (Notifications)** → chọn **Lời nhắc (Reminders)**.
+3. Bật mục **Thông báo nhạy cảm về thời gian (Time Sensitive Notifications)**.
+4. *Ý nghĩa*: Khi bật tính năng này, thông báo lời nhắc sẽ luôn xuất hiện ngay lập tức và phát chuông báo trên màn hình khóa, ngay cả khi bạn đang bật chế độ Tập trung (Focus / Không làm phiền).
+
+---
+
+### Nếu không chạy
+
+Nếu khi bấm "Thêm báo thức" hoặc "Thêm lời nhắc" từ LichKhoa mà iPhone không hoạt động như ý:
+- **(a) iOS báo không tìm thấy Phím tắt**: Tên phím tắt đặt bị sai lệch. Hãy kiểm tra lại tên của 2 phím tắt trong app Shortcuts trên máy bạn để đảm bảo đúng chữ hoa chữ thường là `ThemBaoThuc` và `ThemLoiNhac`. Nếu muốn đặt tên khác (ví dụ "Báo thức" hay "Lời nhắc"), bạn chỉ cần vào tab **Xem trước** của LichKhoa, cuộn xuống phần cài đặt và sửa lại 2 ô "Tên Phím tắt báo thức" và "Tên Phím tắt lời nhắc" cho khớp đúng 100% với tên trên iPhone.
+- **(b) Phím tắt không tách được dòng**: Mở phím tắt trong app Shortcuts, kiểm tra lại hành động **Split Text (Tách văn bản)**. Thử chuyển đổi giữa cách chọn **Custom (Tùy chỉnh)** (gõ phím Return/Xuống dòng vào ô) hoặc chọn trực tiếp **New Lines (Dòng mới)** tùy theo phiên bản bàn phím/iOS hiển thị.
+- **(c) Ngày giờ bị hiểu sai**: Hành động **Get Dates from Input (Lấy ngày từ đầu vào)** tự động nhận diện định dạng số chuẩn `YYYY-MM-DD HH:mm`. Trên một số cài đặt vùng/ngôn ngữ đặc biệt, nếu iOS hiểu sai ngày và giờ (ví dụ nhầm ngày thành tháng hoặc giờ bị lệch), hãy báo lại cho đội phát triển để điều chỉnh định dạng chuỗi dòng 1 cho phù hợp với máy của bạn.
+- **Mức độ chắc chắn về các hành động trên iOS 17+**: Các hành động `Split Text (Tách văn bản)`, `Get Item from List (Lấy mục từ danh sách)`, `Get Dates from Input (Lấy ngày từ đầu vào)`, `Create Alarm (Tạo báo thức)`, và `Add New Reminder (Thêm lời nhắc mới)` là các hành động tiêu chuẩn có thật và đã ổn định trên iOS 17+. Tùy vào phiên bản ngôn ngữ máy của bạn (tiếng Việt hoặc tiếng Anh), nhãn của các trường cấu hình con (ví dụ *Label*, *Name*, *Remind Me*, *Due Date*) có thể được Apple dịch hơi khác một chút, bạn hãy chọn trường tương ứng theo ngữ cảnh mô tả ở trên.
+
 ---
 
 ## Quy trình dùng hằng ngày (≤ 3 chạm)

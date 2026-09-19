@@ -14,7 +14,7 @@ interface Card {
 }
 
 /**
- * Màn Hướng dẫn: 6 thẻ ngắn (không thay HUONG-DAN.md — chỉ tóm tắt trong app).
+ * Màn Hướng dẫn: 7 thẻ ngắn (không thay HUONG-DAN.md — chỉ tóm tắt trong app).
  * Nội dung đầy đủ + "Bài thử trên iPhone" nằm ở docs/HUONG-DAN.md (SPEC §10, D-015/D-016).
  */
 export function Guide({ store, onGoToTab }: GuideProps) {
@@ -27,6 +27,7 @@ export function Guide({ store, onGoToTab }: GuideProps) {
     { key: 'daily', title: t('guide.dailyTitle', lang), body: t('guide.dailyBody', lang) },
     { key: 'fallback', title: t('guide.fallbackTitle', lang), body: t('guide.fallbackBody', lang) },
     { key: 'limits', title: t('guide.limitsTitle', lang), body: t('guide.limitsBody', lang) },
+    { key: 'reminder', title: t('guide.reminderTitle', lang), body: t('guide.reminderBody', lang) },
   ];
 
   return (

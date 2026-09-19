@@ -241,6 +241,8 @@
   "guide.fallbackBody": "Confirmed working on iPhone 13 Pro Max. If another device gets stuck after sign-in: use LichKhoa in Safari (bookmark it) for Google instead — its data is separate from the installed app.",
   "guide.limitsTitle": "6. Known limits",
   "guide.limitsBody": "Google session lasts 1 hour, tap \"Reconnect\" after. No automatic wallpaper changes. Data may be cleared after 7 days if not installed. For reminders, add each event to iPhone Calendar.",
+  "guide.reminderTitle": "7. Set up iPhone Reminder Shortcuts",
+  "guide.reminderBody": "Set up 2 Shortcuts on iPhone: \"ThemBaoThuc\" (creates alarms in Clock) and \"ThemLoiNhac\" (creates reminders in Reminders). Names can be changed in the Preview tab. See step-by-step setup details in section E of docs/HUONG-DAN.md.",
   "guide.goToSync": "Open Sync tab",
   "guide.goToDesign": "Open Design tab"
 }
