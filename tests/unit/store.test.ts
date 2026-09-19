@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { reducer } from '../../src/ui/store';
+import { reducer, createStore } from '../../src/ui/store';
 import { shouldAutoSync, performSync, syncRange, handleAuthRedirect, autoSyncIfNeeded } from '../../src/ui/sync';
 import { defaultState, defaultDesign } from '../../src/core/model';
 import type { DeviceSpec } from '../../src/core/model';
+import * as db from '../../src/storage/db';
 
 const device: DeviceSpec = {
   id: 'iphone-1179x2556',
@@ -357,6 +358,39 @@ describe('reducer', () => {
     expect(next.google.cache).toBeNull();
     expect(next.google.clientId).toBe('abc.apps.googleusercontent.com');
     expect(connected.google.calendarIds).toEqual(['cal1']); // không mutate
+  });
+});
+
+describe('createStore.flush (T-7.5: ghi ngay xuống đĩa trước khi rời app sang Phím tắt)', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  it('dispatch rồi flush() làm saveState chạy ngay, TRƯỚC khi hết 300ms debounce', async () => {
+    vi.useFakeTimers();
+    const saveStateSpy = vi.spyOn(db, 'saveState').mockResolvedValue(undefined);
+    const store = createStore(defaultState(device));
+
+    store.dispatch({ type: 'addTodo', text: 'Mua sữa' });
+    expect(saveStateSpy).not.toHaveBeenCalled(); // chưa hết 300ms, chưa tự ghi
+
+    await store.flush();
+
+    expect(saveStateSpy).toHaveBeenCalledTimes(1); // flush() ghi ngay, không chờ debounce
+    expect(saveStateSpy.mock.calls[0][0].todos[0].text).toBe('Mua sữa');
+
+    // Debounce cũ đã bị hủy: chờ hết 300ms không ghi thêm lần nữa.
+    vi.advanceTimersByTime(300);
+    expect(saveStateSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it('flush() khi không có gì đang chờ (không dispatch trước đó) vẫn an toàn: ghi lại state hiện tại', async () => {
+    const saveStateSpy = vi.spyOn(db, 'saveState').mockResolvedValue(undefined);
+    const store = createStore(defaultState(device));
+
+    await expect(store.flush()).resolves.toBeUndefined();
+    expect(saveStateSpy).toHaveBeenCalledTimes(1);
   });
 });
 

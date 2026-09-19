@@ -721,6 +721,7 @@ export function TodosTab({ store, state, showToast }: Props) {
         alarmShortcutName={state.alarmShortcutName}
         reminderShortcutName={state.reminderShortcutName}
         onSave={saveForReminder}
+        flush={store.flush}
         showToast={showToast}
         lang={lang}
       />

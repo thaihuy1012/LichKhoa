@@ -23,6 +23,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - 2026-09-15: Chủ dự án bật làn Gemini **v2 mức NHIỀU** (kit v2.1, `tho-gemini`). `agy-run.sh kiem-tra` → SẴN SÀNG (agy 1.2.2; code `gemini-3.8-flash-high`, soat/doc `gemini-3.1-pro-high`, sinh `gemini-3.8-flash-low`). Dự án vẫn ĐÓNG (D-022) → hỏi Chủ dự án việc tiếp theo.
 
 ## Tồn đọng (S4 — không chặn)
+- S4 · T-7.5 · nút "Đặt hình nền" (IN-6) cũng gọi `openShortcut` sau khi lưu mà chưa `flush()` → cùng loại rủi ro mất dữ liệu, mức nhẹ hơn (chỉ mất thay đổi thiết kế chưa kịp ghi, không mất sự kiện/việc/ghi chú). Mở phiếu riêng nếu Chủ dự án gặp thật.
 - ~~S4 · T-1.2 · mặc định `boxAlpha=1` che ảnh nền~~ → đã sửa T-4.2 (0.35 khi chọn ảnh; D-021 xác nhận).
 - ~~S4 · T-1.7 · normalizeState device thiếu safe*~~ → đã sửa T-2.14.
 - ~~S4 · T-2.7 · `EventsTab.tsx` L93 durationMin ngầm 60~~ → đã sửa trong T-2.12.
@@ -972,4 +973,4 @@ Chung cho mọi phiếu M7: không sửa/skip test khóa M1–M6 (ngoại lệ d
   [ ] E2E `m7-reminder.spec.ts`: thêm kiểm chứng — sau khi bấm `rem-alarm` ở kịch bản 3, đọc IndexedDB NGAY (không chờ 300 ms) và thấy việc "Mua sữa" đã nằm trong trạng thái đã lưu. Giữ nguyên 6 kịch bản cũ, không sửa ý nghĩa của chúng.
   [ ] `npm run check` pass; không sửa/skip test khóa nào khác.
 - Lệnh kiểm tra: `npm run check`
-- Model: sonnet — KHÔNG giao Gemini, lý do cụ thể: đây là đường ghi dữ liệu xuống đĩa, hỏng thì mất dữ liệu người dùng (mức S1 theo CLAUDE.md), và phải sửa đồng thời hợp đồng `createStore` dùng chung toàn app — thuộc loại "đổi interface dùng chung" bị loại theo LAN-GEMINI mục 3 điều kiện 3. · Lần thử: 0/3 · Trạng thái: DOING
+- Model: sonnet — KHÔNG giao Gemini, lý do cụ thể: đây là đường ghi dữ liệu xuống đĩa, hỏng thì mất dữ liệu người dùng (mức S1 theo CLAUDE.md), và phải sửa đồng thời hợp đồng `createStore` dùng chung toàn app — thuộc loại "đổi interface dùng chung" bị loại theo LAN-GEMINI mục 3 điều kiện 3. · Lần thử: 0/3 (1 phản biện CHẤP NHẬN, D-033) · Trạng thái: DONE

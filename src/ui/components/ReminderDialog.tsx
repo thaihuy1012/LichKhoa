@@ -13,6 +13,8 @@ export interface ReminderDialogProps {
   alarmShortcutName: string;
   reminderShortcutName: string;
   onSave: () => Promise<boolean | void> | boolean | void;
+  /** Ghi ngay xuống IndexedDB trước khi rời app sang Phím tắt (T-7.5, chống mất dữ liệu). Bắt buộc truyền. */
+  flush: () => Promise<void>;
   showToast: (msg: string) => void;
   lang: 'vi' | 'en';
 }
@@ -28,6 +30,7 @@ export function ReminderDialog({
   alarmShortcutName,
   reminderShortcutName,
   onSave,
+  flush,
   showToast,
   lang,
 }: ReminderDialogProps) {
@@ -51,6 +54,12 @@ export function ReminderDialog({
       if (ok === false) return;
     } catch {
       return;
+    }
+    try {
+      await flush();
+    } catch {
+      // Ghi thất bại (vd. IndexedDB lỗi): dữ liệu vẫn đúng trong state RAM và sẽ được
+      // ghi lại qua debounce/pagehide sau đó (T-7.5). Không chặn người dùng mở Phím tắt.
     }
     onClose();
     showToast(t('reminder.openedToast', lang, { name: shortcutName }));

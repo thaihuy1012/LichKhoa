@@ -37,6 +37,27 @@ async function getLastNav(page: import('@playwright/test').Page): Promise<string
   return page.evaluate(() => (window as unknown as { __lastNav?: string }).__lastNav);
 }
 
+/** Đọc trực tiếp bản ghi state đã lưu trong IndexedDB (không chờ debounce). Dùng lại cách kịch bản 6 dùng. */
+async function readSavedState(page: import('@playwright/test').Page): Promise<{ todos?: { text: string }[] } | undefined> {
+  return page.evaluate(
+    () =>
+      new Promise((resolve) => {
+        const req = indexedDB.open('keyval-store');
+        req.onerror = () => resolve(undefined);
+        req.onsuccess = () => {
+          const tx = req.result.transaction('keyval', 'readonly');
+          const getReq = tx.objectStore('keyval').get('lichkhoa:state');
+          getReq.onerror = () => resolve(undefined);
+          getReq.onsuccess = () => {
+            const s = getReq.result as { todos?: { text: string }[] } | undefined;
+            req.result.close();
+            resolve(s);
+          };
+        };
+      }),
+  );
+}
+
 test('T-7.END luồng chính M7: 6 kịch bản nhắc Phím tắt (Báo thức + Lời nhắc)', async ({ page }) => {
   page.on('dialog', (d) => d.accept());
   await page.goto('/?test=1');
@@ -167,6 +188,10 @@ test('T-7.END luồng chính M7: 6 kịch bản nhắc Phím tắt (Báo thức 
 
     const [dPart, tPart] = atTwoHours.split('T');
     expect(payload3).toBe(`${dPart} ${tPart}\nMua sữa`);
+
+    // T-7.5: đọc IndexedDB NGAY (không chờ debounce 300ms) — flush() đã ghi trước khi rời app.
+    const savedRightAfterClick = await readSavedState(page);
+    expect(savedRightAfterClick?.todos?.some((t) => t.text === 'Mua sữa')).toBe(true);
   });
 
   // --------------------------------------------------------------------------

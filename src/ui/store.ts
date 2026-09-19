@@ -218,6 +218,8 @@ export interface Store {
   getState: () => AppState;
   dispatch: (action: Action) => void;
   subscribe: (listener: (state: AppState) => void) => () => void;
+  /** Hủy debounce đang chờ (nếu có) rồi ghi ngay trạng thái hiện tại xuống IndexedDB, có `await` được (T-7.5). */
+  flush: () => Promise<void>;
 }
 
 const PERSIST_DEBOUNCE_MS = 300;
@@ -244,6 +246,17 @@ export function createStore(initialState: AppState): Store {
     }
   }
 
+  /** Bản `await` được của flush, dùng cho UI (vd. trước khi rời app sang Phím tắt, T-7.5).
+   * Luôn hủy timer đang chờ (nếu có) rồi ghi lại trạng thái hiện tại — an toàn kể cả khi
+   * không có gì đang chờ (ghi lại state hiện tại, vốn đã đúng, không gây hại). */
+  function flush(): Promise<void> {
+    if (timer !== null) {
+      clearTimeout(timer);
+      timer = null;
+    }
+    return saveState(state);
+  }
+
   if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
     window.addEventListener('pagehide', flushPersist);
   }
@@ -267,5 +280,6 @@ export function createStore(initialState: AppState): Store {
       listeners.add(listener);
       return () => listeners.delete(listener);
     },
+    flush,
   };
 }
