@@ -1165,7 +1165,7 @@ Chủ dự án chốt 2026-09-19: muốn việc có hạn **ngày + giờ** và 
 - Model: gemini (làn code — đủ điều kiện: 1 file, tiêu chí rõ, lệnh kiểm tra chạy được, không đổi thiết kế) · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DONE
 - Nhật ký: 2026-09-19 vòng 1 (gemini-3.8-flash-high, 6 phút): XONG → kiem-thu PASS (GioNhac ×9; grep cấm rỗng; diff chỉ HUONG-DAN trong phạm vi; check 100/14 skip) → review đạt (8 hành động, Set Variable, Trigger/chữ xám, cảnh báo mới) → commit.
 
-## M9 — Việc có giờ hạn + sửa hạn sau khi tạo (SPEC v1.10, D-035) — ĐANG LÀM
+## M9 — Việc có giờ hạn + sửa hạn sau khi tạo (SPEC v1.10, D-035) — XONG (tag `M9-ok`; chờ thử tay H1–H4 sau deploy)
 Chủ dự án duyệt 2026-09-19: làm ngay (không chờ G1–G5 của M8); "Quá hạn" theo NGÀY; deploy M8 + M9 gộp một lần. Nguồn chuẩn: SPEC §6 M9 (dòng 245–259) — phiếu dưới chỉ trỏ tới đó, không chép lại. Tuần tự 9.1 → 9.2 → 9.3 → 9.END. Test khóa M1–M8 không sửa/skip.
 
 ### T-9.1 — Lõi `Todo.dueTime` + state + `cmpTodo` + `defaultReminderAt`
@@ -1200,5 +1200,6 @@ Chủ dự án duyệt 2026-09-19: làm ngay (không chờ G1–G5 của M8); "Q
 - Phạm vi file: `src/ui/styles.css`, `src/ui/screens/events/TodosTab.tsx`, `tests/e2e/m9-todo-time.spec.ts`.
 - Việc: (1) `styles.css:777` thêm `min-width: 0` vào `.addrow-todo-due-line .todo-due-hint`; (2) `TodosTab.tsx:80–91` bọc `todo-due-time-edit` trong `{Boolean(editDue) && …}`; (3) E2E: (1) sau khi `todo-due-time` hiện, `todo-add` boundingBox `x + width ≤ 428` và `.addrow-todo-due-line` `scrollWidth ≤ clientWidth`; (5) `window.__lastOps = undefined` trước khi bấm `layout-todo` và `layout-week`; (6) dòng 305/322 → `expect(await page.getByTestId('rem-at').inputValue()).toBe(…)`; (7) assert nhãn Họp `6/10 09:00`, Nộp báo cáo `6/10 14:00`, Đọc `+ Hạn`.
 - Tiêu chí: assert (1) FAIL trước khi sửa CSS (ghi log), PASS sau; `m9-todo-time.spec.ts --repeat-each=3` pass 2 trình duyệt; `npm run check` pass; test khóa nguyên vẹn.
-- Model: sua-loi (opus — sự cố S2) · Lần thử: 0/3 · Trạng thái: DOING
+- Model: sua-loi (opus — sự cố S2) · Lần thử: 1/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-19 lượt 1 ĐÃ SỬA → kiem-thu PASS → commit; SC-004 đóng; M9 đạt theo phán quyết (Kiến trúc sư: "đạt thì gắn M9-ok, không cần gọi lại").
 - S4 (Kiến trúc sư): `sameTodoGroup` (store.ts:13–14) coi `due: ''` là có hạn, `cmpTodo` (collect.ts:71) coi không — chỉ với JSON nhập tay.

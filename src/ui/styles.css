@@ -776,6 +776,7 @@ input[type='datetime-local'] {
 
 .addrow-todo-due-line .todo-due-hint {
   flex: 1;
+  min-width: 0;
 }
 
 .addrow-todo-due-line input[type='date'],

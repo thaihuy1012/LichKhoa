@@ -2,16 +2,18 @@
 (Chỉ Quản lý ghi. Đọc đầu mỗi phiên: sự cố chưa đóng xử lý trước mọi việc khác. Trạng thái: MỞ | ĐANG SỬA | CHỜ CHỦ DỰ ÁN | ĐÃ ĐÓNG.)
 
 ## Đang mở
-- **SC-004** (S2, ĐANG SỬA) — Tab Việc: hàng thêm việc tràn khỏi màn hình 428 pt khi ô Giờ hiện (M9) (2026-09-19)
+- (không)
 
 ## Đã đóng gần đây
+- **SC-004** (S2, ĐÃ ĐÓNG 2026-09-19) — hàng thêm việc tràn 428 pt (M9)
 - **SC-003** (S2, ĐÃ ĐÓNG 2026-09-19) — Phím tắt Lời nhắc lỗi "No alert location was provided" → B, B', C KHÔNG ĐẠT trên iPhone thật (2026-09-19)
 
-## SC-004 — Hàng thêm việc tràn ở 428 pt khi ô Giờ hiện · Mức S2 · Trạng thái: ĐANG SỬA
+## SC-004 — Hàng thêm việc tràn ở 428 pt khi ô Giờ hiện · Mức S2 · Trạng thái: ĐÃ ĐÓNG
 - Phát hiện: 2026-09-19 · Kiến trúc sư khi duyệt M9 (đo Playwright 428 pt): webkit nội dung 559/404 px, `todo-add` x 505–571 ngoài màn hình, `overflow-x: hidden` nên không cuộn tới; chromium 425/404, nút cắt 9 px. E2E không bắt vì Playwright tự cuộn khi click.
 - Nguyên nhân (Kiến trúc sư): `src/ui/styles.css:777` `.addrow-todo-due-line .todo-due-hint` có `flex: 1` nhưng giữ `min-width: auto`.
 - Commit tốt cuối cùng: 32ebe26 (trước M9; lỗi do T-9.3 86a3534 — thuộc milestone CHƯA duyệt). Không revert (mất cả T-9.3); sửa tại chỗ theo phán quyết SỬA.
 - Đóng băng: `src/ui/styles.css`, `TodosTab.tsx`, `m9-todo-time.spec.ts` — chỉ phiếu T-9.4. Làn Gemini dừng tới khi đóng.
+- ĐÓNG 2026-09-19: sua-loi (opus) lượt 1 ĐÃ SỬA — tái hiện bằng assert boundingBox (fail 571/437 > 428, `docs/test-log/SC-004-truoc.log`), thêm `min-width: 0`; kiem-thu độc lập PASS (m9 ×3 hai trình duyệt; check 104/14 skip; `SC-004-kiem.log`). Commit: xem git log "T-9.4".
 - Sửa: T-9.4 giao `sua-loi` (opus) — tái hiện bằng assert boundingBox trước, rồi sửa; gộp 3 việc test + S4 TodosTab:80–91 theo phán quyết.
 
 ## SC-003 — Phím tắt Lời nhắc lỗi "No alert location was provided" · Mức S2 · Trạng thái: ĐÃ ĐÓNG

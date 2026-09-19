@@ -1,0 +1,48 @@
+
+Running 2 tests using 2 workers
+
+[1/2] [chromium] › tests\e2e\m9-todo-time.spec.ts:62:1 › T-9.END luồng chính M9: 7 kịch bản Việc có giờ hạn (m9-todo-time)
+[2/2] [webkit] › tests\e2e\m9-todo-time.spec.ts:62:1 › T-9.END luồng chính M9: 7 kịch bản Việc có giờ hạn (m9-todo-time)
+  1) [webkit] › tests\e2e\m9-todo-time.spec.ts:62:1 › T-9.END luồng chính M9: 7 kịch bản Việc có giờ hạn (m9-todo-time) › Kịch bản 1: todo-due-time ẩn/hiện; thêm "Nộp báo cáo" 6/10 14:00 
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 428
+    Received:    571.21875
+
+       98 |     const addBox = await page.getByTestId('todo-add').boundingBox();
+       99 |     expect(addBox).not.toBeNull();
+    > 100 |     expect(addBox!.x + addBox!.width).toBeLessThanOrEqual(428);
+          |                                       ^
+      101 |     const dueLineOverflow = await page
+      102 |       .locator('.addrow-todo-due-line')
+      103 |       .evaluate((el) => ({ scrollWidth: el.scrollWidth, clientWidth: el.clientWidth }));
+        at E:\DuAn\thu-nghiem\tests\e2e\m9-todo-time.spec.ts:100:39
+        at E:\DuAn\thu-nghiem\tests\e2e\m9-todo-time.spec.ts:77:3
+
+    Error Context: test-results\m9-todo-time-T-9-END-luồng-efa1a-ệc-có-giờ-hạn-m9-todo-time--webkit\error-context.md
+
+
+  2) [chromium] › tests\e2e\m9-todo-time.spec.ts:62:1 › T-9.END luồng chính M9: 7 kịch bản Việc có giờ hạn (m9-todo-time) › Kịch bản 1: todo-due-time ẩn/hiện; thêm "Nộp báo cáo" 6/10 14:00 
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 428
+    Received:    437.28125
+
+       98 |     const addBox = await page.getByTestId('todo-add').boundingBox();
+       99 |     expect(addBox).not.toBeNull();
+    > 100 |     expect(addBox!.x + addBox!.width).toBeLessThanOrEqual(428);
+          |                                       ^
+      101 |     const dueLineOverflow = await page
+      102 |       .locator('.addrow-todo-due-line')
+      103 |       .evaluate((el) => ({ scrollWidth: el.scrollWidth, clientWidth: el.clientWidth }));
+        at E:\DuAn\thu-nghiem\tests\e2e\m9-todo-time.spec.ts:100:39
+        at E:\DuAn\thu-nghiem\tests\e2e\m9-todo-time.spec.ts:77:3
+
+    Error Context: test-results\m9-todo-time-T-9-END-luồng-efa1a-ệc-có-giờ-hạn-m9-todo-time--chromium\error-context.md
+
+
+  2 failed
+    [chromium] › tests\e2e\m9-todo-time.spec.ts:62:1 › T-9.END luồng chính M9: 7 kịch bản Việc có giờ hạn (m9-todo-time) 
+    [webkit] › tests\e2e\m9-todo-time.spec.ts:62:1 › T-9.END luồng chính M9: 7 kịch bản Việc có giờ hạn (m9-todo-time) 

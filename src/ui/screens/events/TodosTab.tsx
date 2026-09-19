@@ -77,18 +77,20 @@ function DueBadge({
             if (e.key === 'Enter') handleDone();
           }}
         />
-        <input
-          type="time"
-          class="todo-due-time-input"
-          data-testid="todo-due-time-edit"
-          aria-label={t('events.todoDueTime', lang)}
-          value={editDueTime}
-          onInput={(e) => setEditDueTime((e.target as HTMLInputElement).value)}
-          onChange={(e) => setEditDueTime((e.target as HTMLInputElement).value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') handleDone();
-          }}
-        />
+        {Boolean(editDue) && (
+          <input
+            type="time"
+            class="todo-due-time-input"
+            data-testid="todo-due-time-edit"
+            aria-label={t('events.todoDueTime', lang)}
+            value={editDueTime}
+            onInput={(e) => setEditDueTime((e.target as HTMLInputElement).value)}
+            onChange={(e) => setEditDueTime((e.target as HTMLInputElement).value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleDone();
+            }}
+          />
+        )}
         <button
           type="button"
           class="todo-due-done"

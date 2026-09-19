@@ -93,6 +93,16 @@ test('T-9.END luồng chính M9: 7 kịch bản Việc có giờ hạn (m9-todo-
     // Nhập giờ
     await page.getByTestId('todo-due-time').fill('14:00');
 
+    // SC-004: hàng thêm việc không được tràn khỏi màn hình 428 pt khi ô Giờ hiện
+    // (Playwright tự cuộn khi click nên phải đo trực tiếp).
+    const addBox = await page.getByTestId('todo-add').boundingBox();
+    expect(addBox).not.toBeNull();
+    expect(addBox!.x + addBox!.width).toBeLessThanOrEqual(428);
+    const dueLineOverflow = await page
+      .locator('.addrow-todo-due-line')
+      .evaluate((el) => ({ scrollWidth: el.scrollWidth, clientWidth: el.clientWidth }));
+    expect(dueLineOverflow.scrollWidth).toBeLessThanOrEqual(dueLineOverflow.clientWidth);
+
     // Bấm Thêm
     await page.getByTestId('todo-add').click();
 
@@ -251,6 +261,10 @@ test('T-9.END luồng chính M9: 7 kịch bản Việc có giờ hạn (m9-todo-
 
     // Chuyển bố cục To-do
     await page.getByTestId('tab-preview').click();
+    // Xóa __lastOps cũ để poll chỉ nhận lần vẽ SAU khi đổi bố cục (không khớp nhầm bản cũ)
+    await page.evaluate(() => {
+      (window as unknown as { __lastOps?: unknown }).__lastOps = undefined;
+    });
     await page.getByTestId('layout-todo').click();
 
     // Chờ render + kiểm __lastOps
@@ -265,6 +279,9 @@ test('T-9.END luồng chính M9: 7 kịch bản Việc có giờ hạn (m9-todo-
       .toBe(true);
 
     // Chuyển bố cục Tuần
+    await page.evaluate(() => {
+      (window as unknown as { __lastOps?: unknown }).__lastOps = undefined;
+    });
     await page.getByTestId('layout-week').click();
 
     // Chờ render + kiểm __lastOps
@@ -301,8 +318,7 @@ test('T-9.END luồng chính M9: 7 kịch bản Việc có giờ hạn (m9-todo-
 
     // rem-at phải = 2026-10-07T06:45 ngay lần đọc đầu (KHÔNG toPass)
     // → Lần 1: kiểm trực tiếp, KHÔNG fill lại
-    const remAtInput1 = page.getByTestId('rem-at');
-    await expect(remAtInput1).toHaveValue('2026-10-07T06:45');
+    expect(await page.getByTestId('rem-at').inputValue()).toBe('2026-10-07T06:45');
 
     // rem-none
     await page.getByTestId('rem-none').click();
@@ -318,8 +334,7 @@ test('T-9.END luồng chính M9: 7 kịch bản Việc có giờ hạn (m9-todo-
 
     // rem-at phải = 2026-10-08T06:45 ngay lần đọc đầu (KHÔNG toPass)
     // → Lần 2: kiểm trực tiếp, KHÔNG fill lại
-    const remAtInput2 = page.getByTestId('rem-at');
-    await expect(remAtInput2).toHaveValue('2026-10-08T06:45');
+    expect(await page.getByTestId('rem-at').inputValue()).toBe('2026-10-08T06:45');
 
     // rem-none
     await page.getByTestId('rem-none').click();
@@ -356,7 +371,16 @@ test('T-9.END luồng chính M9: 7 kịch bản Việc có giờ hạn (m9-todo-
     const callLabel = callItem.getByTestId('todo-due-label');
     await expect(callLabel).toContainText('Hôm nay 16:00');
 
-    // Kiểm nhãn của 3 cái khác (tuy nhiên kịch bản này tập trung vào reload, nên chỉ kiểm "Gọi điện")
+    // Nhãn 3 việc còn lại sau reload
+    await expect(
+      page.getByTestId('todo-item').filter({ hasText: 'Họp' }).getByTestId('todo-due-label'),
+    ).toContainText('6/10 09:00');
+    await expect(
+      page.getByTestId('todo-item').filter({ hasText: 'Nộp báo cáo' }).getByTestId('todo-due-label'),
+    ).toContainText('6/10 14:00');
+    await expect(
+      page.getByTestId('todo-item').filter({ hasText: 'Đọc' }).getByTestId('todo-due-label'),
+    ).toContainText('+ Hạn');
 
     // Đổi ngôn ngữ en ở tab Xem trước
     await page.getByTestId('tab-preview').click();

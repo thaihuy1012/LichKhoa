@@ -43,3 +43,6 @@
 - Dấu hiệu: báo cáo theo khung THỢ Claude ("KẾT QUẢ: DONE") thay vì khung "THỢ GEMINI … Trạng thái script"; không có `docs/tasks/<mã>.md` và `docs/gemini-out/<mã>.md`.
 - Bài học: sau MỖI lượt tho-gemini, Quản lý kiểm `ls docs/tasks/<mã>.md docs/gemini-out/<mã>.md` trước khi gửi kiem-thu. Thiếu → coi là vi phạm làn: nếu kiem-thu + review vẫn đạt thì có thể nhận (ghi rõ), nhưng tính như lượt thợ Claude, không tính cho Gemini. Nhắc trong prompt giao: "Cấm tự viết code; không chạy được agy thì trả LỖI".
 - Cùng đợt: báo cáo Gemini bị cụt 2 lần (T-9.2, T-9.3) — code vẫn đúng; luôn để kiem-thu đối chiếu từng tiêu chí SPEC, không tin lời tự báo.
+
+## 2026-09-19 · SC-004: E2E không bắt lỗi tràn bố cục
+- Playwright tự cuộn tới phần tử trước khi click → nút bị đẩy ra ngoài màn hình (overflow-x hidden) vẫn "bấm được" trong test. Phần tử con `flex: 1` chứa input date/time phải có `min-width: 0`. Mọi phiếu đổi hàng nhập/ bố cục phải có assert boundingBox ≤ 428 hoặc scrollWidth ≤ clientWidth. Kiến trúc sư bắt được nhờ đo thật, không nhờ test.
