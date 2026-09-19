@@ -1,0 +1,11 @@
+CỔNG BẢO MẬT TRƯỚC DEPLOY — 2026-09-19 15:13 — commit 1b4ac0f
+Phạm vi: origin/main..HEAD (12 commit). Kho CÔNG KHAI.
+1. Bí mật: 0 · 2. PII (email/SĐT): 0 · 3. Ảnh chụp máy thật: 0 · 4. File nhạy cảm: 0 · 5. Phụ thuộc mới: 0
+
+Một phát hiện đã xử lý: 4 ảnh chụp màn hình iPhone của Chủ dự án (tên phím tắt cá nhân, thông báo Zalo,
+tên danh sách Lời nhắc, ~14 MB) đã lọt vào commit 266da23 chưa push. Chủ dự án tự chạy git filter-branch
+gỡ khỏi 12 commit chưa push (nhánh sao lưu: backup-truoc-go-anh). Ảnh đã khôi phục về máy để tham chiếu;
+docs/hinh-anh-loi/ đã đưa vào .gitignore. Tag M7-ok không bị ảnh hưởng (nằm trước vùng viết lại).
+Kiểm chứng sau khi viết lại lịch sử: npm run check → 100 passed / 14 skipped / 0 fail; mã nguồn nguyên vẹn.
+
+KẾT LUẬN: ĐƯỢC PHÉP DEPLOY.
