@@ -1073,7 +1073,8 @@ Lưu ý thiết kế đã chốt (SPEC v1.9 §5, §8.11): payload KHÔNG đổi 
 - Nội dung §E.3 theo SPEC §3 IN-12 gạch "Phía iPhone" + §10.E: tạo danh sách Reminders `BaoThuc`; `ThemBaoThucNgay` = Duplicate `ThemLoiNhac` (bản đã sửa B-014, dùng `GioNhac`/`TieuDe`) chỉ đổi danh sách thành `BaoThuc`; `TaoBaoThucSang` (Find Reminders: List is BaoThuc, Due Date is Today, Is Completed is No, sort Due Date → Repeat with Each → If Due Date is after Current Date → Create Alarm (Time = Due Date, Label = Title) → Edit Reminder: Is Completed = Yes → End If → End Repeat); Tự động hóa "Time of Day" 00:05 Daily, Run Immediately, tắt Notify When Run → Run Shortcut `TaoBaoThucSang`. Mục "Thử ngay" (G1) và "Nếu không chạy" (G5: thêm Edit Reminder Set Due Date = GioNhac). Văn phong song ngữ như E.2; ưu tiên `Set Variable` đặt tên, không dùng Select Variable.
 - Tiêu chí nghiệm thu: [ ] `Select-String` 10 mẫu trong SPEC §6 M8 ≥ 9 dòng · [ ] có "Thử ngay" và "Nếu không chạy" · [ ] 4 rủi ro (a)–(d) · [ ] `guide.dayAlarmTitle`/`Body` đủ VI/EN, hiện trong tab Hướng dẫn · [ ] `npm run check` pass.
 - Lệnh kiểm tra: `grep -c -E "ThemBaoThucNgay|TaoBaoThucSang|BaoThuc|Find Reminders|Repeat with Each|Create Alarm|Edit Reminder|Run Immediately|Notify When Run|00:05" docs/HUONG-DAN.md` ; `npm run check`.
-- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO — sau T-8.2 (chung file i18n)
+- Model: gemini → sonnet · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-19 vòng 1 Gemini TRỐNG (3 phút, không sửa file — lỗi làn lần 1) → chuyển tho-sonnet ngay (quy tắc trạng thái khác XONG) → DONE → kiem-thu PASS (grep 29; check 290 unit / 100 e2e / 14 skip; E.2 không đụng) → review nội dung E.3 đạt → commit.
 
 ### T-8.END — E2E `tests/e2e/m8-dayalarm.spec.ts`
 - Phạm vi file: `tests/e2e/m8-dayalarm.spec.ts` (mới). Không sửa src.

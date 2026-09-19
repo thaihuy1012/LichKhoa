@@ -253,6 +253,8 @@
   "guide.limitsBody": "Phiên Google chỉ sống 1 giờ, hết hạn bấm \"Kết nối lại\" (không tự làm mới trên iPhone được). App không tự đổi hình nền khi không chạm máy. Nếu không cài vào Màn hình chính, Safari có thể xóa dữ liệu sau 7 ngày không dùng. Muốn Lịch iPhone nhắc giờ: bấm \"Thêm vào Lịch iPhone\" cho từng sự kiện.",
   "guide.reminderTitle": "7. Cài Phím tắt nhắc trên iPhone",
   "guide.reminderBody": "Cần cài 2 Phím tắt trên iPhone: \"ThemBaoThuc\" (tạo báo thức trong app Đồng hồ) và \"ThemLoiNhac\" (tạo lời nhắc trong app Lời nhắc). Đổi tên được ở tab Xem trước. Xem hướng dẫn cài từng bước chi tiết tại mục E trong docs/HUONG-DAN.md.",
+  "guide.dayAlarmTitle": "8. Báo thức đúng ngày (Tự động hóa, làm 1 lần)",
+  "guide.dayAlarmBody": "Cho báo thức xa hơn 24 giờ: tạo danh sách Reminders \"BaoThuc\", Phím tắt \"ThemBaoThucNgay\" (nhân bản ThemLoiNhac, đổi List = BaoThuc) và \"TaoBaoThucSang\" (Find Reminders → Repeat with Each → Create Alarm), rồi Tự động hóa chạy 00:05 hằng ngày gọi TaoBaoThucSang. Không đảm bảo 100% (máy tắt/hết pin lúc 00:05). Xem đầy đủ tại mục E.3 trong docs/HUONG-DAN.md.",
   "guide.goToSync": "Mở tab Đồng bộ",
   "guide.goToDesign": "Mở tab Thiết kế"
 }

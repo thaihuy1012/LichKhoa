@@ -253,6 +253,8 @@
   "guide.limitsBody": "Google session lasts 1 hour, tap \"Reconnect\" after. No automatic wallpaper changes. Data may be cleared after 7 days if not installed. For reminders, add each event to iPhone Calendar.",
   "guide.reminderTitle": "7. Set up iPhone Reminder Shortcuts",
   "guide.reminderBody": "Set up 2 Shortcuts on iPhone: \"ThemBaoThuc\" (creates alarms in Clock) and \"ThemLoiNhac\" (creates reminders in Reminders). Names can be changed in the Preview tab. See step-by-step setup details in section E of docs/HUONG-DAN.md.",
+  "guide.dayAlarmTitle": "8. Alarm on that day (Automation, once)",
+  "guide.dayAlarmBody": "For alarms more than 24 hours away: create a Reminders list \"BaoThuc\", a \"ThemBaoThucNgay\" Shortcut (duplicate ThemLoiNhac, change List = BaoThuc) and \"TaoBaoThucSang\" (Find Reminders → Repeat with Each → Create Alarm), then an Automation running daily at 00:05 calling TaoBaoThucSang. Not 100% guaranteed (device off/low battery at 00:05). Full steps in section E.3 of docs/HUONG-DAN.md.",
   "guide.goToSync": "Open Sync tab",
   "guide.goToDesign": "Open Design tab"
 }

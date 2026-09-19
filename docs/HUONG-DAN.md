@@ -212,6 +212,55 @@ Nếu khi bấm "Thêm báo thức" hoặc "Thêm lời nhắc" từ LichKhoa m�
 
 ---
 
+### 3. Báo thức đúng ngày (Tự động hóa, dựng 1 lần)
+
+Nút "Báo thức đúng ngày" trong LichKhoa vượt giới hạn 24 giờ của báo thức Đồng hồ: app gửi một *lời nhắc* (đủ ngày + giờ) vào danh sách Reminders riêng `BaoThuc`; một Tự động hóa Phím tắt chạy **00:05 hằng ngày** quét lời nhắc đến hạn hôm nay trong danh sách đó rồi tạo báo thức Đồng hồ đúng giờ (lúc đó luôn còn trong 24 giờ). Cần dựng 3 phần dưới đây, chỉ làm một lần.
+
+#### Bước 1 — Danh sách Reminders `BaoThuc`
+
+1. Mở app **Lời nhắc (Reminders)**.
+2. Tạo danh sách mới, đặt ĐÚNG tên **`BaoThuc`** (không dấu cách).
+3. Danh sách này CHỈ dùng cho báo thức đúng ngày — không thêm việc khác vào đây, kẻo mọi lời nhắc trong ngày bị biến thành báo thức (xem rủi ro (d) ở "Giới hạn đã biết").
+
+#### Bước 2 — Phím tắt `ThemBaoThucNgay`
+
+1. Trong app **Shortcuts (Phím tắt)**, mở phím tắt `ThemLoiNhac` đã tạo ở mục E.2 (Cách A hoặc Cách B, dùng biến `GioNhac`/`TieuDe` y hệt).
+2. Bấm nút **⋯ (More)** → **Duplicate (Nhân bản)**.
+3. Đổi tên bản sao thành ĐÚNG **`ThemBaoThucNgay`**.
+4. Mở hành động **Add New Reminder (Thêm lời nhắc mới)** ở cuối phím tắt: chạm vào ô danh sách, đổi thành **`BaoThuc`** (danh sách đã tạo ở Bước 1). KHÔNG đổi gì khác — vẫn gán tiêu đề từ biến `TieuDe` và giờ báo từ biến `GioNhac` như bản gốc.
+5. Bấm **Done (Xong)**.
+
+#### Bước 3 — Phím tắt `TaoBaoThucSang`
+
+1. Trong app **Shortcuts (Phím tắt)**, bấm dấu **+** để tạo phím tắt mới, đặt ĐÚNG tên **`TaoBaoThucSang`**.
+2. Thêm lần lượt các hành động sau, đúng thứ tự:
+   - **Find Reminders (Tìm lời nhắc)**: nguồn **All Reminders**, thêm bộ lọc: `List is BaoThuc`; `Due Date is Today`; `Is Completed is No`; sắp xếp **Sort by Due Date**.
+   - **Repeat with Each (Lặp với từng)**: chọn kết quả của **Find Reminders** vừa thêm.
+   - **If (Nếu)**: chọn `Repeat Item › Due Date`, điều kiện **is after (là sau)**, giá trị **Current Date (Ngày hiện tại)**.
+     - **Nhánh "Nếu có"**: thêm **Create Alarm (Tạo báo thức)** — Time = `Repeat Item › Due Date`, Label = `Repeat Item › Title`, Repeat = **Never**.
+     - Ngay sau đó, thêm **Edit Reminder (Sửa lời nhắc)** — chọn `Repeat Item`, đặt **Is Completed = Yes** (đánh dấu hoàn thành, để không tạo báo thức trùng nếu chạy lại cùng ngày).
+   - **End If (Kết thúc nếu)** / **End Repeat (Kết thúc lặp)**.
+3. Bấm **Done (Xong)** để lưu.
+
+**Thử ngay**: trong app Lời nhắc, tự tạo một lời nhắc bịa vào danh sách `BaoThuc` với hạn hôm nay, ví dụ tiêu đề "Thử báo thức" lúc `14:35` (giờ còn sau hiện tại). Mở app Shortcuts, mở phím tắt `TaoBaoThucSang`, bấm nút ▶ (Run) để chạy tay ngay lập tức — không cần chờ qua 00:05. Kiểm tra app Đồng hồ có xuất hiện báo thức mới "Thử báo thức" đúng giờ không, và lời nhắc thử ở `BaoThuc` đã tự đánh dấu hoàn thành chưa.
+
+#### Bước 4 — Tự động hóa chạy 00:05 hằng ngày
+
+1. Trong app **Shortcuts (Phím tắt)**, vào tab **Automation (Tự động hóa)** → bấm **+** ở góc trên.
+2. Chọn **Create Personal Automation (Tạo tự động hóa cá nhân)** → **Time of Day (Thời điểm trong ngày)**.
+3. Đặt giờ **00:05**, chọn lặp **Daily (Hằng ngày)**.
+4. Ở bước xác nhận chạy: chọn **Run Immediately (Chạy ngay)**, tắt **Notify When Run (Thông báo khi chạy)** (để không hiện thông báo giữa đêm).
+5. Bấm **Next (Tiếp)** → **Add Action (Thêm hành động)** → tìm và thêm **Run Shortcut (Chạy phím tắt)** → chọn phím tắt **`TaoBaoThucSang`**.
+6. Bấm **Done (Xong)** để lưu Tự động hóa.
+
+**Nếu không chạy** (G5 — Tự động hóa không tạo báo thức lúc sáng): kiểm tra theo thứ tự:
+- Mở app Shortcuts → Automation → chắc chắn Tự động hóa đang **bật** (không bị tắt) và chọn đúng **Run Immediately** (không phải "Ask Before Running").
+- Vào `TaoBaoThucSang`, bấm ▶ chạy tay — nếu báo thức xuất hiện thì Tự động hóa đúng, chỉ là máy đã tắt/khóa hẳn lúc 00:05 (xem rủi ro (a)); vào Lời nhắc bấm hoàn thành lại việc dọn.
+- Nếu bấm ▶ chạy tay cũng KHÔNG tạo báo thức: kiểm tra lời nhắc thử có đúng `Due Date` là hôm nay và nằm trong danh sách `BaoThuc` không (Find Reminders lọc theo `List is BaoThuc`).
+- Nếu hành động **Add New Reminder** trong `ThemBaoThucNgay` không ghi giờ vào `Due Date` trên máy của bạn (hiếm gặp): mở phím tắt, thêm hành động **Edit Reminder (Set Due Date = GioNhac)** ngay sau **Add New Reminder** để đảm bảo có hạn đúng giờ.
+
+---
+
 ## Quy trình dùng hằng ngày (≤ 3 chạm)
 
 1. Mở LichKhoa từ biểu tượng trên Màn hình chính.
@@ -226,6 +275,11 @@ Nếu khi bấm "Thêm báo thức" hoặc "Thêm lời nhắc" từ LichKhoa m�
 - Nếu chỉ mở bằng Safari thường (chưa "Thêm vào MH chính"), Safari có thể tự xóa dữ liệu đã lưu sau **7 ngày không dùng**. Cài vào Màn hình chính để tránh mất dữ liệu; nên thỉnh thoảng **Xuất JSON** để sao lưu (tab Xem trước → cuộn xuống phần cài đặt).
 - Muốn Lịch iPhone **nhắc giờ** một sự kiện: mở sự kiện đó trong LichKhoa → bấm **"Thêm vào Lịch iPhone"** → mở file `.ics` tải về. Phải làm cho **từng sự kiện**, không tự động hàng loạt.
 - Sự kiện lấy từ Google Calendar chỉ để xem, **không sửa được** trong LichKhoa.
+- Báo thức đúng ngày (mục E.3) — 4 rủi ro đã biết:
+  - **(a)** Tự động hóa theo giờ **không đảm bảo 100%**: máy tắt nguồn, hết pin, hoặc Chế độ nguồn thấp đúng lúc 00:05 → có thể chạy trễ hoặc không chạy. Giảm rủi ro: `TaoBaoThucSang` chạy tay được bất cứ lúc nào (mở app Shortcuts, bấm ▶), và lời nhắc chưa hoàn thành vẫn tự thông báo đúng giờ qua app Lời nhắc (đã bật "Nhạy cảm thời gian").
+  - **(b)** Chạy **trùng** (bấm tay + Tự động hóa cùng chạy trong ngày) → "Create Alarm" luôn tạo báo thức mới, có thể ra 2 báo thức giống nhau. Giảm rủi ro: lọc `Is Completed is No` trong "Find Reminders" và "Edit Reminder: Set Is Completed = Yes" ngay sau khi tạo — chạy lại cùng ngày sẽ không tạo thêm.
+  - **(c)** Báo thức một lần sau khi kêu **vẫn còn nằm (ở trạng thái tắt)** trong app Đồng hồ — Phím tắt không tự xóa được. Cần dọn tay theo đợt (Đồng hồ → Sửa → xóa các báo thức cũ).
+  - **(d)** Bắt buộc phải dùng danh sách Reminders **riêng** `BaoThuc`, không dùng chung với danh sách lời nhắc khác. Nếu trỏ nhầm sang danh sách chung, mọi lời nhắc đến hạn hôm nay trong danh sách đó sẽ bị biến thành báo thức.
 
 ## Bài thử trên iPhone (làm khi có bản chạy thật — T-4.0)
 

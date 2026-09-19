@@ -28,6 +28,7 @@ export function Guide({ store, onGoToTab }: GuideProps) {
     { key: 'fallback', title: t('guide.fallbackTitle', lang), body: t('guide.fallbackBody', lang) },
     { key: 'limits', title: t('guide.limitsTitle', lang), body: t('guide.limitsBody', lang) },
     { key: 'reminder', title: t('guide.reminderTitle', lang), body: t('guide.reminderBody', lang) },
+    { key: 'dayAlarm', title: t('guide.dayAlarmTitle', lang), body: t('guide.dayAlarmBody', lang) },
   ];
 
   return (
