@@ -109,9 +109,16 @@ Bấm **Add Action (Thêm hành động)** và lần lượt thêm các hành đ
   - Tại mục **Title (Tiêu đề)** / **Reminder**: chọn biến tiêu đề từ Hành động 4 (Item 2).
   - Tại mục **List (Danh sách)**: chọn danh sách mong muốn (mặc định là *Reminders* hoặc *Lời nhắc*).
   - Chạm vào mũi tên mở rộng (>):
-    - Bật mục **Remind Me (Nhắc tôi)** hoặc **Due Date (Đến hạn vào)**: chọn biến ngày giờ từ kết quả **Dates (Ngày)** của Hành động 3.
+    - Mặc định ô nhắc đang hiện **"No Alert" (Không báo)**. Chạm vào ô đó → chọn **"Alert" (Báo)** (tùy bản iOS, có thể hiện là **"Remind me at a time" (Nhắc tôi vào lúc)**).
+    - Sau khi chọn xong, một ô mới **"At Time" (Vào lúc)** sẽ hiện ra → chạm vào ô này và chọn biến ngày giờ từ kết quả **Dates (Ngày)** của Hành động 3.
     - *Lưu ý*: KHÔNG lấy Item 3 và KHÔNG gắn trường Notes (Ghi chú).
 - Bấm **Done (Xong)** ở góc trên bên phải để lưu lại.
+
+> ⚠️ **CẢNH BÁO QUAN TRỌNG**: KHÔNG được gán biến ngày giờ trực tiếp vào ô **"No Alert"**. Nếu làm vậy, iOS sẽ hiểu nhầm đây là lời nhắc theo VỊ TRÍ và báo lỗi nguyên văn:
+> **"No alert location was provided. Please provide a location for this reminder's alert."**
+> Cách sửa: bắt buộc phải đổi ô đó sang **"Alert"** (hoặc **"Remind me at a time"**) trước, ô **"At Time"** mới xuất hiện để gán biến ngày giờ.
+>
+> **Phương án dự phòng trên iOS 18**: nếu máy có hành động mới **"Create Reminder"** (thay cho "Add New Reminder"), có thể dùng hành động này — nó có ô **"Due Date"** riêng để gán biến ngày giờ, không cần bước đổi "No Alert" → "Alert" như trên. Không bắt buộc, chỉ dùng nếu có sẵn.
 
 #### Cách B (nếu muốn có cả nội dung ghi chú)
 Đây là cách dài hơn, chỉ làm nếu bạn muốn nội dung ghi chú xuất hiện trong app Lời nhắc. Vì Sự kiện và Việc chỉ gửi 2 dòng (ngày giờ + tiêu đề), chỉ có Ghi chú mới gửi dòng 3 (nội dung), nên cần dùng lệnh điều kiện **If (Nếu)** để kiểm tra:
@@ -137,13 +144,15 @@ Bấm **Add Action (Thêm hành động)** và lần lượt thêm các hành đ
   - **Nhánh "Nếu có" (If)**: Thêm hành động **Add New Reminder (Thêm lời nhắc mới)**:
     - **Title (Tiêu đề)**: chọn biến từ Hành động 4 (Item 2).
     - **List (Danh sách)**: chọn danh sách mong muốn.
-    - Chạm mũi tên mở rộng (>): bật **Remind Me / Due Date** gắn biến Ngày giờ từ Hành động 3; tại mục **Notes (Ghi chú)** gắn biến từ Hành động 5 (Item 3).
+    - Chạm mũi tên mở rộng (>): chạm ô **"No Alert"** → chọn **"Alert"** (hoặc **"Remind me at a time"**) → ô **"At Time"** hiện ra, gán biến Ngày giờ từ Hành động 3; tại mục **Notes (Ghi chú)** gắn biến từ Hành động 5 (Item 3).
   - **Nhánh "Ngược lại" (Otherwise)**: Thêm hành động **Add New Reminder (Thêm lời nhắc mới)**:
     - **Title (Tiêu đề)**: chọn biến từ Hành động 4 (Item 2).
     - **List (Danh sách)**: chọn danh sách mong muốn.
-    - Chạm mũi tên mở rộng (>): bật **Remind Me / Due Date** gắn biến Ngày giờ từ Hành động 3; để trống trường **Notes (Ghi chú)** (không gắn Notes).
+    - Chạm mũi tên mở rộng (>): chạm ô **"No Alert"** → chọn **"Alert"** (hoặc **"Remind me at a time"**) → ô **"At Time"** hiện ra, gán biến Ngày giờ từ Hành động 3; để trống trường **Notes (Ghi chú)** (không gắn Notes).
   - Khối kết thúc bằng **End If (Kết thúc nếu)**.
 - Bấm **Done (Xong)** ở góc trên bên phải để lưu lại.
+
+> ⚠️ Xem cảnh báo quan trọng và phương án dự phòng iOS 18 (**"Create Reminder"** với ô **"Due Date"** riêng) ở cuối Cách A — áp dụng tương tự cho Cách B.
 
 ---
 
@@ -164,6 +173,7 @@ Nếu khi bấm "Thêm báo thức" hoặc "Thêm lời nhắc" từ LichKhoa m�
 - **(b) Phím tắt không tách được dòng**: Mở phím tắt trong app Shortcuts, kiểm tra lại hành động **Split Text (Tách văn bản)**. Đảm bảo đã chọn phân tách theo **New Lines (Dòng mới)** (nếu máy không có lựa chọn này thì mới chuyển sang chọn **Custom (Tùy chỉnh)** và gõ phím Return/Xuống dòng vào ô).
 - **(c) Ngày giờ bị hiểu sai**: Hành động **Get Dates from Input (Lấy ngày từ đầu vào)** tự động nhận diện định dạng số chuẩn `YYYY-MM-DD HH:mm`. Trên một số cài đặt vùng/ngôn ngữ đặc biệt, nếu iOS hiểu sai ngày và giờ (ví dụ nhầm ngày thành tháng hoặc giờ bị lệch), hãy báo lại cho đội phát triển để điều chỉnh định dạng chuỗi dòng 1 cho phù hợp với máy của bạn.
 - **(d) Lời nhắc tạo từ Sự kiện hoặc Việc báo lỗi**: Nhiều khả năng do phím tắt đang cố lấy dòng 3 không tồn tại (vì Sự kiện và Việc chỉ gửi 2 dòng gồm ngày giờ và tiêu đề, không có ghi chú). Hãy chuyển sang cài đặt theo **Cách A** (không lấy Item 3 và không gắn trường Notes) để phím tắt hoạt động ổn định cho mọi trường hợp.
+- **(e) Báo lỗi "No alert location was provided. Please provide a location for this reminder's alert."**: Bạn đang gán biến ngày giờ trực tiếp vào ô **"No Alert"** của hành động Add New Reminder/Create Reminder. Sửa theo bước ở Cách A/Cách B: chạm ô **"No Alert"** → chọn **"Alert"** (hoặc **"Remind me at a time"**) → ô **"At Time"** hiện ra mới gán biến ngày giờ vào đó.
 - **Mức độ chắc chắn về các hành động trên iOS 17+**: Các hành động `Split Text (Tách văn bản)`, `Get Item from List (Lấy mục từ danh sách)`, `Get Dates from Input (Lấy ngày từ đầu vào)`, `Create Alarm (Tạo báo thức)`, và `Add New Reminder (Thêm lời nhắc mới)` là các hành động tiêu chuẩn có thật và đã ổn định trên iOS 17+. Tùy vào phiên bản ngôn ngữ máy của bạn (tiếng Việt hoặc tiếng Anh), nhãn của các trường cấu hình con (ví dụ *Label*, *Name*, *Remind Me*, *Due Date*) có thể được Apple dịch hơi khác một chút, bạn hãy chọn trường tương ứng theo ngữ cảnh mô tả ở trên.
 
 ---
