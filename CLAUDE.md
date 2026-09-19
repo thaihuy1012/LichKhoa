@@ -89,6 +89,7 @@ Nghi ngờ mà không chắc → **chặn và hỏi Chủ dự án**, không t�
 Quy tắc phòng ngừa (rút từ kiểm toán hồi tố 2026-09-19, `docs/test-log/bao-mat-d6c7bec.log`):
 - **Kho `LichKhoa` là kho CÔNG KHAI** — mọi file, ảnh, log commit vào đây là công khai vĩnh viễn. Cân nhắc trước khi thêm bất cứ thứ gì.
 - **Ảnh chụp màn hình / log trong kho phải dùng dữ liệu mẫu bịa.** Cấm chụp màn hình hoặc xuất log từ dữ liệu thật của Chủ dự án (sự kiện, việc, ghi chú, ảnh nền cá nhân, danh sách lịch Google).
+- **Báo cáo về lộ dữ liệu không được chép lại dữ liệu đã lộ** (BAI-HOC 2026-09-19): ghi loại PII/bí mật và nơi chứa (`file:dòng`), KHÔNG ghi giá trị thật — kể cả trong log kiểm toán, báo cáo sự cố, phiếu giao việc, ảnh chụp.
 - Commit bằng email ẩn `171107212+thaihuy1012@users.noreply.github.com` (đã đặt `git config` cho kho này). Không đặt lại email thật.
 - File sao lưu JSON dữ liệu thật, `.env`, khóa: đã chặn trong `.gitignore` — không được dùng `git add -f` để vượt.
 ## Cấm

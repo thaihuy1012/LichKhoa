@@ -13,7 +13,7 @@ Kho: https://github.com/thaihuy1012/LichKhoa — CÔNG KHAI (api.github.com tr�
 4. PII TRONG NỘI DUNG FILE — 0 kết quả email (gmail/yahoo/outlook/hotmail/icloud) và 0 số điện thoại VN.
    Fixture Google dùng tên bịa ("Nghi le", "Hop nhom", "Khach hang").
 5. PHÁT HIỆN MỨC NHẸ (đã lộ, không cần thu hồi khóa vì không phải bí mật):
-   a) Email thật trong metadata 132 commit đã push: thaihuy1012@gmail.com.
+   a) Email thật trong metadata 132 commit đã push: <email cá nhân của Chủ dự án — đã che, xem git config>.
       → Xử lý (Chủ dự án chọn 2026-09-19): KHÔNG viết lại lịch sử; từ nay commit bằng
         171107212+thaihuy1012@users.noreply.github.com (đã đặt git config cho kho này).
    b) Tên người dùng Windows + đường dẫn máy (C:/Users/HUY, E:\DuAn, F:\LICH_NEN) trong

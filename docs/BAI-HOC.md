@@ -24,3 +24,8 @@
 - Vì sao không bị test bắt: `npm run check` vẫn PASS — test hiện có không render hộp thoại mới, nên khóa dịch thiếu chỉ lộ ra khi người dùng mở giao diện (chữ thô `reminder.title`, hộp thoại không style).
 - Bài học cho Quản lý: **trước khi giao bất kỳ phiếu nào (nhất là làn Gemini), phải kiểm mọi đường dẫn trong "Phạm vi file" có thật** — `ls` / `git ls-files <đường dẫn>` từng cái. Script Gemini hoàn tác không thương tiếc, sai đường dẫn = mất việc, và test không bắt được.
 - Bài học thứ hai: phiếu UI phải có tiêu chí kiểm được rằng **khóa i18n mới tồn tại ở cả vi và en** (grep khóa từ `.tsx` đối chiếu 2 file json), đừng chỉ dựa `npm run check`.
+
+## 2026-09-19 · Chính Quản lý suýt push PII trong báo cáo kiểm toán bảo mật
+- Chuyện gì: viết `docs/test-log/bao-mat-<commit>.log` để ghi kết quả kiểm toán, trong đó chép thẳng email thật của Chủ dự án vào phần "phát hiện". Kho là kho CÔNG KHAI → chính báo cáo bảo mật lại làm lộ thêm một bản sao PII. Cổng bảo mật trước push bắt được (nhóm 3 — PII trong diff).
+- Bài học: **tài liệu mô tả sự cố lộ dữ liệu không được chép lại dữ liệu đã lộ**. Ghi loại dữ liệu và nơi chứa, không ghi giá trị thật. Áp dụng cho mọi báo cáo, log test, ảnh chụp, phiếu giao việc.
+- Đã sửa: che thành `<email cá nhân của Chủ dự án — đã che, xem git config>` trước khi push.
