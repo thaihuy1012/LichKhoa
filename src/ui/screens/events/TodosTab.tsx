@@ -575,10 +575,7 @@ export function TodosTab({ store, state, showToast }: Props) {
             aria-label={`${todo.text} — ${t('events.todoEditHint', lang)}`}
             onClick={() => startEdit(todo)}
           >
-            <span class="todo-text-label">{todo.text}</span>
-            <span class="todo-edit-icon" aria-hidden="true">
-              ✎
-            </span>
+            {todo.text}
           </button>
         )}
         <DueBadge

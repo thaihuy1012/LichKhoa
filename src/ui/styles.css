@@ -847,25 +847,22 @@ input[type='datetime-local'] {
 }
 
 /* B-010 lỗi 4: chữ việc trước đây trông y hệt chữ thường -> Chủ dự án "không biết bấm vào đâu để
-   sửa việc". Thêm gạch chấm dưới chữ + icon bút chì làm dấu hiệu thị giác "chạm được", chỉ áp cho
-   nút sửa (`.todo-text-editable`), không áp cho hàng đã lưu trữ (span `.todo-text` tĩnh, không sửa được). */
+   sửa việc". Thêm gạch chấm dưới chữ + icon bút chì (`::after`, KHÔNG phải node DOM thật, để không
+   đổi `textContent`/`toHaveText` của các test cũ ngoài phạm vi phiếu này) làm dấu hiệu thị giác
+   "chạm được", chỉ áp cho nút sửa (`.todo-text-editable`), không áp cho hàng đã lưu trữ (span
+   `.todo-text` tĩnh, không sửa được). */
 .todo-text-editable {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  white-space: nowrap;
-}
-
-.todo-text-editable .todo-text-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  min-width: 0;
   border-bottom: 1px dashed #5a5a66;
+  padding-right: 16px;
+  position: relative;
 }
 
-.todo-edit-icon {
-  flex: none;
+.todo-text-editable::after {
+  content: '\270E';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
   font-size: 12px;
   color: #8b8b95;
 }
