@@ -191,3 +191,10 @@
 - Quyết định của Chủ dự án (2026-09-19): (1) KHÔNG viết lại lịch sử / không force push — giữ nguyên tag M1-ok…M6-ok; từ nay commit bằng email ẩn `171107212+thaihuy1012@users.noreply.github.com` (đã đặt `git config` cho kho). (2) Kho GIỮ CÔNG KHAI (Pages tài khoản miễn phí cần công khai). (3) Ảnh test giữ nguyên.
 - Quản lý tự quyết kèm theo: siết `.gitignore` (chặn `.env*`, `*.pem/*.p12/*.key`, `*credentials*.json`, `*service-account*.json`, `*client_secret*.json`, sao lưu JSON dữ liệu thật); thêm quy tắc "ảnh/log trong kho phải dùng dữ liệu mẫu bịa" vào `CLAUDE.md`; mở phiếu T-G.2 viết `scripts/kiem-bao-mat.sh` để cổng chạy được bằng một lệnh.
 - Lý do không viết lại lịch sử: không có bí mật nào cần thu hồi; rewrite phá 6 tag milestone, đổi toàn bộ mã commit, cần force push, mà bản cũ vẫn còn trong cache GitHub một thời gian → rủi ro cao hơn lợi ích.
+
+## D-033 — T-7.5: `flush` truyền qua prop bắt buộc, mở rộng phạm vi phiếu 3 file (2026-09-19)
+- Bối cảnh: soát chéo M7 (Gemini Pro) phát hiện nguy cơ mất dữ liệu — `ReminderDialog` gọi `openShortcut` ngay sau `dispatch`, trong khi `createStore` ghi IndexedDB sau debounce 300 ms và `flushPersist` không được export (`store.ts:238-244`, `259-270`). Quản lý kiểm chứng: đúng.
+- Phản biện của tho-sonnet (lượt 1/3, CHẤP NHẬN): phạm vi phiếu gốc (4 file) không chứa nơi truyền `flush` thật — không có store singleton, `store` là prop truyền từ `App.tsx` xuống `EventsTab`/`TodosTab`/`NoteTab`. Làm đúng phạm vi gốc sẽ ra "DONE giả": prop luôn `undefined`, test vẫn xanh nhờ store mock, còn người dùng vẫn mất dữ liệu.
+- Quyết định: mở rộng phạm vi thêm `EventsTab.tsx`, `TodosTab.tsx`, `NoteTab.tsx` (mỗi file thêm đúng `flush={store.flush}`). `ReminderDialogProps.flush` là **bắt buộc, không optional** — để TypeScript bắt lỗi nếu có chỗ quên truyền, thay vì im lặng thành code chết.
+- BÁC BỎ phương án "mỗi `save()` tự flush bên trong": lặp ở 3 nơi, dễ sót khi thêm form mới, trộn trách nhiệm lưu nghiệp vụ với ghi đĩa.
+- Thêm ràng buộc chống DONE giả: E2E phải chạy trên app thật (`?test=1`) và đọc IndexedDB thật, không được chứng minh bằng store mock dựng riêng cho test.
