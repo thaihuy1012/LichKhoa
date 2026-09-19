@@ -22,6 +22,32 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - Làn Gemini: BẬT (D-009) — Pro `gemini-3.1-pro-high`, Flash `gemini-3.8-flash-high`. Dùng đầu tiên: soát chéo cuối M2.
 - 2026-09-15: Chủ dự án bật làn Gemini **v2 mức NHIỀU** (kit v2.1, `tho-gemini`). `agy-run.sh kiem-tra` → SẴN SÀNG (agy 1.2.2; code `gemini-3.8-flash-high`, soat/doc `gemini-3.1-pro-high`, sinh `gemini-3.8-flash-low`). Dự án vẫn ĐÓNG (D-022) → hỏi Chủ dự án việc tiếp theo.
 
+
+## ĐIỂM DỪNG PHIÊN 2026-09-19 (đọc mục này đầu tiên ở phiên sau)
+
+**Trạng thái**: SỰ CỐ **SC-003 (S2) ĐANG MỞ** → xử lý trước mọi việc khác (`docs/SU-CO.md`).
+**Git**: cây sạch; **4 commit chưa push** (B-013 + sổ sách). Chủ dự án tự chạy `git push` khi muốn deploy — cổng bảo mật PHẢI chạy lại trước khi đề nghị push (CLAUDE.md).
+**Nhánh phụ còn sót**: `backup-truoc-go-anh` (sao lưu trước khi gỡ ảnh khỏi lịch sử) — giữ tới khi Chủ dự án yên tâm, rồi xoá.
+**Làn Gemini**: BẬT mức NHIỀU nhưng **đang tạm dừng** vì sự cố S2 mở. Mở lại khi đóng SC-003.
+
+### Việc đang dở — SC-003 (lời nhắc iPhone không tạo được)
+Đã loại trừ: (a) kiểu Alert — menu chỉ có `Alert`/`No Alert`, không có loại theo vị trí; (b) định dạng ngày — Chủ dự án kiểm Quick Look, app gửi đúng `23 Sep 2026 08:00` (B-012 đã sửa, đã deploy).
+Nguyên nhân thật: hành động `Add New Reminder` trên iOS 18 có ô **`At Time` để TRỐNG** → iOS quay sang đòi vị trí.
+**Bước Chủ dự án đang làm dở** (hướng dẫn đã gửi, chưa có kết quả): chạm ô trống sau `At Time` → chọn **Select Variable** → chạm vào hành động `Get Item at Index 1 from Dates`; kiểm biến ngay sau `Add` phải là kết quả của `Get Item at Index 2 from Split Text` (tiêu đề). Lưu ý: **chạm giữ biến KHÔNG có mục Rename** trên máy Chủ dự án → phải dùng `Select Variable`.
+**Phiên sau hỏi ngay**: "Mục B đã tạo được lời nhắc chưa?"
+- Nếu RỒI → đóng SC-003; mở phiếu viết lại `docs/HUONG-DAN.md` mục E cho khớp giao diện iOS 18 thật (có ô `At Time`, dùng `Select Variable`, bỏ mô tả "No Alert" cũ); rồi thử lại mục E (Tập trung) — nghi cần đặt cờ Time Sensitive cho từng lời nhắc, không chỉ bật trong Cài đặt.
+- Nếu CHƯA → dừng đường Lời nhắc, trình Chủ dự án hướng thay thế: app tạo **sự kiện lịch có cảnh báo** thay cho lời nhắc (đổi SPEC → Kiến trúc sư + Chủ dự án duyệt).
+
+### Hàng chờ sau khi đóng SC-003 (theo thứ tự)
+1. **B-011** — Việc có **giờ** + sửa lại được sau khi tạo. Chủ dự án đã chốt muốn hạn = ngày + giờ; nhắc 2 lần. Đổi `Todo.due` (ISODate → có giờ) đụng model/sắp xếp/hình nền/sao lưu → **phải qua Kiến trúc sư** trước khi viết phiếu.
+2. **M8** (SPEC v1.9, D-034) — nút "Báo thức đúng ngày" + Tự động hóa. Chủ dự án đã DUYỆT SPEC nhưng hoãn tới khi thử tay M7 xong. Phiếu dự kiến T-8.1…T-8.END đã ghi ở mục "M8 — CHỜ".
+3. Thử tay M7 còn lại: mục **E** (Tập trung), và xác nhận giao diện tab Việc sau B-013.
+
+### Bài học phiên này (đã ghi `docs/BAI-HOC.md`)
+- Phiếu giao Gemini phải xác minh đường dẫn bằng `git ls-files` trước khi giao (script hoàn tác file ngoài danh sách).
+- Cấm `git add -A` khi còn thợ chạy nền.
+- Báo cáo về lộ dữ liệu không được chép lại dữ liệu đã lộ.
+- `git filter-branch` xoá luôn file khỏi cây làm việc → sao lưu ra ngoài repo TRƯỚC khi đụng lịch sử.
 ## Tồn đọng (S4 — không chặn)
 - ~~S4 · T-1.2 · mặc định `boxAlpha=1` che ảnh nền~~ → đã sửa T-4.2 (0.35 khi chọn ảnh; D-021 xác nhận).
 - ~~S4 · T-1.7 · normalizeState device thiếu safe*~~ → đã sửa T-2.14.
