@@ -62,13 +62,11 @@ LichKhoa hỗ trợ mở nhanh Phím tắt trên iPhone để tạo **Báo thứ
 1. Mở app **Shortcuts (Phím tắt)** trên iPhone.
 2. Bấm dấu **+** ở góc trên cùng bên phải để tạo Phím tắt mới.
 3. Chạm vào tên phím tắt ở đỉnh màn hình (mặc định là "New Shortcut" hoặc "Phím tắt mới") → chọn **Rename (Đổi tên)** → đặt ĐÚNG tên: **`ThemBaoThuc`** (viết hoa/thường chuẩn, không dấu cách).
-4. Thiết lập nhận dữ liệu đầu vào:
-   - Bấm vào biểu tượng **(i)** (Details / Chi tiết) ở cạnh dưới màn hình → bật mục **Show in Share Sheet (Hiện trong bảng chia sẻ)** và kiểm tra phím tắt đã sẵn sàng nhận đầu vào là văn bản.
+4. Dữ liệu đầu vào: phím tắt nhận dữ liệu qua **Shortcut Input (Đầu vào phím tắt)**, không cần bật gì thêm.
 5. Bấm **Add Action (Thêm hành động)** và thêm lần lượt các hành động theo đúng thứ tự sau:
    - **Hành động 1: Split Text (Tách văn bản)**
      - Chọn đầu vào là **Shortcut Input (Đầu vào phím tắt)**.
-     - Tại mục **By (Theo)**: chọn **Custom (Tùy chỉnh)**.
-     - Tại ô phân tách: gõ phím **Return (Xuống dòng)** trên bàn phím ảo để tạo ký tự dòng mới (hoặc chọn **New Lines (Dòng mới)** nếu máy có sẵn tùy chọn này).
+     - Tại mục **Separator (Dấu phân tách)** hoặc **By (Theo)**: chọn **New Lines (Dòng mới)** (đây là lựa chọn chuẩn có sẵn trong app Phím tắt). Nếu máy không hiện tùy chọn này thì mới chọn **Custom (Tùy chỉnh)** và gõ phím Return (Xuống dòng) vào ô phân tách làm phương án dự phòng.
    - **Hành động 2: Get Item from List (Lấy mục từ danh sách)**
      - Chọn danh sách đầu vào là kết quả từ **Split Text (Văn bản đã tách)** ở Hành động 1.
      - Tại mục **Get (Lấy)**: chọn **Item at Index (Mục tại chỉ mục)** và nhập số `1` (đây là Item 1 — dòng chứa ngày giờ dạng `YYYY-MM-DD HH:mm`).
@@ -88,28 +86,64 @@ LichKhoa hỗ trợ mở nhanh Phím tắt trên iPhone để tạo **Báo thứ
 
 1. Trong app **Shortcuts (Phím tắt)**, bấm dấu **+** để tạo thêm một Phím tắt mới.
 2. Chạm vào tên phím tắt ở đỉnh màn hình → chọn **Rename (Đổi tên)** → đặt ĐÚNG tên: **`ThemLoiNhac`** (viết hoa/thường chuẩn, không dấu cách).
-3. Bấm **Add Action (Thêm hành động)** và lần lượt thêm các hành động theo thứ tự sau:
-   - **Hành động 1: Split Text (Tách văn bản)**
-     - Chọn đầu vào là **Shortcut Input (Đầu vào phím tắt)**.
-     - Tại mục **By (Theo)**: chọn **Custom (Tùy chỉnh)** và gõ phím **Return (Xuống dòng)** làm dấu phân tách dòng mới (hoặc chọn **New Lines (Dòng mới)**).
-   - **Hành động 2: Get Item from List (Lấy mục từ danh sách)**
-     - Đầu vào: danh sách từ **Split Text (Văn bản đã tách)** ở Hành động 1.
-     - Chọn **Item at Index (Mục tại chỉ mục)** và nhập số `1` (Item 1: ngày giờ).
-   - **Hành động 3: Get Dates from Input (Lấy ngày từ đầu vào)**
-     - Đầu vào: kết quả của Hành động 2 (Item 1).
-   - **Hành động 4: Get Item from List (Lấy mục từ danh sách)**
-     - Đầu vào: danh sách từ **Split Text (Văn bản đã tách)** ở Hành động 1.
-     - Chọn **Item at Index (Mục tại chỉ mục)** và nhập số `2` (Item 2: tiêu đề lời nhắc).
-   - **Hành động 5: Get Item from List (Lấy mục từ danh sách)**
-     - Đầu vào: danh sách từ **Split Text (Văn bản đã tách)** ở Hành động 1.
-     - Chọn **Item at Index (Mục tại chỉ mục)** và nhập số `3` (Item 3: ghi chú, nếu có).
-   - **Hành động 6: Add New Reminder (Thêm lời nhắc mới)**
-     - Tại mục **Title (Tiêu đề)**: chọn biến tiêu đề từ Hành động 4 (Item 2).
-     - Tại mục **List (Danh sách)**: chọn danh sách mong muốn (mặc định là *Reminders* hoặc *Lời nhắc*).
-     - Chạm vào mũi tên mở rộng (>):
-       - Bật mục **Remind Me (Nhắc tôi)** hoặc **Due Date (Đến hạn vào)**: chọn biến ngày giờ từ kết quả **Dates (Ngày)** của Hành động 3.
-       - Tại mục **Notes (Ghi chú)**: chọn biến nội dung ghi chú từ Hành động 5 (Item 3).
-4. Bấm **Done (Xong)** ở góc trên bên phải để lưu lại.
+3. Dữ liệu đầu vào: phím tắt nhận dữ liệu qua **Shortcut Input (Đầu vào phím tắt)**, không cần bật gì thêm.
+
+Bạn hãy chọn cài đặt theo một trong hai cách dưới đây:
+
+#### Cách A (khuyến nghị, chạy được với mọi trường hợp)
+Cách này đơn giản và ổn định nhất: lời nhắc có tiêu đề + ngày giờ báo, KHÔNG lấy Item 3 và KHÔNG gắn trường Notes. Hoạt động mượt mà cho cả sự kiện, việc cần làm lẫn ghi chú (không lo lỗi thiếu dòng).
+
+Bấm **Add Action (Thêm hành động)** và lần lượt thêm các hành động theo thứ tự sau:
+- **Hành động 1: Split Text (Tách văn bản)**
+  - Chọn đầu vào là **Shortcut Input (Đầu vào phím tắt)**.
+  - Tại mục **Separator (Dấu phân tách)** hoặc **By (Theo)**: chọn **New Lines (Dòng mới)** (nếu máy không hiện tùy chọn này, chọn **Custom (Tùy chỉnh)** rồi gõ phím Return/Xuống dòng làm phương án dự phòng).
+- **Hành động 2: Get Item from List (Lấy mục từ danh sách)**
+  - Đầu vào: danh sách từ **Split Text (Văn bản đã tách)** ở Hành động 1.
+  - Chọn **Item at Index (Mục tại chỉ mục)** và nhập số `1` (Item 1: ngày giờ dạng `YYYY-MM-DD HH:mm`).
+- **Hành động 3: Get Dates from Input (Lấy ngày từ đầu vào)**
+  - Đầu vào: kết quả của Hành động 2 (Item 1).
+- **Hành động 4: Get Item from List (Lấy mục từ danh sách)**
+  - Đầu vào: danh sách từ **Split Text (Văn bản đã tách)** ở Hành động 1.
+  - Chọn **Item at Index (Mục tại chỉ mục)** và nhập số `2` (Item 2: tiêu đề lời nhắc).
+- **Hành động 5: Add New Reminder (Thêm lời nhắc mới)**
+  - Tại mục **Title (Tiêu đề)** / **Reminder**: chọn biến tiêu đề từ Hành động 4 (Item 2).
+  - Tại mục **List (Danh sách)**: chọn danh sách mong muốn (mặc định là *Reminders* hoặc *Lời nhắc*).
+  - Chạm vào mũi tên mở rộng (>):
+    - Bật mục **Remind Me (Nhắc tôi)** hoặc **Due Date (Đến hạn vào)**: chọn biến ngày giờ từ kết quả **Dates (Ngày)** của Hành động 3.
+    - *Lưu ý*: KHÔNG lấy Item 3 và KHÔNG gắn trường Notes (Ghi chú).
+- Bấm **Done (Xong)** ở góc trên bên phải để lưu lại.
+
+#### Cách B (nếu muốn có cả nội dung ghi chú)
+Đây là cách dài hơn, chỉ làm nếu bạn muốn nội dung ghi chú xuất hiện trong app Lời nhắc. Vì Sự kiện và Việc chỉ gửi 2 dòng (ngày giờ + tiêu đề), chỉ có Ghi chú mới gửi dòng 3 (nội dung), nên cần dùng lệnh điều kiện **If (Nếu)** để kiểm tra:
+
+Bấm **Add Action (Thêm hành động)** và lần lượt thêm các hành động theo thứ tự sau:
+- **Hành động 1: Split Text (Tách văn bản)**
+  - Đầu vào là **Shortcut Input (Đầu vào phím tắt)**.
+  - Tại mục **Separator (Dấu phân tách)** hoặc **By (Theo)**: chọn **New Lines (Dòng mới)** (dự phòng: **Custom (Tùy chỉnh)** và gõ Return).
+- **Hành động 2: Get Item from List (Lấy mục từ danh sách)**
+  - Đầu vào: danh sách từ **Split Text (Văn bản đã tách)** ở Hành động 1.
+  - Chọn **Item at Index (Mục tại chỉ mục)** và nhập số `1` (Item 1: ngày giờ).
+- **Hành động 3: Get Dates from Input (Lấy ngày từ đầu vào)**
+  - Đầu vào: kết quả của Hành động 2 (Item 1).
+- **Hành động 4: Get Item from List (Lấy mục từ danh sách)**
+  - Đầu vào: danh sách từ **Split Text (Văn bản đã tách)** ở Hành động 1.
+  - Chọn **Item at Index (Mục tại chỉ mục)** và nhập số `2` (Item 2: tiêu đề lời nhắc).
+- **Hành động 5: Get Item from List (Lấy mục từ danh sách)**
+  - Đầu vào: danh sách từ **Split Text (Văn bản đã tách)** ở Hành động 1.
+  - Chọn **Item at Index (Mục tại chỉ mục)** và nhập số `3` (Item 3: ghi chú).
+- **Hành động 6: If (Nếu)**
+  - Chọn biến kiểm tra là kết quả từ Hành động 5 (**Item from List** — Item 3).
+  - Điều kiện: chọn **has any value (có giá trị)**.
+  - **Nhánh "Nếu có" (If)**: Thêm hành động **Add New Reminder (Thêm lời nhắc mới)**:
+    - **Title (Tiêu đề)**: chọn biến từ Hành động 4 (Item 2).
+    - **List (Danh sách)**: chọn danh sách mong muốn.
+    - Chạm mũi tên mở rộng (>): bật **Remind Me / Due Date** gắn biến Ngày giờ từ Hành động 3; tại mục **Notes (Ghi chú)** gắn biến từ Hành động 5 (Item 3).
+  - **Nhánh "Ngược lại" (Otherwise)**: Thêm hành động **Add New Reminder (Thêm lời nhắc mới)**:
+    - **Title (Tiêu đề)**: chọn biến từ Hành động 4 (Item 2).
+    - **List (Danh sách)**: chọn danh sách mong muốn.
+    - Chạm mũi tên mở rộng (>): bật **Remind Me / Due Date** gắn biến Ngày giờ từ Hành động 3; để trống trường **Notes (Ghi chú)** (không gắn Notes).
+  - Khối kết thúc bằng **End If (Kết thúc nếu)**.
+- Bấm **Done (Xong)** ở góc trên bên phải để lưu lại.
 
 ---
 
@@ -127,8 +161,9 @@ LichKhoa hỗ trợ mở nhanh Phím tắt trên iPhone để tạo **Báo thứ
 
 Nếu khi bấm "Thêm báo thức" hoặc "Thêm lời nhắc" từ LichKhoa mà iPhone không hoạt động như ý:
 - **(a) iOS báo không tìm thấy Phím tắt**: Tên phím tắt đặt bị sai lệch. Hãy kiểm tra lại tên của 2 phím tắt trong app Shortcuts trên máy bạn để đảm bảo đúng chữ hoa chữ thường là `ThemBaoThuc` và `ThemLoiNhac`. Nếu muốn đặt tên khác (ví dụ "Báo thức" hay "Lời nhắc"), bạn chỉ cần vào tab **Xem trước** của LichKhoa, cuộn xuống phần cài đặt và sửa lại 2 ô "Tên Phím tắt báo thức" và "Tên Phím tắt lời nhắc" cho khớp đúng 100% với tên trên iPhone.
-- **(b) Phím tắt không tách được dòng**: Mở phím tắt trong app Shortcuts, kiểm tra lại hành động **Split Text (Tách văn bản)**. Thử chuyển đổi giữa cách chọn **Custom (Tùy chỉnh)** (gõ phím Return/Xuống dòng vào ô) hoặc chọn trực tiếp **New Lines (Dòng mới)** tùy theo phiên bản bàn phím/iOS hiển thị.
+- **(b) Phím tắt không tách được dòng**: Mở phím tắt trong app Shortcuts, kiểm tra lại hành động **Split Text (Tách văn bản)**. Đảm bảo đã chọn phân tách theo **New Lines (Dòng mới)** (nếu máy không có lựa chọn này thì mới chuyển sang chọn **Custom (Tùy chỉnh)** và gõ phím Return/Xuống dòng vào ô).
 - **(c) Ngày giờ bị hiểu sai**: Hành động **Get Dates from Input (Lấy ngày từ đầu vào)** tự động nhận diện định dạng số chuẩn `YYYY-MM-DD HH:mm`. Trên một số cài đặt vùng/ngôn ngữ đặc biệt, nếu iOS hiểu sai ngày và giờ (ví dụ nhầm ngày thành tháng hoặc giờ bị lệch), hãy báo lại cho đội phát triển để điều chỉnh định dạng chuỗi dòng 1 cho phù hợp với máy của bạn.
+- **(d) Lời nhắc tạo từ Sự kiện hoặc Việc báo lỗi**: Nhiều khả năng do phím tắt đang cố lấy dòng 3 không tồn tại (vì Sự kiện và Việc chỉ gửi 2 dòng gồm ngày giờ và tiêu đề, không có ghi chú). Hãy chuyển sang cài đặt theo **Cách A** (không lấy Item 3 và không gắn trường Notes) để phím tắt hoạt động ổn định cho mọi trường hợp.
 - **Mức độ chắc chắn về các hành động trên iOS 17+**: Các hành động `Split Text (Tách văn bản)`, `Get Item from List (Lấy mục từ danh sách)`, `Get Dates from Input (Lấy ngày từ đầu vào)`, `Create Alarm (Tạo báo thức)`, và `Add New Reminder (Thêm lời nhắc mới)` là các hành động tiêu chuẩn có thật và đã ổn định trên iOS 17+. Tùy vào phiên bản ngôn ngữ máy của bạn (tiếng Việt hoặc tiếng Anh), nhãn của các trường cấu hình con (ví dụ *Label*, *Name*, *Remind Me*, *Due Date*) có thể được Apple dịch hơi khác một chút, bạn hãy chọn trường tương ứng theo ngữ cảnh mô tả ở trên.
 
 ---
