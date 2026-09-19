@@ -225,6 +225,12 @@ export function Preview({ store }: { store: Store }) {
       showToast(t('preview.copyError', lang));
       return;
     }
+    try {
+      await store.flush();
+    } catch {
+      // Ghi thất bại: state RAM vẫn đúng, sẽ được ghi lại qua debounce/pagehide sau đó (T-7.5).
+      // Không chặn người dùng mở Phím tắt.
+    }
     openShortcut(state.shortcutName);
     showToast(t('preview.setWallpaperOk', lang));
   }

@@ -8,6 +8,30 @@ async function waitReady(page: import('@playwright/test').Page) {
   await expect(page.getByTestId('save')).toBeEnabled();
 }
 
+/** Đọc trực tiếp bản ghi state đã lưu trong IndexedDB (không chờ debounce 300ms).
+ * Chép từ tests/e2e/m7-reminder.spec.ts (T-7.6). */
+async function readSavedState(
+  page: import('@playwright/test').Page,
+): Promise<{ shortcutName?: string } | undefined> {
+  return page.evaluate(
+    () =>
+      new Promise((resolve) => {
+        const req = indexedDB.open('keyval-store');
+        req.onerror = () => resolve(undefined);
+        req.onsuccess = () => {
+          const tx = req.result.transaction('keyval', 'readonly');
+          const getReq = tx.objectStore('keyval').get('lichkhoa:state');
+          getReq.onerror = () => resolve(undefined);
+          getReq.onsuccess = () => {
+            const s = getReq.result as { shortcutName?: string } | undefined;
+            req.result.close();
+            resolve(s);
+          };
+        };
+      }),
+  );
+}
+
 test.describe('Sao chép + Đặt hình nền (T-4.3)', () => {
   test('Sao chép ghi mục image/png vào clipboard', async ({ page, context, browserName }) => {
     test.skip(browserName !== 'chromium', 'clipboard-write chỉ cấp quyền được trên chromium trong Playwright.');
@@ -55,6 +79,28 @@ test.describe('Sao chép + Đặt hình nền (T-4.3)', () => {
     await expect
       .poll(() => page.evaluate(() => (window as unknown as { __lastNav?: string }).__lastNav))
       .toBe(expected);
+  });
+
+  test('Đặt hình nền: trạng thái đã được ghi xuống IndexedDB ngay, không chờ debounce 300ms (T-7.6)', async ({
+    page,
+    context,
+    browserName,
+  }) => {
+    test.skip(browserName !== 'chromium', 'clipboard-write chỉ cấp quyền được trên chromium trong Playwright.');
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await waitReady(page);
+
+    const name = 'TenMoiChuaFlush';
+    await page.getByTestId('shortcut-name').fill(name);
+    await page.getByTestId('set-wallpaper').click();
+
+    // __lastNav chỉ được gán sau khi flush() đã await xong (onSetWallpaper).
+    // Đợi nó xuất hiện rồi đọc IndexedDB ngay — không chờ thêm 300ms debounce nào nữa.
+    await expect
+      .poll(() => page.evaluate(() => (window as unknown as { __lastNav?: string }).__lastNav))
+      .toContain(encodeURIComponent(name));
+    const saved = await readSavedState(page);
+    expect(saved?.shortcutName).toBe(name);
   });
 
   test('Sao chép thất bại: hiện toast hướng dẫn thay thế, không mở Shortcut', async ({ page }) => {
