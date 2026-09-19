@@ -1,0 +1,8 @@
+KIỂM TOÁN BẢO MẬT TRƯỚC PUSH — 2026-09-19 — commit 1e58dfe (origin/main..HEAD: 27 commit, M8 + M9 + bảo trì)
+Kho LichKhoa CÔNG KHAI.
+1. Bí mật trong diff: grep client_secret / PRIVATE KEY / refresh_token / access_token / api_key / password / Bearer / service_account → 0 dòng thêm. Chuỗi dài ≥60 ký tự: chỉ dòng kẻ '-----' trong log test. Cây HEAD: client_secret chỉ xuất hiện trong .gitignore/CLAUDE.md/DECISIONS (tài liệu quy tắc). Không có .env.
+2. File không được lên: không thêm .env/.pem/.p12/.key/ảnh/sao lưu JSON; docs/hinh-anh-loi/ không được theo dõi (gitignore). File thêm: báo cáo, prompt/kết quả Gemini, log test, test mới — đã soát, không token/email.
+3. PII: 0 email/số điện thoại trong dòng thêm; 27 commit dùng email noreply. Dữ liệu test là bịa ("Họp chiến lược M8", "Mua sữa", "Nộp báo cáo"). Tên danh sách Reminders "Sẽ làm" (5 chỗ, cụm từ chung, không định danh). Đường dẫn máy E:\DuAn (12 dòng) — đã chấp nhận mức rất nhẹ ở bao-mat-d6c7bec.log 5b.
+4. Cấu hình: không đổi .github/, vite.config, manifest, service worker, OAuth; src không thêm fetch/URL mạng/scope.
+5. Phụ thuộc: package.json / package-lock.json không đổi.
+KẾT LUẬN: KHÔNG phát hiện bí mật / PII / cấu hình rủi ro → ĐƯỢC đề nghị push.
