@@ -933,3 +933,17 @@ Chung cho mọi phiếu M7: không sửa/skip test khóa M1–M6 (ngoại lệ d
   [ ] `bash -n scripts/agy-run.sh` sạch; `bash scripts/test-agy-song.sh` → `OK 5/5`; không đụng `src/`, `tests/`, `docs/` (thợ khác đang làm ở đó).
 - Lệnh kiểm tra: `bash -n scripts/agy-run.sh; bash scripts/test-agy-song.sh`
 - Model: sonnet — KHÔNG giao Gemini, lý do cụ thể: (1) đây là chính script chạy Gemini, Gemini tự sửa hạ tầng chạy mình thì hỏng là mất luôn đường chạy lại; (2) lúc giao, cây git chưa sạch (T-7.1 đang chạy) nên script từ chối nhận lượt Gemini. · Lần thử: 1/3 · Trạng thái: DONE
+
+### T-G.2 — `scripts/kiem-bao-mat.sh`: cổng bảo mật trước deploy chạy được bằng lệnh
+- Mục tiêu: biến "Cổng bảo mật trước khi deploy" trong `CLAUDE.md` thành một lệnh chạy được, để không lần push nào bỏ sót.
+- Phạm vi file (chỉ được sửa): `scripts/kiem-bao-mat.sh` (mới), `scripts/test-kiem-bao-mat.sh` (mới).
+- Giao diện / đầu vào có sẵn: `CLAUDE.md` mục "Cổng bảo mật trước khi deploy" (5 nhóm kiểm + ngoại lệ đã chốt) — là đặc tả, làm đúng theo đó.
+- Tiêu chí nghiệm thu:
+  [ ] `bash scripts/kiem-bao-mat.sh` soát cả 5 nhóm trên cây làm việc + `git diff origin/main..HEAD` (không có `origin/main` → soát từ commit đầu), in dòng cuối `BẢO MẬT: SẠCH` (mã 0) hoặc `BẢO MẬT: CHẶN — <n> phát hiện` (mã ≠ 0) kèm danh sách `file:dòng · loại phát hiện · trích 1 dòng đã che bớt`.
+  [ ] Không báo nhầm ngoại lệ đã chốt: Google OAuth **Client ID** phía client (chuỗi `*.apps.googleusercontent.com`) → KHÔNG chặn; `client_secret` → chặn.
+  [ ] Ghi log đầy đủ ra `docs/test-log/bao-mat-<commit ngắn>.log`, in đường dẫn ở dòng cuối.
+  [ ] Có `--ci` để chạy im lặng (chỉ in dòng kết luận) và `--all` để soát cả file đã bị `.gitignore` bỏ qua (cảnh báo riêng, không chặn).
+  [ ] `scripts/test-kiem-bao-mat.sh` (không cần mạng, tự dọn): ít nhất 6 ca — client_secret → CHẶN; PRIVATE KEY → CHẶN; `.env` có nội dung → CHẶN; Client ID googleusercontent → SẠCH; email/số điện thoại thật trong fixture → CHẶN; kho sạch → SẠCH (mã 0). In `OK <n>/6`.
+  [ ] `bash -n` sạch cả 2 file; `bash scripts/test-kiem-bao-mat.sh` → `OK 6/6`; chạy `bash scripts/kiem-bao-mat.sh` trên kho hiện tại phải ra `BẢO MẬT: SẠCH` (nếu không sạch → dừng, báo Quản lý, KHÔNG tự xóa gì).
+- Lệnh kiểm tra: `bash -n scripts/kiem-bao-mat.sh; bash -n scripts/test-kiem-bao-mat.sh; bash scripts/test-kiem-bao-mat.sh; bash scripts/kiem-bao-mat.sh`
+- Model: gemini (làn code — đủ điều kiện §4b: tiêu chí rõ, có test chạy được, 2 file, không đụng thiết kế) · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO — chờ T-7.2 xong (Gemini chỉ chạy một lượt mỗi lần, cây phải sạch)

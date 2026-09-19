@@ -66,9 +66,28 @@ PHÁN QUYẾT: DUYỆT | SỬA | DỪNG — Lý do ≤ 5 dòng · Việc cần l
 - **Theo dõi lượt Gemini** (LAN-GEMINI.md §5b): cứ ~10 phút gọi `agy-run.sh song <tên>` — `ĐANG LÀM` thì để yên (cấm hủy vì "lâu quá"); `ĐỨNG IM` 2 chu kỳ liên tiếp thì hủy và chạy lại đúng prompt cũ một lần; chạm hạn giờ mà vẫn đang làm thì `gia-han` (trần 2 lần/lượt) thay vì cắt ngang.
 - Gemini và thợ Claude không ghi file cùng lúc. Thư mục docs/gemini-out là kết quả Gemini; docs/tasks là prompt.
 
+
+## Cổng bảo mật trước khi deploy (bắt buộc — Chủ dự án, 2026-09-19)
+
+> "Before every deployment, perform a security audit and block deployment if any secrets, credentials, PII, confidential data, or sensitive information could be exposed."
+
+Áp dụng cho **mọi** lần: đề nghị Chủ dự án chạy `git push`, mọi deploy (GitHub Pages / Actions), mọi lần công khai kho hoặc chia sẻ file ra ngoài máy. Quản lý **không được đề nghị push/deploy** khi chưa chạy kiểm toán trong cùng phiên, trên đúng commit sắp lên.
+
+Kiểm tối thiểu 5 nhóm (ghi kết quả ra `docs/test-log/bao-mat-<commit ngắn>.log`, dẫn đường dẫn khi báo Chủ dự án):
+1. **Bí mật trong mã sắp push**: soát `git diff origin/main..HEAD` và toàn bộ cây làm việc tìm `client_secret`, `BEGIN ... PRIVATE KEY`, `refresh_token`, `access_token`, `api_key`, `password`, `Authorization: Bearer`, JSON service account, chuỗi base64/hex dài bất thường.
+2. **File lẽ ra không được lên**: `.env*`, `*.pem` `*.p12` `*.key`, file sao lưu JSON chứa dữ liệu thật, ảnh cá nhân, `docs/test-log/` hoặc `docs/gemini-out/` có nội dung riêng tư, file tạm chứa token.
+3. **PII**: tên thật, email, số điện thoại, địa chỉ, sự kiện / việc / ghi chú thật của Chủ dự án nằm trong mã, fixture, test, ảnh chụp màn hình, tài liệu.
+4. **Cấu hình lộ**: OAuth `redirect_uri`/`scope` rộng hơn mức cần, bí mật ghi thẳng trong workflow Actions hoặc in ra log CI, service worker cache dữ liệu riêng tư, CORS mở rộng.
+5. **Phụ thuộc mới**: thư viện vừa thêm có gửi dữ liệu ra ngoài / gọi mạng không.
+
+Ngoại lệ đã chốt (không tính là lộ): Google OAuth **Client ID** phía client là công khai theo thiết kế (khác `client_secret` — cái này lộ là sự cố); email Chủ dự án chỉ nằm trong cấu hình git cục bộ, không được đưa vào mã nguồn hay tài liệu.
+
+Phát hiện bất kỳ mục nào → **CHẶN DEPLOY**: không đề nghị push, mở sự cố `docs/SU-CO.md` (lộ bí mật/PII = **S1**; cấu hình rủi ro = **S2**), gỡ/che dữ liệu, nếu đã lỡ commit thì hỏi Chủ dự án trước khi viết lại lịch sử hoặc thu hồi khóa. Báo Chủ dự án ≤ 5 dòng: lộ gì · ở đâu (file:dòng) · đã xử lý thế nào · cần Chủ dự án làm gì (đổi khóa?).
+
+Nghi ngờ mà không chắc → **chặn và hỏi Chủ dự án**, không tự kết luận "chắc không sao". Ai (thợ, sửa lỗi, kiểm thử, Gemini) thấy dấu hiệu lộ phải báo ngay trong báo cáo, không tự xử.
 ## Cấm
 - Bịa kết quả test; sửa test cho pass; báo DONE khi chưa tự chạy lệnh kiểm tra.
 - Sửa file ngoài phạm vi mà không khai báo.
 - Thợ / Sửa lỗi / Kiểm thử chạy lệnh git làm đổi cây làm việc hoặc lịch sử (`stash`, `checkout --`, `reset`, `clean`, `commit`, `tag`) — chỉ Quản lý được làm (D-012). Cần chạy code cũ: `git show HEAD:<file>` ra thư mục tạm.
-- `git push`, deploy, xóa dữ liệu, thêm dịch vụ trả phí, đổi phạm vi SPEC: chỉ Quản lý được làm, và phải hỏi Chủ dự án trước.
+- `git push`, deploy, xóa dữ liệu, thêm dịch vụ trả phí, đổi phạm vi SPEC: chỉ Quản lý được làm, và phải hỏi Chủ dự án trước. Push/deploy còn phải qua **Cổng bảo mật** ở trên — chưa kiểm toán thì cấm đề nghị push.
 - Đoán ý Chủ dự án. Không biết thì hỏi.
