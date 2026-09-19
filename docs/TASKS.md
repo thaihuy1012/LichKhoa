@@ -1049,3 +1049,18 @@ Kết quả: A ĐẠT · B/B′/C KHÔNG ĐẠT (SC-003) · D ĐẠT · E chưa 
 
 ### B-011 — Việc có GIỜ + sửa được sau khi tạo (Chủ dự án chọn) — CHỜ KIẾN TRÚC SƯ
 Chủ dự án chốt 2026-09-19: muốn việc có hạn **ngày + giờ** và sửa lại được sau khi tạo. Đổi `Todo.due` (hiện là ISODate, chỉ ngày) → đụng model, sắp xếp, hình nền, sao lưu JSON, nhãn "Quá hạn/Hôm nay", và `defaultReminderAt` cho việc. **Đổi phạm vi SPEC → phải qua Kiến trúc sư**, gọi sau khi đóng SC-003.
+
+### B-012 — Đổi định dạng dòng 1 của payload sang `d MMM yyyy HH:mm` (đóng SC-003)
+- Mục tiêu: iOS đọc được ngày giờ trong payload → lời nhắc tạo được, hết lỗi "No alert location was provided".
+- Bằng chứng máy thật (Chủ dự án, iPhone iOS 18, máy tiếng Anh, 2026-09-19): menu kiểu Alert chỉ có `Alert`/`No Alert` (không có loại theo vị trí) → kiểu nhắc đã đúng; lỗi thật là `Get dates from` trả RỖNG vì không nhận dạng được `2026-09-23 14:00`. Thử bằng hành động Text + Quick Look: **`23 Sep 2026 14:00` → hiện đúng "23 Sep 2026 at 14:00"**. Đây là rủi ro SPEC §8.10(d) đã dự liệu ("đổi định dạng trong `reminderText`, 1 hàm, 1 test").
+- Phạm vi file (chỉ được sửa, đã xác minh): `src/export/reminder.ts`, `tests/unit/reminder.test.ts`, `tests/e2e/m7-reminder.spec.ts`, `docs/SPEC.md`, `docs/HUONG-DAN.md`.
+- Tiêu chí nghiệm thu:
+  [ ] Dòng 1 payload đổi từ `YYYY-MM-DD HH:mm` sang **`d MMM yyyy HH:mm`** với tháng viết tắt TIẾNG ANH cố định (`Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec`) — tự sinh trong mã, KHÔNG dùng `toLocaleDateString` (kết quả phụ thuộc máy chạy, sẽ lệch giữa máy dev và iPhone). Ngày không đệm số 0 (`3 Sep 2026`), giờ 24 h có đệm (`08:05`).
+  [ ] Dòng 2, dòng 3 và mọi hành vi khác của `reminderText` giữ nguyên (thay `\n`, cắt 100/200 theo ký tự hiển thị).
+  [ ] Unit: cập nhật các ca kỳ vọng định dạng cũ; THÊM ca cho ngày 1 chữ số, tháng đầu/cuối năm (Jan, Dec), giờ có đệm 0. Pass ở cả 2 múi giờ.
+  [ ] E2E `m7-reminder.spec.ts`: các chỗ so payload sinh chuỗi mong đợi theo định dạng mới, vẫn tính từ `new Date()` (không cắm cứng ngày).
+  [ ] `docs/SPEC.md`: sửa MỌI chỗ ghi định dạng dòng 1 (§3 IN-11, §5 hợp đồng `reminderText`, §6 M7 tiêu chí unit/E2E, §8.10(d)) sang định dạng mới, kèm một câu nêu lý do (máy thật không nhận dạng được dạng cũ, 2026-09-19). Không đổi gì khác trong SPEC.
+  [ ] `docs/HUONG-DAN.md`: sửa các ví dụ payload sang định dạng mới; mục "Nếu không chạy" (c) nói rõ dạng mới là `23 Sep 2026 14:00`.
+  [ ] `npm run check` pass.
+- Lệnh kiểm tra: `npm run check`
+- Model: sonnet — không giao Gemini (sự cố S2 đang mở). · Lần thử: 0/3 · Trạng thái: DOING
