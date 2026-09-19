@@ -1,0 +1,24 @@
+CỔNG BẢO MẬT TRƯỚC DEPLOY — 2026-09-19 11:16 — commit sắp push: 210b277
+Phạm vi: origin/main..HEAD (30 commit). Kho CÔNG KHAI.
+
+1. Bí mật trong diff sắp push — SẠCH.
+   3 dòng khớp mẫu đều nằm trong chính log kiểm toán và chỉ MÔ TẢ mẫu tìm kiếm
+   ("AIza… là dạng Google API key"), không phải giá trị thật. Không có khóa, token,
+   private key, client_secret, mật khẩu.
+2. File nhạy cảm mới — SẠCH. Không có .env, .pem, .p12, .key, credentials, service-account.
+   File mới đều là tài liệu (docs/bao-cao, docs/tasks, docs/gemini-out, docs/test-log),
+   mã nguồn tính năng (reminder.ts, ReminderDialog.tsx) và script test.
+3. PII — ĐÃ CHẶN VÀ XỬ LÝ MỘT LẦN.
+   Phát hiện: email cá nhân của Chủ dự án bị chép thẳng vào docs/test-log/bao-mat-d6c7bec.log
+   (do chính Quản lý viết ở đợt kiểm toán hồi tố). Kho công khai → đây là PII thật sắp bị push.
+   Xử lý: che thành "<email cá nhân của Chủ dự án — đã che, xem git config>"; ghi BAI-HOC;
+   thêm quy tắc vào CLAUDE.md: báo cáo về lộ dữ liệu không được chép lại dữ liệu đã lộ.
+   Quét lại sau khi che: 0 email, 0 số điện thoại trong diff.
+4. Cấu hình lộ — SẠCH. Không đổi OAuth scope/redirect, không thêm bí mật vào workflow,
+   không đổi cache service worker sang dữ liệu riêng tư.
+5. Phụ thuộc mới — KHÔNG CÓ. M7 không thêm thư viện nào (package.json không đổi).
+
+Ngoại lệ đã chốt (D-032): Google OAuth Client ID phía client là công khai theo thiết kế —
+không có chuỗi googleusercontent nào trong diff này.
+
+KẾT LUẬN: ĐƯỢC PHÉP DEPLOY. Một phát hiện PII đã xử lý trước khi push, không còn tồn đọng.
