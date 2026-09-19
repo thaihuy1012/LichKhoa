@@ -914,3 +914,22 @@ Chung cho mọi phiếu M7: không sửa/skip test khóa M1–M6 (ngoại lệ d
 ### Sau T-7.END
 - Kiến trúc sư DUYỆT M7 (`docs/bao-cao/M7.md`) → tag `M7-ok` → Chủ dự án `git push` (Quản lý không push được) → Chủ dự án cài 2 Phím tắt theo HUONG-DAN §E và thử tay A–F trên iPhone.
 - Làn Gemini: phiên 2026-09-19 Chủ dự án chưa bật lại → mọi phiếu M7 giao thợ Claude; không soát chéo Gemini cuối M7 trừ khi Chủ dự án bật.
+
+---
+
+## Hạ tầng làn Gemini (2026-09-19, Chủ dự án yêu cầu)
+
+### T-G.1 — `agy-run.sh`: lệnh `song` (kiểm Gemini có đang làm) + `gia-han` (nới hạn giờ)
+- Mục tiêu: làm cho quy định `docs/LAN-GEMINI.md` §5b chạy được thật — phân biệt "đang làm" với "treo", và nới hạn giờ thay vì cắt ngang lượt đang chạy tốt.
+- Phạm vi file (chỉ được sửa): `scripts/agy-run.sh`, `scripts/test-agy-song.sh` (mới).
+- Giao diện / đầu vào có sẵn: `docs/LAN-GEMINI.md` §5b + mục 6 (đặc tả đã chốt); `_worker`, `chay`, `cho`, `ket_qua`, `huy`, `sua_status_chet`, `kill_tree`, `thay_doi`, `LIMIT[...]` trong chính script.
+- Tiêu chí nghiệm thu:
+  [ ] `bash scripts/agy-run.sh song <tên>` in **đúng một** kết luận ở dòng đầu: `ĐANG LÀM` | `ĐỨNG IM` | `KHÔNG CHẠY`, rồi ≤ 5 dòng bằng chứng (PID sống/chết, giây kể từ lần cuối `<tên>.md`/`.err` đổi, số file cây làm việc đã đổi, phút đã chạy / hạn hiện tại / số lần đã gia hạn). `ĐANG LÀM` = tiến trình sống **và** (đầu ra dài thêm **hoặc** cây làm việc đổi) trong 10 phút qua (ngưỡng đặt tên hằng `IM_LANG=600`).
+  [ ] `bash scripts/agy-run.sh gia-han <tên> [phút]` (mặc định 15) nới hạn của lượt ĐANG chạy, in hạn mới + số lần đã gia hạn; **từ chối** khi: lượt không chạy, đã gia hạn 2 lần, hoặc vượt trần tổng (làn code 60 phút, làn khác 45 phút) — thoát mã ≠ 0 kèm lý do.
+  [ ] Hạn giờ thành **deadline mềm**: `_worker` canh mốc đọc từ file `<tên>.deadline` (epoch, ghi khi chạy, cập nhật khi `gia-han`) và tự `kill_tree` khi quá mốc; `--print-timeout` truyền cho `agy` đặt theo **trần tối đa** của làn để `agy` không tự cắt trước deadline mềm. Quá deadline vẫn phải cho ra `QUÁ GIỜ` như cũ.
+  [ ] `cho` in thêm, ở dòng `ĐANG CHẠY`, phần `— còn <n> phút tới hạn` và nhắc `song` khi đã chạy ≥ 10 phút.
+  [ ] `huy`, `ket-qua`, `trang-thai`, `kiem-tra` và mọi hành vi cũ không đổi; `sua_status_chet` vẫn dọn được lượt chết.
+  [ ] `scripts/test-agy-song.sh` (chạy được, không cần `agy`, không gọi mạng): giả lập bằng cách tự tạo `docs/gemini-out/<tên>.{status,meta,md,deadline}` trong thư mục tạm → kiểm 5 tình huống: tiến trình sống + đầu ra vừa đổi → `ĐANG LÀM`; sống + không đổi > 600 s → `ĐỨNG IM`; PID chết → `KHÔNG CHẠY`; `gia-han` lần 1 nới đúng số phút; `gia-han` lần 3 bị từ chối (mã ≠ 0). In `OK <n>/5` và thoát 0 khi đủ.
+  [ ] `bash -n scripts/agy-run.sh` sạch; `bash scripts/test-agy-song.sh` → `OK 5/5`; không đụng `src/`, `tests/`, `docs/` (thợ khác đang làm ở đó).
+- Lệnh kiểm tra: `bash -n scripts/agy-run.sh; bash scripts/test-agy-song.sh`
+- Model: sonnet — KHÔNG giao Gemini, lý do cụ thể: (1) đây là chính script chạy Gemini, Gemini tự sửa hạ tầng chạy mình thì hỏng là mất luôn đường chạy lại; (2) lúc giao, cây git chưa sạch (T-7.1 đang chạy) nên script từ chối nhận lượt Gemini. · Lần thử: 0/3 · Trạng thái: DOING
