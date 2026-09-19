@@ -330,7 +330,11 @@ function drawChip(
   const line1 =
     chip.kind === 'event'
       ? chipTimeText(chip.occ, c.hour12, c.lang, availWidth, timeSize, c.font)
-      : `☐${chip.overdue ? ` ${t('todo.overdue', c.lang)}` : ''}`;
+      : chip.overdue
+        ? `☐ ${t('todo.overdue', c.lang)}`
+        : chip.todo.dueTime
+          ? `☐ ${fmtTime(chip.todo.dueTime, c.hour12)}`
+          : '☐';
   const line1Size = chip.kind === 'event' ? timeSize : titleSize;
   const line2 = chip.kind === 'event' ? chip.occ.title : chip.todo.text;
 
@@ -408,7 +412,7 @@ function drawTodayItem(
       font: c.font,
     });
   } else if (item.todo.due) {
-    const due = todoDueLabel(item.todo.due, today, c.lang);
+    const due = todoDueLabel(item.todo.due, today, c.lang, item.todo.dueTime, c.hour12);
     ops.push({
       op: 'text',
       x: textLeft,

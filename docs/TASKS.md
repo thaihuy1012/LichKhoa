@@ -1179,7 +1179,8 @@ Chủ dự án duyệt 2026-09-19: làm ngay (không chờ G1–G5 của M8); "Q
 - Phạm vi file: `src/render/layout/common.ts`, `src/render/layout/month.ts`, `src/render/layout/week.ts`, `src/render/layout/todo.ts`, `tests/unit/layout-todo-time.test.ts` (mới).
 - Yêu cầu + tiêu chí: SPEC §6 M9 "Nội dung" (nhãn, 3 bố cục, chip Tuần `☐ 14:00`) và gạch tiêu chí 2.
 - Lệnh kiểm tra: `npx vitest run tests/unit/layout-todo-time.test.ts` ; `npm run check`.
-- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO — sau T-9.1
+- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-19 vòng 1 (3 phút) XONG nhưng báo cáo Gemini cụt → kiem-thu kiểm kỹ PASS (11/11 ×2 TZ, đủ ca SPEC; check 102/14 skip; test khóa không đụng) → review diff đạt → commit.
 
 ### T-9.3 — UI tab Việc (ô giờ, bộ sửa hạn) + i18n + 2 S4 M8
 - Phạm vi file: `src/ui/screens/events/TodosTab.tsx`, `src/ui/components/ReminderDialog.tsx`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `src/ui/styles.css`.

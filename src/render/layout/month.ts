@@ -330,7 +330,7 @@ function drawList(
       const textLeft = contentLeft + lineSize * 1.4;
       let availWidth = Math.max(1, contentLeft + contentWidth - textLeft);
 
-      const due = todo.due ? todoDueLabel(todo.due, d.today, c.lang) : null;
+      const due = todo.due ? todoDueLabel(todo.due, d.today, c.lang, todo.dueTime, c.hour12) : null;
       if (due) {
         const labelSize = lineSize * 0.85;
         const labelWidth = due.text.length * labelSize * 0.5 + lineSize * 0.6;

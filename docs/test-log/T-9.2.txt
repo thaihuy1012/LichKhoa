@@ -1,0 +1,18 @@
+
+ RUN  v5.0.0 E:/DuAn/thu-nghiem
+
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  16:03:51
+   Duration  577ms (transform 47%, import 46%, tests 5%, worker 2%)
+
+
+ RUN  v5.0.0 E:/DuAn/thu-nghiem
+
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  23:03:54
+   Duration  581ms (transform 48%, import 45%, tests 5%, worker 2%)
+

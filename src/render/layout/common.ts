@@ -162,12 +162,22 @@ export function truncate(text: string, width: number, size: number): string {
   return truncateByFactor(text, width, size, 0.5);
 }
 
-/** Nhãn hạn to-do: "Quá hạn" nếu qua ngày `today`, "Hôm nay" nếu đúng hôm nay, còn lại "d/m". */
-export function todoDueLabel(due: ISODate, today: ISODate, lang: 'vi' | 'en'): { text: string; overdue: boolean } {
+/** Nhãn hạn to-do: "Quá hạn" nếu qua ngày `today`, "Hôm nay" nếu đúng hôm nay, còn lại "d/m"; kèm giờ nếu có `dueTime` (trừ khi quá hạn). */
+export function todoDueLabel(
+  due: ISODate,
+  today: ISODate,
+  lang: 'vi' | 'en',
+  dueTime?: string,
+  hour12?: boolean
+): { text: string; overdue: boolean } {
   if (due < today) return { text: t('todo.overdue', lang), overdue: true };
-  if (due === today) return { text: t('date.today', lang), overdue: false };
+  const timeStr = dueTime ? fmtTime(dueTime, Boolean(hour12)) : '';
   const p = parseISODate(due);
-  return { text: `${p.d}/${p.m0 + 1}`, overdue: false };
+  const base = due === today ? t('date.today', lang) : `${p.d}/${p.m0 + 1}`;
+  return {
+    text: timeStr ? `${base} ${timeStr}` : base,
+    overdue: false,
+  };
 }
 
 /** 7 ngày của tuần chứa `today`, bắt đầu theo `weekStart` (1: T2..CN, 0: CN..T7); cùng thứ tự cột với `weekdayLabels`. */
