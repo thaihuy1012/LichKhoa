@@ -988,3 +988,15 @@ Chung cho mọi phiếu M7: không sửa/skip test khóa M1–M6 (ngoại lệ d
   [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npx playwright test tests/e2e/share.spec.ts; npm run check`
 - Model: sonnet — KHÔNG giao Gemini, lý do: Kiến trúc sư đang chạy duyệt M7 và có thể ghi `docs/SPEC.md` bất cứ lúc nào → không đảm bảo được "cây git sạch" mà làn Gemini đòi (điều kiện 4), giao Gemini lúc này có nguy cơ script hoàn tác mất phần Kiến trúc sư vừa sửa. · Lần thử: 0/3 · Trạng thái: DOING
+
+### T-7.7 — `reminderText` cắt chuỗi làm vỡ emoji → không mở được Phím tắt (Kiến trúc sư duyệt M7)
+- Mục tiêu: tiêu đề/ghi chú có emoji (hoặc ký tự ngoài BMP) ở đúng biên 100/200 ký tự không làm hỏng việc mở Phím tắt.
+- Bằng chứng (Kiến trúc sư tự thử bằng node): `src/export/reminder.ts:84-86` cắt bằng `s.slice(0, max)` theo đơn vị UTF-16 → emoji ở biên bị cắt còn nửa cặp (surrogate lẻ) → `encodeURIComponent` trong `shortcutUrl` ném `URIError` → app đã hiện toast "Đã mở Phím tắt" nhưng thực tế KHÔNG mở được, người dùng tưởng đã đặt báo thức.
+- Phạm vi file (chỉ được sửa, đã xác minh): `src/export/reminder.ts`, `tests/unit/reminder.test.ts`.
+- Tiêu chí nghiệm thu:
+  [ ] Cắt theo ký tự hiển thị, không theo đơn vị UTF-16: dùng `Array.from(s).slice(0, max).join('')` (hoặc cách tương đương an toàn với cặp thay thế).
+  [ ] Unit mới: tiêu đề gồm emoji lặp sao cho biên rơi vào GIỮA một emoji → `reminderText(...)` trả chuỗi mà `encodeURIComponent` KHÔNG ném lỗi, và chuỗi không chứa ký tự thay thế lẻ. Làm tương tự cho ghi chú ở biên 200.
+  [ ] Các ca cắt 100/200 đã có vẫn pass (không đổi ý nghĩa test cũ).
+  [ ] `npm run check` pass.
+- Lệnh kiểm tra: `npm run check`
+- Model: sonnet — không giao Gemini: phiếu nhỏ, cần chắc tay về UTF-16/cặp thay thế, và đang chạy song song với T-7.6 nên cây git không sạch. · Lần thử: 0/3 · Trạng thái: DOING
