@@ -1,0 +1,27 @@
+KIỂM TOÁN BẢO MẬT HỒI TỐ — 2026-09-19 09:40 — commit d6c7bec
+Phạm vi: toàn bộ lịch sử git (143 commit, trong đó 132 đã push lên origin/main).
+Kho: https://github.com/thaihuy1012/LichKhoa — CÔNG KHAI (api.github.com trả 200 không cần đăng nhập).
+
+1. BÍ MẬT / THÔNG TIN ĐĂNG NHẬP — SẠCH
+   Quét mọi blob của mọi commit với mẫu: AIza… (Google API key), ya29.… (access token),
+   ghp_/gho_ (GitHub token), sk-… , xox[baprs]- (Slack), -----BEGIN … PRIVATE KEY-----,
+   client_secret=/:"…", GOCSPX-… → 0 kết quả.
+2. GOOGLE OAUTH CLIENT ID — không có chuỗi *.apps.googleusercontent.com nào trong lịch sử.
+   (Client ID do Chủ dự án nhập trong app, lưu IndexedDB trên máy — không nằm trong mã nguồn.)
+3. FILE NHẠY CẢM — chỉ scripts/gemini.env từng được thêm; nội dung chỉ là tên model Gemini
+   (GEMINI_CODE/SOAT/DOC/SINH), không có khóa. Không có .env, .pem, .p12, .key, service account.
+4. PII TRONG NỘI DUNG FILE — 0 kết quả email (gmail/yahoo/outlook/hotmail/icloud) và 0 số điện thoại VN.
+   Fixture Google dùng tên bịa ("Nghi le", "Hop nhom", "Khach hang").
+5. PHÁT HIỆN MỨC NHẸ (đã lộ, không cần thu hồi khóa vì không phải bí mật):
+   a) Email thật trong metadata 132 commit đã push: thaihuy1012@gmail.com.
+      → Xử lý (Chủ dự án chọn 2026-09-19): KHÔNG viết lại lịch sử; từ nay commit bằng
+        171107212+thaihuy1012@users.noreply.github.com (đã đặt git config cho kho này).
+   b) Tên người dùng Windows + đường dẫn máy (C:/Users/HUY, E:\DuAn, F:\LICH_NEN) trong
+      docs/TASKS.md và docs/bao-cao/M3.diff → chấp nhận, mức rất nhẹ.
+   c) Ảnh chụp màn hình trong docs/test-log/ chứa sự kiện/ghi chú mẫu (gồm chuỗi
+      "Mật khẩu wifi nhà mới 12345678") → Chủ dự án xác nhận là DỮ LIỆU BỊA để test,
+      không phải thông tin thật → giữ nguyên ảnh, thêm quy định cấm chụp dữ liệu thật.
+6. KHO CÔNG KHAI — Chủ dự án chọn GIỮ CÔNG KHAI (GitHub Pages tài khoản miễn phí cần kho công khai).
+
+KẾT LUẬN: KHÔNG có bí mật, khóa, token hay PII thật nào bị lộ → không cần thu hồi khóa,
+không cần viết lại lịch sử. Đã siết .gitignore chặn .env/khóa/sao lưu dữ liệu thật cho tương lai.

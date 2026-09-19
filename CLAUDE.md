@@ -85,6 +85,12 @@ Ngoại lệ đã chốt (không tính là lộ): Google OAuth **Client ID** ph�
 Phát hiện bất kỳ mục nào → **CHẶN DEPLOY**: không đề nghị push, mở sự cố `docs/SU-CO.md` (lộ bí mật/PII = **S1**; cấu hình rủi ro = **S2**), gỡ/che dữ liệu, nếu đã lỡ commit thì hỏi Chủ dự án trước khi viết lại lịch sử hoặc thu hồi khóa. Báo Chủ dự án ≤ 5 dòng: lộ gì · ở đâu (file:dòng) · đã xử lý thế nào · cần Chủ dự án làm gì (đổi khóa?).
 
 Nghi ngờ mà không chắc → **chặn và hỏi Chủ dự án**, không tự kết luận "chắc không sao". Ai (thợ, sửa lỗi, kiểm thử, Gemini) thấy dấu hiệu lộ phải báo ngay trong báo cáo, không tự xử.
+
+Quy tắc phòng ngừa (rút từ kiểm toán hồi tố 2026-09-19, `docs/test-log/bao-mat-d6c7bec.log`):
+- **Kho `LichKhoa` là kho CÔNG KHAI** — mọi file, ảnh, log commit vào đây là công khai vĩnh viễn. Cân nhắc trước khi thêm bất cứ thứ gì.
+- **Ảnh chụp màn hình / log trong kho phải dùng dữ liệu mẫu bịa.** Cấm chụp màn hình hoặc xuất log từ dữ liệu thật của Chủ dự án (sự kiện, việc, ghi chú, ảnh nền cá nhân, danh sách lịch Google).
+- Commit bằng email ẩn `171107212+thaihuy1012@users.noreply.github.com` (đã đặt `git config` cho kho này). Không đặt lại email thật.
+- File sao lưu JSON dữ liệu thật, `.env`, khóa: đã chặn trong `.gitignore` — không được dùng `git add -f` để vượt.
 ## Cấm
 - Bịa kết quả test; sửa test cho pass; báo DONE khi chưa tự chạy lệnh kiểm tra.
 - Sửa file ngoài phạm vi mà không khai báo.

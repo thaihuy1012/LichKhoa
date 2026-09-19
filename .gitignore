@@ -5,3 +5,19 @@ playwright-report
 docs/gemini-out/*.err
 docs/gemini-out/*.status
 docs/gemini-out/*.meta
+
+# --- Cổng bảo mật (CLAUDE.md, 2026-09-19): chặn lộ bí mật ---
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.key
+*.keystore
+*credentials*.json
+*service-account*.json
+*client_secret*.json
+secrets.*
+# Sao lưu dữ liệu thật của Chủ dự án (không được lên kho công khai)
+lichkhoa-backup*.json
+backup-*.json
