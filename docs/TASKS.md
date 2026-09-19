@@ -879,7 +879,7 @@ Chung cho mọi phiếu M7: không sửa/skip test khóa M1–M6 (ngoại lệ d
 
 ### T-7.3 — Gắn ReminderDialog vào form Việc và form Ghi chú
 - Mục tiêu: nút "Nhắc trên iPhone" hoạt động ở hàng nhập Việc và Sheet Ghi chú.
-- Phạm vi file (chỉ được sửa): `src/ui/screens/events/TodosTab.tsx`, `src/ui/screens/events/NoteTab.tsx`, `src/i18n/vi.json`, `src/i18n/en.json`.
+- Phạm vi file (chỉ được sửa): `src/ui/screens/events/TodosTab.tsx`, `src/ui/screens/events/NoteTab.tsx`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`.
 - Giao diện / đầu vào có sẵn: `ReminderDialog` từ T-7.2 (dùng lại, KHÔNG viết bản thứ hai); `defaultReminderAt`/`reminderText` xử lý sẵn ba loại (sự kiện / việc / ghi chú).
 - Tiêu chí nghiệm thu:
   [ ] Việc: `rem-open` vô hiệu khi ô nhập rỗng; chọn thời điểm → bấm gửi → `addTodo` chạy trước (việc xuất hiện trong danh sách, ô nhập rỗng) rồi mới mở Phím tắt; mặc định thời điểm = hạn lúc 08:00, không hạn → giờ tròn kế tiếp.
@@ -887,7 +887,7 @@ Chung cho mọi phiếu M7: không sửa/skip test khóa M1–M6 (ngoại lệ d
   [ ] Không đụng cử chỉ vuốt / nhấn giữ kéo của M6: `npx playwright test tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts` pass như cũ.
   [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npx playwright test tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts; npm run check`
-- Model: sonnet · Lần thử: 0/3 · Trạng thái: TODO
+- Model: gemini (làn code, §4b) · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
 
 ### T-7.4 — Hướng dẫn cài 2 Phím tắt (docs + màn Guide)
 - Mục tiêu: Chủ dự án tự cài được 2 Phím tắt mà không cần hỏi lại.
