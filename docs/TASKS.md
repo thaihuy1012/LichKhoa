@@ -1064,3 +1064,17 @@ Chủ dự án chốt 2026-09-19: muốn việc có hạn **ngày + giờ** và 
   [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npm run check`
 - Model: sonnet — không giao Gemini (sự cố S2 đang mở). · Lần thử: 0/3 · Trạng thái: DOING
+
+### B-013 — Tab Việc lượt 2: hàng nhập vẫn lệch, nút Sửa khó thấy (Chủ dự án báo 2026-09-19, sau B-010)
+- Mục tiêu: nhìn là biết sửa việc ở đâu; hàng nhập gọn gàng. Chủ dự án nói nguyên văn: "Ô việc mới và ô hạn vẫn bị lệch nhìn mất thẩm mỹ. Việc đã tạo khó sửa lại. Nút sửa hiện ra sau khi vuốt sang trái, nằm cạnh nút xóa/lưu trữ, nhưng màu tối nhìn không rõ. Có hình cây bút để sửa nhưng nhìn nhỏ xíu, nhìn không rõ."
+- Bối cảnh: B-010 đã thêm icon ✎ vào chữ việc nhưng quá nhỏ; nút "Sửa" trong dải vuốt trái có màu quá tối so với nền.
+- Phạm vi file (chỉ được sửa, đã xác minh): `src/ui/styles.css`, `src/ui/screens/events/TodosTab.tsx`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`.
+- Tiêu chí nghiệm thu:
+  [ ] **Hàng nhập việc**: "Việc mới…", nhãn "Hạn" + ô hạn, nút "Thêm" nằm cân đối ở bề ngang 428 pt — các ô cùng chiều cao, cùng đường giữa, khoảng cách đều; không còn cảm giác lệch. Nếu chật thì cho xuống 2 dòng gọn gàng thay vì nhồi 1 dòng.
+  [ ] **Nút Sửa trong dải vuốt trái**: nền tương phản rõ trên nền tối (không dùng màu tối trên tối), chữ/biểu tượng đọc được, vùng chạm ≥ 44 px, phân biệt rõ với nút Xóa (đỏ) và Lưu trữ.
+  [ ] **Icon ✎ trên chữ việc**: to hơn hẳn, đủ tương phản (hoặc thay bằng cách gợi ý rõ hơn). Nhìn lướt phải thấy được là "chạm vào đây sửa được".
+  [ ] Không phá cử chỉ M6: `npx playwright test tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts` pass.
+  [ ] Chụp webkit 428×926 trước/sau (tab Việc có ≥ 3 việc, 1 việc đang mở dải vuốt trái) để Quản lý xem bằng mắt; ghi đường dẫn ảnh vào báo cáo (ảnh để trong thư mục tạm, KHÔNG commit vào kho).
+  [ ] `npm run check` pass.
+- Lệnh kiểm tra: `npx playwright test tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts; npm run check`
+- Model: sonnet — không giao Gemini (sự cố SC-003 còn mở). · Lần thử: 0/3 · Trạng thái: DOING
