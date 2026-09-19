@@ -61,4 +61,16 @@ describe('exportBackup/importBackup', () => {
     const bad = { version: 1, state: { version: 1, device: { id: 'x' } } };
     expect(() => importBackup(JSON.stringify(bad))).toThrow();
   });
+
+  it('v1.8 (IN-11): xuất -> nhập giữ 2 tên Phím tắt đã đổi, version vẫn 1', () => {
+    const s = defaultState(device);
+    s.alarmShortcutName = 'Bao Thuc';
+    s.reminderShortcutName = 'Loi Nhac';
+    const json = exportBackup(s);
+    expect(JSON.parse(json).version).toBe(1);
+    const result = importBackup(json);
+    expect(result.alarmShortcutName).toBe('Bao Thuc');
+    expect(result.reminderShortcutName).toBe('Loi Nhac');
+    expect(result).toEqual(s);
+  });
 });

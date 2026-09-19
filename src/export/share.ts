@@ -48,10 +48,19 @@ declare global {
   }
 }
 
-/** Mở Shortcut `name` với `input=clipboard`. Khi `?test=1`, ghi URL vào
- * `window.__lastNav` thay vì điều hướng thật (Playwright không mở được `shortcuts://`). */
-export function openShortcut(name: string): void {
-  const url = `shortcuts://run-shortcut?name=${encodeURIComponent(name)}&input=clipboard`;
+/** v1.8: URL `shortcuts://run-shortcut?...` cho Phím tắt `name`. Có `text` -> `input=text&text=<enc>`;
+ * không có -> `input=clipboard` (hành vi cũ, IN-6). */
+export function shortcutUrl(name: string, text?: string): string {
+  if (text != null) {
+    return `shortcuts://run-shortcut?name=${encodeURIComponent(name)}&input=text&text=${encodeURIComponent(text)}`;
+  }
+  return `shortcuts://run-shortcut?name=${encodeURIComponent(name)}&input=clipboard`;
+}
+
+/** Mở Shortcut `name`. Không truyền `text` -> giữ nguyên hành vi cũ (`input=clipboard`, IN-6).
+ * Khi `?test=1`, ghi URL vào `window.__lastNav` thay vì điều hướng thật (Playwright không mở được `shortcuts://`). */
+export function openShortcut(name: string, text?: string): void {
+  const url = shortcutUrl(name, text);
   if (typeof location !== 'undefined' && new URLSearchParams(location.search).get('test') === '1') {
     window.__lastNav = url;
     return;

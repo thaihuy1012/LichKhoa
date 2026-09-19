@@ -88,6 +88,8 @@ export interface AppState {
     cache: { events: Occurrence[]; fetchedAt: number } | null;
   };
   shortcutName: string;
+  alarmShortcutName: string; // v1.8 (IN-11): tên Phím tắt "Thêm báo thức"
+  reminderShortcutName: string; // v1.8 (IN-11): tên Phím tắt "Thêm lời nhắc"
 }
 
 export interface RenderData {
@@ -130,6 +132,8 @@ export function defaultState(device: DeviceSpec): AppState {
     device,
     google: { clientId: '', calendarIds: [], cache: null },
     shortcutName: 'DatHinhNen',
+    alarmShortcutName: 'ThemBaoThuc',
+    reminderShortcutName: 'ThemLoiNhac',
   };
 }
 
@@ -185,6 +189,16 @@ export function normalizeState(raw: unknown): AppState | null {
   const events: unknown[] = Array.isArray(raw['events']) ? (raw['events'] as unknown[]).filter(isPlainObject) : [];
   const todos: unknown[] = Array.isArray(raw['todos']) ? (raw['todos'] as unknown[]).filter(isPlainObject) : [];
 
+  // v1.8 (IN-11): bù mặc định khi thiếu/rỗng/không phải chuỗi.
+  const alarmShortcutName =
+    typeof raw['alarmShortcutName'] === 'string' && raw['alarmShortcutName'] !== ''
+      ? (raw['alarmShortcutName'] as string)
+      : base.alarmShortcutName;
+  const reminderShortcutName =
+    typeof raw['reminderShortcutName'] === 'string' && raw['reminderShortcutName'] !== ''
+      ? (raw['reminderShortcutName'] as string)
+      : base.reminderShortcutName;
+
   return {
     ...base,
     ...raw,
@@ -194,6 +208,8 @@ export function normalizeState(raw: unknown): AppState | null {
     notes,
     design: mergedDesign as unknown as DesignConfig,
     google: { ...base.google, ...rawGoogle } as AppState['google'],
+    alarmShortcutName,
+    reminderShortcutName,
   } as AppState;
 }
 

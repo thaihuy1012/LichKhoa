@@ -335,6 +335,17 @@ describe('reducer', () => {
     expect(s3.google.clientId).toBe('abc.apps.googleusercontent.com'); // giữ nguyên phần khác
   });
 
+  it('v1.8 (IN-11): setAlarmShortcutName/setReminderShortcutName đặt tên, không mutate state cũ', () => {
+    const state = defaultState(device);
+    const s1 = reducer(state, { type: 'setAlarmShortcutName', name: 'Bao Thuc' });
+    expect(s1.alarmShortcutName).toBe('Bao Thuc');
+    expect(state.alarmShortcutName).toBe('ThemBaoThuc');
+
+    const s2 = reducer(s1, { type: 'setReminderShortcutName', name: 'Loi Nhac' });
+    expect(s2.reminderShortcutName).toBe('Loi Nhac');
+    expect(s1.reminderShortcutName).toBe('ThemLoiNhac');
+  });
+
   it('T-3.3: disconnectGoogle xóa calendarIds + cache, giữ clientId', () => {
     const state = defaultState(device);
     const connected = {

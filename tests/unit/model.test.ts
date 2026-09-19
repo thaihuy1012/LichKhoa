@@ -159,6 +159,27 @@ describe('normalizeState', () => {
     expect(pinned[0].id).toBe('n2');
   });
 
+  it('v1.8 (IN-11): state thiếu 2 tên Phím tắt -> mặc định ThemBaoThuc/ThemLoiNhac', () => {
+    const raw = { version: 1 as const, events: [], todos: [], design: defaultDesign(), device };
+    const result = normalizeState(raw);
+    expect(result!.alarmShortcutName).toBe('ThemBaoThuc');
+    expect(result!.reminderShortcutName).toBe('ThemLoiNhac');
+  });
+
+  it('v1.8 (IN-11): 2 tên Phím tắt rỗng hoặc không phải chuỗi -> bù mặc định', () => {
+    const raw = { version: 1 as const, events: [], todos: [], design: defaultDesign(), device, alarmShortcutName: '', reminderShortcutName: 42 };
+    const result = normalizeState(raw);
+    expect(result!.alarmShortcutName).toBe('ThemBaoThuc');
+    expect(result!.reminderShortcutName).toBe('ThemLoiNhac');
+  });
+
+  it('v1.8 (IN-11): giữ 2 tên Phím tắt hợp lệ đã đổi', () => {
+    const raw = { version: 1 as const, events: [], todos: [], design: defaultDesign(), device, alarmShortcutName: 'Bao Thuc', reminderShortcutName: 'Loi Nhac' };
+    const result = normalizeState(raw);
+    expect(result!.alarmShortcutName).toBe('Bao Thuc');
+    expect(result!.reminderShortcutName).toBe('Loi Nhac');
+  });
+
   it('giữ nguyên giá trị có sẵn khi hợp lệ đầy đủ', () => {
     const full = defaultState(device);
     full.design.accentColor = '#abcdef';

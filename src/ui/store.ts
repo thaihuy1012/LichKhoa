@@ -43,7 +43,9 @@ export type Action =
   | { type: 'setGoogleCalendarIds'; calendarIds: string[] }
   | { type: 'setGoogleCache'; cache: { events: Occurrence[]; fetchedAt: number } | null }
   | { type: 'disconnectGoogle' }
-  | { type: 'setShortcutName'; shortcutName: string };
+  | { type: 'setShortcutName'; shortcutName: string }
+  | { type: 'setAlarmShortcutName'; name: string }
+  | { type: 'setReminderShortcutName'; name: string };
 
 function nextId(explicit?: string): string {
   if (explicit) return explicit;
@@ -203,6 +205,10 @@ export function reducer(state: AppState, action: Action): AppState {
       return { ...state, google: { ...state.google, calendarIds: [], cache: null } };
     case 'setShortcutName':
       return { ...state, shortcutName: action.shortcutName };
+    case 'setAlarmShortcutName':
+      return { ...state, alarmShortcutName: action.name };
+    case 'setReminderShortcutName':
+      return { ...state, reminderShortcutName: action.name };
     default:
       return state;
   }
