@@ -82,7 +82,8 @@ export function reminderWindow(at: LocalDateTime, now: Date): ReminderWindow {
 }
 
 function truncate(s: string, max: number): string {
-  return s.length > max ? s.slice(0, max) : s;
+  const chars = Array.from(s);
+  return chars.length > max ? chars.slice(0, max).join('') : s;
 }
 
 /** v1.8 (IN-11): payload gửi qua Phím tắt — hợp đồng SPEC §5/§8.11. */

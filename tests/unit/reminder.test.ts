@@ -28,6 +28,56 @@ describe('reminderText', () => {
     expect(lines[1].length).toBe(100);
     expect(lines[2].length).toBe(200);
   });
+
+  it('cắt tiêu đề không vỡ emoji khi biên 100 rơi giữa cặp thay thế', () => {
+    // '🎉' chiếm 2 đơn vị UTF-16; với cách cắt cũ (slice theo UTF-16),
+    // tiền tố 'x' (1 đơn vị) làm biên 100 rơi đúng giữa emoji thứ 50.
+    const longTitle = 'x' + '🎉'.repeat(150);
+    expect(() => encodeURIComponent(reminderText('2026-09-20T07:30', longTitle))).not.toThrow();
+    const result = reminderText('2026-09-20T07:30', longTitle);
+    const line2 = result.split('\n')[1];
+    const loneSurrogates = line2
+      .split('')
+      .filter((ch, i) => {
+        const code = ch.charCodeAt(0);
+        const isHigh = code >= 0xd800 && code <= 0xdbff;
+        const isLow = code >= 0xdc00 && code <= 0xdfff;
+        if (!isHigh && !isLow) return false;
+        if (isHigh) {
+          const next = line2.charCodeAt(i + 1);
+          return !(next >= 0xdc00 && next <= 0xdfff);
+        }
+        const prev = line2.charCodeAt(i - 1);
+        return !(prev >= 0xd800 && prev <= 0xdbff);
+      });
+    expect(loneSurrogates.length).toBe(0);
+    expect(Array.from(line2).length).toBe(100);
+  });
+
+  it('cắt ghi chú không vỡ emoji khi biên 200 rơi giữa cặp thay thế', () => {
+    const longNote = 'x' + '🎉'.repeat(220);
+    expect(() =>
+      encodeURIComponent(reminderText('2026-09-20T07:30', 'tiêu đề', longNote)),
+    ).not.toThrow();
+    const result = reminderText('2026-09-20T07:30', 'tiêu đề', longNote);
+    const line3 = result.split('\n')[2];
+    const loneSurrogates = line3
+      .split('')
+      .filter((ch, i) => {
+        const code = ch.charCodeAt(0);
+        const isHigh = code >= 0xd800 && code <= 0xdbff;
+        const isLow = code >= 0xdc00 && code <= 0xdfff;
+        if (!isHigh && !isLow) return false;
+        if (isHigh) {
+          const next = line3.charCodeAt(i + 1);
+          return !(next >= 0xdc00 && next <= 0xdfff);
+        }
+        const prev = line3.charCodeAt(i - 1);
+        return !(prev >= 0xd800 && prev <= 0xdbff);
+      });
+    expect(loneSurrogates.length).toBe(0);
+    expect(Array.from(line3).length).toBe(200);
+  });
 });
 
 describe('defaultReminderAt', () => {
