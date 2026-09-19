@@ -2,7 +2,7 @@
 (Chỉ Quản lý ghi. Đọc đầu mỗi phiên: sự cố chưa đóng xử lý trước mọi việc khác. Trạng thái: MỞ | ĐANG SỬA | CHỜ CHỦ DỰ ÁN | ĐÃ ĐÓNG.)
 
 ## Đang mở
-- (không)
+- **SC-003** (S2, ĐANG SỬA) — Phím tắt Lời nhắc lỗi "No alert location was provided" → B, B', C KHÔNG ĐẠT trên iPhone thật (2026-09-19)
 
 ## SC-003 — Phím tắt Lời nhắc lỗi "No alert location was provided" · Mức S2 · Trạng thái: ĐANG SỬA
 - Phát hiện: 2026-09-19 · Chủ dự án thử tay M7 trên iPhone, iOS 18, ngôn ngữ máy Tiếng Anh · sau deploy e432dce.
