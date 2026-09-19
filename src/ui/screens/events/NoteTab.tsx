@@ -171,6 +171,7 @@ export function NoteTab({ store, state, showToast }: Props) {
         note={nBody.trim() || undefined}
         alarmShortcutName={state.alarmShortcutName}
         reminderShortcutName={state.reminderShortcutName}
+        dayAlarmShortcutName={state.dayAlarmShortcutName}
         onSave={() => save({ suppressToast: true })}
         flush={store.flush}
         showToast={showToast}

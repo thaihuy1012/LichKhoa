@@ -38,6 +38,7 @@ export function Preview({ store }: { store: Store }) {
   const [shortcutNameText, setShortcutNameText] = useState(state.shortcutName);
   const [alarmShortcutNameText, setAlarmShortcutNameText] = useState(state.alarmShortcutName);
   const [reminderShortcutNameText, setReminderShortcutNameText] = useState(state.reminderShortcutName);
+  const [dayAlarmShortcutNameText, setDayAlarmShortcutNameText] = useState(state.dayAlarmShortcutName);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const bgRef = useRef<Blob | null>(null);
   const urlRef = useRef<string | null>(null);
@@ -61,6 +62,10 @@ export function Preview({ store }: { store: Store }) {
   useEffect(() => {
     setReminderShortcutNameText(state.reminderShortcutName);
   }, [state.reminderShortcutName]);
+
+  useEffect(() => {
+    setDayAlarmShortcutNameText(state.dayAlarmShortcutName);
+  }, [state.dayAlarmShortcutName]);
 
   useEffect(() => {
     loadBg().then((b) => {
@@ -211,6 +216,13 @@ export function Preview({ store }: { store: Store }) {
     }
   }
 
+  function onDayAlarmShortcutNameInput(text: string) {
+    setDayAlarmShortcutNameText(text);
+    if (text.trim()) {
+      store.dispatch({ type: 'setDayAlarmShortcutName', name: text });
+    }
+  }
+
   async function onCopy() {
     if (!blob) return;
     // copyPng gọi navigator.clipboard.write ngay đầu — không await gì trước đó (user activation).
@@ -297,6 +309,15 @@ export function Preview({ store }: { store: Store }) {
             data-testid="shortcut-reminder-name"
             value={reminderShortcutNameText}
             onInput={(e) => onReminderShortcutNameInput((e.target as HTMLInputElement).value)}
+          />
+        </label>
+        <label class="field shortcut-name-field">
+          {t('preview.shortcutDayAlarmName', lang)}
+          <input
+            type="text"
+            data-testid="shortcut-dayalarm-name"
+            value={dayAlarmShortcutNameText}
+            onInput={(e) => onDayAlarmShortcutNameInput((e.target as HTMLInputElement).value)}
           />
         </label>
         <div class="row-actions">

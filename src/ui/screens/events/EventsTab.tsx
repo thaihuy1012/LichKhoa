@@ -415,6 +415,7 @@ export function EventsTab({ store, state, showToast }: Props) {
         title={title.trim()}
         alarmShortcutName={state.alarmShortcutName}
         reminderShortcutName={state.reminderShortcutName}
+        dayAlarmShortcutName={state.dayAlarmShortcutName}
         onSave={() => save({ suppressToast: true })}
         flush={store.flush}
         showToast={showToast}

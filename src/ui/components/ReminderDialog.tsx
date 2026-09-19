@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
-import type { ReminderSource, ReminderWindow } from '../../export/reminder';
-import { defaultReminderAt, reminderText, reminderWindow } from '../../export/reminder';
+import type { DayAlarmWindow, ReminderSource, ReminderWindow } from '../../export/reminder';
+import { dayAlarmWindow, defaultReminderAt, reminderText, reminderWindow } from '../../export/reminder';
 import { openShortcut } from '../../export/share';
 import { t } from '../../core/i18n';
 
@@ -12,6 +12,7 @@ export interface ReminderDialogProps {
   note?: string;
   alarmShortcutName: string;
   reminderShortcutName: string;
+  dayAlarmShortcutName: string;
   onSave: () => Promise<boolean | void> | boolean | void;
   /** Ghi ngay xuống IndexedDB trước khi rời app sang Phím tắt (T-7.5, chống mất dữ liệu). Bắt buộc truyền. */
   flush: () => Promise<void>;
@@ -19,7 +20,7 @@ export interface ReminderDialogProps {
   lang: 'vi' | 'en';
 }
 
-/** Hộp thoại chọn thời điểm nhắc trên iPhone qua Phím tắt (IN-11, SPEC dòng 30-32).
+/** Hộp thoại chọn thời điểm nhắc trên iPhone qua Phím tắt (IN-11/IN-12, SPEC §3 IN-12).
  * Dùng chung cho Sự kiện (EventsTab), Việc cần làm (TodosTab) và Ghi chú (NoteTab). */
 export function ReminderDialog({
   open,
@@ -29,6 +30,7 @@ export function ReminderDialog({
   note,
   alarmShortcutName,
   reminderShortcutName,
+  dayAlarmShortcutName,
   onSave,
   flush,
   showToast,
@@ -44,11 +46,18 @@ export function ReminderDialog({
 
   if (!open) return null;
 
+  const now = new Date();
   const isValid = Boolean(at && !isNaN(new Date(at).getTime()));
-  const win: ReminderWindow = isValid ? reminderWindow(at, new Date()) : 'past';
+  const win: ReminderWindow = isValid ? reminderWindow(at, now) : 'past';
+  const dayWin: DayAlarmWindow = isValid ? dayAlarmWindow(at, now) : 'past';
 
-  async function handleAction(kind: 'alarm' | 'reminder') {
-    const shortcutName = kind === 'alarm' ? alarmShortcutName : reminderShortcutName;
+  async function handleAction(kind: 'alarm' | 'dayalarm' | 'reminder') {
+    const shortcutName =
+      kind === 'alarm'
+        ? alarmShortcutName
+        : kind === 'dayalarm'
+        ? dayAlarmShortcutName
+        : reminderShortcutName;
     try {
       const ok = await onSave();
       if (ok === false) return;
@@ -68,12 +77,20 @@ export function ReminderDialog({
   }
 
   let statusHint = '';
-  if (win === 'past') {
+  let statusClass = '';
+  if (!isValid || win === 'past' || dayWin === 'past') {
     statusHint = t('reminder.statusPast', lang);
-  } else if (win === 'reminder-only') {
-    statusHint = t('reminder.statusReminderOnly', lang);
-  } else {
+    statusClass = 'rem-hint-past';
+  } else if (dayWin === 'today') {
+    statusHint = t('reminder.statusToday', lang);
+  } else if (dayWin === 'too-early') {
+    statusHint = t('reminder.statusTooEarly', lang);
+    statusClass = 'rem-hint-warning';
+  } else if (win === 'alarm-ok') {
     statusHint = t('reminder.statusAlarmOk', lang);
+  } else {
+    statusHint = t('reminder.statusOver24h', lang);
+    statusClass = 'rem-hint-warning';
   }
 
   return (
@@ -95,13 +112,7 @@ export function ReminderDialog({
             value={at}
             onInput={(e) => setAt((e.target as HTMLInputElement).value)}
           />
-          <p
-            class={`hint rem-status ${
-              win === 'past' ? 'rem-hint-past' : win === 'reminder-only' ? 'rem-hint-warning' : ''
-            }`}
-          >
-            {statusHint}
-          </p>
+          <p class={`hint rem-status ${statusClass}`}>{statusHint}</p>
         </div>
         <div class="rem-actions">
           <button
@@ -113,6 +124,23 @@ export function ReminderDialog({
           >
             {t('reminder.alarm', lang)}
           </button>
+          <div class="rem-hint rem-hint-alarm" data-testid="rem-hint-alarm">
+            {t('reminder.hintAlarm', lang)}
+          </div>
+
+          <button
+            type="button"
+            data-testid="rem-dayalarm"
+            class="btn block"
+            disabled={dayWin !== 'ok'}
+            onClick={() => void handleAction('dayalarm')}
+          >
+            {t('reminder.dayAlarm', lang)}
+          </button>
+          <div class="rem-hint rem-hint-dayalarm" data-testid="rem-hint-dayalarm">
+            {t('reminder.hintDayAlarm', lang)}
+          </div>
+
           <button
             type="button"
             data-testid="rem-reminder"
@@ -122,6 +150,10 @@ export function ReminderDialog({
           >
             {t('reminder.reminder', lang)}
           </button>
+          <div class="rem-hint rem-hint-reminder" data-testid="rem-hint-reminder">
+            {t('reminder.hintReminder', lang)}
+          </div>
+
           <button type="button" data-testid="rem-none" class="btn block rem-none-btn" onClick={onClose}>
             {t('reminder.none', lang)}
           </button>
