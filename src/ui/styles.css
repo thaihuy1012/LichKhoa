@@ -594,6 +594,54 @@ select option {
   margin-top: 6px;
 }
 
+/* ---- ReminderDialog (T-7.2b): nổi trên .sheet (z-index 31) ---- */
+
+.rem-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+}
+
+.rem-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 41;
+  background: #16161c;
+  border-radius: 18px;
+  width: 92vw;
+  max-width: 92vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+  padding: calc(10px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(16px + env(safe-area-inset-bottom))
+    calc(16px + env(safe-area-inset-left));
+}
+
+.rem-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.rem-none-btn {
+  background: #2a2a33;
+}
+
+.rem-actions .btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.rem-hint-past,
+.rem-hint-warning {
+  color: #e0a030;
+}
+
 .btn {
   min-height: 44px;
   border-radius: 10px;

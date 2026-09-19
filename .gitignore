@@ -21,3 +21,4 @@ secrets.*
 # Sao lưu dữ liệu thật của Chủ dự án (không được lên kho công khai)
 lichkhoa-backup*.json
 backup-*.json
+docs/gemini-out/*.deadline

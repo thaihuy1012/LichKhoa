@@ -8,6 +8,7 @@ import { solarToLunar } from '../../../core/lunar';
 import { eventToIcs } from '../../../export/ics';
 import { t } from '../../../core/i18n';
 import { Sheet } from '../../components/Sheet';
+import { ReminderDialog } from '../../components/ReminderDialog';
 import { ALARM_MINUTES, EVENT_COLORS, addMinutesToTime, downloadBlob, minutesBetween, newId } from './util';
 
 interface Props {
@@ -43,6 +44,7 @@ export function EventsTab({ store, state, showToast }: Props) {
   });
   const [selected, setSelected] = useState(today);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [reminderOpen, setReminderOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [allDay, setAllDay] = useState(false);
@@ -94,6 +96,7 @@ export function EventsTab({ store, state, showToast }: Props) {
     setUntil('');
     setColor(EVENT_COLORS[0]);
     setAlarmMin(0);
+    setReminderOpen(false);
     setSheetOpen(true);
   }
 
@@ -109,6 +112,7 @@ export function EventsTab({ store, state, showToast }: Props) {
     setUntil(ev.until ?? '');
     setColor(ev.color || EVENT_COLORS[0]);
     setAlarmMin(ev.alarmMin ?? 0);
+    setReminderOpen(false);
     setSheetOpen(true);
   }
 
@@ -135,7 +139,7 @@ export function EventsTab({ store, state, showToast }: Props) {
     };
   }
 
-  function save() {
+  function save(options?: { suppressToast?: boolean }): boolean {
     const ev = buildEvent();
     if (editingId) store.dispatch({ type: 'updateEvent', event: ev });
     else store.dispatch({ type: 'addEvent', event: { ...ev, createdAt: Date.now() } });
@@ -143,7 +147,11 @@ export function EventsTab({ store, state, showToast }: Props) {
     const p = parseISODate(ev.date);
     setYm({ y: p.y, m0: p.m0 });
     setSheetOpen(false);
-    showToast(t(editingId ? 'events.savedToast' : 'events.addedToast', lang));
+    setReminderOpen(false);
+    if (!options?.suppressToast) {
+      showToast(t(editingId ? 'events.savedToast' : 'events.addedToast', lang));
+    }
+    return true;
   }
 
   function remove() {
@@ -248,13 +256,13 @@ export function EventsTab({ store, state, showToast }: Props) {
         })}
       </div>
 
-      <Sheet open={sheetOpen} onClose={() => setSheetOpen(false)}>
+      <Sheet open={sheetOpen} onClose={() => { setSheetOpen(false); setReminderOpen(false); }}>
         <div class="sheet-head">
-          <button type="button" data-testid="ev-cancel" class="link" onClick={() => setSheetOpen(false)}>
+          <button type="button" data-testid="ev-cancel" class="link" onClick={() => { setSheetOpen(false); setReminderOpen(false); }}>
             {t('events.cancel', lang)}
           </button>
           <div class="sheet-title">{editingId ? t('events.edit', lang) : t('events.add', lang)}</div>
-          <button type="button" data-testid="ev-save" class="link strong" onClick={save}>
+          <button type="button" data-testid="ev-save" class="link strong" onClick={() => void save()}>
             {t('events.save', lang)}
           </button>
         </div>
@@ -374,6 +382,15 @@ export function EventsTab({ store, state, showToast }: Props) {
           </div>
         </div>
         <div class="sheet-actions">
+          <button
+            type="button"
+            data-testid="rem-open"
+            class="btn block"
+            disabled={!title.trim()}
+            onClick={() => setReminderOpen(true)}
+          >
+            {t('reminder.open', lang)}
+          </button>
           <button type="button" data-testid="ev-ics" class="btn block" onClick={exportIcs}>
             {t('events.addToAppleCalendar', lang)}
           </button>
@@ -384,6 +401,24 @@ export function EventsTab({ store, state, showToast }: Props) {
           )}
         </div>
       </Sheet>
+
+      <ReminderDialog
+        open={reminderOpen}
+        onClose={() => setReminderOpen(false)}
+        source={{
+          kind: 'event',
+          date,
+          time: allDay ? undefined : start || '09:00',
+          repeat,
+          until: repeat !== 'none' && until ? until : undefined,
+        }}
+        title={title.trim()}
+        alarmShortcutName={state.alarmShortcutName}
+        reminderShortcutName={state.reminderShortcutName}
+        onSave={() => save({ suppressToast: true })}
+        showToast={showToast}
+        lang={lang}
+      />
     </div>
   );
 }

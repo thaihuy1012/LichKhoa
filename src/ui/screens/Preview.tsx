@@ -36,6 +36,8 @@ export function Preview({ store }: { store: Store }) {
   const [widthText, setWidthText] = useState(String(state.device.width));
   const [heightText, setHeightText] = useState(String(state.device.height));
   const [shortcutNameText, setShortcutNameText] = useState(state.shortcutName);
+  const [alarmShortcutNameText, setAlarmShortcutNameText] = useState(state.alarmShortcutName);
+  const [reminderShortcutNameText, setReminderShortcutNameText] = useState(state.reminderShortcutName);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const bgRef = useRef<Blob | null>(null);
   const urlRef = useRef<string | null>(null);
@@ -51,6 +53,14 @@ export function Preview({ store }: { store: Store }) {
   useEffect(() => {
     setShortcutNameText(state.shortcutName);
   }, [state.shortcutName]);
+
+  useEffect(() => {
+    setAlarmShortcutNameText(state.alarmShortcutName);
+  }, [state.alarmShortcutName]);
+
+  useEffect(() => {
+    setReminderShortcutNameText(state.reminderShortcutName);
+  }, [state.reminderShortcutName]);
 
   useEffect(() => {
     loadBg().then((b) => {
@@ -187,6 +197,20 @@ export function Preview({ store }: { store: Store }) {
     }
   }
 
+  function onAlarmShortcutNameInput(text: string) {
+    setAlarmShortcutNameText(text);
+    if (text.trim()) {
+      store.dispatch({ type: 'setAlarmShortcutName', name: text });
+    }
+  }
+
+  function onReminderShortcutNameInput(text: string) {
+    setReminderShortcutNameText(text);
+    if (text.trim()) {
+      store.dispatch({ type: 'setReminderShortcutName', name: text });
+    }
+  }
+
   async function onCopy() {
     if (!blob) return;
     // copyPng gọi navigator.clipboard.write ngay đầu — không await gì trước đó (user activation).
@@ -249,6 +273,24 @@ export function Preview({ store }: { store: Store }) {
             data-testid="shortcut-name"
             value={shortcutNameText}
             onInput={(e) => onShortcutNameInput((e.target as HTMLInputElement).value)}
+          />
+        </label>
+        <label class="field shortcut-name-field">
+          {t('preview.shortcutAlarmName', lang)}
+          <input
+            type="text"
+            data-testid="shortcut-alarm-name"
+            value={alarmShortcutNameText}
+            onInput={(e) => onAlarmShortcutNameInput((e.target as HTMLInputElement).value)}
+          />
+        </label>
+        <label class="field shortcut-name-field">
+          {t('preview.shortcutReminderName', lang)}
+          <input
+            type="text"
+            data-testid="shortcut-reminder-name"
+            value={reminderShortcutNameText}
+            onInput={(e) => onReminderShortcutNameInput((e.target as HTMLInputElement).value)}
           />
         </label>
         <div class="row-actions">
