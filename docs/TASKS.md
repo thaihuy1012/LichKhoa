@@ -44,6 +44,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - Agy cần cây sạch giữa các vòng: cất bản test dở vào `docs/tasks/<mã>-v*.spec.ts.txt` thay vì commit test đang fail.
 
 ## Tồn đọng (S4 — không chặn)
+- (2026-09-21, góp ý Chủ dự án, NGOÀI SPEC) Việc đã tạo không mở được "Nhắc trên iPhone" (nút chỉ ở hàng thêm việc). Chủ dự án chọn TẠM DÙNG CÁCH THỦ CÔNG — không sửa app. Nếu sau này muốn: đổi phạm vi SPEC → Kiến trúc sư, milestone nhỏ (nút trong bộ sửa hạn).
 - ~~S4 · T-1.2 · mặc định `boxAlpha=1` che ảnh nền~~ → đã sửa T-4.2 (0.35 khi chọn ảnh; D-021 xác nhận).
 - ~~S4 · T-1.7 · normalizeState device thiếu safe*~~ → đã sửa T-2.14.
 - ~~S4 · T-2.7 · `EventsTab.tsx` L93 durationMin ngầm 60~~ → đã sửa trong T-2.12.
