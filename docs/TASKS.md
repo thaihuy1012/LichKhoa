@@ -26,7 +26,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 ## ĐIỂM DỪNG PHIÊN 2026-09-20 (đọc mục này đầu tiên ở phiên sau)
 
 **Trạng thái**: KHÔNG có sự cố mở (SC-003, SC-004 đã đóng). Cây git sạch, `main` = `origin/main` (đã push, deploy OK — bản `index-BLKpwWNR.js`).
-**Milestone**: M7 ĐÓNG (thử tay A–F, B′ đạt). M8 xong 4/4, Kiến trúc sư DUYỆT bằng lệnh — **tag `M8-ok` CHƯA gắn, chờ thử tay G1–G5**. M9 xong (T-9.1…T-9.4), tag `M9-ok` đã gắn (theo phán quyết Kiến trúc sư) — thử tay H1–H4 là điều kiện đóng.
+**Milestone**: M7 ĐÓNG (thử tay A–F, B′ đạt). M8 xong 4/4, Kiến trúc sư DUYỆT bằng lệnh — **tag `M8-ok` CHƯA gắn, chờ thử tay G1–G5**. M9 ĐÓNG — thử tay H1–H4 ĐẠT (2026-09-21), tag `M9-ok`.
 **Làn Gemini**: BẬT mức NHIỀU (sự cố đã đóng). Lỗi làn phiên này: 1 lần TRỐNG (T-8.3). Sau mỗi lượt `tho-gemini` phải kiểm có `docs/tasks/<mã>.md` + `docs/gemini-out/<mã>.md` (BAI-HOC: người liên lạc từng tự viết code T-9.END).
 **Nhánh phụ còn sót**: `backup-truoc-go-anh` — giữ tới khi Chủ dự án yên tâm, rồi xoá.
 
