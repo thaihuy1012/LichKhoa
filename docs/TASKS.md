@@ -23,17 +23,17 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - 2026-09-15: Chủ dự án bật làn Gemini **v2 mức NHIỀU** (kit v2.1, `tho-gemini`). `agy-run.sh kiem-tra` → SẴN SÀNG (agy 1.2.2; code `gemini-3.8-flash-high`, soat/doc `gemini-3.1-pro-high`, sinh `gemini-3.8-flash-low`). Dự án vẫn ĐÓNG (D-022) → hỏi Chủ dự án việc tiếp theo.
 
 
-## ĐIỂM DỪNG PHIÊN 2026-09-20 (đọc mục này đầu tiên ở phiên sau)
+## ĐIỂM DỪNG PHIÊN 2026-09-21 (đọc mục này đầu tiên ở phiên sau)
 
-**Trạng thái**: KHÔNG có sự cố mở (SC-003, SC-004 đã đóng). Cây git sạch, `main` = `origin/main` (đã push, deploy OK — bản `index-BLKpwWNR.js`).
-**Milestone**: M7 ĐÓNG (thử tay A–F, B′ đạt). M8 xong 4/4, Kiến trúc sư DUYỆT bằng lệnh — **tag `M8-ok` CHƯA gắn — G1, G2, G4 ĐẠT (2026-09-21), chờ G3 sáng 22/9; sau đó phiếu sửa HUONG-DAN §E.3 (xem bao-cao/M8.md)**. M9 ĐÓNG — thử tay H1–H4 ĐẠT (2026-09-21), tag `M9-ok`.
-**Làn Gemini**: BẬT mức NHIỀU (sự cố đã đóng). Lỗi làn phiên này: 1 lần TRỐNG (T-8.3). Sau mỗi lượt `tho-gemini` phải kiểm có `docs/tasks/<mã>.md` + `docs/gemini-out/<mã>.md` (BAI-HOC: người liên lạc từng tự viết code T-9.END).
-**Nhánh phụ còn sót**: `backup-truoc-go-anh` — giữ tới khi Chủ dự án yên tâm, rồi xoá.
+**Trạng thái**: KHÔNG có sự cố mở. Cây git sạch sau commit sổ sách; `main` đi trước `origin/main` vài commit CHỈ sổ sách (docs) — không cần push/deploy.
+**Milestone**: M7 ĐÓNG. M9 ĐÓNG (H1–H4 ĐẠT 2026-09-21, tag `M9-ok`). M8: G1, G2, G4 ĐẠT (2026-09-21); G5 phần "mất giờ" không cần (G2 lời nhắc có giờ); **tag `M8-ok` CHƯA gắn — chờ G3**.
+**Làn Gemini**: BẬT mức NHIỀU. **Nhánh phụ**: `backup-truoc-go-anh` — giữ tới khi Chủ dự án yên tâm.
 
-### Phiên sau hỏi ngay Chủ dự án
-1. Kết quả thử tay **M9 H1–H4** (SPEC §6 M9 cuối mục): hàng nhập không tràn ở iPhone thật; nhãn/hình nền có giờ; đổi giờ → thứ tự đổi; "Nhắc trên iPhone" lấy đúng giờ; sao lưu/khôi phục giữ giờ. Ghi `docs/bao-cao/M9.md`.
-2. Kết quả thử tay **M8 G1–G5** (SPEC §6 M8 dòng ~233; HUONG-DAN §E.3). Làm G1 trước. HUONG-DAN §E.3 viết theo SPEC, chưa theo ảnh máy thật → dự kiến phải chỉnh theo ảnh chụp (bài học SC-003: xin ảnh ngay). Điểm nghi: bộ lọc "Due Date is Today" hay "is on Today" (soát chéo M8 #3). Đạt → `git tag M8-ok`, ghi `docs/bao-cao/M8.md`.
-3. Lỗi phát hiện khi thử → Giai đoạn 5 (phiếu B-xxx).
+### Phiên sau làm ngay
+1. Hỏi Chủ dự án kết quả **G3** (sáng 22/9, không mở gì): Đồng hồ có báo thức 07:30 đúng tên sự kiện G2, kêu đúng giờ; lời nhắc trong `BaoThuc` đã tick; không có thông báo/hỏi xác nhận lúc 00:05. Hỏng → G5: hỏi trạng thái máy đêm qua (sạc/nguồn thấp/tắt) + Automation có "Run Immediately" không; ghi "Giới hạn đã biết".
+2. Phiếu tài liệu sửa `docs/HUONG-DAN.md` §E.3 theo giao diện máy thật (chi tiết `docs/bao-cao/M8.md` mục Thử tay): `Due Date is today`; `Is Not Completed`; "Create an Alarm for <Due Date> called <Repeat Item>" (Title là mặc định, token vẫn hiện "Repeat Item"; xóa chữ "Alarm" sẵn có); "Set Is Completed of Repeat Item to **Yes**" (mặc định No — bẫy); thêm hành động vào trong Repeat/If bằng nhấn giữ-kéo-thả; Bước 4 iOS 17/18: Automation › + › Time of Day › 00:05 Daily › Run Immediately › tắt Notify When Run › Next › chọn thẳng `TaoBaoThucSang`; `ThemBaoThucNgay` không được chạy thử bằng ▶ (lỗi "No title was provided" vì không có đầu vào). Ưu tiên giao làn Gemini (chỉ 1 file). Kiểm: `npm run check`.
+3. G3 đạt + phiếu tài liệu commit → `git tag M8-ok`, ghi kết luận vào `docs/bao-cao/M8.md`.
+4. Tồn đọng mới: việc đã tạo không mở được "Nhắc trên iPhone" — Chủ dự án chọn làm thủ công, không sửa app.
 
 ### Tồn đọng mới (xem mục Tồn đọng): S4 `sameTodoGroup` vs `cmpTodo` với `due: ''`. (S4 `ReminderDialog` giữ `at` cũ và khóa i18n thừa → đã sửa T-9.3.)
 
