@@ -1,0 +1,62 @@
+  ✓  110 [webkit] › tests\e2e\notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload (3.8s)
+  ✓  112 [webkit] › tests\e2e\persist-flush.spec.ts:39:1 › pagehide: ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (1.4s)
+  ✓  113 [webkit] › tests\e2e\persist-flush.spec.ts:52:1 › visibilitychange (hidden): ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms (1.4s)
+  ✓  109 [webkit] › tests\e2e\m9-todo-time.spec.ts:62:1 › T-9.END luồng chính M9: 7 kịch bản Việc có giờ hạn (m9-todo-time) (9.4s)
+  -  116 [webkit] › tests\e2e\share.spec.ts:36:3 › Sao chép + Đặt hình nền (T-4.3) › Sao chép ghi mục image/png vào clipboard
+  -  117 [webkit] › tests\e2e\share.spec.ts:53:3 › Sao chép + Đặt hình nền (T-4.3) › Đặt hình nền: __lastNav bắt đầu bằng shortcuts://run-shortcut?name=DatHinhNen&input=clipboard
+  -  118 [webkit] › tests\e2e\share.spec.ts:69:3 › Sao chép + Đặt hình nền (T-4.3) › tên Shortcut có dấu cách/tiếng Việt được encode trong __lastNav
+  ✘  108 [webkit] › tests\e2e\m8-dayalarm.spec.ts:66:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) (13.3s)
+  -  119 [webkit] › tests\e2e\share.spec.ts:85:3 › Sao chép + Đặt hình nền (T-4.3) › Đặt hình nền: trạng thái đã được ghi xuống IndexedDB ngay, không chờ debounce 300ms (T-7.6)
+  ✓  120 [webkit] › tests\e2e\smoke.spec.ts:3:1 › trang có manifest và service worker sẵn sàng (600ms)
+  ✓  115 [webkit] › tests\e2e\settings.spec.ts:171:1 › T-4.7 #4: Xóa dữ liệu dọn ảnh nền — chọn lại Ảnh sau đó không hiện ảnh cũ (5.5s)
+  ✓  123 [webkit] › tests\e2e\share.spec.ts:108:3 › Sao chép + Đặt hình nền (T-4.3) › Sao chép thất bại: hiện toast hướng dẫn thay thế, không mở Shortcut (1.4s)
+  ✓  114 [webkit] › tests\e2e\settings.spec.ts:59:1 › Preview: chọn bố cục, cài đặt chung, sao lưu (8.8s)
+  ✓  124 [webkit] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất (2.3s)
+  ✓  121 [webkit] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ (4.9s)
+  ✓  125 [webkit] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0 (1.8s)
+  -  128 [webkit] › tests\e2e\todo-touch.spec.ts:40:1 › Chạm thật (CDP): nhấn giữ ~600ms rồi kéo dọc đổi thứ tự, hàng nổi/dịch không chồng nhau
+  ✓  122 [webkit] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên (4.9s)
+  -  129 [webkit] › tests\e2e\todo-touch.spec.ts:107:1 › Chạm thật (CDP): chạm nút tick/chữ/+Hạn trong hàng vẫn có tác dụng dù ngón tay xê dịch nhẹ
+  -  130 [webkit] › tests\e2e\todo-touch.spec.ts:159:1 › Chạm thật (CDP): giữ nút tick hơi lâu (qua ngưỡng nhấn giữ) không di chuyển vẫn có tác dụng
+  -  131 [webkit] › tests\e2e\todo-touch.spec.ts:203:1 › Chạm thật (CDP): giữa lúc kéo, hàng kéo và hàng nhường chỗ đều NHÌN THẤY (không bị cắt mất)
+  -  132 [webkit] › tests\e2e\todo-touch.spec.ts:368:1 › Chuỗi sự kiện iOS: pointercancel giữa lúc kéo, touch vẫn tiếp tục rồi touchend -> vẫn đổi thứ tự C,A,B
+  ✓  126 [webkit] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa (3.2s)
+  -  133 [webkit] › tests\e2e\todo-touch.spec.ts:374:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước
+  ✓  127 [webkit] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) (3.0s)
+  ✓  136 [webkit] › tests\e2e\week.spec.ts:87:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px (1.2s)
+  -  134 [webkit] › tests\e2e\todo-touch.spec.ts:381:1 › Chuỗi sự kiện iOS: chạm nút +Hạn xê dịch ngang 5px — touchmove KHÔNG bị preventDefault (không làm iOS bỏ click)
+  ✓  135 [webkit] › tests\e2e\week.spec.ts:12:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái (2.6s)
+
+
+  1) [webkit] › tests\e2e\m8-dayalarm.spec.ts:66:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) › Kịch bản 7: Đổi shortcut-dayalarm-name = Hen Bao Thuc → reload giữ → __lastNav chứa name=Hen%20Bao%20Thuc 
+
+    Error: expect(locator).toHaveValue(expected) failed
+
+    Locator: getByTestId('shortcut-dayalarm-name')
+    Expected: "Hen Bao Thuc"
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveValue" getByTestId('shortcut-dayalarm-name') with timeout 5000ms
+      - waiting for getByTestId('shortcut-dayalarm-name')
+
+
+      347 |     await page.reload();
+      348 |     await page.getByTestId('shortcut-names-toggle').click();
+    > 349 |     await expect(page.getByTestId('shortcut-dayalarm-name')).toHaveValue('Hen Bao Thuc');
+          |                                                              ^
+      350 |
+      351 |     // Kích hoạt Báo thức đúng ngày để kiểm tra __lastNav chứa name=Hen%20Bao%20Thuc
+      352 |     await page.getByTestId('tab-events').click();
+        at E:\DuAn\thu-nghiem\tests\e2e\m8-dayalarm.spec.ts:349:62
+        at E:\DuAn\thu-nghiem\tests\e2e\m8-dayalarm.spec.ts:318:3
+
+    Error Context: test-results\m8-dayalarm-T-8-END-luồng--008f4-thức-đúng-ngày-m8-dayalarm--webkit\error-context.md
+
+  1 failed
+    [webkit] › tests\e2e\m8-dayalarm.spec.ts:66:1 › T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-dayalarm) 
+  14 skipped
+  121 passed (1.9m)
+
+[exited with code 0]

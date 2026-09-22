@@ -1269,6 +1269,8 @@ Mục "Nhắc trên iPhone cho việc cũ": Chủ dự án chọn giữ thủ c�
 
 ### B-019 — `store-create.test.ts` để timer ghi 300 ms chạy muộn → `indexedDB is not defined` (chập chờn)
 - Test khóa B-015, sửa có khai báo: thêm `store.destroy()` cuối test `subscribe…` (Quản lý tự sửa — 1 dòng, nhỏ hơn một phiếu). Check EXIT 0. Trạng thái: DONE.
+### B-020 — m7/m8: bấm `shortcut-names-toggle` ngay sau reload (chập chờn, do dòng B-018 thêm)
+- Quản lý tự sửa (2 dòng, khai báo test khóa): chờ `save` enabled trước toggle sau `page.reload()` ở `m7-reminder.spec.ts`, `m8-dayalarm.spec.ts` (như `b018-shortcut-names.spec.ts`). `--repeat-each=5` 20/20; check EXIT 0. Trạng thái: DONE.
 - S4 theo dõi: `tests/e2e/week.spec.ts:12` webkit timeout `aria-selected` 1 lần khi chạy cả suite (cô lập pass) — nếu lặp lại thì mở phiếu.
 
 
@@ -1286,13 +1288,14 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - Phạm vi file: `docs/HUONG-DAN.md` (§F, §G mới; "Giới hạn đã biết" thêm (a)–(h); đầu §C và §E thêm 1 dòng trỏ §F). Không sửa §E.1–E.3.
 - Yêu cầu + tiêu chí: SPEC §6 M10 gạch T-10.3 + tiêu chí "Tài liệu"; §8.13; §10.G.
 - Lệnh kiểm tra: `grep -c -E "Copy iCloud Link|Get Shortcut|Import Question|Stop Sharing|icloud.com/shortcuts|shortcut-links.json|Private Sharing" docs/HUONG-DAN.md` ≥ 7 ; `npm run check` (kiem-thu).
-- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
+- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-22 vòng 1 XONG (grep 22) → kiem-thu: tài liệu đạt đủ tiêu chí, §E.1–E.3 không đổi, không link/tên thật; check có 1 fail `m8-dayalarm.spec.ts:349` (ngoài phạm vi — dòng toggle sau reload do B-018 thêm, chập chờn) → B-020 → check 337×2 / 122 EXIT 0 → review đạt → commit.
 
 ### T-10.2 — Thẻ Hướng dẫn "Cài nhanh bộ Phím tắt" (số 2)
 - Phạm vi file: `src/ui/screens/Guide.tsx`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `src/ui/styles.css`.
 - Yêu cầu + tiêu chí: SPEC §6 M10 Nội dung (thẻ số 2, testid `guide-card-installShortcuts`, `sc-row-*`, `sc-install-*`, `sc-nolink-*`, `sc-links-error`, `sc-updated`, `sc-name-mismatch-*`, `sc-manual-steps`), §3 IN-14. Dùng `install.ts` của T-10.1. Không gọi `store.subscribe` (guard).
 - Lệnh kiểm tra: `npx tsc --noEmit` ; `npm run build && npx playwright test tests/e2e/m2-i18n.spec.ts tests/e2e/settings.spec.ts` ; `npm run check` (kiem-thu).
-- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO
+- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
 
 ### T-10.END — E2E `tests/e2e/m10-install.spec.ts`
 - Phạm vi file: `tests/e2e/m10-install.spec.ts` (mới). Không sửa src.
