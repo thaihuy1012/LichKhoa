@@ -23,12 +23,20 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - 2026-09-15: Chủ dự án bật làn Gemini **v2 mức NHIỀU** (kit v2.1, `tho-gemini`). `agy-run.sh kiem-tra` → SẴN SÀNG (agy 1.2.2; code `gemini-3.8-flash-high`, soat/doc `gemini-3.1-pro-high`, sinh `gemini-3.8-flash-low`). Dự án vẫn ĐÓNG (D-022) → hỏi Chủ dự án việc tiếp theo.
 
 
-## ĐIỂM DỪNG PHIÊN 2026-09-22 (đọc mục này đầu tiên ở phiên sau)
+## ĐIỂM DỪNG PHIÊN 2026-09-22 — cuối ngày (đọc mục này đầu tiên ở phiên sau)
 
-**Trạng thái**: KHÔNG sự cố mở (SC-005 đã đóng). Cây git sạch. M7, M8 (tag `M8-ok` 2026-09-22), M9 ĐÓNG. **Tồn đọng S4: HẾT.**
-**Đã deploy 2026-09-22**: Cổng bảo mật ĐẠT (`docs/test-log/bao-mat-3f29e12.log`) → Chủ dự án `git push` (2735ed4..f060273) → Actions run 35682982915 success, trang 200, bản `index-3iv75JNu.js`.
-**Chủ dự án thử iPhone 2026-09-22: ĐẠT CẢ 3** — (1) xóa 2 việc liền → 1 Hoàn tác trả cả 2; (2) danh sách dài, nhấn giữ kéo xuống mép dưới → tự cuộn; (3) kéo việc có hạn sang nhóm không hạn → hàng dừng ở ranh giới, không bật về.
-**Làn Gemini**: TẮT tới hết phiên 2026-09-22 (lỗi làn 2 lần: T-8.4 LỖI; T-10.END tho-gemini tự viết test không qua agy rồi treo). Phiên sau bật lại mức NHIỀU. Lệnh e2e trong prompt Gemini phải `npm run build &&` trước (BAI-HOC SC-005). **Nhánh phụ**: `backup-truoc-go-anh` — giữ tới khi Chủ dự án yên tâm.
+**Trạng thái**: KHÔNG sự cố mở. Không phiếu DOING. Cây git sạch. M7, M8 (`M8-ok`), M9 ĐÓNG. Tồn đọng S4 cũ: HẾT (B-015/016/017 + Chủ dự án thử iPhone đạt).
+**Đã deploy**: f060273 (B-015..B-017, T-8.4). **Chưa deploy** (main đi trước origin/main): B-018 (gom ô tên Phím tắt), B-019, B-020, SPEC v1.11, T-10.1, T-10.3, T-10.2, T-10.END.
+**M10 (SPEC v1.11, D-037) — cài bộ Phím tắt bằng link iCloud**: T-10.1 ✔ · T-10.3 ✔ · T-10.2 ✔ · T-10.END ✔ · **T-10.4 CHỜ Chủ dự án gửi 5 link iCloud** (DatHinhNen, ThemBaoThuc, ThemLoiNhac, ThemBaoThucNgay, TaoBaoThucSang; cách tạo: HUONG-DAN §G).
+
+### Phiên sau làm ngay
+1. Có 5 link → T-10.4 (Quản lý tự làm): ghi `public/shortcut-links.json` + `updated`; `npx vitest run tests/unit/install.test.ts`; mở từng link trên Windows (trang hiện đúng tên Phím tắt, KHÔNG tên thật/email → có thì CHẶN, hỏi Chủ dự án); `npm run check`; Cổng bảo mật → log `docs/test-log/bao-mat-<commit>.log` → đề nghị Chủ dự án `git push`.
+   Chưa có link mà Chủ dự án muốn xem sớm → Cổng bảo mật rồi push với url rỗng (thẻ hiện "dựng tay" cả 5 hàng).
+2. Sau deploy: Chủ dự án thử tay B-018 (nút "Đổi tên Phím tắt", "Khôi phục tên mặc định") + I0–I5 (SPEC §6 M10) → ghi `docs/bao-cao/M10.md` → báo cáo M10 cho Kiến trúc sư duyệt → `git tag M10-ok`.
+3. S4 theo dõi: `week.spec.ts:12` webkit chập chờn 1 lần; nút `shortcut-names-toggle` dưới ảnh xem trước — bố cục dịch lúc ảnh dựng lại có thể làm trượt cú chạm đầu.
+
+**Làn Gemini**: tắt hết phiên 2026-09-22 (lỗi làn 2 lần) → phiên sau BẬT lại mức NHIỀU. Nhớ: lệnh e2e trong prompt Gemini luôn `npm run build &&`; tho-gemini chạy lâu bất thường → `agy-run.sh trang-thai | grep <mã>` kiểm có lượt thật.
+**Nhánh phụ**: `backup-truoc-go-anh` — giữ tới khi Chủ dự án yên tâm.
 
 ## Tồn đọng (S4 — không chặn) — HẾT (2026-09-22)
 - ~~(2026-09-21, góp ý Chủ dự án, NGOÀI SPEC) Việc đã tạo không mở được "Nhắc trên iPhone" (nút chỉ ở hàng thêm việc). Chủ dự án chọn TẠM DÙNG CÁCH THỦ CÔNG — không sửa app. Nếu sau này muốn: đổi phạm vi SPEC → Kiến trúc sư, milestone nhỏ (nút trong bộ sửa hạn).~~ → Chủ dự án 2026-09-22 xác nhận giữ thủ công → ĐÓNG.
