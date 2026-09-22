@@ -26,7 +26,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 ## ĐIỂM DỪNG PHIÊN 2026-09-21 (đọc mục này đầu tiên ở phiên sau)
 
 **Trạng thái**: KHÔNG có sự cố mở. Cây git sạch sau commit sổ sách; `main` đi trước `origin/main` vài commit CHỈ sổ sách (docs) — không cần push/deploy.
-**Milestone**: M7 ĐÓNG. M9 ĐÓNG (H1–H4 ĐẠT 2026-09-21, tag `M9-ok`). M8: G1, G2, G4 ĐẠT (2026-09-21); G5 phần "mất giờ" không cần (G2 lời nhắc có giờ); **tag `M8-ok` CHƯA gắn — chờ G3**.
+**Milestone**: M7 ĐÓNG. M9 ĐÓNG (H1–H4 ĐẠT 2026-09-21, tag `M9-ok`). M8: G1, G2, G4 ĐẠT (2026-09-21); **G3 ĐẠT (2026-09-22, Chủ dự án)**; G5 không cần. Còn T-8.4 (sửa §E.3) → tag `M8-ok`.
 **Làn Gemini**: BẬT mức NHIỀU. **Nhánh phụ**: `backup-truoc-go-anh` — giữ tới khi Chủ dự án yên tâm.
 
 ### Phiên sau làm ngay
@@ -1080,6 +1080,26 @@ Lưu ý thiết kế đã chốt (SPEC v1.9 §5, §8.11): payload KHÔNG đổi 
 - Tiêu chí nghiệm thu: đúng 7 kịch bản SPEC §6 M8 (E2E T-8.END), chromium + webkit, `page.clock.setFixedTime(new Date('2026-10-05T10:00:00'))`; `npx playwright test tests/e2e/m8-dayalarm.spec.ts --repeat-each=3` pass; `npm run check` pass; `node scripts/size.mjs` JS gzip < 150 KB.
 - Model: gemini · Lần thử: 0/3 · Vòng Gemini: 3/3 · Trạng thái: DONE
 - Nhật ký: 2026-09-19 vòng 1 FAIL 2 kịch bản (Gemini tự báo) → vòng 2 (chờ-fill-xác nhận) Gemini báo PASS nhưng kiem-thu FAIL webkit 3/6 (giá trị `at` cũ bị effect ghi đè; đọc `__lastNav` cũ) → vòng 3: helper `setRemAt` (toPass) + poll `__lastNav` → kiem-thu PASS (repeat-each=5: 5 chromium + 5 webkit; check 102/14 skip; size 39.7 KB gzip) → commit. Cây phải sạch cho agy → Quản lý cất bản test dở vào `docs/tasks/T-8.END-v*.spec.ts.txt` giữa các vòng.
+
+### T-8.4 — Sửa `docs/HUONG-DAN.md` §E.3 theo giao diện iPhone thật (sau G1–G4)
+- Mục tiêu: hướng dẫn §E.3 khớp đúng những gì Chủ dự án đã làm được trên iPhone (iOS 18, máy tiếng Anh) — G1–G4 ĐẠT 2026-09-21/22.
+- Phạm vi file (chỉ được sửa): `docs/HUONG-DAN.md` — CHỈ từ dòng `#### Bước 3 — Phím tắt \`TaoBaoThucSang\`` tới hết đoạn "Nếu không chạy" của §E.3 (trước `---` / `## Quy trình dùng hằng ngày`), cộng gạch rủi ro **(b)** trong "Giới hạn đã biết". Không sửa chỗ khác (E.1, E.2, Bước 1–2 giữ nguyên).
+- Sự thật máy thật (bắt buộc dùng đúng chữ):
+  1. Find Reminders: bộ lọc `List is BaoThuc`; `Due Date` chọn toán tử **`is today`**; mục **`Is Not Completed`** (một mục, KHÔNG phải "Is Completed is No"); Sort by Due Date.
+  2. Hành động tạo báo thức hiện là **"Create an Alarm for <Due Date> called <Repeat Item>"**: ô thời gian gán `Repeat Item › Due Date`; ô "called" chạm vào, xóa chữ "Alarm" có sẵn, chọn `Repeat Item` (Title là thuộc tính mặc định nên token vẫn hiện chữ "Repeat Item" — đúng, không phải lỗi).
+  3. Đánh dấu hoàn thành: hành động **"Set <Detail> of <Reminder>"** → "Set **Is Completed** of **Repeat Item** to **Yes**". Cảnh báo: mặc định là **No** — phải chạm đổi thành Yes (bẫy). Bỏ tên "Edit Reminder".
+  4. Muốn đặt hành động vào TRONG khối Repeat/If: thêm hành động rồi **nhấn giữ – kéo – thả** vào giữa `If` và `Otherwise`/`End If` (thụt vào trong).
+  5. Bước 4 (iOS 17/18, không còn "Create Personal Automation"): Automation › **+** › **Time of Day** › 00:05, **Daily** › **Run Immediately** › tắt **Notify When Run** › **Next** › chọn thẳng phím tắt `TaoBaoThucSang` (không cần thêm "Run Shortcut").
+  6. Thêm lưu ý ở Bước 2 hoặc "Nếu không chạy": **không bấm ▶ chạy thử `ThemBaoThucNgay`** — sẽ báo lỗi "No title was provided" vì chạy tay không có đầu vào; chỉ chạy nó từ nút trong LichKhoa. (Được phép sửa thêm đúng 1 dòng này ở cuối Bước 2.)
+  7. Gạch "(G5 …)" cuối "Nếu không chạy" về Edit Reminder/Set Due Date: đổi chữ "Edit Reminder" thành hành động "Set <Detail> of <Reminder>" (Detail = Due Date).
+- Tiêu chí nghiệm thu:
+  [ ] Bước 3 viết lại theo 1–4; giữ văn phong song ngữ Anh (Việt), giữ đoạn "Thử ngay".
+  [ ] Bước 4 viết lại theo 5.
+  [ ] Có lưu ý 6; gạch 7 đã đổi.
+  [ ] Rủi ro (b) đổi "`Is Completed is No`" → "`Is Not Completed`" và "Edit Reminder: Set Is Completed = Yes" → "Set Is Completed of Repeat Item to Yes".
+  [ ] Không dữ liệu thật của Chủ dự án.
+- Lệnh kiểm tra: `grep -n "Is Completed is No\|Edit Reminder\|Create Personal Automation\|Due Date is Today" docs/HUONG-DAN.md` → rỗng · `grep -c "Is Not Completed\|is today\|Create an Alarm for\|to \*\*Yes\*\*\|No title was provided" docs/HUONG-DAN.md` ≥ 5 · `git diff --stat` chỉ `docs/HUONG-DAN.md` · `npm run check` pass.
+- Model: gemini (làn code — 1 file, tiêu chí rõ, lệnh chạy được, không đổi thiết kế) · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
 
 ---
 
