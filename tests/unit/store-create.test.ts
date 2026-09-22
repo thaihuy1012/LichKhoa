@@ -118,6 +118,7 @@ describe('tests/unit/store-create.test.ts (B-015)', () => {
       store.dispatch({ type: 'addTodo', text: 'Việc 2' });
       expect(listener).toHaveBeenCalledTimes(1); // không gọi thêm sau khi unsubscribe
       expect(store.getState().todos).toHaveLength(2);
+      store.destroy(); // B-019: hủy timer ghi 300 ms, tránh saveState chạy muộn (indexedDB không có trong Node)
     });
 
     it('destroy(): sau đó dispatch không gọi subscriber; phát visibilitychange (hidden) / pagehide không gọi saveState; timer đang chờ bị hủy', () => {
