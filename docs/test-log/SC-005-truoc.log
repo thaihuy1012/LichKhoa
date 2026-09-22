@@ -1,0 +1,131 @@
+
+Running 10 tests using 4 workers
+
+[1/10] [chromium] › tests\e2e\b016-toast-undo.spec.ts:88:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › lưu trữ + xóa liên tiếp -> Hoàn tác khôi phục cả hai
+[2/10] [chromium] › tests\e2e\b016-toast-undo.spec.ts:51:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) -> bấm toast-undo -> cả 2 việc trở lại đúng thứ tự
+[3/10] [chromium] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không
+[4/10] [chromium] › tests\e2e\b016-toast-undo.spec.ts:32:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa 1 việc -> bấm Hoàn tác -> trở lại (hành vi cũ giữ nguyên)
+[5/10] [chromium] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ
+[6/10] [webkit] › tests\e2e\b016-toast-undo.spec.ts:32:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa 1 việc -> bấm Hoàn tác -> trở lại (hành vi cũ giữ nguyên)
+[7/10] [webkit] › tests\e2e\b016-toast-undo.spec.ts:51:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) -> bấm toast-undo -> cả 2 việc trở lại đúng thứ tự
+[8/10] [webkit] › tests\e2e\b016-toast-undo.spec.ts:88:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › lưu trữ + xóa liên tiếp -> Hoàn tác khôi phục cả hai
+[9/10] [webkit] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không
+  1) [chromium] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('todo-item')
+    Expected: 2
+    Received: 3
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('todo-item') with timeout 5000ms
+      - waiting for getByTestId('todo-item')
+        14 × locator resolved to 3 elements
+           - unexpected value "3"
+
+
+      150 |     await undoBtn.click();
+      151 |
+    > 152 |     await expect(rows).toHaveCount(2);
+          |                        ^
+      153 |     await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('Z');
+      154 |     await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('Y');
+      155 |     const texts = await rows.getByTestId('todo-edit').allInnerTexts();
+        at E:\DuAn\thu-nghiem\tests\e2e\b016-toast-undo.spec.ts:152:24
+
+    Error Context: test-results\b016-toast-undo-B-016-Gộp--50f1f-tác---chỉ-Z-trở-lại-X-không-chromium\error-context.md
+
+
+[10/10] [webkit] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ
+  2) [chromium] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('todo-item')
+    Expected: 3
+    Received: 4
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('todo-item') with timeout 5000ms
+      - waiting for getByTestId('todo-item')
+        14 × locator resolved to 4 elements
+           - unexpected value "4"
+
+
+      170 |   await expect(rows).toHaveCount(2);
+      171 |   await page.getByTestId('toast-undo').click();
+    > 172 |   await expect(rows).toHaveCount(3);
+          |                      ^
+      173 |   await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('A');
+      174 |   await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('B');
+      175 |   await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('C');
+        at E:\DuAn\thu-nghiem\tests\e2e\m6-todo-gestures.spec.ts:172:22
+
+    Error Context: test-results\m6-todo-gestures-T-6-END-l-36503--sắp-xếp-reload-giữ-mọi-thứ-chromium\error-context.md
+
+
+  3) [webkit] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('todo-item')
+    Expected: 2
+    Received: 3
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('todo-item') with timeout 5000ms
+      - waiting for getByTestId('todo-item')
+        14 × locator resolved to 3 elements
+           - unexpected value "3"
+
+
+      150 |     await undoBtn.click();
+      151 |
+    > 152 |     await expect(rows).toHaveCount(2);
+          |                        ^
+      153 |     await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('Z');
+      154 |     await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('Y');
+      155 |     const texts = await rows.getByTestId('todo-edit').allInnerTexts();
+        at E:\DuAn\thu-nghiem\tests\e2e\b016-toast-undo.spec.ts:152:24
+
+    Error Context: test-results\b016-toast-undo-B-016-Gộp--50f1f-tác---chỉ-Z-trở-lại-X-không-webkit\error-context.md
+
+
+  4) [webkit] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('todo-item')
+    Expected: 3
+    Received: 4
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('todo-item') with timeout 5000ms
+      - waiting for getByTestId('todo-item')
+        14 × locator resolved to 4 elements
+           - unexpected value "4"
+
+
+      170 |   await expect(rows).toHaveCount(2);
+      171 |   await page.getByTestId('toast-undo').click();
+    > 172 |   await expect(rows).toHaveCount(3);
+          |                      ^
+      173 |   await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('A');
+      174 |   await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('B');
+      175 |   await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('C');
+        at E:\DuAn\thu-nghiem\tests\e2e\m6-todo-gestures.spec.ts:172:22
+
+    Error Context: test-results\m6-todo-gestures-T-6-END-l-36503--sắp-xếp-reload-giữ-mọi-thứ-webkit\error-context.md
+
+
+  4 failed
+    [chromium] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không 
+    [chromium] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+    [webkit] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không 
+    [webkit] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+  6 passed (24.9s)

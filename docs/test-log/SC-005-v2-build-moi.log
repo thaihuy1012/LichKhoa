@@ -1,0 +1,70 @@
+
+Running 66 tests using 4 workers
+
+[1/66] [chromium] › tests\e2e\b016-toast-undo.spec.ts:51:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) -> bấm toast-undo -> cả 2 việc trở lại đúng thứ tự
+[2/66] [chromium] › tests\e2e\b016-toast-undo.spec.ts:32:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa 1 việc -> bấm Hoàn tác -> trở lại (hành vi cũ giữ nguyên)
+[3/66] [chromium] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không
+[4/66] [chromium] › tests\e2e\b016-toast-undo.spec.ts:88:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › lưu trữ + xóa liên tiếp -> Hoàn tác khôi phục cả hai
+[5/66] [chromium] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ
+[6/66] [chromium] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ
+[7/66] [chromium] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên
+[8/66] [chromium] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất
+[9/66] [chromium] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0
+[10/66] [chromium] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa
+[11/66] [chromium] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất)
+[12/66] [chromium] › tests\e2e\b016-toast-undo.spec.ts:32:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa 1 việc -> bấm Hoàn tác -> trở lại (hành vi cũ giữ nguyên)
+[13/66] [chromium] › tests\e2e\b016-toast-undo.spec.ts:51:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) -> bấm toast-undo -> cả 2 việc trở lại đúng thứ tự
+[14/66] [chromium] › tests\e2e\b016-toast-undo.spec.ts:88:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › lưu trữ + xóa liên tiếp -> Hoàn tác khôi phục cả hai
+[15/66] [chromium] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không
+[16/66] [chromium] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ
+[17/66] [chromium] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ
+[18/66] [chromium] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên
+[19/66] [chromium] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất
+[20/66] [chromium] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0
+[21/66] [chromium] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa
+[22/66] [chromium] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất)
+[23/66] [chromium] › tests\e2e\b016-toast-undo.spec.ts:32:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa 1 việc -> bấm Hoàn tác -> trở lại (hành vi cũ giữ nguyên)
+[24/66] [chromium] › tests\e2e\b016-toast-undo.spec.ts:51:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) -> bấm toast-undo -> cả 2 việc trở lại đúng thứ tự
+[25/66] [chromium] › tests\e2e\b016-toast-undo.spec.ts:88:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › lưu trữ + xóa liên tiếp -> Hoàn tác khôi phục cả hai
+[26/66] [chromium] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không
+[27/66] [chromium] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ
+[28/66] [chromium] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên
+[29/66] [chromium] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ
+[30/66] [chromium] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất
+[31/66] [chromium] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0
+[32/66] [chromium] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa
+[33/66] [chromium] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất)
+[34/66] [webkit] › tests\e2e\b016-toast-undo.spec.ts:32:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa 1 việc -> bấm Hoàn tác -> trở lại (hành vi cũ giữ nguyên)
+[35/66] [webkit] › tests\e2e\b016-toast-undo.spec.ts:51:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) -> bấm toast-undo -> cả 2 việc trở lại đúng thứ tự
+[36/66] [webkit] › tests\e2e\b016-toast-undo.spec.ts:88:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › lưu trữ + xóa liên tiếp -> Hoàn tác khôi phục cả hai
+[37/66] [webkit] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không
+[38/66] [webkit] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ
+[39/66] [webkit] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ
+[40/66] [webkit] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên
+[41/66] [webkit] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất
+[42/66] [webkit] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0
+[43/66] [webkit] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa
+[44/66] [webkit] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất)
+[45/66] [webkit] › tests\e2e\b016-toast-undo.spec.ts:32:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa 1 việc -> bấm Hoàn tác -> trở lại (hành vi cũ giữ nguyên)
+[46/66] [webkit] › tests\e2e\b016-toast-undo.spec.ts:51:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) -> bấm toast-undo -> cả 2 việc trở lại đúng thứ tự
+[47/66] [webkit] › tests\e2e\b016-toast-undo.spec.ts:88:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › lưu trữ + xóa liên tiếp -> Hoàn tác khôi phục cả hai
+[48/66] [webkit] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ
+[49/66] [webkit] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không
+[50/66] [webkit] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ
+[51/66] [webkit] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên
+[52/66] [webkit] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất
+[53/66] [webkit] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0
+[54/66] [webkit] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa
+[55/66] [webkit] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất)
+[56/66] [webkit] › tests\e2e\b016-toast-undo.spec.ts:32:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa 1 việc -> bấm Hoàn tác -> trở lại (hành vi cũ giữ nguyên)
+[57/66] [webkit] › tests\e2e\b016-toast-undo.spec.ts:51:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) -> bấm toast-undo -> cả 2 việc trở lại đúng thứ tự
+[58/66] [webkit] › tests\e2e\b016-toast-undo.spec.ts:88:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › lưu trữ + xóa liên tiếp -> Hoàn tác khôi phục cả hai
+[59/66] [webkit] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không
+[60/66] [webkit] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ
+[61/66] [webkit] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ
+[62/66] [webkit] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên
+[63/66] [webkit] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất
+[64/66] [webkit] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0
+[65/66] [webkit] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa
+[66/66] [webkit] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất)
+  66 passed (1.1m)

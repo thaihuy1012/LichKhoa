@@ -1,0 +1,64 @@
+
+Running 2 tests using 2 workers
+
+[1/2] [chromium] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không
+[2/2] [webkit] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không
+  1) [webkit] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('todo-item')
+    Expected: 2
+    Received: 3
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('todo-item') with timeout 5000ms
+      - waiting for getByTestId('todo-item')
+        14 × locator resolved to 3 elements
+           - unexpected value "3"
+
+
+      150 |     await undoBtn.click();
+      151 |
+    > 152 |     await expect(rows).toHaveCount(2);
+          |                        ^
+      153 |     await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('Z');
+      154 |     await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('Y');
+      155 |     const texts = await rows.getByTestId('todo-edit').allInnerTexts();
+        at E:\DuAn\thu-nghiem\tests\e2e\b016-toast-undo.spec.ts:152:24
+
+    Error Context: test-results\b016-toast-undo-B-016-Gộp--50f1f-tác---chỉ-Z-trở-lại-X-không-webkit\error-context.md
+
+
+  2) [chromium] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('todo-item')
+    Expected: 2
+    Received: 3
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('todo-item') with timeout 5000ms
+      - waiting for getByTestId('todo-item')
+        14 × locator resolved to 3 elements
+           - unexpected value "3"
+
+
+      150 |     await undoBtn.click();
+      151 |
+    > 152 |     await expect(rows).toHaveCount(2);
+          |                        ^
+      153 |     await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('Z');
+      154 |     await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('Y');
+      155 |     const texts = await rows.getByTestId('todo-edit').allInnerTexts();
+        at E:\DuAn\thu-nghiem\tests\e2e\b016-toast-undo.spec.ts:152:24
+
+    Error Context: test-results\b016-toast-undo-B-016-Gộp--50f1f-tác---chỉ-Z-trở-lại-X-không-chromium\error-context.md
+
+
+  2 failed
+    [chromium] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không 
+    [webkit] › tests\e2e\b016-toast-undo.spec.ts:119:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa X -> thêm việc Y -> xóa Z -> Hoàn tác -> chỉ Z trở lại, X không 

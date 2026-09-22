@@ -46,3 +46,5 @@
 
 ## 2026-09-19 · SC-004: E2E không bắt lỗi tràn bố cục
 - Playwright tự cuộn tới phần tử trước khi click → nút bị đẩy ra ngoài màn hình (overflow-x hidden) vẫn "bấm được" trong test. Phần tử con `flex: 1` chứa input date/time phải có `min-width: 0`. Mọi phiếu đổi hàng nhập/ bố cục phải có assert boundingBox ≤ 428 hoặc scrollWidth ≤ clientWidth. Kiến trúc sư bắt được nhờ đo thật, không nhờ test.
+
+- 2026-09-22 (SC-005): e2e chạy trên `dist/` (vite preview) → chạy playwright riêng lẻ PHẢI `npm run build` trước; mọi lệnh kiểm tra e2e trong phiếu/prompt Gemini ghi `npm run build && npx playwright test …`. Quản lý soạn phiếu phải kiểm test khóa kiến trúc (vd. `store-subscribe-guard`: chỉ store.ts/useStoreState.ts được `.subscribe(`) trước khi chỉ định cách cài.
