@@ -72,6 +72,7 @@ test.describe('Sao chép + Đặt hình nền (T-4.3)', () => {
     await waitReady(page);
 
     const name = 'Đặt hình nền của tôi';
+    await page.getByTestId('shortcut-names-toggle').click();
     await page.getByTestId('shortcut-name').fill(name);
     await page.getByTestId('set-wallpaper').click();
 
@@ -91,6 +92,7 @@ test.describe('Sao chép + Đặt hình nền (T-4.3)', () => {
     await waitReady(page);
 
     const name = 'TenMoiChuaFlush';
+    await page.getByTestId('shortcut-names-toggle').click();
     await page.getByTestId('shortcut-name').fill(name);
     await page.getByTestId('set-wallpaper').click();
 

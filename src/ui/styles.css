@@ -178,6 +178,13 @@ select option {
   padding-right: 4px;
 }
 
+.shortcut-names-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
 .shortcut-name-field {
   flex-shrink: 0;
 }

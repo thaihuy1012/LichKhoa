@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import type { Store } from '../store';
 import { useStoreState } from '../useStoreState';
 import type { DesignConfig } from '../../core/model';
+import { defaultState } from '../../core/model';
 import { DEVICES, customDevice, detectDevice } from '../../render/devices';
 import { renderWallpaper } from '../../render/wallpaper';
 import { loadBg, saveBg } from '../../storage/db';
@@ -40,6 +41,8 @@ export function Preview({ store }: { store: Store }) {
   const [reminderShortcutNameText, setReminderShortcutNameText] = useState(state.reminderShortcutName);
   const [dayAlarmShortcutNameText, setDayAlarmShortcutNameText] = useState(state.dayAlarmShortcutName);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  // B-018: mở/đóng panel đổi tên Phím tắt chỉ trong bộ nhớ (không lưu state/JSON).
+  const [namesOpen, setNamesOpen] = useState(false);
   const bgRef = useRef<Blob | null>(null);
   const urlRef = useRef<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -223,6 +226,14 @@ export function Preview({ store }: { store: Store }) {
     }
   }
 
+  function onResetShortcutNames() {
+    const defaults = defaultState(state.device);
+    store.dispatch({ type: 'setShortcutName', shortcutName: defaults.shortcutName });
+    store.dispatch({ type: 'setAlarmShortcutName', name: defaults.alarmShortcutName });
+    store.dispatch({ type: 'setReminderShortcutName', name: defaults.reminderShortcutName });
+    store.dispatch({ type: 'setDayAlarmShortcutName', name: defaults.dayAlarmShortcutName });
+  }
+
   async function onCopy() {
     if (!blob) return;
     // copyPng gọi navigator.clipboard.write ngay đầu — không await gì trước đó (user activation).
@@ -284,42 +295,6 @@ export function Preview({ store }: { store: Store }) {
         )}
         {error && <p class="error">{error}</p>}
         {imgUrl && <img data-testid="preview" src={imgUrl} alt={t('preview.previewAlt', lang)} />}
-        <label class="field shortcut-name-field">
-          {t('preview.shortcutName', lang)}
-          <input
-            type="text"
-            data-testid="shortcut-name"
-            value={shortcutNameText}
-            onInput={(e) => onShortcutNameInput((e.target as HTMLInputElement).value)}
-          />
-        </label>
-        <label class="field shortcut-name-field">
-          {t('preview.shortcutAlarmName', lang)}
-          <input
-            type="text"
-            data-testid="shortcut-alarm-name"
-            value={alarmShortcutNameText}
-            onInput={(e) => onAlarmShortcutNameInput((e.target as HTMLInputElement).value)}
-          />
-        </label>
-        <label class="field shortcut-name-field">
-          {t('preview.shortcutReminderName', lang)}
-          <input
-            type="text"
-            data-testid="shortcut-reminder-name"
-            value={reminderShortcutNameText}
-            onInput={(e) => onReminderShortcutNameInput((e.target as HTMLInputElement).value)}
-          />
-        </label>
-        <label class="field shortcut-name-field">
-          {t('preview.shortcutDayAlarmName', lang)}
-          <input
-            type="text"
-            data-testid="shortcut-dayalarm-name"
-            value={dayAlarmShortcutNameText}
-            onInput={(e) => onDayAlarmShortcutNameInput((e.target as HTMLInputElement).value)}
-          />
-        </label>
         <div class="row-actions">
           <button data-testid="save" onClick={() => void onSave()} disabled={!blob}>
             {t('preview.save', lang)}
@@ -336,6 +311,59 @@ export function Preview({ store }: { store: Store }) {
             {t('preview.setWallpaper', lang)}
           </button>
         </div>
+        <button
+          type="button"
+          class="btn block"
+          data-testid="shortcut-names-toggle"
+          aria-expanded={namesOpen}
+          onClick={() => setNamesOpen((v) => !v)}
+        >
+          {t('preview.shortcutNamesToggle', lang)} {namesOpen ? '▴' : '▾'}
+        </button>
+        {namesOpen && (
+          <div class="shortcut-names-panel" data-testid="shortcut-names-panel">
+            <p class="hint">{t('preview.shortcutNamesWarning', lang)}</p>
+            <label class="field shortcut-name-field">
+              {t('preview.shortcutName', lang)}
+              <input
+                type="text"
+                data-testid="shortcut-name"
+                value={shortcutNameText}
+                onInput={(e) => onShortcutNameInput((e.target as HTMLInputElement).value)}
+              />
+            </label>
+            <label class="field shortcut-name-field">
+              {t('preview.shortcutAlarmName', lang)}
+              <input
+                type="text"
+                data-testid="shortcut-alarm-name"
+                value={alarmShortcutNameText}
+                onInput={(e) => onAlarmShortcutNameInput((e.target as HTMLInputElement).value)}
+              />
+            </label>
+            <label class="field shortcut-name-field">
+              {t('preview.shortcutReminderName', lang)}
+              <input
+                type="text"
+                data-testid="shortcut-reminder-name"
+                value={reminderShortcutNameText}
+                onInput={(e) => onReminderShortcutNameInput((e.target as HTMLInputElement).value)}
+              />
+            </label>
+            <label class="field shortcut-name-field">
+              {t('preview.shortcutDayAlarmName', lang)}
+              <input
+                type="text"
+                data-testid="shortcut-dayalarm-name"
+                value={dayAlarmShortcutNameText}
+                onInput={(e) => onDayAlarmShortcutNameInput((e.target as HTMLInputElement).value)}
+              />
+            </label>
+            <button type="button" class="btn block" data-testid="shortcut-names-reset" onClick={onResetShortcutNames}>
+              {t('preview.shortcutNamesReset', lang)}
+            </button>
+          </div>
+        )}
       </div>
 
       <div class="settings-section">

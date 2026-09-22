@@ -23,6 +23,9 @@
   "preview.shortcutAlarmName": "Tên Phím tắt báo thức",
   "preview.shortcutReminderName": "Tên Phím tắt lời nhắc",
   "preview.shortcutDayAlarmName": "Tên Phím tắt báo thức đúng ngày",
+  "preview.shortcutNamesToggle": "Đổi tên Phím tắt",
+  "preview.shortcutNamesWarning": "Tên phải trùng ĐÚNG tên Phím tắt trong app Phím tắt, nếu không nút sẽ không chạy.",
+  "preview.shortcutNamesReset": "Khôi phục tên mặc định",
 
   "weekday.short.0": "CN",
   "weekday.short.1": "T2",

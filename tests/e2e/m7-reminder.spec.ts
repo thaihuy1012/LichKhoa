@@ -289,6 +289,7 @@ test('T-7.END luồng chính M7: 6 kịch bản nhắc Phím tắt (Báo thức 
   // --------------------------------------------------------------------------
   await test.step('Kịch bản 6: Đổi shortcut-alarm-name thành Bao Thuc → reload giữ → __lastNav chứa name=Bao%20Thuc', async () => {
     await page.getByTestId('tab-preview').click();
+    await page.getByTestId('shortcut-names-toggle').click();
 
     const alarmInput = page.getByTestId('shortcut-alarm-name');
     await expect(alarmInput).toBeVisible();
@@ -316,6 +317,7 @@ test('T-7.END luồng chính M7: 6 kịch bản nhắc Phím tắt (Báo thức 
 
     // reload vẫn giữ
     await page.reload();
+    await page.getByTestId('shortcut-names-toggle').click();
     await expect(page.getByTestId('shortcut-alarm-name')).toHaveValue('Bao Thuc');
 
     // Kích hoạt báo thức để kiểm tra __lastNav chứa name=Bao%20Thuc

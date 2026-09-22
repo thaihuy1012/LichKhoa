@@ -23,6 +23,9 @@
   "preview.shortcutAlarmName": "Alarm Shortcut name",
   "preview.shortcutReminderName": "Reminder Shortcut name",
   "preview.shortcutDayAlarmName": "Day alarm Shortcut name",
+  "preview.shortcutNamesToggle": "Rename shortcuts",
+  "preview.shortcutNamesWarning": "Names must EXACTLY match the Shortcut names in the Shortcuts app, otherwise the button won't run.",
+  "preview.shortcutNamesReset": "Restore default names",
 
   "weekday.short.0": "Sun",
   "weekday.short.1": "Mon",

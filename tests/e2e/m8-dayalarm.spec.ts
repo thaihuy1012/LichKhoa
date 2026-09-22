@@ -317,6 +317,7 @@ test('T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-day
   // --------------------------------------------------------------------------
   await test.step('Kịch bản 7: Đổi shortcut-dayalarm-name = Hen Bao Thuc → reload giữ → __lastNav chứa name=Hen%20Bao%20Thuc', async () => {
     await page.getByTestId('tab-preview').click();
+    await page.getByTestId('shortcut-names-toggle').click();
 
     const dayAlarmInput = page.getByTestId('shortcut-dayalarm-name');
     await expect(dayAlarmInput).toBeVisible();
@@ -344,6 +345,7 @@ test('T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-day
 
     // reload vẫn giữ
     await page.reload();
+    await page.getByTestId('shortcut-names-toggle').click();
     await expect(page.getByTestId('shortcut-dayalarm-name')).toHaveValue('Hen Bao Thuc');
 
     // Kích hoạt Báo thức đúng ngày để kiểm tra __lastNav chứa name=Hen%20Bao%20Thuc
