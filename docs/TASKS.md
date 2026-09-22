@@ -23,27 +23,14 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - 2026-09-15: Chủ dự án bật làn Gemini **v2 mức NHIỀU** (kit v2.1, `tho-gemini`). `agy-run.sh kiem-tra` → SẴN SÀNG (agy 1.2.2; code `gemini-3.8-flash-high`, soat/doc `gemini-3.1-pro-high`, sinh `gemini-3.8-flash-low`). Dự án vẫn ĐÓNG (D-022) → hỏi Chủ dự án việc tiếp theo.
 
 
-## ĐIỂM DỪNG PHIÊN 2026-09-21 (đọc mục này đầu tiên ở phiên sau)
+## ĐIỂM DỪNG PHIÊN 2026-09-22 (đọc mục này đầu tiên ở phiên sau)
 
-**Trạng thái**: KHÔNG có sự cố mở. Cây git sạch sau commit sổ sách; `main` đi trước `origin/main` vài commit CHỈ sổ sách (docs) — không cần push/deploy.
-**Milestone**: M7 ĐÓNG. M9 ĐÓNG (H1–H4 ĐẠT 2026-09-21, tag `M9-ok`). M8: G1, G2, G4 ĐẠT (2026-09-21); **G3 ĐẠT (2026-09-22, Chủ dự án)**; G5 không cần. T-8.4 ✔ → **M8 ĐÓNG, tag `M8-ok` (2026-09-22)**. Dự án không còn milestone mở.
-**Làn Gemini**: BẬT mức NHIỀU. **Nhánh phụ**: `backup-truoc-go-anh` — giữ tới khi Chủ dự án yên tâm.
+**Trạng thái**: KHÔNG sự cố mở (SC-005 đã đóng). Cây git sạch. M7, M8 (tag `M8-ok` 2026-09-22), M9 ĐÓNG. **Tồn đọng S4: HẾT.**
+**Chưa deploy**: `main` đi trước `origin/main` gồm mã nguồn mới (B-015 store, B-016 gộp Hoàn tác, B-017 kéo tự cuộn/kẹp nhóm) + T-8.4 HUONG-DAN. Muốn lên iPhone: Quản lý chạy Cổng bảo mật (CLAUDE.md) trên đúng commit → Chủ dự án `git push`.
+**Sau deploy nhờ Chủ dự án thử iPhone**: (1) xóa 2 việc liền → 1 Hoàn tác trả cả 2; (2) danh sách dài, nhấn giữ kéo xuống mép dưới → tự cuộn; (3) kéo việc có hạn sang nhóm không hạn → hàng dừng ở ranh giới, không bật về.
+**Làn Gemini**: BẬT mức NHIỀU (lỗi làn 1 lần phiên này — T-8.4). Lệnh e2e trong prompt Gemini phải `npm run build &&` trước (BAI-HOC SC-005). **Nhánh phụ**: `backup-truoc-go-anh` — giữ tới khi Chủ dự án yên tâm.
 
-### Phiên sau làm ngay
-1. Hỏi Chủ dự án kết quả **G3** (sáng 22/9, không mở gì): Đồng hồ có báo thức 07:30 đúng tên sự kiện G2, kêu đúng giờ; lời nhắc trong `BaoThuc` đã tick; không có thông báo/hỏi xác nhận lúc 00:05. Hỏng → G5: hỏi trạng thái máy đêm qua (sạc/nguồn thấp/tắt) + Automation có "Run Immediately" không; ghi "Giới hạn đã biết".
-2. Phiếu tài liệu sửa `docs/HUONG-DAN.md` §E.3 theo giao diện máy thật (chi tiết `docs/bao-cao/M8.md` mục Thử tay): `Due Date is today`; `Is Not Completed`; "Create an Alarm for <Due Date> called <Repeat Item>" (Title là mặc định, token vẫn hiện "Repeat Item"; xóa chữ "Alarm" sẵn có); "Set Is Completed of Repeat Item to **Yes**" (mặc định No — bẫy); thêm hành động vào trong Repeat/If bằng nhấn giữ-kéo-thả; Bước 4 iOS 17/18: Automation › + › Time of Day › 00:05 Daily › Run Immediately › tắt Notify When Run › Next › chọn thẳng `TaoBaoThucSang`; `ThemBaoThucNgay` không được chạy thử bằng ▶ (lỗi "No title was provided" vì không có đầu vào). Ưu tiên giao làn Gemini (chỉ 1 file). Kiểm: `npm run check`.
-3. G3 đạt + phiếu tài liệu commit → `git tag M8-ok`, ghi kết luận vào `docs/bao-cao/M8.md`.
-4. Tồn đọng mới: việc đã tạo không mở được "Nhắc trên iPhone" — Chủ dự án chọn làm thủ công, không sửa app.
-
-### Tồn đọng mới (xem mục Tồn đọng): S4 `sameTodoGroup` vs `cmpTodo` với `due: ''`. (S4 `ReminderDialog` giữ `at` cũ và khóa i18n thừa → đã sửa T-9.3.)
-
-### Bài học phiên này (đã ghi `docs/BAI-HOC.md`)
-- Lỗi cấu hình trên máy Chủ dự án: xin ảnh chụp ngay lượt đầu; hướng dẫn Phím tắt dùng `Set Variable` đặt tên.
-- `tho-gemini` có thể tự viết code / báo cáo cụt → luôn kiểm file prompt/kết quả và để kiem-thu đối chiếu từng tiêu chí.
-- E2E không bắt lỗi tràn bố cục (Playwright tự cuộn) → assert boundingBox ≤ 428.
-- Agy cần cây sạch giữa các vòng: cất bản test dở vào `docs/tasks/<mã>-v*.spec.ts.txt` thay vì commit test đang fail.
-
-## Tồn đọng (S4 — không chặn)
+## Tồn đọng (S4 — không chặn) — HẾT (2026-09-22)
 - ~~(2026-09-21, góp ý Chủ dự án, NGOÀI SPEC) Việc đã tạo không mở được "Nhắc trên iPhone" (nút chỉ ở hàng thêm việc). Chủ dự án chọn TẠM DÙNG CÁCH THỦ CÔNG — không sửa app. Nếu sau này muốn: đổi phạm vi SPEC → Kiến trúc sư, milestone nhỏ (nút trong bộ sửa hạn).~~ → Chủ dự án 2026-09-22 xác nhận giữ thủ công → ĐÓNG.
 - ~~S4 · T-1.2 · mặc định `boxAlpha=1` che ảnh nền~~ → đã sửa T-4.2 (0.35 khi chọn ảnh; D-021 xác nhận).
 - ~~S4 · T-1.7 · normalizeState device thiếu safe*~~ → đã sửa T-2.14.
@@ -55,13 +42,13 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - ~~S4 · D-015 · sau redirect kết nối thành công~~ → đã sửa T-4.2.
 - ~~S4 · T-3.3 · nút `sync-connect` / `sync-now` kiểu nút phụ~~ → đã sửa T-4.2 (accent; D-021 xác nhận).
 - ~~S4 · T-4.8 · nhãn ngày lặp / cột tiêu đề lệch / số âm lịch nhỏ~~ → Chủ dự án thử máy thật 2026-09-14: "dễ đọc, chữ và số âm lịch đã ổn" → đóng, không sửa.
-- S4 · M5 (D-025): (a)–(d) → ~~phiếu T-5.4~~ ✔ DONE 3b16a76; (e) cache Google cũ thiếu ngày đầu tuần → đóng, không sửa (D-025: cache không có timeMin, tự hết sau 1 lần đồng bộ); (f) "◷" → Chủ dự án xác nhận iOS hiện đúng → đóng.
+- ~~S4 · M5 (D-025): (a)–(d) → ~~phiếu T-5.4~~ ✔ DONE 3b16a76; (e) cache Google cũ thiếu ngày đầu tuần → đóng, không sửa (D-025: cache không có timeMin, tự hết sau 1 lần đồng bộ); (f) "◷" → Chủ dự án xác nhận iOS hiện đúng → đóng.~~
 - ~~S4 · T-6.2 · `createStore` ghi IndexedDB debounce 300 ms → thao tác rồi thoát app ngay (< 0,3 s) có thể mất thay đổi cuối; đề xuất flush khi `pagehide`/`visibilitychange=hidden` (store.ts) ~~ → đã sửa B-006 (Gemini).
-- S4 · M6 (D-029) → đang xử lý B-015/B-016/B-017 (2026-09-22): (a) toast đè mất Hoàn tác lần trước (#6); (b) listener `createStore` không gỡ (#7); (c) chưa có unit `createStore` (#10); (d) Hoàn tác xóa ngay sau khi thêm việc mới → 2 việc cùng `order`; (e) kéo không tự cuộn khi danh sách dài; (f) kéo sang nhóm khác hàng dịch rồi bật về.
-- S4 · T-8.END · `ReminderDialog` giữ state `at` của lần mở trước; `useEffect([open])` đặt lại mặc định SAU lần vẽ đầu → mở hộp có thể thoáng hiện giờ cũ (test phải dùng `setRemAt` chờ ổn định). Sửa gợi ý: đặt lại bằng `useLayoutEffect` hoặc `key` theo lần mở.
-- S4 · T-9.4 (Kiến trúc sư) → B-015 · `sameTodoGroup` (store.ts:13–14) coi `due: ''` là có hạn, `cmpTodo` (collect.ts:71) coi không — chỉ với JSON nhập tay.
+- ~~S4 · M6 (D-029) (a) toast đè mất Hoàn tác lần trước (#6); (b) listener `createStore` không gỡ (#7); (c) chưa có unit `createStore` (#10); (d) Hoàn tác xóa ngay sau khi thêm việc mới → 2 việc cùng `order`; (e) kéo không tự cuộn khi danh sách dài; (f) kéo sang nhóm khác hàng dịch rồi bật về.~~ → đã sửa B-015 (b,c,d), B-016 (a), B-017 (e,f) 2026-09-22.
+- ~~S4 · T-8.END · `ReminderDialog` giữ state `at` của lần mở trước; `useEffect([open])` đặt lại mặc định SAU lần vẽ đầu → mở hộp có thể thoáng hiện giờ cũ (test phải dùng `setRemAt` chờ ổn định). Sửa gợi ý: đặt lại bằng `useLayoutEffect` hoặc `key` theo lần mở.~~ (trùng mục dưới, đã sửa T-9.3)
+- ~~S4 · T-9.4 (Kiến trúc sư) · `sameTodoGroup` (store.ts:13–14) coi `due: ''` là có hạn, `cmpTodo` (collect.ts:71) coi không — chỉ với JSON nhập tay.~~ → đã sửa B-015.
 - ~~S4 · T-8.END · ReminderDialog giữ `at` cũ~~ → đã sửa T-9.3 (wrapper + Inner).
-- S4 · T-3.1 · `parseFragment`: giải mã 2 lần đã sửa ở T-3.4 (`oauth.ts:60`); còn trả `{error}` không kiểm `state` → ~~B-004~~ ✔ DONE (Gemini).
+- ~~S4 · T-3.1 · `parseFragment`: giải mã 2 lần đã sửa ở T-3.4 (`oauth.ts:60`); còn trả `{error}` không kiểm `state` → B-004 ✔ DONE (Gemini).~~
 - ~~S4 · T-2.5 · `eventToIcs` chưa gập dòng > 75 byte~~ → đã sửa T-2.15.
 
 ## Thứ tự & song song
@@ -1263,4 +1250,5 @@ Mục "Nhắc trên iPhone cho việc cũ": Chủ dự án chọn giữ thủ c�
 - Yêu cầu: (1) Kẹp `finalIndex` (và độ dịch hiển thị) trong phạm vi nhóm của hàng đang kéo (cùng `sameTodoGroup` từ `src/ui/store.ts`) → không bao giờ xem trước vị trí khác nhóm. (2) Tự cuộn: khi ngón/chuột cách mép trên/dưới vùng cuộn < 60 px trong lúc kéo → cuộn đều (requestAnimationFrame, tốc độ tăng theo độ sát mép, tối đa ~12 px/khung), cập nhật `finalIndex` theo độ cuộn; dừng khi thả/hủy. Không ảnh hưởng vuốt trái và cuộn thường.
 - Tiêu chí nghiệm thu: [ ] e2e: 2 nhóm (có hạn / không hạn), kéo hàng nhóm A quá ranh giới → thả → thứ tự không đổi và không hàng nào của nhóm B bị dịch trong lúc kéo · [ ] e2e: danh sách dài hơn viewport 428×926, kéo hàng đầu xuống mép dưới giữ ~1 s → vùng cuộn `scrollTop` tăng, thả → hàng về vị trí dưới cùng đã xem trước · [ ] `m6-todo-gestures`, `todo-touch`, `todo-gestures` pass nguyên vẹn · [ ] `npm run check` pass · [ ] Chủ dự án thử trên iPhone sau deploy.
 - Lệnh kiểm tra: `npx playwright test tests/e2e/b017-drag.spec.ts tests/e2e/m6-todo-gestures.spec.ts tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts` ; `npm run check`.
-- Model: sonnet (lý do không giao Gemini: cử chỉ cảm ứng + rAF cần cân chỉnh theo máy thật, vùng từng gây SC-002) · Lần thử: 0/3 · Trạng thái: DOING
+- Model: sonnet (lý do không giao Gemini: cử chỉ cảm ứng + rAF cần cân chỉnh theo máy thật, vùng từng gây SC-002) · Lần thử: 0/3 · Trạng thái: DONE (chờ Chủ dự án thử iPhone sau deploy)
+- Nhật ký: 2026-09-22 lượt 1 DONE (phát hiện: phải kẹp cả độ dịch hiển thị, nếu không transform nới `scrollHeight` → tự cuộn không hội tụ) → kiem-thu PASS (4 file ×3: 75 pass / 21 skip CDP; check 116 / 14 skip; test đo boundingBox/scrollTop thật) → review đạt → commit.

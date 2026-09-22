@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { JSX } from 'preact';
 import type { Store } from '../../store';
+import { sameTodoGroup } from '../../store';
 import type { AppState, ISODate, Todo } from '../../../core/model';
 import { t } from '../../../core/i18n';
 import { toISODate } from '../../../core/calendar';
@@ -21,6 +22,9 @@ const EARLY_SWIPE_PX = 4; // T-6.3 (#4): ngưỡng chặn cuộn sớm trong tou
 const SWIPE_PANEL_PX = 160; // B-013: giữ làm bề rộng mặc định (hàng lưu trữ, 2 nút: Khôi phục/Xóa).
 const SWIPE_PANEL_PX_3 = 228; // B-013: hàng thường có 3 nút (Sửa/Lưu trữ/Xóa) -> panel rộng hơn.
 const SWIPE_OPEN_RATIO = 0.4;
+// B-017: tự cuộn khi kéo tới gần mép vùng cuộn (`.events-screen`).
+const AUTO_SCROLL_EDGE_PX = 60;
+const AUTO_SCROLL_MAX_PX = 12;
 
 function DueBadge({
   todo,
@@ -136,7 +140,7 @@ type Phase = 'idle' | 'pending' | 'swipe' | 'drag';
 interface GestureCallbacks {
   onSwipeSettle: (open: boolean) => void;
   onBeginDrag: (rowEl: HTMLDivElement) => void;
-  onDragMove: (dy: number) => void;
+  onDragMove: (dy: number, clientY: number) => void;
   onDragEnd: () => void;
   onDragCancel: () => void;
 }
@@ -256,7 +260,7 @@ function useRowGesture(canDrag: boolean, isOpen: boolean, panelWidth: number, cb
       return true;
     }
     if (phaseRef.current === 'drag') {
-      callbacks.onDragMove(dyNow);
+      callbacks.onDragMove(dyNow, y);
       return true;
     }
     return false;
@@ -423,22 +427,113 @@ function SwipeRow({
   actions: JSX.Element;
   children: JSX.Element;
 }) {
+  // B-017: refs cho tự cuộn + kẹp nhóm khi kéo (không dùng state để tránh render lại theo từng khung rAF).
+  const scrollElRef = useRef<HTMLElement | null>(null);
+  const scrollDeltaRef = useRef(0);
+  const pointerDyRef = useRef(0);
+  const clientYRef = useRef(0);
+  const draggingActiveRef = useRef(false);
+  const rafIdRef = useRef<number | null>(null);
+  const groupBoundsRef = useRef<{ min: number; max: number }>({ min: 0, max: 0 });
+
+  useEffect(
+    () => () => {
+      draggingActiveRef.current = false;
+      if (rafIdRef.current !== null) cancelAnimationFrame(rafIdRef.current);
+    },
+    [],
+  );
+
+  function stopAutoScroll() {
+    draggingActiveRef.current = false;
+    if (rafIdRef.current !== null) {
+      cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = null;
+    }
+  }
+
+  function applyMove(effectiveDy: number) {
+    setDragInfo((prev) => {
+      if (!prev || prev.id !== id) return prev;
+      const { min, max } = groupBoundsRef.current;
+      const steps = Math.round(effectiveDy / prev.rowHeight);
+      const finalIndex = Math.min(max, Math.max(min, prev.originalIndex + steps));
+      // B-017 (1): kẹp luôn độ dịch HIỂN THỊ theo đúng phạm vi nhóm — nếu không, `rawDy` tăng vô hạn
+      // trong lúc tự cuộn (nhất là khi giữ ở mép) sẽ tự nới rộng `scrollHeight` của chính vùng cuộn
+      // (transform nằm trong vùng cuộn được tính vào overflow có thể cuộn) -> vòng lặp tự cuộn không
+      // bao giờ hội tụ.
+      const minDy = (min - prev.originalIndex) * prev.rowHeight;
+      const maxDy = (max - prev.originalIndex) * prev.rowHeight;
+      const clampedDy = Math.min(maxDy, Math.max(minDy, effectiveDy));
+      return { ...prev, rawDy: clampedDy, finalIndex };
+    });
+  }
+
+  function autoScrollTick() {
+    if (!draggingActiveRef.current) {
+      rafIdRef.current = null;
+      return;
+    }
+    const el = scrollElRef.current;
+    if (!el) {
+      rafIdRef.current = requestAnimationFrame(autoScrollTick);
+      return;
+    }
+    const rect = el.getBoundingClientRect();
+    const y = clientYRef.current;
+    let speed = 0;
+    if (y < rect.top + AUTO_SCROLL_EDGE_PX) {
+      const closeness = Math.min(1, (rect.top + AUTO_SCROLL_EDGE_PX - y) / AUTO_SCROLL_EDGE_PX);
+      speed = -AUTO_SCROLL_MAX_PX * closeness;
+    } else if (y > rect.bottom - AUTO_SCROLL_EDGE_PX) {
+      const closeness = Math.min(1, (y - (rect.bottom - AUTO_SCROLL_EDGE_PX)) / AUTO_SCROLL_EDGE_PX);
+      speed = AUTO_SCROLL_MAX_PX * closeness;
+    }
+    if (speed !== 0) {
+      const before = el.scrollTop;
+      el.scrollTop = Math.max(0, Math.min(el.scrollHeight - el.clientHeight, el.scrollTop + speed));
+      const applied = el.scrollTop - before;
+      if (applied !== 0) {
+        scrollDeltaRef.current += applied;
+        applyMove(pointerDyRef.current + scrollDeltaRef.current);
+      }
+    }
+    rafIdRef.current = requestAnimationFrame(autoScrollTick);
+  }
+
   const { dx, dragging, rowElRef, handlers } = useRowGesture(canDrag, isOpen, panelWidth, {
     onSwipeSettle: (open) => setOpen(open),
     onBeginDrag: (rowEl) => {
       const rect = rowEl.getBoundingClientRect();
+      scrollElRef.current = rowEl.closest<HTMLElement>('.events-screen');
+      scrollDeltaRef.current = 0;
+      pointerDyRef.current = 0;
+      clientYRef.current = rect.top + rect.height / 2;
+      const dragged = list[index];
+      let min = index;
+      let max = index;
+      if (dragged) {
+        while (min > 0 && sameTodoGroup(dragged, list[min - 1])) min--;
+        while (max < list.length - 1 && sameTodoGroup(dragged, list[max + 1])) max++;
+      }
+      groupBoundsRef.current = { min, max };
+      draggingActiveRef.current = true;
+      if (rafIdRef.current === null) rafIdRef.current = requestAnimationFrame(autoScrollTick);
       setDragInfo({ id, listKey, originalIndex: index, finalIndex: index, rowHeight: rect.height + 6, rawDy: 0 });
     },
-    onDragMove: (dy) => {
-      setDragInfo((prev) => {
-        if (!prev || prev.id !== id) return prev;
-        const steps = Math.round(dy / prev.rowHeight);
-        const finalIndex = Math.min(list.length - 1, Math.max(0, prev.originalIndex + steps));
-        return { ...prev, rawDy: dy, finalIndex };
-      });
+    onDragMove: (dy, clientY) => {
+      pointerDyRef.current = dy;
+      clientYRef.current = clientY;
+      applyMove(dy + scrollDeltaRef.current);
     },
-    onDragEnd: () => onDragCommit(id, ''),
-    onDragCancel: () => setDragInfo(null),
+    onDragEnd: () => {
+      stopAutoScroll();
+      onDragCommit(id, '');
+    },
+    onDragCancel: () => {
+      stopAutoScroll();
+      setDragInfo(null);
+    },
   });
 
   const isDraggedRow = dragInfo?.id === id && dragInfo.listKey === listKey;
