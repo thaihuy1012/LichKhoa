@@ -1279,7 +1279,8 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - Phạm vi file: `src/export/install.ts` (mới), `public/shortcut-links.json` (mới, 5 khóa url `""`, chưa có `updated`), `tests/unit/install.test.ts` (mới).
 - Yêu cầu + tiêu chí: SPEC §5 (chữ ký `export/install.ts`), §3 IN-14, §6 M10 gạch tiêu chí 1 (unit `install.test.ts`).
 - Lệnh kiểm tra: `npx vitest run tests/unit/install.test.ts` ; `npx tsc --noEmit` ; test tổng `npm run check` (kiem-thu).
-- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
+- Model: gemini · Lần thử: 1/3 · Vòng Gemini: 2/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-22 vòng 1 XONG (13/13) → kiem-thu PASS nhưng review KHÔNG ĐẠT: test thiếu (1) khoảng trắng đầu-cuối url; (2) KHÔNG đọc thô file thật để kiểm đúng 5 khóa/không khóa lạ (cần cho T-10.4); (3) ca url sai chỉ kiểm qua regex, không qua `parseShortcutLinks`; (4) `updated: '22/09/2026'` và số. Bản v1 cất `docs/tasks/T-10.1-v1.*.txt` → vòng 2.
 
 ### T-10.3 — `docs/HUONG-DAN.md` §F + §G + Giới hạn §8.13
 - Phạm vi file: `docs/HUONG-DAN.md` (§F, §G mới; "Giới hạn đã biết" thêm (a)–(h); đầu §C và §E thêm 1 dòng trỏ §F). Không sửa §E.1–E.3.
