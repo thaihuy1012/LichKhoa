@@ -27,7 +27,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 **Trạng thái**: KHÔNG sự cố mở (SC-005 đã đóng). Cây git sạch. M7, M8 (tag `M8-ok` 2026-09-22), M9 ĐÓNG. **Tồn đọng S4: HẾT.**
 **Đã deploy 2026-09-22**: Cổng bảo mật ĐẠT (`docs/test-log/bao-mat-3f29e12.log`) → Chủ dự án `git push` (2735ed4..f060273) → Actions run 35682982915 success, trang 200, bản `index-3iv75JNu.js`.
-**Sau deploy nhờ Chủ dự án thử iPhone**: (1) xóa 2 việc liền → 1 Hoàn tác trả cả 2; (2) danh sách dài, nhấn giữ kéo xuống mép dưới → tự cuộn; (3) kéo việc có hạn sang nhóm không hạn → hàng dừng ở ranh giới, không bật về.
+**Chủ dự án thử iPhone 2026-09-22: ĐẠT CẢ 3** — (1) xóa 2 việc liền → 1 Hoàn tác trả cả 2; (2) danh sách dài, nhấn giữ kéo xuống mép dưới → tự cuộn; (3) kéo việc có hạn sang nhóm không hạn → hàng dừng ở ranh giới, không bật về.
 **Làn Gemini**: BẬT mức NHIỀU (lỗi làn 1 lần phiên này — T-8.4). Lệnh e2e trong prompt Gemini phải `npm run build &&` trước (BAI-HOC SC-005). **Nhánh phụ**: `backup-truoc-go-anh` — giữ tới khi Chủ dự án yên tâm.
 
 ## Tồn đọng (S4 — không chặn) — HẾT (2026-09-22)
@@ -1250,5 +1250,5 @@ Mục "Nhắc trên iPhone cho việc cũ": Chủ dự án chọn giữ thủ c�
 - Yêu cầu: (1) Kẹp `finalIndex` (và độ dịch hiển thị) trong phạm vi nhóm của hàng đang kéo (cùng `sameTodoGroup` từ `src/ui/store.ts`) → không bao giờ xem trước vị trí khác nhóm. (2) Tự cuộn: khi ngón/chuột cách mép trên/dưới vùng cuộn < 60 px trong lúc kéo → cuộn đều (requestAnimationFrame, tốc độ tăng theo độ sát mép, tối đa ~12 px/khung), cập nhật `finalIndex` theo độ cuộn; dừng khi thả/hủy. Không ảnh hưởng vuốt trái và cuộn thường.
 - Tiêu chí nghiệm thu: [ ] e2e: 2 nhóm (có hạn / không hạn), kéo hàng nhóm A quá ranh giới → thả → thứ tự không đổi và không hàng nào của nhóm B bị dịch trong lúc kéo · [ ] e2e: danh sách dài hơn viewport 428×926, kéo hàng đầu xuống mép dưới giữ ~1 s → vùng cuộn `scrollTop` tăng, thả → hàng về vị trí dưới cùng đã xem trước · [ ] `m6-todo-gestures`, `todo-touch`, `todo-gestures` pass nguyên vẹn · [ ] `npm run check` pass · [ ] Chủ dự án thử trên iPhone sau deploy.
 - Lệnh kiểm tra: `npx playwright test tests/e2e/b017-drag.spec.ts tests/e2e/m6-todo-gestures.spec.ts tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts` ; `npm run check`.
-- Model: sonnet (lý do không giao Gemini: cử chỉ cảm ứng + rAF cần cân chỉnh theo máy thật, vùng từng gây SC-002) · Lần thử: 0/3 · Trạng thái: DONE (chờ Chủ dự án thử iPhone sau deploy)
+- Model: sonnet (lý do không giao Gemini: cử chỉ cảm ứng + rAF cần cân chỉnh theo máy thật, vùng từng gây SC-002) · Lần thử: 0/3 · Trạng thái: DONE (Chủ dự án xác nhận iPhone 2026-09-22)
 - Nhật ký: 2026-09-22 lượt 1 DONE (phát hiện: phải kẹp cả độ dịch hiển thị, nếu không transform nới `scrollHeight` → tự cuộn không hội tụ) → kiem-thu PASS (4 file ×3: 75 pass / 21 skip CDP; check 116 / 14 skip; test đo boundingBox/scrollTop thật) → review đạt → commit.
