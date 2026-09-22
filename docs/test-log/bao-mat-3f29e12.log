@@ -1,0 +1,32 @@
+# Kiem toan bao mat truoc push — commit 3f29e12 — 2026-09-22T10:19:39+07:00
+Pham vi: git diff origin/main..HEAD (17 commit, 37 file) + cay lam viec
+
+## 1. Bi mat trong ma sap push (diff them moi)
+(khong co)
+- Chuoi base64/hex dai bat thuong (>=40 ky tu) trong dong them:
+136:/DuAn/thu-nghiem/tests/unit/store-create
+149:/DuAn/thu-nghiem/tests/e2e/b016-toast-undo
+
+## 1b. Toan cay dang track
+
+## 2. File le ra khong duoc len (trong 37 file)
+(khong co)
+
+## 3. PII (email/SĐT/duong dan may ca nhan) trong dong them
+
+## 4. Cau hinh lo (workflow, redirect_uri, scope, CORS, service worker)
+(khong file cau hinh nao doi)
+
+## 5. Phu thuoc moi
+(package.json / lock khong doi)
+
+## Goi mang moi trong src doi
+(khong co)
+
+## Ghi chu soat tay (Quan ly)
+- Nhom 1: 2 "chuoi dai" chi la duong dan tep test (khong phai khoa). Khong co bi mat.
+- Nhom 3: duong dan du an `E:\DuAn\thu-nghiem` xuat hien trong 13 file tai lieu/log moi (stack trace test, link file trong bao cao Gemini). KHONG co ten nguoi dung Windows, email, SDT. Loai duong dan nay da duoc chap nhan o kiem toan hoi to (bao-mat-d6c7bec.log muc b: "chap nhan, muc rat nhe") va da co tren origin/main o >20 file.
+- Test log / e2e chi dung du lieu mau bia (A, B, C, ViecLuuTru, Item0..19, Tudo/Hen...). Khong anh chup man hinh moi.
+- Nhom 4, 5: khong doi cau hinh, workflow, service worker, package.json; khong goi mang moi trong src.
+
+## KET LUAN: DAT — khong chan deploy. Commit kiem toan 3f29e12; commit day len chi them dung file log nay.
