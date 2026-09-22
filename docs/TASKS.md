@@ -1295,13 +1295,14 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - Phạm vi file: `src/ui/screens/Guide.tsx`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `src/ui/styles.css`.
 - Yêu cầu + tiêu chí: SPEC §6 M10 Nội dung (thẻ số 2, testid `guide-card-installShortcuts`, `sc-row-*`, `sc-install-*`, `sc-nolink-*`, `sc-links-error`, `sc-updated`, `sc-name-mismatch-*`, `sc-manual-steps`), §3 IN-14. Dùng `install.ts` của T-10.1. Không gọi `store.subscribe` (guard).
 - Lệnh kiểm tra: `npx tsc --noEmit` ; `npm run build && npx playwright test tests/e2e/m2-i18n.spec.ts tests/e2e/settings.spec.ts` ; `npm run check` (kiem-thu).
-- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
+- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-22 vòng 1 (26 phút, gia hạn 1) XONG → kiem-thu PASS (testid đủ; i18n 6/6; JS gzip 43 KB; check 337×2 / 122 / 14 skip; tests không đổi) → review: `.btn` toàn cục thêm inline-flex căn giữa + padding 0 16px — các nút cũ chỉ chứa chữ, không vỡ → đạt → commit.
 
 ### T-10.END — E2E `tests/e2e/m10-install.spec.ts`
 - Phạm vi file: `tests/e2e/m10-install.spec.ts` (mới). Không sửa src.
 - Tiêu chí: SPEC §6 M10 gạch E2E (1)–(6), chromium + webkit, `serviceWorkers: 'block'`, không gọi mạng thật; `--repeat-each=3` pass; `npm run check` pass; `node scripts/size.mjs` < 150 KB; `dist/shortcut-links.json` tồn tại.
 - Lệnh kiểm tra: `npm run build && npx playwright test tests/e2e/m10-install.spec.ts --repeat-each=3` ; `npm run check`.
-- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO
+- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
 
 ### T-10.4 — Nạp 5 link thật (Chủ dự án tạo theo §10.G) + Cổng bảo mật + push
 - Quản lý tự làm (không giao thợ): theo SPEC §6 M10 gạch T-10.4. Chờ Chủ dự án gửi 5 link. Trạng thái: TODO
