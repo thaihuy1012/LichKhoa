@@ -1243,7 +1243,8 @@ Mục "Nhắc trên iPhone cho việc cũ": Chủ dự án chọn giữ thủ c�
   [ ] `destroy()`: sau đó `dispatch` không gọi subscriber; phát `visibilitychange` (hidden) / `pagehide` không gọi `saveState` (mock `../../src/storage/db`); timer đang chờ bị hủy.
   [ ] Toàn bộ test cũ pass nguyên vẹn.
 - Lệnh kiểm tra: `npx vitest run tests/unit/store-create.test.ts tests/unit/store.test.ts` ; test tổng `npm run check` (kiem-thu chạy).
-- Model: gemini (làn code — 2 file, tiêu chí rõ, test chạy được) · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
+- Model: gemini (làn code — 2 file, tiêu chí rõ, test chạy được) · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-22 vòng 1 (gemini-3.8-flash-high, 9 phút) XONG → kiem-thu PASS (43/43; check 314 unit / 104 e2e / 14 skip; test đối chiếu từng tiêu chí) → review đạt (`sameTodoGroup` giờ khớp `cmpTodo` cả phần dueTime) → commit.
 
 ### B-016 — Toast: thao tác mới không làm mất Hoàn tác của thao tác trước
 - Mục tiêu: đóng S4 M6 (a) (soát chéo M6 #6). Quyết định D-036: gộp Hoàn tác.
@@ -1252,7 +1253,7 @@ Mục "Nhắc trên iPhone cho việc cũ": Chủ dự án chọn giữ thủ c�
 - Yêu cầu: giữ danh sách hành động Hoàn tác đang chờ (ref). `showToast` có action trong lúc toast có action cũ còn hiện → nối thêm; bấm `toast-undo` chạy MỌI hành động đang chờ theo thứ tự ngược (mới nhất trước) rồi xóa danh sách. Toast hết giờ (5 s tính từ lần gọi cuối) hoặc `showToast` không có action → xóa danh sách. Chữ toast = thông điệp mới nhất.
 - Tiêu chí nghiệm thu: [ ] e2e (chromium + webkit): thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) → bấm `toast-undo` → cả 2 việc trở lại đúng thứ tự · [ ] xóa 1 việc → bấm Hoàn tác → trở lại (hành vi cũ giữ) · [ ] lưu trữ + xóa liên tiếp → Hoàn tác khôi phục cả hai · [ ] `m6-todo-gestures.spec.ts`, `todo-gestures.spec.ts` pass nguyên vẹn · [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npx playwright test tests/e2e/b016-toast-undo.spec.ts tests/e2e/m6-todo-gestures.spec.ts tests/e2e/todo-gestures.spec.ts` ; `npm run check` (kiem-thu).
-- Model: gemini (2 file) · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO
+- Model: gemini (2 file) · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
 
 ### B-017 — Kéo đổi thứ tự Việc: tự cuộn ở mép màn hình + không kéo ra khỏi nhóm
 - Mục tiêu: đóng S4 M6 (e), (f).

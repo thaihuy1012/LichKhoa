@@ -10,13 +10,15 @@ export function sameTodoGroup(a: Todo, b: Todo): boolean {
   if (a.archived) return false;
   if (a.done !== b.done) return false;
   if (a.done) return true;
-  const aHas = a.due != null;
-  const bHas = b.due != null;
+  const aHas = a.due != null && a.due !== '';
+  const bHas = b.due != null && b.due !== '';
   if (aHas !== bHas) return false;
-  if (aHas && a.due !== b.due) return false;
-  const aTime = a.dueTime || undefined;
-  const bTime = b.dueTime || undefined;
-  if (aTime !== bTime) return false;
+  if (aHas) {
+    if (a.due !== b.due) return false;
+    const aTime = a.dueTime || undefined;
+    const bTime = b.dueTime || undefined;
+    if (aTime !== bTime) return false;
+  }
   return true;
 }
 
@@ -143,7 +145,11 @@ export function reducer(state: AppState, action: Action): AppState {
     }
     case 'restoreTodo': {
       if (state.todos.some((t) => t.id === action.todo.id)) return state;
-      return { ...state, todos: [...state.todos, action.todo] };
+      const hasConflict = state.todos.some((t) => t.order === action.todo.order);
+      const todos = hasConflict
+        ? state.todos.map((t) => (t.order >= action.todo.order ? { ...t, order: t.order + 1 } : t))
+        : state.todos;
+      return { ...state, todos: [...todos, action.todo] };
     }
     case 'reorderTodo': {
       // T-6.1 (D-028): kéo id vào vị trí targetId trong danh sách hiển thị (không lưu trữ),
@@ -238,6 +244,7 @@ export interface Store {
   subscribe: (listener: (state: AppState) => void) => () => void;
   /** Hủy debounce đang chờ (nếu có) rồi ghi ngay trạng thái hiện tại xuống IndexedDB, có `await` được (T-7.5). */
   flush: () => Promise<void>;
+  destroy: () => void;
 }
 
 const PERSIST_DEBOUNCE_MS = 300;
@@ -245,10 +252,12 @@ const PERSIST_DEBOUNCE_MS = 300;
 /** Tạo store có persist debounce 300ms qua db.ts. */
 export function createStore(initialState: AppState): Store {
   let state = initialState;
+  let destroyed = false;
   const listeners = new Set<(state: AppState) => void>();
   let timer: ReturnType<typeof setTimeout> | null = null;
 
   function schedulePersist(): void {
+    if (destroyed) return;
     if (timer !== null) clearTimeout(timer);
     timer = setTimeout(() => {
       timer = null;
@@ -264,6 +273,12 @@ export function createStore(initialState: AppState): Store {
     }
   }
 
+  function onVisibilityChange(): void {
+    if (typeof document !== 'undefined' && document.visibilityState === 'hidden') {
+      flushPersist();
+    }
+  }
+
   /** Bản `await` được của flush, dùng cho UI (vd. trước khi rời app sang Phím tắt, T-7.5).
    * Luôn hủy timer đang chờ (nếu có) rồi ghi lại trạng thái hiện tại — an toàn kể cả khi
    * không có gì đang chờ (ghi lại state hiện tại, vốn đã đúng, không gây hại). */
@@ -275,16 +290,27 @@ export function createStore(initialState: AppState): Store {
     return saveState(state);
   }
 
+  function destroy(): void {
+    destroyed = true;
+    if (timer !== null) {
+      clearTimeout(timer);
+      timer = null;
+    }
+    listeners.clear();
+    if (typeof window !== 'undefined' && typeof window.removeEventListener === 'function') {
+      window.removeEventListener('pagehide', flushPersist);
+    }
+    if (typeof document !== 'undefined' && typeof document.removeEventListener === 'function') {
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    }
+  }
+
   if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
     window.addEventListener('pagehide', flushPersist);
   }
 
   if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') {
-        flushPersist();
-      }
-    });
+    document.addEventListener('visibilitychange', onVisibilityChange);
   }
 
   return {
@@ -299,5 +325,6 @@ export function createStore(initialState: AppState): Store {
       return () => listeners.delete(listener);
     },
     flush,
+    destroy,
   };
 }
