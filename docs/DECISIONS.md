@@ -213,3 +213,8 @@
 - Lý do: (B) chỉ cộng thêm — không migrate, test khóa nguyên vẹn (nhãn không giờ y hệt), giờ chỉ ảnh hưởng sắp xếp / hiển thị / mặc định nhắc nên đủ cho nhu cầu; (A) đắt và rủi ro regression ở 3 bố cục.
 - Duyệt M8 (Kiến trúc sư): DUYỆT nghiệm thu bằng lệnh — tự chạy `dayalarm.test.ts` 7/7 và `m8-dayalarm.spec.ts` 2/2 (chromium + webkit) sau `npm run build`; 4 commit M8 chỉ thêm 2 file test mới (`git diff --name-only M7-ok..cd57c71 -- tests/`); tag `M8-ok` sau thử tay G1–G5.
 - Soát chéo M8 (Gemini Pro, 4 S4): #1 state `at` cũ chớp (`ReminderDialog.tsx:39–45`, component không unmount) → NHẬN, sửa bằng tách wrapper mount mới, T-9.3; #2 khóa `reminder.statusReminderOnly` thừa (`vi.json:132`, `en.json:132`) → NHẬN, T-9.3; #3 "Due Date is on Today" → CHƯA KIỂM ĐƯỢC (Apple Support "Add filter parameters" và Cassinelli không liệt kê toán tử ngày) — giữ "is Today" (HUONG-DAN.md:237), chỉnh 1 dòng theo menu thật khi thử G1; #4 "không khai báo ngoại lệ `defaultState`" → BÁC — ngoại lệ SPEC §6 M8 nói về test khóa/fixture, còn `defaultState` trong `src/core/model.ts` là yêu cầu chính của M8.
+
+## D-036 — Dọn tồn đọng 2026-09-22: gộp Hoàn tác; khôi phục giữ chỗ cũ (2026-09-22 · người quyết: Quản lý)
+- Chủ dự án: "xử lý hết tồn đọng"; mục "Nhắc trên iPhone cho việc cũ" (ngoài SPEC) → Chủ dự án chọn giữ thủ công, đóng.
+- Toast đè Hoàn tác (M6 a): gộp — thao tác có Hoàn tác liên tiếp trong lúc toast còn hiện thì một nút Hoàn tác khôi phục tất cả (mới nhất trước). Lý do: không mất thao tác, không cần hàng đợi toast/chữ mới.
+- Khôi phục trùng `order` (M6 d): dời các việc `order >=` lên 1, việc khôi phục giữ đúng chỗ cũ. `sameTodoGroup` khớp `cmpTodo` (`due: ''` = không hạn).

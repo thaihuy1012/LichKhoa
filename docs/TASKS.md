@@ -44,7 +44,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - Agy cần cây sạch giữa các vòng: cất bản test dở vào `docs/tasks/<mã>-v*.spec.ts.txt` thay vì commit test đang fail.
 
 ## Tồn đọng (S4 — không chặn)
-- (2026-09-21, góp ý Chủ dự án, NGOÀI SPEC) Việc đã tạo không mở được "Nhắc trên iPhone" (nút chỉ ở hàng thêm việc). Chủ dự án chọn TẠM DÙNG CÁCH THỦ CÔNG — không sửa app. Nếu sau này muốn: đổi phạm vi SPEC → Kiến trúc sư, milestone nhỏ (nút trong bộ sửa hạn).
+- ~~(2026-09-21, góp ý Chủ dự án, NGOÀI SPEC) Việc đã tạo không mở được "Nhắc trên iPhone" (nút chỉ ở hàng thêm việc). Chủ dự án chọn TẠM DÙNG CÁCH THỦ CÔNG — không sửa app. Nếu sau này muốn: đổi phạm vi SPEC → Kiến trúc sư, milestone nhỏ (nút trong bộ sửa hạn).~~ → Chủ dự án 2026-09-22 xác nhận giữ thủ công → ĐÓNG.
 - ~~S4 · T-1.2 · mặc định `boxAlpha=1` che ảnh nền~~ → đã sửa T-4.2 (0.35 khi chọn ảnh; D-021 xác nhận).
 - ~~S4 · T-1.7 · normalizeState device thiếu safe*~~ → đã sửa T-2.14.
 - ~~S4 · T-2.7 · `EventsTab.tsx` L93 durationMin ngầm 60~~ → đã sửa trong T-2.12.
@@ -57,9 +57,9 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 - ~~S4 · T-4.8 · nhãn ngày lặp / cột tiêu đề lệch / số âm lịch nhỏ~~ → Chủ dự án thử máy thật 2026-09-14: "dễ đọc, chữ và số âm lịch đã ổn" → đóng, không sửa.
 - S4 · M5 (D-025): (a)–(d) → ~~phiếu T-5.4~~ ✔ DONE 3b16a76; (e) cache Google cũ thiếu ngày đầu tuần → đóng, không sửa (D-025: cache không có timeMin, tự hết sau 1 lần đồng bộ); (f) "◷" → Chủ dự án xác nhận iOS hiện đúng → đóng.
 - ~~S4 · T-6.2 · `createStore` ghi IndexedDB debounce 300 ms → thao tác rồi thoát app ngay (< 0,3 s) có thể mất thay đổi cuối; đề xuất flush khi `pagehide`/`visibilitychange=hidden` (store.ts) ~~ → đã sửa B-006 (Gemini).
-- S4 · M6 (D-029): (a) toast đè mất Hoàn tác lần trước (#6); (b) listener `createStore` không gỡ (#7); (c) chưa có unit `createStore` (#10); (d) Hoàn tác xóa ngay sau khi thêm việc mới → 2 việc cùng `order`; (e) kéo không tự cuộn khi danh sách dài; (f) kéo sang nhóm khác hàng dịch rồi bật về.
+- S4 · M6 (D-029) → đang xử lý B-015/B-016/B-017 (2026-09-22): (a) toast đè mất Hoàn tác lần trước (#6); (b) listener `createStore` không gỡ (#7); (c) chưa có unit `createStore` (#10); (d) Hoàn tác xóa ngay sau khi thêm việc mới → 2 việc cùng `order`; (e) kéo không tự cuộn khi danh sách dài; (f) kéo sang nhóm khác hàng dịch rồi bật về.
 - S4 · T-8.END · `ReminderDialog` giữ state `at` của lần mở trước; `useEffect([open])` đặt lại mặc định SAU lần vẽ đầu → mở hộp có thể thoáng hiện giờ cũ (test phải dùng `setRemAt` chờ ổn định). Sửa gợi ý: đặt lại bằng `useLayoutEffect` hoặc `key` theo lần mở.
-- S4 · T-9.4 (Kiến trúc sư) · `sameTodoGroup` (store.ts:13–14) coi `due: ''` là có hạn, `cmpTodo` (collect.ts:71) coi không — chỉ với JSON nhập tay.
+- S4 · T-9.4 (Kiến trúc sư) → B-015 · `sameTodoGroup` (store.ts:13–14) coi `due: ''` là có hạn, `cmpTodo` (collect.ts:71) coi không — chỉ với JSON nhập tay.
 - ~~S4 · T-8.END · ReminderDialog giữ `at` cũ~~ → đã sửa T-9.3 (wrapper + Inner).
 - S4 · T-3.1 · `parseFragment`: giải mã 2 lần đã sửa ở T-3.4 (`oauth.ts:60`); còn trả `{error}` không kiểm `state` → ~~B-004~~ ✔ DONE (Gemini).
 - ~~S4 · T-2.5 · `eventToIcs` chưa gập dòng > 75 byte~~ → đã sửa T-2.15.
@@ -1222,3 +1222,43 @@ Chủ dự án duyệt 2026-09-19: làm ngay (không chờ G1–G5 của M8); "Q
 - Model: sua-loi (opus — sự cố S2) · Lần thử: 1/3 · Trạng thái: DONE
 - Nhật ký: 2026-09-19 lượt 1 ĐÃ SỬA → kiem-thu PASS → commit; SC-004 đóng; M9 đạt theo phán quyết (Kiến trúc sư: "đạt thì gắn M9-ok, không cần gọi lại").
 - S4 (Kiến trúc sư): `sameTodoGroup` (store.ts:13–14) coi `due: ''` là có hạn, `cmpTodo` (collect.ts:71) coi không — chỉ với JSON nhập tay.
+
+
+## Bảo trì 2026-09-22 — Dọn hết tồn đọng S4 (Chủ dự án: "xử lý hết tồn đọng")
+Mục "Nhắc trên iPhone cho việc cũ": Chủ dự án chọn giữ thủ công → đóng. Còn: M6 (a)–(f) + `sameTodoGroup`. Tuần tự B-015 → B-016 → B-017 (B-016, B-017 cùng vùng UI Việc; Gemini và Claude không ghi cùng lúc). Test khóa M1–M9 không sửa/skip. Gemini: KHÔNG chạy `npm run check` (lượt T-8.4 treo ở lệnh này) — chỉ chạy vitest; kiem-thu chạy test tổng.
+
+### B-015 — Store: `sameTodoGroup` với `due: ''`, Hoàn tác xóa trùng `order`, gỡ listener, unit `createStore`
+- Mục tiêu: đóng S4 T-9.4 và M6 (b), (c), (d).
+- Phạm vi file (chỉ được sửa): `src/ui/store.ts`, `tests/unit/store-create.test.ts` (mới). KHÔNG sửa `tests/unit/store.test.ts` hay test cũ nào.
+- Giao diện có sẵn: `sameTodoGroup` (store.ts:8–21) dùng `a.due != null`; `cmpTodo` (`src/core/collect.ts:~71`, KHÔNG sửa) coi `due` rỗng `''` là không hạn. `addTodo` (~L85) order = max+1. `restoreTodo` (~L144–147) chèn lại todo với `order` cũ. `createStore` (~L246–302) đăng ký `pagehide` (window) và `visibilitychange` (document, hàm ẩn danh) không gỡ; trả `{ getState, dispatch, subscribe, flush }`.
+- Yêu cầu:
+  1. `sameTodoGroup`: coi `due` là có hạn chỉ khi `!= null && !== ''` (khớp `cmpTodo`).
+  2. `restoreTodo`: nếu đã có việc khác (chưa lưu trữ hay đã lưu trữ đều tính) mang cùng `order` với việc khôi phục → mọi việc có `order >= order khôi phục` tăng 1, rồi chèn việc khôi phục với `order` cũ (giữ đúng chỗ cũ). Không trùng thì như hiện tại.
+  3. `createStore` trả thêm `destroy(): void` — gỡ cả 2 listener (đặt tên hàm cho listener `visibilitychange`), hủy timer debounce đang chờ, xóa hết subscriber. Thêm `destroy` vào kiểu `Store`. Không đổi hành vi khác.
+- Tiêu chí nghiệm thu (`tests/unit/store-create.test.ts`):
+  [ ] `sameTodoGroup`: `{due:''}` và `{due: undefined}` cùng nhóm; `{due:''}` và `{due:'2026-10-05'}` khác nhóm.
+  [ ] add A → delete A → add B → restoreTodo A: hai việc có `order` khác nhau; thứ tự hiển thị (`cmpTodo`) là A rồi B.
+  [ ] restore khi không trùng `order`: todo giữ nguyên `order`, các việc khác không đổi.
+  [ ] `createStore`: `subscribe` nhận state sau `dispatch`; hàm hủy trả về từ `subscribe` làm listener ngừng nhận.
+  [ ] `destroy()`: sau đó `dispatch` không gọi subscriber; phát `visibilitychange` (hidden) / `pagehide` không gọi `saveState` (mock `../../src/storage/db`); timer đang chờ bị hủy.
+  [ ] Toàn bộ test cũ pass nguyên vẹn.
+- Lệnh kiểm tra: `npx vitest run tests/unit/store-create.test.ts tests/unit/store.test.ts` ; test tổng `npm run check` (kiem-thu chạy).
+- Model: gemini (làn code — 2 file, tiêu chí rõ, test chạy được) · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO
+
+### B-016 — Toast: thao tác mới không làm mất Hoàn tác của thao tác trước
+- Mục tiêu: đóng S4 M6 (a) (soát chéo M6 #6). Quyết định D-036: gộp Hoàn tác.
+- Phạm vi file: `src/ui/screens/Events.tsx`, `tests/e2e/b016-toast-undo.spec.ts` (mới).
+- Giao diện có sẵn: `showToast(msg, action?)` trong Events.tsx (~L29–40) ghi đè `toastAction`; nút `toast-undo` gọi `toastAction.onClick()`. TodosTab gọi `showToast` khi xóa (`restoreTodo`) / lưu trữ (`archiveTodo archived:false`) — KHÔNG sửa TodosTab.
+- Yêu cầu: giữ danh sách hành động Hoàn tác đang chờ (ref). `showToast` có action trong lúc toast có action cũ còn hiện → nối thêm; bấm `toast-undo` chạy MỌI hành động đang chờ theo thứ tự ngược (mới nhất trước) rồi xóa danh sách. Toast hết giờ (5 s tính từ lần gọi cuối) hoặc `showToast` không có action → xóa danh sách. Chữ toast = thông điệp mới nhất.
+- Tiêu chí nghiệm thu: [ ] e2e (chromium + webkit): thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) → bấm `toast-undo` → cả 2 việc trở lại đúng thứ tự · [ ] xóa 1 việc → bấm Hoàn tác → trở lại (hành vi cũ giữ) · [ ] lưu trữ + xóa liên tiếp → Hoàn tác khôi phục cả hai · [ ] `m6-todo-gestures.spec.ts`, `todo-gestures.spec.ts` pass nguyên vẹn · [ ] `npm run check` pass.
+- Lệnh kiểm tra: `npx playwright test tests/e2e/b016-toast-undo.spec.ts tests/e2e/m6-todo-gestures.spec.ts tests/e2e/todo-gestures.spec.ts` ; `npm run check` (kiem-thu).
+- Model: gemini (2 file) · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO
+
+### B-017 — Kéo đổi thứ tự Việc: tự cuộn ở mép màn hình + không kéo ra khỏi nhóm
+- Mục tiêu: đóng S4 M6 (e), (f).
+- Phạm vi file: `src/ui/screens/events/TodosTab.tsx`, `tests/e2e/b017-drag.spec.ts` (mới); `src/ui/styles.css` nếu thật cần (khai báo).
+- Giao diện có sẵn: `useRowGesture` / `onDragMove` (~L430–460) tính `finalIndex` từ `dy/rowHeight`, dịch hàng bằng `transform`; reducer `reorderTodo` từ chối khác nhóm (`sameTodoGroup`) → hàng bật về. Nhánh ngón tay dùng Touch Events, chuột dùng Pointer Events (D-030) — giữ nguyên.
+- Yêu cầu: (1) Kẹp `finalIndex` (và độ dịch hiển thị) trong phạm vi nhóm của hàng đang kéo (cùng `sameTodoGroup` từ `src/ui/store.ts`) → không bao giờ xem trước vị trí khác nhóm. (2) Tự cuộn: khi ngón/chuột cách mép trên/dưới vùng cuộn < 60 px trong lúc kéo → cuộn đều (requestAnimationFrame, tốc độ tăng theo độ sát mép, tối đa ~12 px/khung), cập nhật `finalIndex` theo độ cuộn; dừng khi thả/hủy. Không ảnh hưởng vuốt trái và cuộn thường.
+- Tiêu chí nghiệm thu: [ ] e2e: 2 nhóm (có hạn / không hạn), kéo hàng nhóm A quá ranh giới → thả → thứ tự không đổi và không hàng nào của nhóm B bị dịch trong lúc kéo · [ ] e2e: danh sách dài hơn viewport 428×926, kéo hàng đầu xuống mép dưới giữ ~1 s → vùng cuộn `scrollTop` tăng, thả → hàng về vị trí dưới cùng đã xem trước · [ ] `m6-todo-gestures`, `todo-touch`, `todo-gestures` pass nguyên vẹn · [ ] `npm run check` pass · [ ] Chủ dự án thử trên iPhone sau deploy.
+- Lệnh kiểm tra: `npx playwright test tests/e2e/b017-drag.spec.ts tests/e2e/m6-todo-gestures.spec.ts tests/e2e/todo-touch.spec.ts tests/e2e/todo-gestures.spec.ts` ; `npm run check`.
+- Model: sonnet (lý do không giao Gemini: cử chỉ cảm ứng + rAF cần cân chỉnh theo máy thật, vùng từng gây SC-002) · Lần thử: 0/3 · Trạng thái: TODO
