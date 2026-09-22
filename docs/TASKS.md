@@ -26,7 +26,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 ## ĐIỂM DỪNG PHIÊN 2026-09-21 (đọc mục này đầu tiên ở phiên sau)
 
 **Trạng thái**: KHÔNG có sự cố mở. Cây git sạch sau commit sổ sách; `main` đi trước `origin/main` vài commit CHỈ sổ sách (docs) — không cần push/deploy.
-**Milestone**: M7 ĐÓNG. M9 ĐÓNG (H1–H4 ĐẠT 2026-09-21, tag `M9-ok`). M8: G1, G2, G4 ĐẠT (2026-09-21); **G3 ĐẠT (2026-09-22, Chủ dự án)**; G5 không cần. Còn T-8.4 (sửa §E.3) → tag `M8-ok`.
+**Milestone**: M7 ĐÓNG. M9 ĐÓNG (H1–H4 ĐẠT 2026-09-21, tag `M9-ok`). M8: G1, G2, G4 ĐẠT (2026-09-21); **G3 ĐẠT (2026-09-22, Chủ dự án)**; G5 không cần. T-8.4 ✔ → **M8 ĐÓNG, tag `M8-ok` (2026-09-22)**. Dự án không còn milestone mở.
 **Làn Gemini**: BẬT mức NHIỀU. **Nhánh phụ**: `backup-truoc-go-anh` — giữ tới khi Chủ dự án yên tâm.
 
 ### Phiên sau làm ngay
@@ -1027,7 +1027,7 @@ Chung cho mọi phiếu M7: không sửa/skip test khóa M1–M6 (ngoại lệ d
 
 ---
 
-## M8 — Báo thức đúng ngày qua Lời nhắc + Tự động hóa (SPEC v1.9, D-034) — ĐANG LÀM (bắt đầu 2026-09-19, M7 đã đóng; Chủ dự án chọn M8 trước B-011)
+## M8 — Báo thức đúng ngày qua Lời nhắc + Tự động hóa (SPEC v1.9, D-034) — XONG (tag `M8-ok` 2026-09-22) (bắt đầu 2026-09-19, M7 đã đóng; Chủ dự án chọn M8 trước B-011)
 **Điều kiện bắt đầu (Chủ dự án chốt 2026-09-19): chỉ soạn phiếu chi tiết và giao thợ SAU KHI Chủ dự án thử tay M7 (A–F, B′) trên iPhone xong và M7 đã đóng.** Lý do: M8 xây trên đúng cơ chế Phím tắt của M7 — nền hỏng thì xây tiếp là phí.
 
 Chủ dự án đã duyệt SPEC v1.9 và chốt: lời nhắc trong danh sách `BaoThuc` **được đánh dấu hoàn thành** ngay khi sinh báo thức (chống tạo trùng; đánh đổi: hôm đó chỉ báo thức kêu, lời nhắc không báo nữa) — khớp giả định Kiến trúc sư, không phải sửa SPEC.
@@ -1099,7 +1099,8 @@ Lưu ý thiết kế đã chốt (SPEC v1.9 §5, §8.11): payload KHÔNG đổi 
   [ ] Rủi ro (b) đổi "`Is Completed is No`" → "`Is Not Completed`" và "Edit Reminder: Set Is Completed = Yes" → "Set Is Completed of Repeat Item to Yes".
   [ ] Không dữ liệu thật của Chủ dự án.
 - Lệnh kiểm tra: `grep -n "Is Completed is No\|Edit Reminder\|Create Personal Automation\|Due Date is Today" docs/HUONG-DAN.md` → rỗng · `grep -c "Is Not Completed\|is today\|Create an Alarm for\|to \*\*Yes\*\*\|No title was provided" docs/HUONG-DAN.md` ≥ 5 · `git diff --stat` chỉ `docs/HUONG-DAN.md` · `npm run check` pass.
-- Model: gemini (làn code — 1 file, tiêu chí rõ, lệnh chạy được, không đổi thiết kế) · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
+- Model: gemini → sonnet · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-22 vòng 1 Gemini LỖI (không sửa file; lỗi làn lần 1 phiên này) → chuyển tho-sonnet ngay → DONE → kiem-thu PASS (grep cấm rỗng; grep mẫu 5; diff chỉ HUONG-DAN đúng vùng; check 104/14 skip; `docs/test-log/T-8.4.txt`) → review đạt → commit. **M8 ĐÓNG — tag `M8-ok`.**
 
 ---
 
