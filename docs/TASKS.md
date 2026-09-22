@@ -28,7 +28,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 **Trạng thái**: KHÔNG sự cố mở (SC-005 đã đóng). Cây git sạch. M7, M8 (tag `M8-ok` 2026-09-22), M9 ĐÓNG. **Tồn đọng S4: HẾT.**
 **Đã deploy 2026-09-22**: Cổng bảo mật ĐẠT (`docs/test-log/bao-mat-3f29e12.log`) → Chủ dự án `git push` (2735ed4..f060273) → Actions run 35682982915 success, trang 200, bản `index-3iv75JNu.js`.
 **Chủ dự án thử iPhone 2026-09-22: ĐẠT CẢ 3** — (1) xóa 2 việc liền → 1 Hoàn tác trả cả 2; (2) danh sách dài, nhấn giữ kéo xuống mép dưới → tự cuộn; (3) kéo việc có hạn sang nhóm không hạn → hàng dừng ở ranh giới, không bật về.
-**Làn Gemini**: BẬT mức NHIỀU (lỗi làn 1 lần phiên này — T-8.4). Lệnh e2e trong prompt Gemini phải `npm run build &&` trước (BAI-HOC SC-005). **Nhánh phụ**: `backup-truoc-go-anh` — giữ tới khi Chủ dự án yên tâm.
+**Làn Gemini**: TẮT tới hết phiên 2026-09-22 (lỗi làn 2 lần: T-8.4 LỖI; T-10.END tho-gemini tự viết test không qua agy rồi treo). Phiên sau bật lại mức NHIỀU. Lệnh e2e trong prompt Gemini phải `npm run build &&` trước (BAI-HOC SC-005). **Nhánh phụ**: `backup-truoc-go-anh` — giữ tới khi Chủ dự án yên tâm.
 
 ## Tồn đọng (S4 — không chặn) — HẾT (2026-09-22)
 - ~~(2026-09-21, góp ý Chủ dự án, NGOÀI SPEC) Việc đã tạo không mở được "Nhắc trên iPhone" (nút chỉ ở hàng thêm việc). Chủ dự án chọn TẠM DÙNG CÁCH THỦ CÔNG — không sửa app. Nếu sau này muốn: đổi phạm vi SPEC → Kiến trúc sư, milestone nhỏ (nút trong bộ sửa hạn).~~ → Chủ dự án 2026-09-22 xác nhận giữ thủ công → ĐÓNG.
@@ -1302,7 +1302,8 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - Phạm vi file: `tests/e2e/m10-install.spec.ts` (mới). Không sửa src.
 - Tiêu chí: SPEC §6 M10 gạch E2E (1)–(6), chromium + webkit, `serviceWorkers: 'block'`, không gọi mạng thật; `--repeat-each=3` pass; `npm run check` pass; `node scripts/size.mjs` < 150 KB; `dist/shortcut-links.json` tồn tại.
 - Lệnh kiểm tra: `npm run build && npx playwright test tests/e2e/m10-install.spec.ts --repeat-each=3` ; `npm run check`.
-- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
+- Model: gemini → sonnet · Lần thử: 1/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-22 vòng 1: tho-gemini KHÔNG chạy lượt agy (không có trong `agy-run.sh trang-thai`, không có prompt) mà tự viết `tests/e2e/m10-install.spec.ts`, rồi treo chờ tác vụ nền đã chết; nhắc 1 lần vẫn không báo → tính 1 lần thử thất bại + lỗi làn lần 2 phiên này → **TẮT làn Gemini tới hết phiên 2026-09-22**. Bản Haiku cất `docs/tasks/T-10.END-v1-haiku.spec.ts.txt` → giao tho-sonnet (dùng làm nền được, phải tự kiểm từng kịch bản).
 
 ### T-10.4 — Nạp 5 link thật (Chủ dự án tạo theo §10.G) + Cổng bảo mật + push
 - Quản lý tự làm (không giao thợ): theo SPEC §6 M10 gạch T-10.4. Chờ Chủ dự án gửi 5 link. Trạng thái: TODO

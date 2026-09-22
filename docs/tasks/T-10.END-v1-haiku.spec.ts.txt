@@ -1,0 +1,341 @@
+import { test, expect } from '@playwright/test';
+
+const BASE_URL = 'http://localhost:4173';
+
+// 5 fixture iCloud Shortcut links (32 hex BỊA)
+const FIXTURE_LINKS = {
+  wallpaper: 'https://www.icloud.com/shortcuts/abcdef0123456789abcdef0123456789',
+  alarm: 'https://www.icloud.com/shortcuts/0123456789abcdef0123456789abcdef',
+  reminder: 'https://www.icloud.com/shortcuts/fedcba9876543210fedcba9876543210',
+  dayAlarm: 'https://www.icloud.com/shortcuts/9876543210abcdef9876543210abcdef',
+  morning: 'https://www.icloud.com/shortcuts/abcd1234efgh5678ijkl9012mnop3456',
+};
+
+const FIXTURE_UPDATED = '2026-09-22';
+
+/**
+ * E2E kiểm thử tab Hướng dẫn thẻ 2 "Cài nhanh bộ Phím tắt":
+ * - Tải danh sách link từ shortcut-links.json
+ * - Hiển thị 5 hàng với nút "Tải" hoặc "Chưa có link"
+ * - Kiểm tra lỗi tải, cảnh báo lệch tên, danh sách việc tự làm
+ */
+
+test.use({ serviceWorkers: 'block' });
+
+test.beforeEach(async ({ context }) => {
+  // Block iCloud shortcuts → trả lỗi (không gọi mạng thật)
+  await context.route('https://www.icloud.com/**', (route) => {
+    route.abort('blockedbyclient');
+  });
+});
+
+test.describe('M10 E2E: Cài bộ Phím tắt qua link iCloud', () => {
+  test('(1) JSON đầy đủ 5 link + updated: hiện 5 nút "Tải", không nolink, có dòng updated', async ({
+    page,
+    context,
+  }) => {
+    test.setTimeout(30000);
+
+    const fixtureData = {
+      updated: FIXTURE_UPDATED,
+      shortcuts: {
+        wallpaper: { url: FIXTURE_LINKS.wallpaper },
+        alarm: { url: FIXTURE_LINKS.alarm },
+        reminder: { url: FIXTURE_LINKS.reminder },
+        dayAlarm: { url: FIXTURE_LINKS.dayAlarm },
+        morning: { url: FIXTURE_LINKS.morning },
+      },
+    };
+
+    await context.route(`${BASE_URL}/shortcut-links.json`, (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(fixtureData),
+      });
+    });
+
+    await page.goto(`${BASE_URL}/?test=1`);
+    await page.getByTestId('tab-guide').click();
+
+    // Chờ dữ liệu link load
+    await expect(page.getByTestId('sc-updated'), 'sc-updated should be visible').toBeVisible();
+    await expect(page.getByTestId('sc-updated')).toContainText('2026-09-22');
+
+    // Kiểm 5 hàng đúng thứ tự: wallpaper, alarm, reminder, dayAlarm, morning
+    const kinds = ['wallpaper', 'alarm', 'reminder', 'dayAlarm', 'morning'];
+    for (const kind of kinds) {
+      const row = page.getByTestId(`sc-row-${kind}`);
+      await expect(row, `sc-row-${kind} should be visible`).toBeVisible();
+
+      // Có nút "Tải"
+      const btn = page.getByTestId(`sc-install-${kind}`);
+      await expect(btn, `sc-install-${kind} should be visible`).toBeVisible();
+      await expect(btn).toHaveAttribute('href', FIXTURE_LINKS[kind as keyof typeof FIXTURE_LINKS]);
+      await expect(btn).toHaveAttribute('target', '_blank');
+      const rel = await btn.getAttribute('rel');
+      expect(rel).toContain('noopener');
+
+      // Kiểm cao nút >= 44 px
+      const box = await btn.boundingBox();
+      expect(box).toBeTruthy();
+      if (box) {
+        expect(box.height).toBeGreaterThanOrEqual(44);
+      }
+
+      // Không có "Chưa có link"
+      await expect(page.getByTestId(`sc-nolink-${kind}`)).toHaveCount(0);
+    }
+
+    // Kiểm không lỗi tải
+    await expect(page.getByTestId('sc-links-error')).toHaveCount(0);
+  });
+
+  test('(2) JSON thiếu URL / khóa: đúng số nolink và install', async ({ page, context }) => {
+    test.setTimeout(30000);
+
+    const fixtureData = {
+      updated: FIXTURE_UPDATED,
+      shortcuts: {
+        wallpaper: { url: FIXTURE_LINKS.wallpaper },
+        alarm: { url: '' }, // URL rỗng
+        reminder: { url: FIXTURE_LINKS.reminder },
+        dayAlarm: { url: FIXTURE_LINKS.dayAlarm },
+        // morning: thiếu khóa
+      },
+    };
+
+    await context.route(`${BASE_URL}/shortcut-links.json`, (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(fixtureData),
+      });
+    });
+
+    await page.goto(`${BASE_URL}/?test=1`);
+    await page.getByTestId('tab-guide').click();
+
+    // Chờ dữ liệu load
+    await expect(page.getByTestId('sc-row-wallpaper')).toBeVisible();
+
+    // Kiểm số nolink = 2 (alarm, morning)
+    await expect(page.getByTestId('sc-nolink-alarm')).toBeVisible();
+    await expect(page.getByTestId('sc-nolink-morning')).toBeVisible();
+    await expect(page.locator('[data-testid^="sc-nolink-"]')).toHaveCount(2);
+
+    // Kiểm số install = 3 (wallpaper, reminder, dayAlarm)
+    await expect(page.getByTestId('sc-install-wallpaper')).toBeVisible();
+    await expect(page.getByTestId('sc-install-reminder')).toBeVisible();
+    await expect(page.getByTestId('sc-install-dayAlarm')).toBeVisible();
+    await expect(page.locator('[data-testid^="sc-install-"]')).toHaveCount(3);
+
+    // Kiểm không lỗi tải
+    await expect(page.getByTestId('sc-links-error')).toHaveCount(0);
+  });
+
+  test('(3) JSON 404: hiện lỗi tải, 5 nolink, 0 install', async ({ page, context }) => {
+    test.setTimeout(30000);
+
+    await context.route(`${BASE_URL}/shortcut-links.json`, (route) => {
+      route.fulfill({
+        status: 404,
+        body: 'Not found',
+      });
+    });
+
+    await page.goto(`${BASE_URL}/?test=1`);
+    await page.getByTestId('tab-guide').click();
+
+    // Chờ lỗi hiện
+    await expect(page.getByTestId('sc-links-error')).toBeVisible();
+
+    // Kiểm 5 nolink
+    await expect(page.locator('[data-testid^="sc-nolink-"]')).toHaveCount(5);
+
+    // Kiểm 0 install
+    await expect(page.locator('[data-testid^="sc-install-"]')).toHaveCount(0);
+
+    // Thẻ Guide vẫn hiện được (không sập)
+    await expect(page.getByTestId('guide-card-install')).toBeVisible();
+    await expect(page.getByTestId('guide-card-installShortcuts')).toBeVisible();
+  });
+
+  test('(4) Dùng file thật trong repo (shortcut-links.json): mix install/nolink', async ({
+    page,
+  }) => {
+    test.setTimeout(30000);
+
+    await page.goto(`${BASE_URL}/?test=1`);
+    await page.getByTestId('tab-guide').click();
+
+    // Chờ dữ liệu load
+    await expect(page.getByTestId('sc-row-wallpaper')).toBeVisible();
+
+    // Kiểm mỗi hàng có đúng 1 trong install hoặc nolink
+    const kinds = ['wallpaper', 'alarm', 'reminder', 'dayAlarm', 'morning'];
+    for (const kind of kinds) {
+      const hasInstall = (await page.getByTestId(`sc-install-${kind}`).count()) > 0;
+      const hasNolink = (await page.getByTestId(`sc-nolink-${kind}`).count()) > 0;
+
+      expect(hasInstall || hasNolink, `${kind} should have either install or nolink`).toBeTruthy();
+      expect(hasInstall && hasNolink, `${kind} should not have both install and nolink`).toBeFalsy();
+    }
+  });
+
+  test('(5) Lệch tên: toggle → update → hiện mismatch → reset → mất mismatch', async ({
+    page,
+    context,
+  }) => {
+    test.setTimeout(30000);
+
+    const fixtureData = {
+      updated: FIXTURE_UPDATED,
+      shortcuts: {
+        wallpaper: { url: FIXTURE_LINKS.wallpaper },
+        alarm: { url: FIXTURE_LINKS.alarm },
+        reminder: { url: FIXTURE_LINKS.reminder },
+        dayAlarm: { url: FIXTURE_LINKS.dayAlarm },
+        morning: { url: FIXTURE_LINKS.morning },
+      },
+    };
+
+    await context.route(`${BASE_URL}/shortcut-links.json`, (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(fixtureData),
+      });
+    });
+
+    await page.goto(`${BASE_URL}/?test=1`);
+
+    // Mở tab Design → toggle panel đổi tên
+    await page.getByTestId('tab-design').click();
+    await page.getByTestId('shortcut-names-toggle').click();
+    await expect(page.getByTestId('shortcut-names-panel')).toBeVisible();
+
+    // Chờ ảnh render xong trước khi sửa input
+    await expect(page.getByTestId('save')).toBeEnabled();
+
+    await page.getByTestId('shortcut-alarm-name').fill('Bao Thuc');
+
+    // Chờ persist debounce
+    await page.waitForTimeout(400);
+
+    // Về tab Guide → kiểm mismatch hiện
+    await page.getByTestId('tab-guide').click();
+    await expect(page.getByTestId('sc-name-mismatch-alarm')).toBeVisible();
+    await expect(page.getByTestId('sc-name-mismatch-alarm')).toContainText('Bao Thuc');
+    await expect(page.getByTestId('sc-name-mismatch-alarm')).toContainText('ThemBaoThuc');
+
+    // Quay về Design → reset
+    await page.getByTestId('tab-design').click();
+    await page.getByTestId('shortcut-names-reset').click();
+    await page.waitForTimeout(400);
+
+    // Về tab Guide → mismatch biến mất
+    await page.getByTestId('tab-guide').click();
+    await expect(page.getByTestId('sc-name-mismatch-alarm')).toHaveCount(0);
+  });
+
+  test('(6) Danh sách việc tự làm: 4 li, chứa BaoThuc và 00:05; EN: Install, Get', async ({
+    page,
+    context,
+  }) => {
+    test.setTimeout(30000);
+
+    const fixtureData = {
+      updated: FIXTURE_UPDATED,
+      shortcuts: {
+        wallpaper: { url: FIXTURE_LINKS.wallpaper },
+        alarm: { url: FIXTURE_LINKS.alarm },
+        reminder: { url: FIXTURE_LINKS.reminder },
+        dayAlarm: { url: FIXTURE_LINKS.dayAlarm },
+        morning: { url: FIXTURE_LINKS.morning },
+      },
+    };
+
+    await context.route(`${BASE_URL}/shortcut-links.json`, (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(fixtureData),
+      });
+    });
+
+    await page.goto(`${BASE_URL}/?test=1`);
+    await page.getByTestId('tab-guide').click();
+
+    // Chờ dữ liệu load
+    const steps = page.getByTestId('sc-manual-steps');
+    await expect(steps).toBeVisible();
+
+    const items = steps.getByRole('listitem');
+    await expect(items).toHaveCount(4);
+
+    // Kiểm chứa "BaoThuc" và "00:05"
+    const stepsText = await steps.textContent();
+    expect(stepsText).toContain('BaoThuc');
+    expect(stepsText).toContain('00:05');
+
+    // Đổi sang EN
+    await page.getByTestId('lang').selectOption('en');
+
+    // Kiểm tiêu đề thẻ 2
+    const card = page.getByTestId('guide-card-installShortcuts');
+    const cardText = await card.locator('strong').first().textContent();
+    expect(cardText).toContain('Install');
+
+    // Kiểm nút "Get"
+    const btn = page.getByTestId('sc-install-wallpaper');
+    const btnText = await btn.textContent();
+    expect(btnText).toContain('Get');
+
+    // Kiểm danh sách vẫn 4 li
+    await expect(steps.getByRole('listitem')).toHaveCount(4);
+  });
+
+  test('Click nút Tải → mở popup, trang chính vẫn ở Guide', async ({ page, context }) => {
+    test.setTimeout(30000);
+
+    const fixtureData = {
+      updated: FIXTURE_UPDATED,
+      shortcuts: {
+        wallpaper: { url: FIXTURE_LINKS.wallpaper },
+        alarm: { url: FIXTURE_LINKS.alarm },
+        reminder: { url: FIXTURE_LINKS.reminder },
+        dayAlarm: { url: FIXTURE_LINKS.dayAlarm },
+        morning: { url: FIXTURE_LINKS.morning },
+      },
+    };
+
+    await context.route(`${BASE_URL}/shortcut-links.json`, (route) => {
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(fixtureData),
+      });
+    });
+
+    await page.goto(`${BASE_URL}/?test=1`);
+    await page.getByTestId('tab-guide').click();
+
+    // Chờ dữ liệu load
+    const btn = page.getByTestId('sc-install-alarm');
+    await expect(btn).toBeVisible();
+
+    // Dùng waitForPopup để bắt popup
+    const [popup] = await Promise.all([
+      page.waitForEvent('popup'),
+      btn.click(),
+    ]);
+
+    // Popup có URL là iCloud link
+    const popupUrl = popup.url();
+    expect(popupUrl).toContain('icloud.com/shortcuts');
+
+    // Trang chính vẫn ở Guide tab
+    await expect(page.getByTestId('guide-card-installShortcuts')).toBeVisible();
+  });
+});
