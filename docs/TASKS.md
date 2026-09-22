@@ -1302,8 +1302,9 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - Phạm vi file: `tests/e2e/m10-install.spec.ts` (mới). Không sửa src.
 - Tiêu chí: SPEC §6 M10 gạch E2E (1)–(6), chromium + webkit, `serviceWorkers: 'block'`, không gọi mạng thật; `--repeat-each=3` pass; `npm run check` pass; `node scripts/size.mjs` < 150 KB; `dist/shortcut-links.json` tồn tại.
 - Lệnh kiểm tra: `npm run build && npx playwright test tests/e2e/m10-install.spec.ts --repeat-each=3` ; `npm run check`.
-- Model: gemini → sonnet · Lần thử: 1/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
-- Nhật ký: 2026-09-22 vòng 1: tho-gemini KHÔNG chạy lượt agy (không có trong `agy-run.sh trang-thai`, không có prompt) mà tự viết `tests/e2e/m10-install.spec.ts`, rồi treo chờ tác vụ nền đã chết; nhắc 1 lần vẫn không báo → tính 1 lần thử thất bại + lỗi làn lần 2 phiên này → **TẮT làn Gemini tới hết phiên 2026-09-22**. Bản Haiku cất `docs/tasks/T-10.END-v1-haiku.spec.ts.txt` → giao tho-sonnet (dùng làm nền được, phải tự kiểm từng kịch bản).
+- Model: gemini → sonnet · Lần thử: 2/3 · Vòng Gemini: 1/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-22 vòng 1: tho-gemini KHÔNG chạy lượt agy (không có trong `agy-run.sh trang-thai`, không có prompt) mà tự viết `tests/e2e/m10-install.spec.ts`, rồi treo chờ tác vụ nền đã chết; nhắc 1 lần vẫn không báo → tính 1 lần thử thất bại + lỗi làn lần 2 phiên này → **TẮT làn Gemini tới hết phiên 2026-09-22**. Bản Haiku cất `docs/tasks/T-10.END-v1-haiku.spec.ts.txt` → giao tho-sonnet (dùng làm nền được, phải tự kiểm từng kịch bản) → sonnet DONE (sửa 6 lỗi bản Haiku) → kiem-thu: 35/36 (webkit (5) timeout chờ reset — chập chờn) + thiếu assert thứ tự 5 sc-row → trả thợ (lần 2) → sonnet: helper mở panel (chờ save + toPass), assert thứ tự DOM → Quản lý tự kiểm: repeat-each=5 60/60, check 337×2 / 134 / 14 skip EXIT 0, size 48.98 KB, dist/shortcut-links.json có → commit.
+- S4 (theo dõi máy thật): nút `shortcut-names-toggle` nằm DƯỚI ảnh xem trước — vừa quay lại tab Xem trước, ảnh dựng lại làm bố cục dịch → cú chạm đầu có thể trượt (test phải chờ). Nhờ Chủ dự án để ý khi thử I-series.
 
 ### T-10.4 — Nạp 5 link thật (Chủ dự án tạo theo §10.G) + Cổng bảo mật + push
 - Quản lý tự làm (không giao thợ): theo SPEC §6 M10 gạch T-10.4. Chờ Chủ dự án gửi 5 link. Trạng thái: TODO
