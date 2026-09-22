@@ -1243,7 +1243,7 @@ Mục "Nhắc trên iPhone cho việc cũ": Chủ dự án chọn giữ thủ c�
   [ ] `destroy()`: sau đó `dispatch` không gọi subscriber; phát `visibilitychange` (hidden) / `pagehide` không gọi `saveState` (mock `../../src/storage/db`); timer đang chờ bị hủy.
   [ ] Toàn bộ test cũ pass nguyên vẹn.
 - Lệnh kiểm tra: `npx vitest run tests/unit/store-create.test.ts tests/unit/store.test.ts` ; test tổng `npm run check` (kiem-thu chạy).
-- Model: gemini (làn code — 2 file, tiêu chí rõ, test chạy được) · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO
+- Model: gemini (làn code — 2 file, tiêu chí rõ, test chạy được) · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
 
 ### B-016 — Toast: thao tác mới không làm mất Hoàn tác của thao tác trước
 - Mục tiêu: đóng S4 M6 (a) (soát chéo M6 #6). Quyết định D-036: gộp Hoàn tác.
