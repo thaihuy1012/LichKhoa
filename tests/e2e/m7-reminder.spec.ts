@@ -317,6 +317,7 @@ test('T-7.END luồng chính M7: 6 kịch bản nhắc Phím tắt (Báo thức 
 
     // reload vẫn giữ
     await page.reload();
+    await expect(page.getByTestId('save')).toBeEnabled(); // B-020: chờ app nạp xong trước khi bấm toggle
     await page.getByTestId('shortcut-names-toggle').click();
     await expect(page.getByTestId('shortcut-alarm-name')).toHaveValue('Bao Thuc');
 

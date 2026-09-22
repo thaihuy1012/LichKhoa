@@ -345,6 +345,7 @@ test('T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-day
 
     // reload vẫn giữ
     await page.reload();
+    await expect(page.getByTestId('save')).toBeEnabled(); // B-020: chờ app nạp xong trước khi bấm toggle
     await page.getByTestId('shortcut-names-toggle').click();
     await expect(page.getByTestId('shortcut-dayalarm-name')).toHaveValue('Hen Bao Thuc');
 
