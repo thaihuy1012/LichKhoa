@@ -26,7 +26,7 @@ Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 ## ĐIỂM DỪNG PHIÊN 2026-09-22 (đọc mục này đầu tiên ở phiên sau)
 
 **Trạng thái**: KHÔNG sự cố mở (SC-005 đã đóng). Cây git sạch. M7, M8 (tag `M8-ok` 2026-09-22), M9 ĐÓNG. **Tồn đọng S4: HẾT.**
-**Chưa deploy**: `main` đi trước `origin/main` gồm mã nguồn mới (B-015 store, B-016 gộp Hoàn tác, B-017 kéo tự cuộn/kẹp nhóm) + T-8.4 HUONG-DAN. Muốn lên iPhone: Quản lý chạy Cổng bảo mật (CLAUDE.md) trên đúng commit → Chủ dự án `git push`.
+**Đã deploy 2026-09-22**: Cổng bảo mật ĐẠT (`docs/test-log/bao-mat-3f29e12.log`) → Chủ dự án `git push` (2735ed4..f060273) → Actions run 35682982915 success, trang 200, bản `index-3iv75JNu.js`.
 **Sau deploy nhờ Chủ dự án thử iPhone**: (1) xóa 2 việc liền → 1 Hoàn tác trả cả 2; (2) danh sách dài, nhấn giữ kéo xuống mép dưới → tự cuộn; (3) kéo việc có hạn sang nhóm không hạn → hàng dừng ở ranh giới, không bật về.
 **Làn Gemini**: BẬT mức NHIỀU (lỗi làn 1 lần phiên này — T-8.4). Lệnh e2e trong prompt Gemini phải `npm run build &&` trước (BAI-HOC SC-005). **Nhánh phụ**: `backup-truoc-go-anh` — giữ tới khi Chủ dự án yên tâm.
 
