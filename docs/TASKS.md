@@ -1279,14 +1279,14 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - Phạm vi file: `src/export/install.ts` (mới), `public/shortcut-links.json` (mới, 5 khóa url `""`, chưa có `updated`), `tests/unit/install.test.ts` (mới).
 - Yêu cầu + tiêu chí: SPEC §5 (chữ ký `export/install.ts`), §3 IN-14, §6 M10 gạch tiêu chí 1 (unit `install.test.ts`).
 - Lệnh kiểm tra: `npx vitest run tests/unit/install.test.ts` ; `npx tsc --noEmit` ; test tổng `npm run check` (kiem-thu).
-- Model: gemini · Lần thử: 1/3 · Vòng Gemini: 2/3 · Trạng thái: DOING
-- Nhật ký: 2026-09-22 vòng 1 XONG (13/13) → kiem-thu PASS nhưng review KHÔNG ĐẠT: test thiếu (1) khoảng trắng đầu-cuối url; (2) KHÔNG đọc thô file thật để kiểm đúng 5 khóa/không khóa lạ (cần cho T-10.4); (3) ca url sai chỉ kiểm qua regex, không qua `parseShortcutLinks`; (4) `updated: '22/09/2026'` và số. Bản v1 cất `docs/tasks/T-10.1-v1.*.txt` → vòng 2.
+- Model: gemini · Lần thử: 1/3 · Vòng Gemini: 2/3 · Trạng thái: DONE
+- Nhật ký: 2026-09-22 vòng 1 XONG (13/13) → kiem-thu PASS nhưng review KHÔNG ĐẠT: test thiếu (1) khoảng trắng đầu-cuối url; (2) KHÔNG đọc thô file thật để kiểm đúng 5 khóa/không khóa lạ (cần cho T-10.4); (3) ca url sai chỉ kiểm qua regex, không qua `parseShortcutLinks`; (4) `updated: '22/09/2026'` và số. Bản v1 cất `docs/tasks/T-10.1-v1.*.txt` → vòng 2 XONG (23/23) → kiem-thu PASS (4 ca có thật; đột biến khóa lạ → test fail; check 122 e2e) → Quản lý bỏ dòng `"updated": null` (SPEC: chưa có updated), unit 23/23 → commit.
 
 ### T-10.3 — `docs/HUONG-DAN.md` §F + §G + Giới hạn §8.13
 - Phạm vi file: `docs/HUONG-DAN.md` (§F, §G mới; "Giới hạn đã biết" thêm (a)–(h); đầu §C và §E thêm 1 dòng trỏ §F). Không sửa §E.1–E.3.
 - Yêu cầu + tiêu chí: SPEC §6 M10 gạch T-10.3 + tiêu chí "Tài liệu"; §8.13; §10.G.
 - Lệnh kiểm tra: `grep -c -E "Copy iCloud Link|Get Shortcut|Import Question|Stop Sharing|icloud.com/shortcuts|shortcut-links.json|Private Sharing" docs/HUONG-DAN.md` ≥ 7 ; `npm run check` (kiem-thu).
-- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 0/3 · Trạng thái: TODO
+- Model: gemini · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
 
 ### T-10.2 — Thẻ Hướng dẫn "Cài nhanh bộ Phím tắt" (số 2)
 - Phạm vi file: `src/ui/screens/Guide.tsx`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `src/ui/styles.css`.
