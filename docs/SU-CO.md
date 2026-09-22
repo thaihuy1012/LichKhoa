@@ -2,11 +2,19 @@
 (Chỉ Quản lý ghi. Đọc đầu mỗi phiên: sự cố chưa đóng xử lý trước mọi việc khác. Trạng thái: MỞ | ĐANG SỬA | CHỜ CHỦ DỰ ÁN | ĐÃ ĐÓNG.)
 
 ## Đang mở
-- (không)
+- **SC-005** (S2, ĐANG SỬA 2026-09-22) — B-016 gộp Hoàn tác: REGRESSION `m6-todo-gestures.spec.ts:172` 2 vòng liên tiếp
 
 ## Đã đóng gần đây
 - **SC-004** (S2, ĐÃ ĐÓNG 2026-09-19) — hàng thêm việc tràn 428 pt (M9)
 - **SC-003** (S2, ĐÃ ĐÓNG 2026-09-19) — Phím tắt Lời nhắc lỗi "No alert location was provided" → B, B', C KHÔNG ĐẠT trên iPhone thật (2026-09-19)
+
+## SC-005 — B-016 gộp Hoàn tác gây REGRESSION test khóa M6 · Mức S2 · Trạng thái: ĐANG SỬA
+- Phát hiện: 2026-09-22 · kiem-thu (vòng 1) và tho-gemini tự chạy (vòng 2). Luật: REGRESSION lần 2 → S2.
+- Triệu chứng: `tests/e2e/m6-todo-gestures.spec.ts:172` `toHaveCount(3)` sau `toast-undo` → 4. Kịch bản: xóa X → thêm A,B,C → xóa A → Hoàn tác → X cũng trở lại. Vòng 2 (quy tắc "đúng 1 dispatch giữa 2 showToast", D-036 siết) vẫn sai — đếm `dispatchCountRef` bị đặt lại sai chỗ. Log: `docs/test-log/B-016.txt`.
+- Tái hiện: áp `docs/tasks/B-016-v2.Events.tsx.txt` → `src/ui/screens/Events.tsx`, `docs/tasks/B-016-v2.spec.ts.txt` → `tests/e2e/b016-toast-undo.spec.ts`; `npx playwright test tests/e2e/b016-toast-undo.spec.ts tests/e2e/m6-todo-gestures.spec.ts`.
+- Commit tốt cuối cùng: `cc187fd` (HEAD, chưa commit gì của B-016 → nhánh chính KHÔNG hỏng; đã trả cây về HEAD, bản v1/v2 cất ở `docs/tasks/`).
+- Đóng băng: `src/ui/screens/Events.tsx`, `tests/e2e/b016-toast-undo.spec.ts` — chỉ sua-loi. B-017 chờ (cùng vùng UI Việc). Làn Gemini dừng tới khi đóng.
+- Sửa lượt 1: `sua-loi` (opus) — làm B-016 theo phiếu + D-036 siết; tái hiện bằng test thất bại trước.
 
 ## SC-004 — Hàng thêm việc tràn ở 428 pt khi ô Giờ hiện · Mức S2 · Trạng thái: ĐÃ ĐÓNG
 - Phát hiện: 2026-09-19 · Kiến trúc sư khi duyệt M9 (đo Playwright 428 pt): webkit nội dung 559/404 px, `todo-add` x 505–571 ngoài màn hình, `overflow-x: hidden` nên không cuộn tới; chromium 425/404, nút cắt 9 px. E2E không bắt vì Playwright tự cuộn khi click.
