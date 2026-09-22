@@ -1,0 +1,235 @@
+
+Running 60 tests using 4 workers
+
+  ✓   2 [chromium] › tests\e2e\b016-toast-undo.spec.ts:32:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa 1 việc -> bấm Hoàn tác -> trở lại (hành vi cũ giữ nguyên) (1.3s)
+  ✓   3 [chromium] › tests\e2e\b016-toast-undo.spec.ts:51:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) -> bấm toast-undo -> cả 2 việc trở lại đúng thứ tự (1.6s)
+  ✓   4 [chromium] › tests\e2e\b016-toast-undo.spec.ts:88:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › lưu trữ + xóa liên tiếp -> Hoàn tác khôi phục cả hai (1.2s)
+  ✓   7 [chromium] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất (956ms)
+  ✓   5 [chromium] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ (1.8s)
+  ✓   8 [chromium] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0 (687ms)
+  ✓   6 [chromium] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên (2.1s)
+  ✓   9 [chromium] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa (1.4s)
+  ✓  10 [chromium] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) (1.8s)
+  ✘   1 [chromium] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (9.7s)
+  ✓  11 [chromium] › tests\e2e\b016-toast-undo.spec.ts:32:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa 1 việc -> bấm Hoàn tác -> trở lại (hành vi cũ giữ nguyên) (1.4s)
+  ✓  12 [chromium] › tests\e2e\b016-toast-undo.spec.ts:51:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) -> bấm toast-undo -> cả 2 việc trở lại đúng thứ tự (1.6s)
+  ✓  13 [chromium] › tests\e2e\b016-toast-undo.spec.ts:88:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › lưu trữ + xóa liên tiếp -> Hoàn tác khôi phục cả hai (1.3s)
+  ✓  16 [chromium] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất (1.2s)
+  ✓  14 [chromium] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ (2.1s)
+  ✓  18 [chromium] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0 (693ms)
+  ✓  15 [chromium] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên (2.4s)
+  ✓  19 [chromium] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa (1.4s)
+  ✓  20 [chromium] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) (1.7s)
+  ✓  21 [chromium] › tests\e2e\b016-toast-undo.spec.ts:32:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa 1 việc -> bấm Hoàn tác -> trở lại (hành vi cũ giữ nguyên) (1.2s)
+  ✓  22 [chromium] › tests\e2e\b016-toast-undo.spec.ts:51:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) -> bấm toast-undo -> cả 2 việc trở lại đúng thứ tự (1.6s)
+  ✓  23 [chromium] › tests\e2e\b016-toast-undo.spec.ts:88:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › lưu trữ + xóa liên tiếp -> Hoàn tác khôi phục cả hai (1.3s)
+  ✘  17 [chromium] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (9.5s)
+  ✓  25 [chromium] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ (1.8s)
+  ✓  26 [chromium] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên (2.1s)
+  ✓  27 [chromium] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0 (707ms)
+  ✓  28 [chromium] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa (1.5s)
+  ✓  30 [chromium] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất (999ms)
+  ✓  29 [chromium] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) (1.8s)
+  ✓  31 [webkit] › tests\e2e\b016-toast-undo.spec.ts:32:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa 1 việc -> bấm Hoàn tác -> trở lại (hành vi cũ giữ nguyên) (2.3s)
+  ✓  32 [webkit] › tests\e2e\b016-toast-undo.spec.ts:51:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) -> bấm toast-undo -> cả 2 việc trở lại đúng thứ tự (2.7s)
+  ✓  33 [webkit] › tests\e2e\b016-toast-undo.spec.ts:88:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › lưu trữ + xóa liên tiếp -> Hoàn tác khôi phục cả hai (2.4s)
+  ✘  24 [chromium] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (9.4s)
+  ✓  35 [webkit] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ (3.7s)
+  ✓  36 [webkit] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên (3.8s)
+  ✓  38 [webkit] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0 (1.8s)
+  ✓  37 [webkit] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất (2.4s)
+  ✓  39 [webkit] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa (2.9s)
+  ✓  40 [webkit] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) (2.7s)
+  ✓  41 [webkit] › tests\e2e\b016-toast-undo.spec.ts:32:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa 1 việc -> bấm Hoàn tác -> trở lại (hành vi cũ giữ nguyên) (2.1s)
+  ✓  42 [webkit] › tests\e2e\b016-toast-undo.spec.ts:51:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) -> bấm toast-undo -> cả 2 việc trở lại đúng thứ tự (2.7s)
+  ✘  34 [webkit] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (12.2s)
+  ✓  44 [webkit] › tests\e2e\b016-toast-undo.spec.ts:88:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › lưu trữ + xóa liên tiếp -> Hoàn tác khôi phục cả hai (2.6s)
+  ✓  45 [webkit] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ (3.9s)
+  ✓  47 [webkit] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất (2.1s)
+  ✓  48 [webkit] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0 (1.5s)
+  ✓  46 [webkit] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên (4.3s)
+  ✓  49 [webkit] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa (2.6s)
+  ✓  50 [webkit] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) (2.6s)
+  ✓  51 [webkit] › tests\e2e\b016-toast-undo.spec.ts:32:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › xóa 1 việc -> bấm Hoàn tác -> trở lại (hành vi cũ giữ nguyên) (2.1s)
+  ✘  43 [webkit] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (11.9s)
+  ✓  52 [webkit] › tests\e2e\b016-toast-undo.spec.ts:51:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) -> bấm toast-undo -> cả 2 việc trở lại đúng thứ tự (2.7s)
+  ✓  53 [webkit] › tests\e2e\b016-toast-undo.spec.ts:88:3 › B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp › lưu trữ + xóa liên tiếp -> Hoàn tác khôi phục cả hai (2.5s)
+  ✓  56 [webkit] › tests\e2e\todo-gestures.spec.ts:155:1 › T-6.3 (#1): Hoàn tác sau Lưu trữ trả về danh sách chính, "Đã lưu trữ" biến mất (2.0s)
+  ✓  55 [webkit] › tests\e2e\todo-gestures.spec.ts:111:1 › Nhấn giữ kéo sắp xếp: đổi thứ tự, __lastOps và reload giữ nguyên (3.9s)
+  ✓  58 [webkit] › tests\e2e\todo-gestures.spec.ts:174:1 › T-6.3 (#2): vuốt tiếp một hàng đang mở không giật về 0 (1.5s)
+  ✓  57 [webkit] › tests\e2e\todo-gestures.spec.ts:67:1 › Vuốt trái: Lưu trữ/Xóa + Hoàn tác, phần Đã lưu trữ (4.0s)
+  ✓  59 [webkit] › tests\e2e\todo-gestures.spec.ts:197:1 › T-6.3 (#3): sau một lần kéo sắp xếp, chạm chữ ngay sau đó vẫn mở sửa (2.5s)
+  ✓  60 [webkit] › tests\e2e\todo-gestures.spec.ts:218:1 › SC-002: giữa lúc kéo, hàng kéo và các hàng nhường chỗ đều nhìn thấy (không bị khung hàng cắt mất) (2.6s)
+  ✘  54 [webkit] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (11.7s)
+
+
+  1) [chromium] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('todo-item')
+    Expected: 3
+    Received: 4
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('todo-item') with timeout 5000ms
+      - waiting for getByTestId('todo-item')
+        14 × locator resolved to 4 elements
+           - unexpected value "4"
+
+
+      170 |   await expect(rows).toHaveCount(2);
+      171 |   await page.getByTestId('toast-undo').click();
+    > 172 |   await expect(rows).toHaveCount(3);
+          |                      ^
+      173 |   await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('A');
+      174 |   await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('B');
+      175 |   await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('C');
+        at E:\DuAn\thu-nghiem\tests\e2e\m6-todo-gestures.spec.ts:172:22
+
+    Error Context: test-results\m6-todo-gestures-T-6-END-l-36503--sắp-xếp-reload-giữ-mọi-thứ-chromium\error-context.md
+
+  2) [chromium] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('todo-item')
+    Expected: 3
+    Received: 4
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('todo-item') with timeout 5000ms
+      - waiting for getByTestId('todo-item')
+        14 × locator resolved to 4 elements
+           - unexpected value "4"
+
+
+      170 |   await expect(rows).toHaveCount(2);
+      171 |   await page.getByTestId('toast-undo').click();
+    > 172 |   await expect(rows).toHaveCount(3);
+          |                      ^
+      173 |   await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('A');
+      174 |   await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('B');
+      175 |   await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('C');
+        at E:\DuAn\thu-nghiem\tests\e2e\m6-todo-gestures.spec.ts:172:22
+
+    Error Context: test-results\m6-todo-gestures-T-6-END-l-36503--sắp-xếp-reload-giữ-mọi-thứ-chromium-repeat1\error-context.md
+
+  3) [chromium] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('todo-item')
+    Expected: 3
+    Received: 4
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('todo-item') with timeout 5000ms
+      - waiting for getByTestId('todo-item')
+        14 × locator resolved to 4 elements
+           - unexpected value "4"
+
+
+      170 |   await expect(rows).toHaveCount(2);
+      171 |   await page.getByTestId('toast-undo').click();
+    > 172 |   await expect(rows).toHaveCount(3);
+          |                      ^
+      173 |   await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('A');
+      174 |   await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('B');
+      175 |   await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('C');
+        at E:\DuAn\thu-nghiem\tests\e2e\m6-todo-gestures.spec.ts:172:22
+
+    Error Context: test-results\m6-todo-gestures-T-6-END-l-36503--sắp-xếp-reload-giữ-mọi-thứ-chromium-repeat2\error-context.md
+
+  4) [webkit] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('todo-item')
+    Expected: 3
+    Received: 4
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('todo-item') with timeout 5000ms
+      - waiting for getByTestId('todo-item')
+        14 × locator resolved to 4 elements
+           - unexpected value "4"
+
+
+      170 |   await expect(rows).toHaveCount(2);
+      171 |   await page.getByTestId('toast-undo').click();
+    > 172 |   await expect(rows).toHaveCount(3);
+          |                      ^
+      173 |   await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('A');
+      174 |   await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('B');
+      175 |   await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('C');
+        at E:\DuAn\thu-nghiem\tests\e2e\m6-todo-gestures.spec.ts:172:22
+
+    Error Context: test-results\m6-todo-gestures-T-6-END-l-36503--sắp-xếp-reload-giữ-mọi-thứ-webkit\error-context.md
+
+  5) [webkit] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('todo-item')
+    Expected: 3
+    Received: 4
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('todo-item') with timeout 5000ms
+      - waiting for getByTestId('todo-item')
+        14 × locator resolved to 4 elements
+           - unexpected value "4"
+
+
+      170 |   await expect(rows).toHaveCount(2);
+      171 |   await page.getByTestId('toast-undo').click();
+    > 172 |   await expect(rows).toHaveCount(3);
+          |                      ^
+      173 |   await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('A');
+      174 |   await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('B');
+      175 |   await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('C');
+        at E:\DuAn\thu-nghiem\tests\e2e\m6-todo-gestures.spec.ts:172:22
+
+    Error Context: test-results\m6-todo-gestures-T-6-END-l-36503--sắp-xếp-reload-giữ-mọi-thứ-webkit-repeat1\error-context.md
+
+  6) [webkit] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('todo-item')
+    Expected: 3
+    Received: 4
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('todo-item') with timeout 5000ms
+      - waiting for getByTestId('todo-item')
+        14 × locator resolved to 4 elements
+           - unexpected value "4"
+
+
+      170 |   await expect(rows).toHaveCount(2);
+      171 |   await page.getByTestId('toast-undo').click();
+    > 172 |   await expect(rows).toHaveCount(3);
+          |                      ^
+      173 |   await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('A');
+      174 |   await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('B');
+      175 |   await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('C');
+        at E:\DuAn\thu-nghiem\tests\e2e\m6-todo-gestures.spec.ts:172:22
+
+    Error Context: test-results\m6-todo-gestures-T-6-END-l-36503--sắp-xếp-reload-giữ-mọi-thứ-webkit-repeat2\error-context.md
+
+  6 failed
+    [chromium] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+    [chromium] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+    [chromium] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+    [webkit] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+    [webkit] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+    [webkit] › tests\e2e\m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+  54 passed (1.1m)

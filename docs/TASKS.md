@@ -1250,10 +1250,11 @@ Mục "Nhắc trên iPhone cho việc cũ": Chủ dự án chọn giữ thủ c�
 - Mục tiêu: đóng S4 M6 (a) (soát chéo M6 #6). Quyết định D-036: gộp Hoàn tác.
 - Phạm vi file: `src/ui/screens/Events.tsx`, `tests/e2e/b016-toast-undo.spec.ts` (mới).
 - Giao diện có sẵn: `showToast(msg, action?)` trong Events.tsx (~L29–40) ghi đè `toastAction`; nút `toast-undo` gọi `toastAction.onClick()`. TodosTab gọi `showToast` khi xóa (`restoreTodo`) / lưu trữ (`archiveTodo archived:false`) — KHÔNG sửa TodosTab.
-- Yêu cầu: giữ danh sách hành động Hoàn tác đang chờ (ref). `showToast` có action trong lúc toast có action cũ còn hiện → nối thêm; bấm `toast-undo` chạy MỌI hành động đang chờ theo thứ tự ngược (mới nhất trước) rồi xóa danh sách. Toast hết giờ (5 s tính từ lần gọi cuối) hoặc `showToast` không có action → xóa danh sách. Chữ toast = thông điệp mới nhất.
+- Yêu cầu: giữ danh sách hành động Hoàn tác đang chờ (ref). `showToast` có action trong lúc toast có action cũ còn hiện → nối thêm; bấm `toast-undo` chạy MỌI hành động đang chờ theo thứ tự ngược (mới nhất trước) rồi xóa danh sách. Toast hết giờ (5 s tính từ lần gọi cuối) hoặc `showToast` không có action → xóa danh sách. Chữ toast = thông điệp mới nhất. **Siết (D-036, sau vòng 1):** chỉ nối thêm khi từ lần `showToast` có action trước tới lần này, store nhận đúng 1 `dispatch` (đếm bằng `store.subscribe` trong Events.tsx, nhớ hủy đăng ký khi unmount); nhiều hơn → bỏ danh sách cũ, chỉ giữ action mới. Bản thân hành động Hoàn tác dispatch cũng không được làm lệch đếm (danh sách đã xóa sau khi bấm).
 - Tiêu chí nghiệm thu: [ ] e2e (chromium + webkit): thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) → bấm `toast-undo` → cả 2 việc trở lại đúng thứ tự · [ ] xóa 1 việc → bấm Hoàn tác → trở lại (hành vi cũ giữ) · [ ] lưu trữ + xóa liên tiếp → Hoàn tác khôi phục cả hai · [ ] `m6-todo-gestures.spec.ts`, `todo-gestures.spec.ts` pass nguyên vẹn · [ ] `npm run check` pass.
 - Lệnh kiểm tra: `npx playwright test tests/e2e/b016-toast-undo.spec.ts tests/e2e/m6-todo-gestures.spec.ts tests/e2e/todo-gestures.spec.ts` ; `npm run check` (kiem-thu).
-- Model: gemini (2 file) · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
+- Model: gemini (2 file) · Lần thử: 1/3 · Vòng Gemini: 2/3 · Trạng thái: DOING
+- Nhật ký: 2026-09-22 vòng 1 XONG → kiem-thu REGRESSION `m6-todo-gestures.spec.ts:172` (Hoàn tác khôi phục cả việc xóa trước đó dù đã thêm A,B,C xen giữa → 4 hàng thay vì 3; log `docs/test-log/B-016.txt`) → nguyên nhân do quy tắc gộp của Quản lý quá rộng → siết D-036 → vòng 2 (lần sửa regression duy nhất).
 
 ### B-017 — Kéo đổi thứ tự Việc: tự cuộn ở mép màn hình + không kéo ra khỏi nhóm
 - Mục tiêu: đóng S4 M6 (e), (f).

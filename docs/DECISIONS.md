@@ -217,4 +217,5 @@
 ## D-036 — Dọn tồn đọng 2026-09-22: gộp Hoàn tác; khôi phục giữ chỗ cũ (2026-09-22 · người quyết: Quản lý)
 - Chủ dự án: "xử lý hết tồn đọng"; mục "Nhắc trên iPhone cho việc cũ" (ngoài SPEC) → Chủ dự án chọn giữ thủ công, đóng.
 - Toast đè Hoàn tác (M6 a): gộp — thao tác có Hoàn tác liên tiếp trong lúc toast còn hiện thì một nút Hoàn tác khôi phục tất cả (mới nhất trước). Lý do: không mất thao tác, không cần hàng đợi toast/chữ mới.
+  - Siết (B-016 vòng 1 REGRESSION `m6-todo-gestures.spec.ts:172`): chỉ gộp khi giữa hai lần `showToast` có hành động, store nhận ĐÚNG 1 `dispatch` (chính thao tác mới). Có thay đổi khác xen giữa (thêm/sửa/kéo việc…) → xóa danh sách chờ, chỉ giữ Hoàn tác mới nhất. Lý do: Hoàn tác không được khôi phục thứ người dùng đã "bỏ qua" bằng thao tác khác.
 - Khôi phục trùng `order` (M6 d): dời các việc `order >=` lên 1, việc khôi phục giữ đúng chỗ cũ. `sameTodoGroup` khớp `cmpTodo` (`due: ''` = không hạn).

@@ -1,0 +1,118 @@
+import { test, expect } from '@playwright/test';
+
+/**
+ * B-016: Toast: thao tác mới không làm mất Hoàn tác của thao tác trước (D-036).
+ * Gộp Hoàn tác khi có thao tác liên tiếp trong lúc toast còn hiện.
+ */
+
+async function openTodos(page: import('@playwright/test').Page) {
+  await page.getByTestId('tab-events').click();
+  await page.getByTestId('seg-todos').click();
+}
+
+async function addTodo(page: import('@playwright/test').Page, text: string) {
+  await page.getByTestId('todo-input').fill(text);
+  await page.getByTestId('todo-add').click();
+}
+
+async function swipeLeft(
+  page: import('@playwright/test').Page,
+  row: import('@playwright/test').Locator,
+): Promise<import('@playwright/test').Locator> {
+  const box = (await row.boundingBox())!;
+  const y = box.y + box.height / 2;
+  await page.mouse.move(box.x + box.width - 10, y);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width - 150, y, { steps: 10 });
+  await page.mouse.up();
+  return row.locator('xpath=../..');
+}
+
+test.describe('B-016 Gộp Hoàn tác khi nhiều thao tác liên tiếp', () => {
+  test('xóa 1 việc -> bấm Hoàn tác -> trở lại (hành vi cũ giữ nguyên)', async ({ page }) => {
+    await page.goto('/?test=1');
+    await openTodos(page);
+    await addTodo(page, 'Việc Đơn');
+    const rows = page.getByTestId('todo-item');
+    await expect(rows).toHaveCount(1);
+
+    const wrap = await swipeLeft(page, rows.nth(0));
+    await wrap.getByTestId('todo-swipe-delete').click();
+    await expect(rows).toHaveCount(0);
+
+    const undoBtn = page.getByTestId('toast-undo');
+    await expect(undoBtn).toBeVisible();
+    await undoBtn.click();
+
+    await expect(rows).toHaveCount(1);
+    await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('Việc Đơn');
+  });
+
+  test('thêm 3 việc, xóa việc 1 rồi xóa việc 2 liên tiếp (trong 5 s) -> bấm toast-undo -> cả 2 việc trở lại đúng thứ tự', async ({
+    page,
+  }) => {
+    await page.goto('/?test=1');
+    await openTodos(page);
+    for (const text of ['Việc 1', 'Việc 2', 'Việc 3']) {
+      await addTodo(page, text);
+    }
+    const rows = page.getByTestId('todo-item');
+    await expect(rows).toHaveCount(3);
+    await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('Việc 1');
+    await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('Việc 2');
+    await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('Việc 3');
+
+    // Xóa việc 1
+    const wrap1 = await swipeLeft(page, rows.nth(0));
+    await wrap1.getByTestId('todo-swipe-delete').click();
+    await expect(rows).toHaveCount(2);
+    await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('Việc 2');
+
+    // Xóa việc 2 liên tiếp trong lúc toast còn hiện
+    const wrap2 = await swipeLeft(page, rows.nth(0));
+    await wrap2.getByTestId('todo-swipe-delete').click();
+    await expect(rows).toHaveCount(1);
+    await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('Việc 3');
+
+    // Bấm Hoàn tác -> cả 2 việc trở lại đúng thứ tự ban đầu
+    const undoBtn = page.getByTestId('toast-undo');
+    await expect(undoBtn).toBeVisible();
+    await undoBtn.click();
+
+    await expect(rows).toHaveCount(3);
+    await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('Việc 1');
+    await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('Việc 2');
+    await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('Việc 3');
+  });
+
+  test('lưu trữ + xóa liên tiếp -> Hoàn tác khôi phục cả hai', async ({ page }) => {
+    await page.goto('/?test=1');
+    await openTodos(page);
+    for (const text of ['Việc Lưu Trữ', 'Việc Xóa']) {
+      await addTodo(page, text);
+    }
+    const rows = page.getByTestId('todo-item');
+    await expect(rows).toHaveCount(2);
+
+    // Lưu trữ việc đầu tiên
+    const wrapArchive = await swipeLeft(page, rows.nth(0));
+    await wrapArchive.getByTestId('todo-swipe-archive').click();
+    await expect(rows).toHaveCount(1);
+    await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('Việc Xóa');
+
+    // Xóa việc thứ hai liên tiếp
+    const wrapDelete = await swipeLeft(page, rows.nth(0));
+    await wrapDelete.getByTestId('todo-swipe-delete').click();
+    await expect(rows).toHaveCount(0);
+
+    // Bấm Hoàn tác -> khôi phục cả hai
+    const undoBtn = page.getByTestId('toast-undo');
+    await expect(undoBtn).toBeVisible();
+    await undoBtn.click();
+
+    await expect(rows).toHaveCount(2);
+    await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('Việc Lưu Trữ');
+    await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('Việc Xóa');
+    await expect(page.getByTestId('todo-archived-toggle')).toHaveCount(0);
+  });
+});
