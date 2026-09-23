@@ -1320,4 +1320,7 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 ### PHIÊN 2026-09-23 — làn Gemini BẬT lại mức NHIỀU (Chủ dự án: "việc làm ngay được thì giao Gemini hết, sắp reset tuần Gemini")
 ### T-10.5 — Soát chéo `M10-soat` (làn soat)
 - Đầu vào: `docs/bao-cao/M10.diff` (c461a39..HEAD: B-018, B-020, SPEC v1.11, T-10.1..T-10.END), SPEC §6 M10, §3 IN-14, §5 install.ts, §8.13, §10.G. Kết quả → `docs/bao-cao/M10-soat-cheo.md`.
-- Model: gemini (soat) · Trạng thái: DOING
+- Model: gemini (soat) · Trạng thái: DONE — Pro 4 phút, 0 vấn đề (báo cáo mỏng, 806 byte; chỉ là gợi ý cho Kiến trúc sư)
+### T-10.6 — Khảo sát chập chờn `tests/e2e/week.spec.ts:12` webkit (làn doc, S4)
+- Chỉ đọc: tìm nguyên nhân khả dĩ (chờ điều kiện, animation, thời gian), đề xuất cách sửa test/app kèm file:dòng. Kết quả → `docs/gemini-out/T-10.6.md`. Không sửa file.
+- Model: gemini (doc) · Trạng thái: DOING
