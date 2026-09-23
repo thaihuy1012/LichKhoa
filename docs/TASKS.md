@@ -1323,4 +1323,11 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - Model: gemini (soat) · Trạng thái: DONE — Pro 4 phút, 0 vấn đề (báo cáo mỏng, 806 byte; chỉ là gợi ý cho Kiến trúc sư)
 ### T-10.6 — Khảo sát chập chờn `tests/e2e/week.spec.ts:12` webkit (làn doc, S4)
 - Chỉ đọc: tìm nguyên nhân khả dĩ (chờ điều kiện, animation, thời gian), đề xuất cách sửa test/app kèm file:dòng. Kết quả → `docs/gemini-out/T-10.6.md`. Không sửa file.
-- Model: gemini (doc) → khao-sat · Trạng thái: DOING — Gemini vòng 1 TRỐNG (dừng giữa lúc chạy test, chỉ còn dòng dò) = lỗi làn 1/2 phiên này → chuyển khao-sat (Haiku)
+- Model: gemini (doc) → khao-sat · Trạng thái: DONE — khao-sat: webkit repeat-each=20 → 40/40 pass (không tái hiện, `docs/test-log/T-10.6-repeat.log`); nghi chính: `week.spec.ts:67` chờ cứng 500 ms trước reload so với debounce ghi 300 ms → T-10.7. Gemini vòng 1 TRỐNG (dừng giữa lúc chạy test, chỉ còn dòng dò) = lỗi làn 1/2 phiên này → chuyển khao-sat (Haiku)
+### T-10.7 — `week.spec.ts`: bỏ chờ cứng 500 ms trước reload, chờ IndexedDB đã lưu bố cục Tuần (S4, sửa test khóa T-5.3 — có khai báo)
+- Mục tiêu: hết chập chờn webkit do reload trước khi ghi IndexedDB xong.
+- Phạm vi file: `tests/e2e/week.spec.ts` (chỉ file này).
+- Giao diện có sẵn: mẫu đọc `indexedDB.open('keyval-store')` + `expect.poll` ở `tests/e2e/m6-todo-gestures.spec.ts:38–60`, `tests/e2e/m8-dayalarm.spec.ts:50`; khóa/cấu trúc state trong `src/ui/store.ts`.
+- Tiêu chí: [ ] thay `page.waitForTimeout(500)` (dòng ~67) bằng `expect.poll` đọc IndexedDB tới khi bố cục đã lưu là tuần [ ] không đổi/bớt assert nào khác, không skip, không nới timeout có sẵn [ ] không còn `waitForTimeout` trong file [ ] lệnh kiểm tra pass.
+- Lệnh kiểm tra: `npm run build && npx playwright test tests/e2e/week.spec.ts --repeat-each=10` ; `npm run check` (kiem-thu).
+- Model: gemini (code — đủ 4 điều: tiêu chí + lệnh rõ, 1 file, không đổi thiết kế, cây sạch) · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DOING
