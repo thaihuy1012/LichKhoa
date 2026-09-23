@@ -1,0 +1,1881 @@
+diff --git a/docs/HUONG-DAN.md b/docs/HUONG-DAN.md
+index e1773bd..ce24dd8 100644
+--- a/docs/HUONG-DAN.md
++++ b/docs/HUONG-DAN.md
+@@ -29,6 +29,8 @@ Nếu bạn không cần lịch Google, có thể bỏ qua phần này.
+ 
+ ## C. Tạo Shortcut "Đặt hình nền" (làm một lần duy nhất)
+ 
++> 💡 **Cách nhanh hơn**: Nếu Chủ dự án đã chia sẻ link iCloud, bạn có thể cài nhanh theo mục [**F. Cài nhanh cả bộ Phím tắt bằng link iCloud**](#f-cài-nhanh-cả-bộ-phím-tắt-bằng-link-icloud) thay vì tạo tay.
++
+ 1. Mở app **Shortcuts** (Phím tắt) có sẵn trên iPhone.
+ 2. Bấm dấu **+** để tạo Shortcut mới.
+ 3. Bấm **"Add Action"** (Thêm hành động), tìm và chọn **"Set Wallpaper"** (Đặt hình nền) — trên một số bản iOS mới, hành động này tên là **"Set Wallpaper Photo"** (Đặt ảnh hình nền).
+@@ -51,6 +53,8 @@ Ghi chú: chỉ dùng hành động **"Set Wallpaper"**, không cần và không
+ 
+ ## E. Cài đặt 2 Phím tắt nhắc trên iPhone (Báo thức & Lời nhắc)
+ 
++> 💡 **Cách nhanh hơn**: Nếu Chủ dự án đã chia sẻ link iCloud, bạn có thể cài nhanh cả bộ 5 Phím tắt theo mục [**F. Cài nhanh cả bộ Phím tắt bằng link iCloud**](#f-cài-nhanh-cả-bộ-phím-tắt-bằng-link-icloud) mà không cần phải dựng tay từng bước ở mục này.
++
+ LichKhoa hỗ trợ mở nhanh Phím tắt trên iPhone để tạo **Báo thức** (trong app Đồng hồ — rung chuông lớn, dành cho sự kiện trong vòng 24 giờ tới) hoặc **Lời nhắc** (trong app Lời nhắc / Reminders — có thông báo ngày giờ, hỗ trợ ghi chú).
+ 
+ Để dùng được tính năng này, bạn cần tạo 2 Phím tắt trên iPhone theo hướng dẫn từng bước dưới đây (chỉ làm một lần duy nhất).
+@@ -262,6 +266,106 @@ Nút "Báo thức đúng ngày" trong LichKhoa vượt giới hạn 24 giờ c
+ 
+ ---
+ 
++## F. Cài nhanh cả bộ Phím tắt bằng link iCloud (người dùng / bạn của Chủ dự án)
++
++Đây là **cách dễ nhất** để cài đặt trọn bộ 5 Phím tắt cho LichKhoa nếu Chủ dự án đã chia sẻ liên kết iCloud cho bạn, không cần phải tự tạo từng hành động phức tạp.
++
++### Điều kiện
++- **Thiết bị**: iPhone chạy **iOS 17 trở lên** (tính năng chia sẻ link iCloud hỗ trợ từ iOS 15+, nhưng LichKhoa yêu cầu iOS 17+ để hoạt động đầy đủ).
++- **Kết nối mạng**: Cần có mạng Internet trong lúc cài đặt (Apple xác thực và ký phím tắt từ máy chủ iCloud).
++- **Đã có link chia sẻ**: Chủ dự án đã cấu hình danh sách link trong app (nạp qua file `shortcut-links.json`) hoặc gửi link trực tiếp cho bạn (dạng ví dụ: `https://www.icloud.com/shortcuts/<32 ký tự hex>`).
++
++### Thứ tự cài đặt (1 → 5)
++Trong LichKhoa, vào tab **Hướng dẫn** → cuộn đến thẻ số 2: **"Cài bộ Phím tắt bằng link iCloud"**. Bấm nút **"Tải"** (Get Shortcut) lần lượt theo đúng thứ tự 1 → 5 sau:
++
++1. **`DatHinhNen`** (Đặt hình nền): Nhận ảnh xuất từ LichKhoa qua clipboard và tự động đổi màn hình khóa (Lock Screen).
++2. **`ThemBaoThuc`** (Thêm báo thức): Nhận thông tin từ app để tạo báo thức rung chuông lớn trong app Đồng hồ (Clock), áp dụng cho các mốc trong vòng 24 giờ tới.
++3. **`ThemLoiNhac`** (Thêm lời nhắc): Tạo mục lời nhắc có thông báo ngày giờ và ghi chú trong app Lời nhắc (Reminders).
++4. **`ThemBaoThucNgay`** (Báo thức đúng ngày): Gửi lời nhắc có ngày giờ hẹn vào danh sách `BaoThuc` làm kho hẹn cho các ngày xa hơn (vượt giới hạn 24 giờ của app Đồng hồ).
++5. **`TaoBaoThucSang`** (Tạo báo thức sáng): Phím tắt quét danh sách `BaoThuc` vào lúc **00:05 hằng ngày** để tự động tạo báo thức Đồng hồ đúng giờ cho ngày hôm đó.
++
++**Thao tác khi tải**:
++- Chạm vào nút **"Tải"** của từng hàng. Khi dùng LichKhoa ở chế độ đã cài vào Màn hình chính (standalone), iOS sẽ mở trang web iCloud trong trình duyệt trong-app hoặc chuyển thẳng sang app Phím tắt (Shortcuts) → hiện màn hình mô tả phím tắt → bấm **"Thêm Phím tắt"** / **"Nhận Phím tắt"** (**Get Shortcut**).
++- **Cách sao chép link (nhấn giữ nút)**: Nếu trình duyệt trong-app bị đứng hoặc không chuyển được sang app Phím tắt, bạn hãy **nhấn giữ nút "Tải"** (hoặc nhấn giữ liên kết) → chọn **Sao chép liên kết** (Copy Link) → mở trình duyệt Safari thông thường, dán link vào thanh địa chỉ và truy cập để mở trực tiếp màn hình Get Shortcut trong app Phím tắt.
++
++### Câu hỏi khi cài đặt (Import Question)
++- Khi bạn cài đặt các phím tắt làm việc với app Lời nhắc như `ThemLoiNhac` và `ThemBaoThucNgay`, nếu Chủ dự án đã thiết lập câu hỏi cài đặt (**Import Question**), iOS sẽ hiện hộp thoại hỏi bạn: *"Chọn danh sách Lời nhắc..."*.
++- Bạn chỉ việc chạm và chọn danh sách tương ứng có sẵn trên iPhone của bạn:
++  - Với `ThemLoiNhac`: chọn danh sách bạn hay dùng (ví dụ: *Lời nhắc* / *Reminders* / *Sẽ làm*).
++  - Với `ThemBaoThucNgay`: chọn ĐÚNG danh sách **`BaoThuc`** (hãy chắc chắn bạn đã tạo danh sách này trước như hướng dẫn bên dưới).
++- Danh sách riêng của Chủ dự án đã được Apple xóa sạch khi tạo link chia sẻ, nên câu hỏi Import Question giúp bạn gắn phím tắt vào đúng danh sách trên máy của mình mà không bị lộ dữ liệu cá nhân của người chia sẻ. Nếu khi cài đặt iOS không hiện câu hỏi thì bạn chỉ cần chỉnh tay ở bước kiểm tra bên dưới.
++
++### Kiểm tra sau khi cài đặt
++Sau khi cài đủ 5 phím tắt, hãy mở app **Shortcuts (Phím tắt)** trên iPhone và kiểm tra 3 điểm quan trọng:
++1. **Kiểm tra tên Phím tắt**: Đảm bảo 5 phím tắt có đúng tên chính xác: `DatHinhNen`, `ThemBaoThuc`, `ThemLoiNhac`, `ThemBaoThucNgay`, `TaoBaoThucSang`. Nếu máy bạn trước đó đã có phím tắt trùng tên, iOS sẽ tự động đổi tên bản mới thành `DatHinhNen 1` hay `ThemBaoThuc 2`... Khi bị lệch tên, LichKhoa sẽ không thể kích hoạt được (iOS báo lỗi "không tìm thấy Phím tắt"). Hãy xóa phím tắt cũ hoặc đổi lại tên cho đúng từng chữ.
++2. **Kiểm tra danh sách trong `ThemBaoThucNgay`**: Chạm vào phím tắt `ThemBaoThucNgay` để mở giao diện sửa → cuộn xuống hành động **Add New Reminder (Thêm lời nhắc mới)** ở cuối → kiểm tra xem ô danh sách đã trỏ đúng vào **`BaoThuc`** chưa. Nếu đang hiện danh sách mặc định khác, chạm vào để chọn lại danh sách `BaoThuc`.
++3. **Kiểm tra bộ lọc trong `TaoBaoThucSang`**: Mở phím tắt `TaoBaoThucSang` → kiểm tra hành động đầu tiên **Find Reminders (Tìm lời nhắc)**. Vì bộ lọc danh sách (`List is BaoThuc`) là thuộc tính cục bộ của máy tạo mà Apple không đóng gói mang sang máy khác được, hãy chạm vào ô danh sách của bộ lọc này và chọn lại đúng danh sách **`BaoThuc`** trên máy bạn.
++
++### Việc còn phải tự làm (4 việc iOS không thể chia sẻ qua link)
++Hệ điều hành iOS không cho phép chia sẻ Tự động hóa và cài đặt thông báo qua link, nên sau khi tải 5 phím tắt, bạn vẫn cần tự hoàn thiện 4 bước sau:
++1. **Tạo danh sách Lời nhắc `BaoThuc`**: Mở app **Lời nhắc (Reminders)** → Tạo danh sách mới đặt ĐÚNG tên **`BaoThuc`** (viết liền, không dấu cách). Làm bước này TRƯỚC khi tải `ThemBaoThucNgay` và `TaoBaoThucSang`.
++2. **Cài Tự động hóa chạy 00:05 hằng ngày**: Mở app **Shortcuts (Phím tắt)** → tab **Automation (Tự động hóa)** → bấm **+** → chọn **Time of Day (Thời điểm trong ngày)** lúc **00:05**, lặp **Daily (Hằng ngày)** → chọn **Run Immediately (Chạy ngay)**, tắt **Notify When Run (Thông báo khi chạy)** → chọn phím tắt **`TaoBaoThucSang`** (xem chi tiết tại mục E.3 Bước 4).
++3. **Bật Nhạy cảm về thời gian**: Vào **Cài đặt (Settings) → Thông báo (Notifications) → Lời nhắc (Reminders)** → bật **Thông báo nhạy cảm về thời gian (Time Sensitive Notifications)**; đồng thời thêm Lời nhắc vào các chế độ Tập trung (Focus / Không làm phiền) bạn sử dụng (xem chi tiết tại mục E - Bật Nhạy cảm về thời gian).
++4. **Đồng bộ tên Phím tắt với LichKhoa**: Đảm bảo tên 4 phím tắt trong app LichKhoa (tab Xem trước › Đổi tên Phím tắt) khớp 100% với tên trên iPhone. Nếu trước đó bạn đã lỡ sửa tên trong app, hãy bấm nút **"Khôi phục tên mặc định"** để đồng bộ lại.
++
++---
++
++## G. Dành cho Chủ dự án: tạo / cập nhật / thu hồi link
++
++Quy trình chuẩn dành cho Chủ dự án để đóng gói 5 Phím tắt (`DatHinhNen`, `ThemBaoThuc`, `ThemLoiNhac`, `ThemBaoThucNgay`, `TaoBaoThucSang`) thành link iCloud chia sẻ cho người dùng và cập nhật vào LichKhoa (theo SPEC §10.G).
++
++### 1. Soát Phím tắt (không có dữ liệu riêng)
++Trước khi chia sẻ, mở từng Phím tắt và kiểm tra kỹ:
++- Không chứa văn bản mẫu (**Text**), thông báo (**Show Notification**), hoặc ghi chú (**Comment**) có lưu thông tin cá nhân, ghi chú riêng tư.
++- Không chứa các hành động truy cập danh bạ (**Contacts**), định vị (**Location**), hoặc ảnh (**Photos**) riêng tư.
++- Tên danh sách Reminders chỉ dùng `BaoThuc` hoặc tên chung.
++- **Lưu ý bảo mật**: Link chia sẻ iCloud và kho mã nguồn LichKhoa đều là công khai. Bất kỳ ai có liên kết đều có thể xem và tải toàn bộ các hành động bên trong Phím tắt.
++
++### 2. Thêm "Import Question" (nếu có tham số danh sách)
++Với 2 Phím tắt tương tác với Lời nhắc (`ThemLoiNhac` và `ThemBaoThucNgay`):
++- Mở Phím tắt trong app Shortcuts → chạm biểu tượng **ⓘ (Details / Chi tiết)** ở cạnh dưới màn hình.
++- Chọn **Setup (Thiết lập)** → chọn **Add New Question (Thêm câu hỏi mới)**.
++- Chọn tham số danh sách (**List**) của hành động **Add New Reminder (Thêm lời nhắc mới)** (nếu iOS cho phép chọn tham số này trong danh sách thiết lập) → điền câu hỏi hướng dẫn: *"Chọn danh sách Lời nhắc (chọn BaoThuc nếu là ThemBaoThucNgay)"*.
++- *Ý nghĩa*: Khi người dùng khác bấm link cài đặt, iOS sẽ hiển thị câu hỏi này để họ chọn danh sách trên máy họ. Apple sẽ tự động xóa giá trị danh sách trên máy của bạn khi tạo link nên không lo lộ danh sách cá nhân. Nếu iOS không cho phép tạo câu hỏi cho tham số đó, bỏ qua bước này và người dùng sẽ chọn tay theo mục §F.
++
++### 3. Bật iCloud › Phím tắt
++Trên iPhone của Chủ dự án:
++- Vào **Cài đặt (Settings)** → chạm vào **[Apple Account / Tên bạn]** ở trên cùng → chọn **iCloud**.
++- Tìm mục **Phím tắt (Shortcuts)** và đảm bảo đang ở trạng thái **Bật** (On).
++- Đây là điều kiện tiên quyết của Apple để có thể tải bản sao phím tắt lên đám mây iCloud và tạo liên kết chia sẻ.
++
++### 4. Copy iCloud Link từng Phím tắt → dán cho Quản lý
++Tại từng Phím tắt trong app Shortcuts:
++- Chạm vào biểu tượng **⋯** hoặc nút **Chia sẻ (Share)** → chọn **Copy iCloud Link (Sao chép liên kết iCloud)**.
++- Liên kết tạo ra có dạng chuẩn: `https://www.icloud.com/shortcuts/<32 ký tự hex>` (ví dụ: `https://www.icloud.com/shortcuts/0123456789abcdef0123456789abcdef`).
++- Sao chép đủ 5 link và gửi cho Quản lý theo đúng 5 định danh (`kind: url`):
++  - `wallpaper`: link của `DatHinhNen`
++  - `alarm`: link của `ThemBaoThuc`
++  - `reminder`: link của `ThemLoiNhac`
++  - `dayAlarm`: link của `ThemBaoThucNgay`
++  - `morning`: link của `TaoBaoThucSang`
++
++### 5. Quản lý kiểm tra (chạy unit test, mở link xác minh tên)
++Sau khi nhận 5 liên kết từ Chủ dự án, Quản lý thực hiện:
++- Dán các URL vào file tĩnh `public/shortcut-links.json`, cập nhật trường ngày `"updated": "YYYY-MM-DD"`.
++- Chạy kiểm thử tự động để xác nhận định dạng link: `npx vitest run tests/unit/install.test.ts`.
++- Mở từng link trên trình duyệt máy tính (Chrome/Edge trên Windows) để xác nhận: trang iCloud hiển thị đúng tên Phím tắt và **không hiển thị tên thật hay email cá nhân** của Chủ dự án trên trang công khai. Nếu trang chia sẻ hiển thị thông tin nhạy cảm → CHẶN lại và trao đổi với Chủ dự án trước khi tiếp tục.
++- Ghi nhận qua Cổng bảo mật, tạo pull request / commit để chuẩn bị deploy.
++
++### 6. Sửa Phím tắt lần sau: chia sẻ lại (link mới)
++- Link iCloud là một **ảnh chụp tĩnh** (snapshot) tại thời điểm tạo. Khi bạn sửa đổi nội dung hành động của Phím tắt trên iPhone, link cũ **không tự cập nhật**.
++- Khi cần nâng cấp hoặc sửa lỗi Phím tắt: thực hiện lại các bước 1–5 để lấy liên kết mới bằng **Copy iCloud Link** → cập nhật URL mới vào `public/shortcut-links.json` và cập nhật ngày `updated` → push bản mới lên hosting.
++- Link cũ vẫn tiếp tục tồn tại và tải phiên bản cũ cho đến khi bị thu hồi.
++
++### 7. Thu hồi: "Stop Sharing" + để url rỗng trong JSON
++- **Dừng chia sẻ trên iCloud**: Nếu muốn thu hồi liên kết cũ, mở link đó trên iPhone hoặc vào app Shortcuts → chọn phím tắt → bấm **⋯** → chọn **Stop Sharing (Dừng chia sẻ)** (hoặc quản lý trong danh sách liên kết chia sẻ iCloud Private Sharing).
++- **Thu hồi trên LichKhoa**: Trong file `public/shortcut-links.json`, đặt URL của phím tắt đó về chuỗi rỗng `""` (ví dụ `"wallpaper": { "url": "" }`) rồi push cập nhật. LichKhoa sẽ tự động nhận biết và hiển thị dòng thông báo *"Chưa có link — dựng tay theo các thẻ bên dưới"* (`sc-nolink`), đảm bảo giao diện không bị lỗi.
++
++> 🔒 **Ghi chú về bảo mật**:
++> Tự động hóa (Automation 00:05 hằng ngày) và danh sách Lời nhắc riêng `BaoThuc` **không thể chia sẻ qua link iCloud**. Đây là cơ chế bảo mật của Apple nhằm tránh ứng dụng can thiệp trái phép vào hệ thống của người dùng khác. Do đó, người nhận bắt buộc phải tự tạo danh sách `BaoThuc` và thiết lập Tự động hóa trên máy của họ (theo mục §F và §E.3).
++
++---
++
+ ## Quy trình dùng hằng ngày (≤ 3 chạm)
+ 
+ 1. Mở LichKhoa từ biểu tượng trên Màn hình chính.
+@@ -281,6 +385,24 @@ Nút "Báo thức đúng ngày" trong LichKhoa vượt giới hạn 24 giờ c
+   - **(b)** Chạy **trùng** (bấm tay + Tự động hóa cùng chạy trong ngày) → "Create an Alarm for..." luôn tạo báo thức mới, có thể ra 2 báo thức giống nhau. Giảm rủi ro: lọc `Is Not Completed` trong "Find Reminders" và "Set Is Completed of Repeat Item to Yes" ngay sau khi tạo — chạy lại cùng ngày sẽ không tạo thêm.
+   - **(c)** Báo thức một lần sau khi kêu **vẫn còn nằm (ở trạng thái tắt)** trong app Đồng hồ — Phím tắt không tự xóa được. Cần dọn tay theo đợt (Đồng hồ → Sửa → xóa các báo thức cũ).
+   - **(d)** Bắt buộc phải dùng danh sách Reminders **riêng** `BaoThuc`, không dùng chung với danh sách lời nhắc khác. Nếu trỏ nhầm sang danh sách chung, mọi lời nhắc đến hạn hôm nay trong danh sách đó sẽ bị biến thành báo thức.
++- Nhắc qua Phím tắt & Cài đặt bộ Phím tắt — 8 giới hạn đã biết từ SPEC (§8.10 / §8.13):
++  - **(a) Báo thức chỉ có giờ (kêu trong 24h tới)**: Báo thức trong app Đồng hồ chỉ có giờ, luôn đổ chuông vào lần tới trong vòng 24 giờ. Do đó LichKhoa chỉ cho phép bấm "Thêm báo thức" trong cửa sổ 24 giờ tới; việc xa hơn phải dùng Lời nhắc hoặc Báo thức đúng ngày (§E.3). Nếu chọn giờ quá sát thời điểm hiện tại (≤ 1–2 phút) mà Phím tắt chạy chậm (ví dụ lần đầu iOS hỏi cấp quyền), báo thức có thể bị trôi sang hôm sau.
++  - **(b) App không theo dõi báo thức/lời nhắc đã tạo**: Bấm nút 2 lần sẽ tạo 2 mục trùng nhau trong app Đồng hồ hoặc Lời nhắc. Báo thức một lần sau khi kêu vẫn nằm (ở trạng thái tắt) trong danh sách Đồng hồ, cần dọn dẹp thủ công theo đợt.
++  - **(c) Tên Phím tắt sai lệch**: Nếu tên Phím tắt trên iPhone bị sai lệch so với tên cài đặt trong LichKhoa, iOS sẽ báo "không tìm thấy Phím tắt" mà app không thể tự phát hiện trước.
++  - **(d) Định dạng `reminderText` dạng `d MMM yyyy HH:mm`**: Dữ liệu gửi sang Phím tắt phải dùng định dạng như `23 Sep 2026 14:00` (tháng viết tắt tiếng Anh cố định trong mã) để hành động "Get Dates from Input" trên iOS 18 nhận diện chính xác, không dùng dạng `YYYY-MM-DD`.
++  - **(e) Rời app sang Phím tắt có thể làm iOS đóng PWA**: Khi bấm nút mở Phím tắt, iOS có thể đóng hoặc đình chỉ app LichKhoa đang chạy nền. Vì vậy app luôn lưu form và gọi `await store.flush()` ghi xong IndexedDB rồi mới điều hướng sang `shortcuts://`.
++  - **(f) Không tự quay về LichKhoa sau khi Phím tắt chạy**: Phím tắt chạy xong sẽ dừng lại ở màn hình Phím tắt hoặc màn hình chính; iOS không cho phép tự động điều hướng quay lại app LichKhoa.
++  - **(g) "Nhạy cảm thời gian" là cài đặt hệ thống**: Tùy chọn Time Sensitive Notifications nằm trong Cài đặt hệ thống của iOS (Cài đặt → Thông báo → Lời nhắc), không thể cấu hình từ trong app. Người dùng bắt buộc phải tự bật thủ công để thông báo không bị chặn bởi chế độ Tập trung.
++  - **(h) Yêu cầu tài khoản iCloud và phiên bản iOS**: Máy Chủ dự án phải bật iCloud › Phím tắt (tính năng iCloud Private Sharing cho Phím tắt) mới có thể tạo link chia sẻ `https://www.icloud.com/shortcuts/<32 ký tự hex>`. Người nhận cần iOS 15 trở lên để mở link iCloud (LichKhoa yêu cầu iOS 17+ để chạy đầy đủ các tính năng).
++- Cài bộ Phím tắt bằng link iCloud — chi tiết rủi ro SPEC §8.13 (D-037):
++  - **Link là công khai**: Bất kỳ ai có link đều xem và cài được nội dung Phím tắt (Apple lưu và ký bản sao trên máy chủ iCloud; bản người dùng đã tải về máy không thu hồi từ xa được). Trước khi chia sẻ phải soát kỹ, không để sót Text / thông báo / bình luận / danh sách / liên hệ / vị trí riêng. Các trường có Import Question sẽ được Apple xóa khi chia sẻ. Quản lý dự án cần mở link trên trình duyệt máy tính để xác nhận trang không hiển thị tên thật hoặc email cá nhân của Chủ dự án trước khi đưa vào `public/shortcut-links.json`.
++  - **Link là ảnh chụp tĩnh (snapshot)**: Chỉnh sửa Phím tắt trên iPhone sẽ không tự cập nhật lên link cũ. Muốn phát hành bản mới, Chủ dự án phải Copy iCloud Link lại (sinh link mới) → Quản lý cập nhật vào `public/shortcut-links.json` và cập nhật ngày `updated` → push bản mới. Link cũ vẫn tải bản cũ cho tới khi Chủ dự án bấm "Stop Sharing".
++  - **Tham số danh sách Reminders và bộ lọc `List is BaoThuc` không mang sang máy khác**: Tham số danh sách là định danh cục bộ trên máy Chủ dự án; người nhận nếu không có Import Question hoặc bỏ qua câu hỏi thì "Add New Reminder" sẽ ghi vào danh sách mặc định, và `TaoBaoThucSang` không tìm thấy gì (lỗi im lặng không báo). Do đó bước "Kiểm tra sau khi cài" ở §F là bắt buộc.
++  - **Tự động hóa 00:05, danh sách `BaoThuc` và Nhạy cảm thời gian không chia sẻ được**: 4 bước này thuộc về hệ thống và thiết bị của từng người, bắt buộc phải tự làm như đã nêu trong thẻ Hướng dẫn.
++  - **Trùng tên Phím tắt**: Nếu máy đã có phím tắt cùng tên, iOS sẽ tự động đổi tên bản mới thành đuôi " 2" khiến nút bấm trong app gọi sai tên. App chỉ phát hiện lệch giữa tên trong app và tên mặc định, không thể đọc được tên phím tắt thực tế trên máy người dùng.
++  - **Mở link từ PWA standalone**: Link khác origin mở ở trình duyệt trong-app (in-app browser), người dùng có thể phải bấm "Get Shortcut" thêm một lần; nếu cửa sổ trong-app không chuyển tiếp được sang app Phím tắt thì cần nhấn giữ nút, chọn Sao chép liên kết và dán vào Safari.
++  - **Cần mạng khi cài đặt**: Tải phím tắt qua link iCloud bắt buộc phải có kết nối Internet; file tĩnh `public/shortcut-links.json` không được precache trong Service Worker nên khi offline sẽ hiện thông báo lỗi tải link (`sc-links-error`). Bộ nhớ đệm của GitHub Pages có thể mất tới 10 phút để hiển thị link mới sau khi deploy.
++  - **Yêu cầu bật iCloud Phím tắt**: Máy Chủ dự án phải bật iCloud › Phím tắt để tạo link chia sẻ; người nhận cần iOS 15+ (LichKhoa yêu cầu iOS 17+).
+ 
+ ## Bài thử trên iPhone (làm khi có bản chạy thật — T-4.0)
+ 
+diff --git a/docs/SPEC.md b/docs/SPEC.md
+index fdbb06f..8054d51 100644
+--- a/docs/SPEC.md
++++ b/docs/SPEC.md
+@@ -1,10 +1,10 @@
+ # SPEC — LichKhoa (tái tạo tính năng "Ink: Lockscreen Calendar, Note" dưới dạng PWA)
+ (Kiến trúc sư điền ở Giai đoạn 0. Đây là nguồn sự thật; mọi thay đổi phạm vi phải qua Chủ dự án.)
+ 
+-Phiên bản SPEC: 1.10 — 2026-09-19 (v1.10, D-035: **Việc có giờ hạn** — `Todo.dueTime` tùy chọn `'HH:mm'` cạnh `due` (KHÔNG đổi kiểu `due`), nhập ở hàng thêm việc và sửa được sau khi tạo; cùng ngày sắp theo giờ; nhãn "Hôm nay 14:00" / "6/10 14:00" trong app và hình nền, "Quá hạn" vẫn theo ngày; hộp nhắc mặc định theo giờ hạn; IN-13, milestone M9; gộp 2 tồn đọng S4 của M8. Duyệt M8 cùng ngày: không đổi chữ M8). Trước đó 1.9 — 2026-09-19 (v1.9, D-034: **Báo thức đúng ngày** — nút thứ ba trong hộp nhắc: lời nhắc vào danh sách Reminders riêng `BaoThuc`, Tự động hóa Phím tắt 00:05 hằng ngày tạo báo thức Đồng hồ cho lời nhắc đến hạn hôm nay — vượt giới hạn 24 h của §8.10(a) mà không cần app chạy nền; IN-12, `AppState.dayAlarmShortcutName`, `dayAlarmWindow`, milestone M8). Trước đó 1.8 — 2026-09-19 (v1.8, D-031: **Nhắc trên iPhone qua Phím tắt** — nút trong 3 form mở hộp chọn thời điểm → "Thêm báo thức" (app Đồng hồ) / "Thêm lời nhắc" (Reminders) / "Không báo thức"; IN-11, `AppState.alarmShortcutName`/`reminderShortcutName`, `export/reminder.ts`, milestone M7; chỉnh chữ khi Kiến trúc sư duyệt M7 2026-09-19, không đổi phạm vi: `flush()` T-7.5/D-033 ở IN-11, §5 L63, §6 M7, §8.10(e); §8.10(a) thêm lỗ hổng độ trễ tạo báo thức; bài thử tay thêm (B′) Cách B). Trước đó 1.7 — 2026-09-15 (v1.7, D-028: Việc cần làm — vuốt trái Xóa/Lưu trữ, nhấn giữ kéo sắp xếp, `Todo.archived`, milestone M6). Trước đó 1.6 — 2026-09-15 (v1.6, D-026: hình nền ẩn sự kiện trùng local/Google — giữ cái tạo sau; `createdAt`). Trước đó 1.5 — 2026-09-15 (v1.5, D-024: bố cục **Tuần** giống app Inks — IN-2, `Occurrence.endTime`, đồng bộ Google từ hôm nay − 7, milestone M5). Trước đó 1.4 — 2026-09-14 (v1.4, D-018: bố cục Tháng có danh sách sự kiện + to-do bên dưới `monthList`; tab Sự kiện hiện sự kiện Google chỉ xem). Trước đó 1.3 — 2026-09-13 (v1.0 + Âm lịch D-006 + thiết bị đích iPhone 13 Pro Max D-007 + lặp T2–T6, nhắc giờ qua .ics, hạn chót to-do, nhiều ghi chú D-011). Kiến trúc sư soát v1.3 ngày 2026-09-14 (D-012): chỉ chỉnh chữ §3 (thứ tự IN-10), §5 (cây thư mục, thêm `cmpTodo`/`buildOps`), §9 (trần dòng agenda); không đổi phạm vi. Duyệt M3 (D-015, 2026-09-14): chỉ chỉnh chữ §8 rủi ro 1. Nghiệm thu cuối (D-021, 2026-09-14): Kiến trúc sư soát v1.4 — chỉ chỉnh chữ §2 TH1, §3 IN-10 (D-020), §5 (background.ts, ui/sync.ts, pages.yml, ảnh nền D-017), §6 M4 (tiêu chí v1.4/D-020), §8 rủi ro 3, §9 hosting thực tế (D-019); không đổi phạm vi. App gốc đối chiếu: "Ink: Lockscreen Calendar, Note" (SilverAI JSC, App Store id6769250805, bản 1.2.14). Tính năng gốc đã tra cứu: hình nền màn hình khóa có lịch / agenda / to-do chồng lên ảnh cá nhân; đồng bộ Google Calendar và Apple Calendar; tạo sự kiện lặp có nhắc; tùy chỉnh ảnh, màu, độ mờ, ngôn ngữ; widget lịch và ghi chú; dữ liệu xử lý trên máy. Tên làm việc "LichKhoa" — không dùng tên, logo, ảnh, font của app gốc; chỉ tái tạo tính năng và luồng dùng.
++Phiên bản SPEC: 1.11 — 2026-09-22 (v1.11, D-037: **Cài bộ Phím tắt bằng link iCloud** — Chủ dự án chia sẻ 5 Phím tắt đã dựng (`DatHinhNen`, `ThemBaoThuc`, `ThemLoiNhac`, `ThemBaoThucNgay`, `TaoBaoThucSang`) bằng "Copy iCloud Link"; app đọc `public/shortcut-links.json` và hiện nút "Tải" cho từng Phím tắt ở thẻ Hướng dẫn số 2, kèm cảnh báo lệch tên và 4 việc người nhận vẫn phải tự làm (danh sách `BaoThuc`, Tự động hóa 00:05, Nhạy cảm thời gian, tên trùng); không lưu link trong AppState; IN-14, `export/install.ts`, milestone M10; Cổng bảo mật thêm bước soát nội dung Phím tắt và trang link trước khi commit). Trước đó 1.10 — 2026-09-19 (v1.10, D-035: **Việc có giờ hạn** — `Todo.dueTime` tùy chọn `'HH:mm'` cạnh `due` (KHÔNG đổi kiểu `due`), nhập ở hàng thêm việc và sửa được sau khi tạo; cùng ngày sắp theo giờ; nhãn "Hôm nay 14:00" / "6/10 14:00" trong app và hình nền, "Quá hạn" vẫn theo ngày; hộp nhắc mặc định theo giờ hạn; IN-13, milestone M9; gộp 2 tồn đọng S4 của M8. Duyệt M8 cùng ngày: không đổi chữ M8). Trước đó 1.9 — 2026-09-19 (v1.9, D-034: **Báo thức đúng ngày** — nút thứ ba trong hộp nhắc: lời nhắc vào danh sách Reminders riêng `BaoThuc`, Tự động hóa Phím tắt 00:05 hằng ngày tạo báo thức Đồng hồ cho lời nhắc đến hạn hôm nay — vượt giới hạn 24 h của §8.10(a) mà không cần app chạy nền; IN-12, `AppState.dayAlarmShortcutName`, `dayAlarmWindow`, milestone M8). Trước đó 1.8 — 2026-09-19 (v1.8, D-031: **Nhắc trên iPhone qua Phím tắt** — nút trong 3 form mở hộp chọn thời điểm → "Thêm báo thức" (app Đồng hồ) / "Thêm lời nhắc" (Reminders) / "Không báo thức"; IN-11, `AppState.alarmShortcutName`/`reminderShortcutName`, `export/reminder.ts`, milestone M7; chỉnh chữ khi Kiến trúc sư duyệt M7 2026-09-19, không đổi phạm vi: `flush()` T-7.5/D-033 ở IN-11, §5 L63, §6 M7, §8.10(e); §8.10(a) thêm lỗ hổng độ trễ tạo báo thức; bài thử tay thêm (B′) Cách B). Trước đó 1.7 — 2026-09-15 (v1.7, D-028: Việc cần làm — vuốt trái Xóa/Lưu trữ, nhấn giữ kéo sắp xếp, `Todo.archived`, milestone M6). Trước đó 1.6 — 2026-09-15 (v1.6, D-026: hình nền ẩn sự kiện trùng local/Google — giữ cái tạo sau; `createdAt`). Trước đó 1.5 — 2026-09-15 (v1.5, D-024: bố cục **Tuần** giống app Inks — IN-2, `Occurrence.endTime`, đồng bộ Google từ hôm nay − 7, milestone M5). Trước đó 1.4 — 2026-09-14 (v1.4, D-018: bố cục Tháng có danh sách sự kiện + to-do bên dưới `monthList`; tab Sự kiện hiện sự kiện Google chỉ xem). Trước đó 1.3 — 2026-09-13 (v1.0 + Âm lịch D-006 + thiết bị đích iPhone 13 Pro Max D-007 + lặp T2–T6, nhắc giờ qua .ics, hạn chót to-do, nhiều ghi chú D-011). Kiến trúc sư soát v1.3 ngày 2026-09-14 (D-012): chỉ chỉnh chữ §3 (thứ tự IN-10), §5 (cây thư mục, thêm `cmpTodo`/`buildOps`), §9 (trần dòng agenda); không đổi phạm vi. Duyệt M3 (D-015, 2026-09-14): chỉ chỉnh chữ §8 rủi ro 1. Nghiệm thu cuối (D-021, 2026-09-14): Kiến trúc sư soát v1.4 — chỉ chỉnh chữ §2 TH1, §3 IN-10 (D-020), §5 (background.ts, ui/sync.ts, pages.yml, ảnh nền D-017), §6 M4 (tiêu chí v1.4/D-020), §8 rủi ro 3, §9 hosting thực tế (D-019); không đổi phạm vi. App gốc đối chiếu: "Ink: Lockscreen Calendar, Note" (SilverAI JSC, App Store id6769250805, bản 1.2.14). Tính năng gốc đã tra cứu: hình nền màn hình khóa có lịch / agenda / to-do chồng lên ảnh cá nhân; đồng bộ Google Calendar và Apple Calendar; tạo sự kiện lặp có nhắc; tùy chỉnh ảnh, màu, độ mờ, ngôn ngữ; widget lịch và ghi chú; dữ liệu xử lý trên máy. Tên làm việc "LichKhoa" — không dùng tên, logo, ảnh, font của app gốc; chỉ tái tạo tính năng và luồng dùng.
+ 
+ ## 1. Mục tiêu
+-Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Chủ dự án: (a) dựng ảnh hình nền màn hình khóa đúng kích thước pixel máy, có lịch tháng / agenda / to-do / ghi chú chồng lên ảnh nền tự chọn; (b) trộn sự kiện Google Calendar (chỉ đọc, OAuth thuần client, không backend) với sự kiện lặp và to-do nhập tại chỗ; (c) đặt làm hình nền khóa bằng ≤ 3 chạm mỗi ngày qua Shortcut. Dùng cá nhân, không đăng nhập, dữ liệu nằm trên máy.
++Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Chủ dự án: (a) dựng ảnh hình nền màn hình khóa đúng kích thước pixel máy, có lịch tháng / agenda / to-do / ghi chú chồng lên ảnh nền tự chọn; (b) trộn sự kiện Google Calendar (chỉ đọc, OAuth thuần client, không backend) với sự kiện lặp và to-do nhập tại chỗ; (c) đặt làm hình nền khóa bằng ≤ 3 chạm mỗi ngày qua Shortcut; (d) (v1.11) người khác dùng app cài được cả bộ 5 Phím tắt đi kèm bằng nút trong tab Hướng dẫn (link iCloud do Chủ dự án chia sẻ), không phải dựng tay. Dùng cá nhân, không đăng nhập, dữ liệu nằm trên máy.
+ 
+ ## 2. Người dùng & tình huống dùng
+ - Một người dùng (Chủ dự án), **iPhone 13 Pro Max** (1284×2778 px, 428×926 pt, DPR 3, tai thỏ — v1.2, D-007), iOS 17+, Safari, dùng dạng PWA Màn hình chính; mọi UI và hình nền tối ưu cho máy này trước; máy dev Windows 10 (Chrome dùng để chỉnh thiết kế, không bắt buộc).
+@@ -12,6 +12,7 @@ Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Ch
+ - TH2: thêm/sửa sự kiện lặp, to-do, ghi chú; xuất .ics để Lịch iPhone nhắc giờ; (v1.8) ngay trong form bấm "Nhắc trên iPhone" → chọn thời điểm → tạo báo thức trong app Đồng hồ (kêu to, trong 24 h tới) hoặc lời nhắc trong Reminders (có ngày) qua Phím tắt tự cài; (v1.9) muốn kêu to vào ngày xa hơn 24 h → "Báo thức đúng ngày": lời nhắc vào danh sách riêng, sáng đúng ngày Tự động hóa tự tạo báo thức Đồng hồ.
+ - TH3 thi thoảng: đổi ảnh nền / bố cục / màu / vị trí; kết nối lại Google khi token hết hạn.
+ - TH4: sao lưu / khôi phục dữ liệu bằng file JSON.
++- TH5 (v1.11): người dùng khác (bạn của Chủ dự án, iPhone iOS 17+) mở app lần đầu → tab Hướng dẫn → bấm "Tải" 5 lần theo thứ tự → iOS mở màn "Get Shortcut"/"Thêm Phím tắt" → xong; tự làm thêm: danh sách Reminders `BaoThuc`, Tự động hóa 00:05, bật Nhạy cảm thời gian (thẻ liệt kê). Chủ dự án là người duy nhất tạo/cập nhật link (§10.G).
+ 
+ ## 3. Phạm vi
+ - IN:
+@@ -44,6 +45,12 @@ Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Ch
+       - **Nhãn** (`todoDueLabel`, app + 3 bố cục hình nền có việc: Tháng-danh-sách, To-do, Tuần): "Hôm nay 14:00" / "6/10 14:00" (dấu cách, giờ theo `hour12`); **"Quá hạn" tính theo NGÀY, không kèm giờ** (Chủ dự án chốt 2026-09-19: hình nền là ảnh tĩnh, không có "bây giờ"); việc không giờ → chuỗi y hệt IN-10 (test khóa không đổi). Chip bố cục Tuần dòng 1 `☐ 14:00` (quá hạn vẫn `☐ Quá hạn`).
+       - **Hộp nhắc** (IN-11/12): `defaultReminderAt` việc = ngày hạn + giờ hạn (thiếu giờ → 08:00 như cũ); hàng nhập truyền `dueTime` vào `ReminderSource`; payload không đổi. App vẫn KHÔNG tự thông báo — giờ hạn chỉ để sắp xếp, hiển thị và làm mặc định cho hộp nhắc.
+       - Gộp 2 tồn đọng S4 của M8 vào T-9.3: `ReminderDialog` tách wrapper `if (!open) return null` + phần trong mount mới mỗi lần mở (`useState(() => defaultReminderAt(…))`, bỏ `useEffect([open])` → hết chớp giờ cũ, E2E không cần `toPass`); xóa khóa i18n `reminder.statusReminderOnly` (VI + EN).
++  14. (v1.11, D-037) **Cài bộ Phím tắt bằng link iCloud** — Chủ dự án chia sẻ 5 Phím tắt đã dựng (`DatHinhNen`, `ThemBaoThuc`, `ThemLoiNhac`, `ThemBaoThucNgay`, `TaoBaoThucSang`) dưới dạng link iCloud `https://www.icloud.com/shortcuts/<32 hex>` (Apple giữ bản sao để ký — iOS 15+ không còn "Allow Untrusted Shortcuts"; người nhận bấm link → mô tả Phím tắt → "Get Shortcut"/"Thêm Phím tắt"); app hiện nút tải trong tab Hướng dẫn để người khác cài không cần dựng tay. Tự động hóa 00:05 và danh sách Reminders `BaoThuc` không chia sẻ được → vẫn tự làm (thẻ liệt kê).
++      - **Nguồn link**: file tĩnh `public/shortcut-links.json` — `{ "updated": "YYYY-MM-DD" (tùy chọn), "shortcuts": { "wallpaper": { "url": "" }, "alarm": { "url": "" }, "reminder": { "url": "" }, "dayAlarm": { "url": "" }, "morning": { "url": "" } } }`; KHÔNG nằm trong `AppState`/JSON sao lưu, KHÔNG có ô nhập link trong app. `Guide.tsx` tải khi mount bằng `fetch(import.meta.env.BASE_URL + 'shortcut-links.json', { cache: 'no-cache' })`; không precache (SW `generateSW` chỉ gom js/css/html; cài Phím tắt vốn cần mạng). `parseShortcutLinks` (thuần, `export/install.ts`) không ném: url phải khớp `ICLOUD_SHORTCUT_URL = /^https:\/\/www\.icloud\.com\/shortcuts\/[0-9a-f]{32}$/`, sai/thiếu → `null`.
++      - **Thẻ Hướng dẫn số 2** `guide-card-installShortcuts` (ngay sau thẻ "Cài vào Màn hình chính"; thẻ cũ 2–8 đánh số lại 3–9 — chỉ đổi chuỗi i18n, key và `data-testid` giữ nguyên): 5 hàng `sc-row-<kind>` theo thứ tự cài `SHORTCUT_KINDS` = `wallpaper` · `alarm` · `reminder` · `dayAlarm` · `morning`; mỗi hàng: số thứ tự, tên mặc định (`sc-name-<kind>`, chữ mono), công dụng một dòng, và đúng một trong hai: nút `<a class="btn" data-testid="sc-install-<kind>" href="<url>" target="_blank" rel="noopener noreferrer">` "Tải" / "Get" (cao ≥ 44 pt, không JS — từ PWA standalone link khác origin mở ở trình duyệt trong-app hoặc thẳng app Phím tắt, cả hai đều tới màn Get Shortcut; nhấn giữ nút = sao chép link) **hoặc** dòng `sc-nolink-<kind>` "Chưa có link — dựng tay theo các thẻ bên dưới". Không tải được JSON (offline / 404 / hỏng) → dòng `sc-links-error` ("Không tải được danh sách link — cần mạng…") + 5 hàng nolink; thẻ không trắng, không ném lỗi. Có `updated` hợp lệ → dòng `sc-updated`. Không hiện URL dạng chữ.
++      - **Cảnh báo lệch tên** `sc-name-mismatch-<kind>` (4 kind có tên trong `AppState`; `morning` không có): khi `state[SHORTCUT_STATE_KEY[kind]] !== SHORTCUT_DEFAULT_NAMES[kind]` → "Tên trong app đang là “X”, Phím tắt tải về tên “Y” — Xem trước › Đổi tên Phím tắt › Khôi phục tên mặc định" (nút của B-018). Chỉ đọc state, không dispatch.
++      - **"Việc còn phải tự làm"** `sc-manual-steps` (4 `<li>` cố định, i18n VI/EN): (1) tạo danh sách Lời nhắc `BaoThuc` TRƯỚC khi tải `ThemBaoThucNgay`/`TaoBaoThucSang`; khi cài nếu được hỏi danh sách → chọn (Import Question — trường có câu hỏi bị xóa khi chia sẻ nên không lộ danh sách của Chủ dự án), không hỏi → mở Phím tắt vừa cài chọn tay ("Add New Reminder" › List; "Find Reminders" › bộ lọc List — bộ lọc không phải tham số nên luôn sửa tay); (2) Tự động hóa 00:05 (thẻ 9, bước 4 — iOS không chia sẻ Tự động hóa); (3) bật Nhạy cảm thời gian cho Lời nhắc (thẻ 8); (4) tên phải khớp app — máy đã có Phím tắt trùng tên thì iOS đặt "… 2" → xóa/đổi tên bản cũ trước khi cài.
++      - **Quy trình Chủ dự án** (§10.G; HUONG-DAN §G): soát từng Phím tắt không chứa dữ liệu riêng → đặt Import Question cho tham số List (nếu Setup liệt kê) → Chia sẻ › Copy iCloud Link → gửi Quản lý → Quản lý kiểm dạng (unit test đọc file thật), mở từng link trên Windows xác nhận trang không hiện tên thật/email → ghi `public/shortcut-links.json` + `updated` → Cổng bảo mật → xin push. Sửa Phím tắt = chia sẻ lại (link mới; link cũ vẫn tải bản cũ tới khi "Stop Sharing") → cập nhật JSON → push.
+ - OUT (không làm trong bản này):
+   - Đồng bộ Apple Calendar / Reminders (không có API web; cần backend CalDAV); nhập file .ics.
+   - (v1.6, D-026) Bấm (đúp) vào sự kiện để mở Google Calendar — hình nền màn khóa là ảnh tĩnh, iOS không cho tương tác; Chủ dự án không muốn làm trong app.
+@@ -51,6 +58,7 @@ Một PWA chạy trên Safari iPhone (cài lên Màn hình chính) cho phép Ch
+   - (v1.8, D-031) Trong IN-11 vẫn OUT: báo thức **lặp theo thứ** (payload không mang thông tin lặp; mỗi lần bấm = 1 báo thức một lần — có thể mở sau nếu Chủ dự án cần); tự tạo hàng loạt cho mọi sự kiện/việc; sửa/xóa/đồng bộ ngược báo thức hoặc lời nhắc đã tạo; đặt cờ "Nhạy cảm thời gian" từ app (là cài đặt hệ thống của app Reminders, không đặt được qua Phím tắt); tự quay về LichKhoa sau khi Phím tắt chạy xong; app tự kiểm Phím tắt đã cài chưa.
+   - (v1.9, D-034) Trong IN-12 vẫn OUT: app tạo/kiểm Tự động hóa (iOS không có URL tạo Automation); nút chạy tay `TaoBaoThucSang` từ app (mở sau nếu Chủ dự án cần); "Báo thức đúng ngày" cho hôm nay (dùng "Thêm báo thức"); báo thức lặp theo thứ; xóa/đồng bộ ngược lời nhắc trong `BaoThuc` hay báo thức đã sinh; app tự chọn danh sách Reminders.
+   - (v1.10, D-035) Trong IN-13 vẫn OUT: "Quá hạn" theo giờ trong ngày (app lẫn hình nền); "nhắc 2 lần" (Chủ dự án bỏ 2026-09-19); app tự thông báo khi tới giờ hạn; giờ hạn cho ghi chú hay sự kiện Google; ô giờ bắt buộc (giờ luôn tùy chọn); đổi `BACKUP_VERSION`.
++  - (v1.11, D-037) Trong IN-14 vẫn OUT: file `.shortcut` (ký hay không) và `shortcuts://import-shortcut?url=` (chỉ nhận file; iOS 15+ đòi ký); app kiểm link còn sống / Phím tắt đã cài / phiên bản đã cài; ô nhập hay sửa link trong app; lưu link vào `AppState`/JSON sao lưu; tự tạo danh sách `BaoThuc`, Tự động hóa 00:05, bật Nhạy cảm thời gian (iOS không có URL cho các việc này); tự đổi tên Phím tắt khi cài; hiện URL dạng chữ; nút "chạy thử" Phím tắt từ thẻ; nhiều bộ link theo ngôn ngữ (một bộ duy nhất — Phím tắt không phụ thuộc ngôn ngữ máy); chia sẻ Phím tắt do người dùng khác sửa.
+   - Ghi sự kiện ngược lên Google; tài khoản / đồng bộ đám mây; mọi backend.
+   - Tối ưu riêng cho iPad, Android, desktop (Chrome desktop chạy được nhưng không nghiệm thu).
+   - Thương hiệu / tài sản của app gốc; mua trong app; ngôn ngữ ngoài VI/EN.
+@@ -73,9 +81,9 @@ src/
+   render/   devices.ts · background.ts (M4: coverFit/fitDownscale/blurDownsampleRatio thuần · loadPhoto, drawBackground) · layout/common.ts (DrawOp, vùng an toàn, nhãn) · layout/{month,agenda,todo,note}.ts (→ DrawOp[]) · paint.ts (DrawOp[] → canvas) · wallpaper.ts (buildOps; nền, mờ, tối → Blob PNG)
+   storage/  db.ts (idb-keyval: state + Blob ảnh) · backup.ts (JSON xuất/nhập, kiểm tra version)
+   google/   oauth.ts (buildAuthUrl, parseFragment, token store) · calendar.ts (fetchCalendars, fetchEvents, normalize)
+-  export/   share.ts (savePng, copyPng, openShortcut, shortcutUrl — v1.8) · ics.ts (eventToIcs) · reminder.ts (v1.8: defaultReminderAt, reminderWindow, reminderText — thuần; v1.9: dayAlarmWindow, DAY_ALARM_MIN_TIME)
++  export/   share.ts (savePng, copyPng, openShortcut, shortcutUrl — v1.8) · ics.ts (eventToIcs) · reminder.ts (v1.8: defaultReminderAt, reminderWindow, reminderText — thuần; v1.9: dayAlarmWindow, DAY_ALARM_MIN_TIME) · install.ts (v1.11: SHORTCUT_KINDS, SHORTCUT_DEFAULT_NAMES, parseShortcutLinks, shortcutNameMismatch — thuần)
+   ui/       App.tsx · store.ts (reducer, persist debounce 300 ms, flushPersist khi ẩn — B-006, `flush()` await được trước khi rời app — T-7.5) · sync.ts (autoSyncIfNeeded, performSyncShared) · components/{Sheet,Toast,ReminderDialog (v1.8)}.tsx · screens/{Preview,Events,Design,Sync,Guide}.tsx · screens/events/{EventsTab,TodosTab,NoteTab,util}.tsx
+-public/     icon-192.png, icon-512.png (manifest do plugin sinh)
++public/     icon-192.png, icon-512.png (manifest do plugin sinh) · shortcut-links.json (v1.11: 5 link iCloud, Quản lý nạp theo §10.G; không precache)
+ tests/      unit/*.test.ts · e2e/*.spec.ts · fixtures/google/*.json · fixtures/photo-4000x3000.jpg
+ scripts/    size.mjs · agy-run.sh (làn Gemini, D-009) · mau-anh-*.cjs / chup-*.cjs (ảnh mẫu có dữ liệu + chụp webkit để review bằng mắt — D-012)
+ docs/       HUONG-DAN.md (M4; §E Phím tắt nhắc — M7; §E.3 Báo thức đúng ngày + Tự động hóa — M8)
+@@ -87,6 +95,7 @@ docs/       HUONG-DAN.md (M4; §E Phím tắt nhắc — M7; §E.3 Báo thức 
+   - `storage/*`: đọc/ghi IndexedDB; sao lưu JSON `{version:1, state}` (Blob ảnh nền không nằm trong JSON).
+   - `google/oauth.ts`: URL ủy quyền, parse `#fragment`, kiểm `state`, lưu `{accessToken, expiresAt}` vào localStorage, `getToken()` trả null nếu hết hạn. `google/calendar.ts`: gọi REST bằng `fetch` + Bearer, phân trang ≤ 2 trang/lịch, chuẩn hóa về `Occurrence` theo giờ địa phương, bỏ sự kiện `cancelled`; 401 → ném `AuthError`.
+   - `export/share.ts`: `savePng` (share → download), `copyPng` (ClipboardItem), `openShortcut(name, text?)` (gán `location.href`; `?test=1` → ghi `window.__lastNav`), `shortcutUrl` thuần (không `text` → `&input=clipboard` như cũ; có `text` → `&input=text&text=<encodeURIComponent>`). `export/ics.ts`: VEVENT có RRULE, CRLF. `export/reminder.ts` (v1.8, thuần, Vitest): thời điểm mặc định, cửa sổ 24 h, payload cho Phím tắt — UI chỉ ghép: `ReminderDialog` → hàm lưu của form → `openShortcut(tên, reminderText(...))`. (v1.9) `dayAlarmWindow` — cửa sổ riêng của nút "Báo thức đúng ngày"; ba nút hành động dùng chung một `handleAction(kind)`, chỉ khác tên Phím tắt.
++  - `export/install.ts` (v1.11, thuần, Vitest): danh mục 5 Phím tắt (`SHORTCUT_KINDS` đúng thứ tự cài, `SHORTCUT_DEFAULT_NAMES`, `SHORTCUT_STATE_KEY`), `parseShortcutLinks` (JSON bất kỳ → 5 url hoặc `null`, không ném), `shortcutNameMismatch`. `Guide.tsx` chỉ fetch JSON + render; không dispatch, không đụng store ngoài đọc state qua `useStoreState`. Link không đi qua `openShortcut` (là `<a>` thường, không phải deep link `shortcuts://`).
+   - `ui/*`: Preact; mọi thay đổi trạng thái qua reducer trong `store.ts`; màn Preview render lại khi state đổi (debounce 150 ms).
+ - Luồng dữ liệu:
+   - UI → `dispatch(action)` → `AppState` (bộ nhớ) → `db.ts` (persist) → `collectRenderData` → `layout*` → `DrawOp[]` → `paint` → canvas → PNG Blob → `<img>` preview / `savePng` / `copyPng` → Shortcut.
+@@ -163,6 +172,15 @@ reminderText(at: LocalDateTime, title: string, note?: string): string   // 'd MM
+ // v1.9 (D-034, IN-12)
+ const DAY_ALARM_MIN_TIME = '00:30';   // giờ trong ngày sớm nhất cho "Báo thức đúng ngày": Tự động hóa chạy 00:05, chừa 25 phút trễ
+ dayAlarmWindow(at: LocalDateTime, now: Date): 'past'|'today'|'too-early'|'ok'   // at ≤ now → past; ngày(at) = ngày(now) → today; giờ-trong-ngày(at) < DAY_ALARM_MIN_TIME → too-early; còn lại ok. Không phụ thuộc cửa sổ 24 h.
++// export/install.ts (v1.11, D-037, thuần — không fetch, không DOM)
++type ShortcutKind = 'wallpaper'|'alarm'|'reminder'|'dayAlarm'|'morning';
++const SHORTCUT_KINDS: readonly ShortcutKind[];                      // đúng thứ tự cài: wallpaper, alarm, reminder, dayAlarm, morning
++const SHORTCUT_DEFAULT_NAMES: Record<ShortcutKind, string>;         // DatHinhNen, ThemBaoThuc, ThemLoiNhac, ThemBaoThucNgay, TaoBaoThucSang — unit test đối chiếu 4 tên đầu với defaultState(); morning chỉ có trong tài liệu
++const SHORTCUT_STATE_KEY: Record<ShortcutKind, 'shortcutName'|'alarmShortcutName'|'reminderShortcutName'|'dayAlarmShortcutName'|null>;   // morning → null
++const ICLOUD_SHORTCUT_URL: RegExp;                                  // /^https:\/\/www\.icloud\.com\/shortcuts\/[0-9a-f]{32}$/ — id viết thường, không query/hash
++type ShortcutLinks = Record<ShortcutKind, string | null>;
++parseShortcutLinks(json: unknown): { links: ShortcutLinks; updated: string | null }   // không ném với mọi đầu vào; url không khớp regex / thiếu / không phải chuỗi → null; `updated` không khớp /^\d{4}-\d{2}-\d{2}$/ → null; khóa lạ bỏ qua
++shortcutNameMismatch(state: AppState, kind: ShortcutKind): { app: string; expected: string } | null   // state[SHORTCUT_STATE_KEY[kind]] !== SHORTCUT_DEFAULT_NAMES[kind] → { app, expected }; morning → luôn null
+ ```
+ Quy ước: `core/*`, `render/layout/*`, `google/oauth.ts`, phần normalize của `google/calendar.ts`, `export/ics.ts`, `storage/backup.ts` là hàm thuần → Vitest. Phần chạm DOM/trình duyệt (`paint`, `wallpaper`, `share`, `db`, `ui`) → Playwright. Khi có `?test=1`, app gắn `window.__lastOps: DrawOp[]` sau mỗi lần render (chỉ để E2E kiểm vùng an toàn).
+ 
+@@ -257,6 +275,23 @@ Phiếu (đều đủ điều kiện Gemini: tiêu chí rõ, lệnh test, ≤ 5
+   - [ ] `npm run build` + `node scripts/size.mjs`: JS gzip < 150 KB; `npm run check` pass trên chromium + webkit.
+ - Thử tay trên iPhone (Chủ dự án, ghi `docs/bao-cao/M9.md`; điều kiện đóng M9, không chặn nghiệm thu bằng lệnh — §10.F): H1 thêm việc ngày mai 07:30 → danh sách `d/m 07:30`, hình nền To-do và Tuần hiện giờ; H2 chạm nhãn hạn → đổi giờ → thứ tự đổi theo, bánh xe giờ đọc được trên nền tối; H3 "Nhắc trên iPhone" từ hàng nhập mặc định đúng giờ hạn; H4 sao lưu JSON → khôi phục → giờ còn. Deploy M8 + M9 gộp một lần push (Chủ dự án chốt 2026-09-19), qua Cổng bảo mật.
+ 
++### M10 — Cài bộ Phím tắt bằng link iCloud từ tab Hướng dẫn (v1.11, D-037)
++Nội dung: `export/install.ts` (danh mục + `parseShortcutLinks` + `shortcutNameMismatch`); `public/shortcut-links.json` (5 khóa, url rỗng cho tới T-10.4); thẻ Hướng dẫn số 2 (5 hàng, nút `<a>` "Tải", nolink, lỗi tải, lệch tên, 4 việc tự làm; thẻ cũ đánh số lại 3–9); i18n VI/EN; CSS `a.btn` (inline-flex, không gạch chân, cao ≥ 44 pt, hàng 428 pt = cột chữ + nút ≈ 88 px); HUONG-DAN §F (người dùng cài từ link) + §G (Chủ dự án tạo/soát/cập nhật link) + "Giới hạn đã biết"; E2E `m10-install.spec.ts`; T-10.4 nạp link thật + Cổng bảo mật + thử tay. Không đụng `Preview.tsx`, `ReminderDialog`, store, model, payload, `openShortcut`; test khóa M1–M9 + B-018 không sửa/skip (không có ngoại lệ). Bắt đầu SAU khi B-018 DONE (T-10.2 đụng `vi.json`/`en.json`/`styles.css`; E2E (5) dùng `shortcut-names-toggle`/`shortcut-names-reset`).
++Phiếu (mỗi phiếu ≤ 4 file, đủ điều kiện Gemini; T-10.1 ∥ T-10.3 → T-10.2 → T-10.END → T-10.4):
++- **T-10.1** lõi thuần + dữ liệu (gemini): `src/export/install.ts` (mới), `public/shortcut-links.json` (mới, 5 khóa url `""`, chưa có `updated`), `tests/unit/install.test.ts` (mới).
++- **T-10.2** thẻ Hướng dẫn (gemini, sau B-018 DONE): `src/ui/screens/Guide.tsx`, `src/core/i18n/vi.json`, `src/core/i18n/en.json`, `src/ui/styles.css`.
++- **T-10.3** tài liệu (gemini làn doc, song song T-10.1): `docs/HUONG-DAN.md` — §F "Cài nhanh cả bộ Phím tắt bằng link iCloud" (điều kiện, thứ tự 1→5, câu hỏi khi cài, "Kiểm tra sau khi cài", "Việc còn phải tự làm", nhấn giữ nút để sao chép link), §G "Dành cho Chủ dự án: tạo / cập nhật / thu hồi link" (soát dữ liệu riêng, Import Question, Copy iCloud Link, gửi Quản lý, Stop Sharing), "Giới hạn đã biết" thêm §8.13 (a)–(h); đầu §C và §E thêm 1 dòng trỏ sang §F.
++- **T-10.END** E2E (kiem-thu hoặc gemini): `tests/e2e/m10-install.spec.ts` (mới); không sửa src.
++- **T-10.4** dữ liệu thật (Chủ dự án tạo 5 link theo §10.G → Quản lý nạp; không giao thợ): `public/shortcut-links.json` (+ `updated` = ngày nạp), `docs/test-log/bao-mat-<commit>.log`; chạy `npx vitest run tests/unit/install.test.ts`; Cổng bảo mật mục 1–5 **cộng** kiểm link: mở từng link trên Windows (Chrome) → trang hiện đúng tên Phím tắt, KHÔNG hiện tên thật/email của Chủ dự án (hiện → CHẶN, hỏi Chủ dự án: đổi tên hiển thị iCloud hay chấp nhận); một lần push sau T-10.4 (khuyến nghị; Chủ dự án muốn xem thẻ sớm thì push với url rỗng cũng qua Cổng bảo mật như thường).
++- Tiêu chí nghiệm thu (kiểm được bằng lệnh):
++  - [ ] Unit `install.test.ts` (T-10.1; `device` literal như `model.test.ts`): `SHORTCUT_KINDS` = `['wallpaper','alarm','reminder','dayAlarm','morning']`; `SHORTCUT_DEFAULT_NAMES.wallpaper/alarm/reminder/dayAlarm` = `defaultState(device).shortcutName/alarmShortcutName/reminderShortcutName/dayAlarmShortcutName` (không gõ cứng ở test), `morning` = `TaoBaoThucSang`. `parseShortcutLinks`: JSON đủ 5 url hợp lệ + `updated: '2026-09-22'` → 5 chuỗi + updated; url `''` → null; `http://www.icloud.com/shortcuts/<32hex>` → null; thiếu `www.` → null; id 31 / 33 ký tự / có chữ hoa → null; có `?x=1`, `#`, khoảng trắng đầu-cuối → null; `shortcuts` thiếu / `null` / mảng / chuỗi, hoặc JSON là `null` / số / chuỗi → 5 null, không ném; khóa lạ (`foo`) bị bỏ qua; `updated` = `'22/09/2026'` hoặc số → null. `shortcutNameMismatch`: state mặc định → null cho cả 5 kind; `alarmShortcutName = 'Bao Thuc'` → `{ app: 'Bao Thuc', expected: 'ThemBaoThuc' }`, các kind khác vẫn null; `morning` luôn null. File thật `public/shortcut-links.json` (đọc `fs.readFileSync`): JSON hợp lệ, `shortcuts` có ĐÚNG 5 khóa (không thừa/thiếu), mỗi `url` là `''` hoặc khớp regex, không có khóa nào ngoài `updated` / `shortcuts` / `url` — đây là kiểm tra Quản lý chạy lại ở T-10.4. `model.test.ts`, `i18n.test.ts` pass nguyên vẹn.
++  - [ ] E2E `m10-install.spec.ts` — **T-10.END** (chromium + webkit, `?test=1`, `test.use({ serviceWorkers: 'block' })` như M3; fixture JSON có 5 id 32 hex bịa khác nhau; `context.route('https://www.icloud.com/**')` trả trang rỗng 200 — không gọi mạng thật): (1) `context.route('**/shortcut-links.json')` trả đủ 5 link + `updated` → tab Hướng dẫn → section `[data-testid^="guide-card-"]` thứ 2 là `guide-card-installShortcuts` (thứ 1 vẫn `guide-card-install`) → 5 `sc-row-*` đúng thứ tự → mỗi `sc-install-<kind>` là thẻ `a`, `href` = url fixture, `target=_blank`, `rel` chứa `noopener`, boundingBox cao ≥ 44; không có `sc-nolink-*`, không `sc-links-error`; `sc-updated` chứa `2026-09-22` (hoặc dạng ngày địa phương của nó); bấm `sc-install-alarm` → `page.waitForEvent('popup')` có URL = link; trang chính vẫn ở tab Hướng dẫn. (2) route JSON: `alarm.url = ''`, `dayAlarm.url = 'https://www.icloud.com/shortcuts/XYZ'`, thiếu khóa `morning` → đúng 3 `sc-nolink` (alarm, dayAlarm, morning) + 2 `sc-install` (wallpaper, reminder); không hàng nào có cả hai; không `sc-links-error`. (3) route 404 → `sc-links-error` hiện, 5 `sc-nolink`, 0 `sc-install`; `guide-card-install` và `guide-card-dayAlarm` vẫn hiện (thẻ không kéo sập màn). (4) không route (file thật trong repo) → mỗi hàng có đúng một trong `sc-install`/`sc-nolink` — pass cả trước và sau T-10.4. (5) lệch tên: tab Xem trước → `shortcut-names-toggle` → `shortcut-alarm-name` = `Bao Thuc` → tab Hướng dẫn → `sc-name-mismatch-alarm` chứa `Bao Thuc` và `ThemBaoThuc`; `sc-name-mismatch-wallpaper/reminder/dayAlarm/morning` count 0 → về Xem trước bấm `shortcut-names-reset` → Hướng dẫn không còn `sc-name-mismatch-*`. (6) `sc-manual-steps` có đúng 4 `li`, chữ chứa `BaoThuc` và `00:05`; `lang` `selectOption('en')` (như `m2-i18n.spec.ts`) → tiêu đề `guide-card-installShortcuts` chứa `Install`, nút `sc-install-*` chứa `Get`.
++  - [ ] Test khóa pass nguyên vẹn (không sửa/skip): `i18n.test.ts` (khóa mới đủ VI/EN), `m2-i18n.spec.ts`, `b018-shortcut-names.spec.ts`, `m7-reminder.spec.ts`, `m8-dayalarm.spec.ts`, `share.spec.ts`, `settings.spec.ts`; `git diff --name-only <commit B-018>..HEAD -- tests/` chỉ có 2 file mới.
++  - [ ] Tài liệu: `Select-String -Path docs/HUONG-DAN.md -Pattern 'Copy iCloud Link|Get Shortcut|Import Question|Stop Sharing|icloud.com/shortcuts|shortcut-links.json|Private Sharing'` ≥ 7 dòng; §F có "Thứ tự cài" 1→5, "Kiểm tra sau khi cài", "Việc còn phải tự làm"; §G có "Soát dữ liệu riêng", "Import Question", "Cập nhật link", "Thu hồi"; "Giới hạn đã biết" có §8.13 (a)–(h).
++  - [ ] `npm run build` + `node scripts/size.mjs`: JS gzip < 150 KB; `dist/shortcut-links.json` tồn tại; `npm run check` pass trên chromium + webkit.
++  - [ ] T-10.4: `public/shortcut-links.json` có 5 url hợp lệ + `updated`; `install.test.ts` pass trên file thật; log Cổng bảo mật ghi kết quả mở 5 link (tên Phím tắt hiện đúng, không tên thật/email); E2E (4) vẫn pass.
++- Thử tay trên iPhone (Chủ dự án, ghi `docs/bao-cao/M10.md`; điều kiện gắn tag `M10-ok`): **I0** tạo link theo §10.G — ghi: tham số List của "Add New Reminder" có trong danh sách Import Question không; trang link trên Windows/iPhone có hiện tên iCloud không. **I1** trên chính máy: đổi tên 5 Phím tắt cũ thêm hậu tố `_cu` → mở LichKhoa (bản cài Màn hình chính) › Hướng dẫn › bấm 5 nút "Tải" theo thứ tự → mỗi lần tới màn Get Shortcut/Thêm Phím tắt → thêm → tên đúng, không có " 2"; câu hỏi khi cài (nếu có) chọn đúng danh sách. **I2** mở `ThemBaoThucNgay`: Add New Reminder › List = `BaoThuc`; `TaoBaoThucSang`: bộ lọc List = `BaoThuc` (trống thì sửa tay — ghi lại để chỉnh §F). **I3** với bản cài từ link: "Đặt hình nền" chạy; (A) Thêm báo thức trong 24 h → Đồng hồ có báo thức; (G1) chạy tay `TaoBaoThucSang` với lời nhắc thử trong `BaoThuc` → có báo thức, lời nhắc hoàn thành. **I4** (khuyến nghị) máy thứ hai / người khác cài từ đầu chỉ theo thẻ Hướng dẫn, không đọc HUONG-DAN — ghi chỗ vướng. **I5** ghi đường mở link từ PWA standalone: thẳng app Phím tắt hay qua cửa sổ trong-app (phải bấm "Get Shortcut" thêm không); nhấn giữ nút có "Sao chép liên kết" không. Xong: xóa bản `_cu` (hoặc đổi tên lại nếu bản từ link lỗi).
++
+ ## 7. Chiến lược test
+ - Lệnh chạy test tổng: `npm run check` (PowerShell, tại `E:\DuAn\thu-nghiem`) = `tsc --noEmit && vitest run && playwright test`.
+ - Chuẩn bị một lần: `npm install`; `npx playwright install chromium webkit` (~400 MB).
+@@ -267,6 +302,7 @@ Phiếu (đều đủ điều kiện Gemini: tiêu chí rõ, lệnh test, ≤ 5
+ - Test của phiếu DONE là khóa (CLAUDE.md); mỗi milestone có đúng một E2E luồng chính `T-n.END`.
+ - (v1.9) E2E M8 cố định `new Date()` của trang bằng `page.clock.setFixedTime` (Playwright ≥ 1.45; timer thật vẫn chạy nên debounce/toast không đổi) — chỉ để các kiểm tra theo ngày ("hôm nay" / "ngày mai" / 00:30) không lệch khi chạy sát nửa đêm; unit vẫn không mock Date (mọi hàm nhận `now`).
+ - (v1.10) E2E M9 cố định giờ trang như M8 (`2026-10-05T10:00:00`); nhãn hạn có giờ phụ thuộc `hour12` → E2E giữ mặc định 24 h, ca 12 h kiểm ở unit. Mọi unit mới của M9 nằm ở file mới (`todo-time.test.ts`, `layout-todo-time.test.ts`) để không đụng file test khóa.
++- (v1.11) E2E M10 dùng `test.use({ serviceWorkers: 'block' })` (mẫu M3 — SW trên WebKit nuốt fetch trước `context.route`) để `context.route('**/shortcut-links.json')` giả lập 3 trạng thái (đủ link / thiếu-sai / 404) trên cả hai project; popup bắt bằng `page.waitForEvent('popup')` với `context.route('https://www.icloud.com/**')` trả trang rỗng — không gọi mạng thật; không thêm hook `?test=1` mới (link là `<a>` thường, không qua `openShortcut`). Unit đọc file thật `public/shortcut-links.json` bằng `fs` để khóa schema — là kiểm tra Quản lý chạy lại trong Cổng bảo mật ở T-10.4. Mở link thật trên iOS và nội dung Phím tắt chỉ kiểm bằng thử tay I0–I5.
+ 
+ ## 8. Rủi ro & cách giảm
+ 1. OAuth redirect trong PWA standalone iOS (sửa D-015): iOS ≥ 12.2 mở URL ngoài scope trong trình duyệt trong-app và trả điều hướng về PWA khi URL quay lại nằm trong `scope` (manifest `scope`/`start_url` = `base`; `redirect_uri = origin + pathname`). Không kiểm được bằng Playwright → thử máy thật sớm (T-4.0). Token implicit sống 1 giờ và KHÔNG gia hạn ngầm được trên iOS (Safari chặn cookie bên thứ ba → iframe `prompt=none` luôn `login_required`) → hằng ngày người dùng bấm "Kết nối lại" (Google tự chuyển hướng nếu phiên trong-app còn); cache sự kiện dùng offline. Nếu standalone không nhận token: dùng app trong Safari (bookmark) — storage Safari và PWA tách biệt, phải chọn một ngữ cảnh dùng xuyên suốt.
+@@ -281,6 +317,7 @@ Phiếu (đều đủ điều kiện Gemini: tiêu chí rõ, lệnh test, ≤ 5
+ 10. (v1.8) Nhắc qua Phím tắt — giới hạn đã biết: (a) báo thức Đồng hồ chỉ có giờ, kêu vào lần tới trong 24 h → app chặn "Thêm báo thức" ngoài cửa sổ 24 h, việc xa hơn phải dùng Lời nhắc hoặc quay lại bấm sau; lập luận "trong 24 h thì kêu đúng ngày" chỉ đúng khi báo thức được TẠO trước thời điểm chọn — chọn sát giờ (≤ 1–2 phút) mà Phím tắt chạy chậm (lần đầu iOS hỏi cho phép) thì báo thức trôi sang hôm sau (giới hạn đã biết, không sửa mã; múi giờ có DST không xét — VN không có); (b) app không theo dõi báo thức/lời nhắc đã tạo → bấm 2 lần = 2 mục, báo thức một lần sau khi kêu vẫn nằm (tắt) trong danh sách Đồng hồ, dọn tay; (c) tên Phím tắt sai → iOS báo "không tìm thấy", app không biết; (d) Phím tắt tách dòng 1 bằng data detector ("Get Dates from Input") → máy thật iOS 18 không nhận dạng được `YYYY-MM-DD HH:mm` (SC-003, 2026-09-19, phát hiện ở thử tay F) nên `reminderText` đổi sang `d MMM yyyy HH:mm` (vd `23 Sep 2026 14:00`, tháng viết tắt tiếng Anh cố định trong mã, B-012); nếu Shortcuts không giải mã `%0A` thành xuống dòng thì đổi phân cách sang ` | ` (1 hằng + hướng dẫn "Split Text" Custom); (e) rời app sang Phím tắt có thể làm iOS đóng PWA → form được lưu rồi `await store.flush()` ghi IndexedDB xong mới điều hướng (T-7.5, D-033); `flushPersist` khi `pagehide`/ẩn (B-006) chỉ là lưới dự phòng; (f) không tự quay về LichKhoa sau khi Phím tắt chạy (như "Đặt hình nền"); (g) "Nhạy cảm thời gian" là cài đặt hệ thống (Cài đặt → Thông báo → Lời nhắc) — hướng dẫn bật, không đặt được từ app.
+ 11. (v1.9) Báo thức đúng ngày qua Tự động hóa — giới hạn đã biết, Chủ dự án đã chấp nhận (D-034): (a) Tự động hóa theo giờ **không đảm bảo 100 %**: máy tắt nguồn / hết pin / Chế độ nguồn thấp lúc 00:05 → chạy trễ hoặc không chạy; giảm: `TaoBaoThucSang` chạy tay được (app Phím tắt, Siri, icon Màn hình chính) và lời nhắc chưa hoàn thành vẫn tự thông báo đúng giờ qua Reminders (bật "Nhạy cảm thời gian", §8.10g). (b) Chạy **trùng** (tay + tự động cùng ngày) → "Create Alarm" luôn tạo mới; giảm: lọc "Is Completed is No" + "Edit Reminder: Set Is Completed" ngay sau khi tạo → chạy lại không tạo thêm. (c) Báo thức một lần sau khi kêu **vẫn nằm (tắt)** trong app Đồng hồ → dọn tay theo đợt (Đồng hồ › Sửa); app không xóa được. (d) Phải có danh sách Reminders **riêng** `BaoThuc` — trỏ nhầm danh sách chung thì mọi lời nhắc trong ngày thành báo thức. (e) Chạy trễ sau giờ hẹn (máy bật lúc 08:00, hẹn 06:00) → điều kiện "is after Current Date" bỏ qua mục đó thay vì tạo báo thức trôi sang hôm sau; app chặn giờ < 00:30 (`DAY_ALARM_MIN_TIME`) và ngày hôm nay. (f) Nếu "Add New Reminder" trên máy thật không ghi giờ vào Due Date (chỉ phát hiện ở thử tay G1/G2) → thêm "Edit Reminder: Set Due Date" vào `ThemBaoThucNgay` (tài liệu, không sửa mã). (g) M8 dùng chung payload và cách tách dòng của M7 → thử tay M7 (F) hỏng thì sửa ở M7 trước; M8 không đổi mã.
+ 12. (v1.10) Giờ hạn việc — giới hạn đã biết (D-035): (a) hình nền là ảnh tĩnh → "Quá hạn" theo ngày; việc đã qua giờ trong hôm nay vẫn "Hôm nay HH:mm" tới hết ngày (Chủ dự án chấp nhận). (b) App không tự thông báo khi tới giờ hạn — muốn kêu thì dùng "Nhắc trên iPhone" (IN-11/12); giờ hạn chỉ là mặc định của hộp. (c) Hai việc cùng ngày khác giờ không kéo đổi chỗ được (thứ tự do giờ quyết định) — đổi giờ để đổi thứ tự; kéo vẫn hoạt động trong cùng (ngày, giờ). (d) `<input type="time">` trên iOS là bánh xe; ô phải có `color-scheme: dark` như B-010 để đọc được trên nền tối; dữ liệu luôn 24 h `HH:mm`, chỉ hiển thị theo `hour12`. (e) Sao lưu tạo bởi v1.10 mở bằng bản cũ hơn: `dueTime` bị bỏ qua vô hại (`BACKUP_VERSION` không đổi); JSON cũ nhập vào v1.10 không có giờ.
++13. (v1.11) Cài bộ Phím tắt bằng link iCloud — giới hạn đã biết (D-037): (a) link là **công khai**: ai có link đều xem và cài được nội dung Phím tắt (Apple ký; bản đã cài không thu hồi được) → trước khi chia sẻ phải soát không có Text / thông báo / bình luận / danh sách / liên hệ / vị trí riêng; trường có Import Question bị xóa khi chia sẻ; trang link có thể hiện tên iCloud của người chia sẻ (Apple không nói rõ cho Phím tắt) → Quản lý mở link kiểm trước khi commit, hiện tên thật/email → CHẶN và hỏi Chủ dự án. (b) Link là **ảnh chụp tĩnh**: sửa Phím tắt phải Copy iCloud Link lại (link mới) → sửa JSON → push; link cũ vẫn tải bản cũ tới khi "Stop Sharing"; app không biết phiên bản, chỉ hiện `updated`. (c) Tham số danh sách Reminders và bộ lọc `List is BaoThuc` **không mang sang máy khác** (tham chiếu tới danh sách trên máy Chủ dự án): không có Import Question hoặc người nhận bỏ qua → "Add New Reminder" ghi vào danh sách mặc định, `TaoBaoThucSang` không tìm thấy gì — im lặng, không báo lỗi → bước "Kiểm tra sau khi cài" bắt buộc (HUONG-DAN §F) và thử tay I2; Apple không liệt kê loại tham số được làm Import Question → kiểm ở I0, không có thì tài liệu hướng dẫn sửa tay. (d) Tự động hóa 00:05, danh sách `BaoThuc`, Nhạy cảm thời gian không chia sẻ được — 4 việc tự làm hiện ngay trong thẻ. (e) Trùng tên → iOS đặt "… 2" → nút trong app gọi sai tên; app chỉ phát hiện lệch giữa tên trong app và tên mặc định, không thấy được tên trên máy. (f) Từ PWA standalone, link khác origin mở ở trình duyệt trong-app (iOS ≥ 12.2; PWA không nhận universal link nhưng phát link thì được) — có thể phải bấm "Get Shortcut" thêm một lần; nếu cửa sổ trong-app không chuyển được sang app Phím tắt → nhấn giữ nút, Sao chép liên kết, dán vào Safari (I5 ghi lại đường thật; hỏng thì đổi nút sang `location.href` cùng tab — 1 dòng, S3). (g) Cần mạng khi cài; JSON không precache nên offline hiện `sc-links-error`; GitHub Pages cache ≤ 10 phút → link mới hiện trễ vài phút. (h) Máy Chủ dự án phải bật iCloud › Phím tắt để tạo link; người nhận iOS 15+ (§2 đã yêu cầu iOS 17+).
+ 
+ ## 9. Giả định (Kiến trúc sư tự quyết; Chủ dự án có thể bác)
+ - Tên làm việc "LichKhoa"; icon tự vẽ đơn giản; Chủ dự án có thể đổi tên sau.
+@@ -292,6 +329,7 @@ Phiếu (đều đủ điều kiện Gemini: tiêu chí rõ, lệnh test, ≤ 5
+ - (v1.8) Nhắc qua Phím tắt: một nút "Nhắc trên iPhone" mỗi form mở hộp thoại có cả hai hành động (thay vì hai nút trên form — hàng nhập việc không đủ chỗ, và người dùng chọn cơ chế sau khi thấy thời điểm); giờ mặc định 08:00 cho việc có hạn và sự kiện cả ngày; giờ tròn kế tiếp cho việc không hạn và ghi chú; cửa sổ báo thức 24 h; tên Phím tắt mặc định `ThemBaoThuc`, `ThemLoiNhac` (không dấu, như `DatHinhNen`); danh sách Reminders đích do Chủ dự án chọn khi tạo Phím tắt; nhãn ≤ 100, ghi chú ≤ 200 ký tự; Snooze để mặc định của Phím tắt.
+ - (v1.9) Báo thức đúng ngày: tên nút "Báo thức đúng ngày" / "Alarm on that day"; Phím tắt `ThemBaoThucNgay` (bản sao `ThemLoiNhac` đổi List — payload không đổi), danh sách `BaoThuc`, Phím tắt `TaoBaoThucSang`, Tự động hóa 00:05 (không chọn giờ muộn: 7 h sẽ bỏ sót hẹn 6 h); ngưỡng `DAY_ALARM_MIN_TIME` = 00:30; lời nhắc trong `BaoThuc` được đánh dấu hoàn thành ngay khi đã sinh báo thức — hôm đó chỉ báo thức kêu, thông báo Reminders chỉ kêu khi Tự động hóa không chạy (Chủ dự án có thể bác: bỏ bước Edit Reminder → cả hai cùng kêu, nhưng chạy trùng sẽ tạo thêm báo thức); không có nút chạy tay từ app; không cảnh báo độ tin cậy trong hộp thoại.
+ - (v1.10) Giờ hạn việc: giờ TÙY CHỌN (việc chỉ có ngày vẫn hợp lệ); "Quá hạn" theo ngày ở cả app lẫn hình nền (Chủ dự án chốt 2026-09-19); nhãn "Hôm nay 14:00" / "6/10 14:00" (một dấu cách, giờ theo `hour12`); chip Tuần `☐ 14:00`; giờ mặc định hộp nhắc = giờ hạn; ô giờ chỉ hiện khi đã chọn ngày; bộ sửa hạn đóng bằng nút "Xong"; `BACKUP_VERSION` giữ 1; khóa i18n `events.todoDueTime` = "Giờ" / "Time", `events.todoDueDone` = "Xong" / "Done".
++- (v1.11) Cài bộ Phím tắt: chỉ link iCloud (không file `.shortcut`); khóa kind `wallpaper` · `alarm` · `reminder` · `dayAlarm` · `morning` theo đúng thứ tự cài; link ở `public/shortcut-links.json` (không AppState, không ô nhập), id 32 hex viết thường, `updated` tùy chọn; nút là `<a target="_blank" rel="noopener noreferrer">` không JS, nhãn "Tải" / "Get"; thẻ Hướng dẫn số 2, các thẻ cũ đánh số lại 3–9 (chỉ chuỗi); một câu nolink chung cho mọi kind; không hiện URL; `morning` (`TaoBaoThucSang`) không có tên trong AppState nên không có cảnh báo lệch tên; Chủ dự án là người duy nhất tạo link, mỗi lần đổi link = một lần push (qua Cổng bảo mật); E2E chặn SW như M3; nút không đi qua `openShortcut`.
+ - Không tối ưu iPad/Android/desktop; không hỗ trợ nhiều người dùng.
+ 
+ ## 10. Việc Chủ dự án tự làm & cách thử trên iPhone
+@@ -319,3 +357,10 @@ E. (v1.9) Báo thức đúng ngày — dựng 1 lần (từng bước ở `docs/
+    4. Tự động hóa: Phím tắt → Tự động hóa → + → Thời điểm trong ngày → 00:05, Hằng ngày → chọn **Chạy ngay** (Run Immediately), tắt **Thông báo khi chạy** (Notify When Run) → hành động "Run Shortcut" `TaoBaoThucSang` → Xong.
+    5. Dùng: hộp "Nhắc trên iPhone" → "Báo thức đúng ngày" (chỉ bật từ ngày mai, giờ ≥ 00:30) → lời nhắc vào `BaoThuc`; sáng đúng ngày báo thức tự xuất hiện trong Đồng hồ. Máy tắt lúc 00:05 → mở app Phím tắt bấm `TaoBaoThucSang`.
+ F. (v1.10) Thử tay M9 (H1–H4, sau nghiệm thu bằng lệnh; ghi `docs/bao-cao/M9.md`): H1 thêm việc ngày mai 07:30 → danh sách `d/m 07:30`, hình nền To-do và Tuần hiện giờ; H2 chạm nhãn hạn → đổi giờ → thứ tự đổi theo, bánh xe giờ đọc được trên nền tối; H3 "Nhắc trên iPhone" từ hàng nhập mặc định đúng giờ hạn; H4 sao lưu JSON → khôi phục → giờ còn. Deploy M8 + M9 gộp một lần push (qua Cổng bảo mật); M8 vẫn cần G1–G5 để gắn tag `M8-ok`.
++G. (v1.11) Chủ dự án tạo / cập nhật link iCloud cho 5 Phím tắt (chi tiết HUONG-DAN §G, viết ở T-10.3; lặp lại mỗi khi sửa Phím tắt):
++   1. Soát từng Phím tắt (`DatHinhNen`, `ThemBaoThuc`, `ThemLoiNhac`, `ThemBaoThucNgay`, `TaoBaoThucSang`): không có Text / Show Notification / Comment chứa thông tin riêng; không hành động Liên hệ / Vị trí / Ảnh; tên danh sách Reminders chỉ `BaoThuc` hoặc tên chung. Kho và link đều công khai.
++   2. `ThemLoiNhac`, `ThemBaoThucNgay`: mở Phím tắt → ⓘ → **Setup** → **Add New Question** → chọn tham số List của "Add New Reminder" (nếu có trong danh sách) → câu hỏi "Chọn danh sách Lời nhắc (BaoThuc cho báo thức đúng ngày)". Không có trong danh sách → bỏ qua, ghi vào báo cáo I0; người nhận sửa tay theo §F.
++   3. Cài đặt → [tên] → iCloud: **Phím tắt** đang bật (bắt buộc để tạo link).
++   4. Mỗi Phím tắt: Chia sẻ → **Copy iCloud Link** → dán vào tin nhắn cho Quản lý theo dạng `kind: url` (5 dòng: `wallpaper`, `alarm`, `reminder`, `dayAlarm`, `morning`).
++   5. Quản lý: dán vào `public/shortcut-links.json`, `updated` = hôm nay → `npx vitest run tests/unit/install.test.ts` → mở 5 link trên Windows (Chrome) xác nhận tên Phím tắt đúng, không hiện tên thật/email → Cổng bảo mật (log) → xin push.
++   6. Sửa Phím tắt về sau: lặp 1–5 (link mới). Khóa bản cũ: mở link cũ → app Phím tắt → ⋯ → **Stop Sharing**. Thu hồi hẳn một Phím tắt: Stop Sharing + để `url: ""` → push (app tự hiện "Chưa có link").
+diff --git a/public/shortcut-links.json b/public/shortcut-links.json
+new file mode 100644
+index 0000000..4b17069
+--- /dev/null
++++ b/public/shortcut-links.json
+@@ -0,0 +1,9 @@
++{
++  "shortcuts": {
++    "wallpaper": { "url": "" },
++    "alarm": { "url": "" },
++    "reminder": { "url": "" },
++    "dayAlarm": { "url": "" },
++    "morning": { "url": "" }
++  }
++}
+diff --git a/src/core/i18n/en.json b/src/core/i18n/en.json
+index 9eebb3e..8c4117a 100644
+--- a/src/core/i18n/en.json
++++ b/src/core/i18n/en.json
+@@ -23,6 +23,9 @@
+   "preview.shortcutAlarmName": "Alarm Shortcut name",
+   "preview.shortcutReminderName": "Reminder Shortcut name",
+   "preview.shortcutDayAlarmName": "Day alarm Shortcut name",
++  "preview.shortcutNamesToggle": "Rename shortcuts",
++  "preview.shortcutNamesWarning": "Names must EXACTLY match the Shortcut names in the Shortcuts app, otherwise the button won't run.",
++  "preview.shortcutNamesReset": "Restore default names",
+ 
+   "weekday.short.0": "Sun",
+   "weekday.short.1": "Mon",
+@@ -242,20 +245,37 @@
+ 
+   "guide.installTitle": "1. Add to Home Screen",
+   "guide.installBody": "In Safari on iPhone: Share → \"Add to Home Screen\", then open from the icon.",
+-  "guide.googleTitle": "2. Connect Google Calendar (optional)",
++  "guide.installShortcutsTitle": "2. Install Shortcut suite",
++  "guide.installShortcutsBody": "Quickly install all 5 Shortcuts via shared iCloud links without manual setup.",
++  "guide.googleTitle": "3. Connect Google Calendar (optional)",
+   "guide.googleBody": "Tab Sync: paste your Google Client ID, tap Connect. No Client ID yet? Create one free at console.cloud.google.com (about 10 minutes) — steps in section B of the included guide.",
+-  "guide.shortcutTitle": "3. Create the wallpaper Shortcut (once)",
++  "guide.shortcutTitle": "4. Create the wallpaper Shortcut (once)",
+   "guide.shortcutBody": "In Shortcuts app, add a \"Set Wallpaper\" action: Image = Shortcut Input, Lock Screen, \"Show Preview\" off. Name it to match the app's Shortcut name. If it fails with \"extensionKit… error 2\" (an iOS bug), tap \"Set wallpaper\" again.",
+-  "guide.dailyTitle": "4. Daily use (≤ 3 taps)",
++  "guide.dailyTitle": "5. Daily use (≤ 3 taps)",
+   "guide.dailyBody": "Open the app → Preview tab → tap \"Set wallpaper\". It copies the image and runs the Shortcut. Allow the Shortcut permission the first time.",
+-  "guide.fallbackTitle": "5. If Google sign-in doesn't return to the app",
++  "guide.fallbackTitle": "6. If Google sign-in doesn't return to the app",
+   "guide.fallbackBody": "Confirmed working on iPhone 13 Pro Max. If another device gets stuck after sign-in: use LichKhoa in Safari (bookmark it) for Google instead — its data is separate from the installed app.",
+-  "guide.limitsTitle": "6. Known limits",
++  "guide.limitsTitle": "7. Known limits",
+   "guide.limitsBody": "Google session lasts 1 hour, tap \"Reconnect\" after. No automatic wallpaper changes. Data may be cleared after 7 days if not installed. For reminders, add each event to iPhone Calendar.",
+-  "guide.reminderTitle": "7. Set up iPhone Reminder Shortcuts",
++  "guide.reminderTitle": "8. Set up iPhone Reminder Shortcuts",
+   "guide.reminderBody": "Set up 2 Shortcuts on iPhone: \"ThemBaoThuc\" (creates alarms in Clock) and \"ThemLoiNhac\" (creates reminders in Reminders). Names can be changed in the Preview tab. See step-by-step setup details in section E of docs/HUONG-DAN.md.",
+-  "guide.dayAlarmTitle": "8. Alarm on that day (Automation, once)",
++  "guide.dayAlarmTitle": "9. Alarm on that day (Automation, once)",
+   "guide.dayAlarmBody": "For alarms more than 24 hours away: create a Reminders list \"BaoThuc\", a \"ThemBaoThucNgay\" Shortcut (duplicate ThemLoiNhac, change List = BaoThuc) and \"TaoBaoThucSang\" (Find Reminders → Repeat with Each → Create Alarm), then an Automation running daily at 00:05 calling TaoBaoThucSang. Not 100% guaranteed (device off/low battery at 00:05). Full steps in section E.3 of docs/HUONG-DAN.md.",
+   "guide.goToSync": "Open Sync tab",
+-  "guide.goToDesign": "Open Design tab"
++  "guide.goToDesign": "Open Design tab",
++  "guide.scInstall": "Get",
++  "guide.scNoLink": "No link yet — set up manually following the cards below",
++  "guide.scLinksError": "Failed to load link list — network required to download Shortcuts.",
++  "guide.scUpdated": "Updated: {updated}",
++  "guide.scNameMismatch": "App shortcut name is \"{app}\", downloaded shortcut name is \"{expected}\" — Preview › Rename Shortcuts › Restore default names",
++  "guide.scManualTitle": "Remaining manual setup steps",
++  "guide.scManualStep1": "Create the BaoThuc Reminders list BEFORE downloading ThemBaoThucNgay/TaoBaoThucSang; during setup, select it if prompted or edit the Shortcut manually.",
++  "guide.scManualStep2": "00:05 Automation (card 9, step 4 — iOS cannot share Automations).",
++  "guide.scManualStep3": "Turn on Time-Sensitive Notifications for Reminders (card 8).",
++  "guide.scManualStep4": "Names must match the app — if a Shortcut with the same name already exists, iOS appends \"… 2\" → delete/rename old version.",
++  "sc-purpose-wallpaper": "Receives image from clipboard and sets Lock Screen wallpaper",
++  "sc-purpose-alarm": "Creates loud alarm in Clock app (within the next 24 hours)",
++  "sc-purpose-reminder": "Creates scheduled reminder with notes in Reminders app",
++  "sc-purpose-dayAlarm": "Sends reminder to BaoThuc list as staging for future dates",
++  "sc-purpose-morning": "00:05 automation scans BaoThuc list to create daily alarm"
+ }
+diff --git a/src/core/i18n/vi.json b/src/core/i18n/vi.json
+index d13d397..36cbb1c 100644
+--- a/src/core/i18n/vi.json
++++ b/src/core/i18n/vi.json
+@@ -23,6 +23,9 @@
+   "preview.shortcutAlarmName": "Tên Phím tắt báo thức",
+   "preview.shortcutReminderName": "Tên Phím tắt lời nhắc",
+   "preview.shortcutDayAlarmName": "Tên Phím tắt báo thức đúng ngày",
++  "preview.shortcutNamesToggle": "Đổi tên Phím tắt",
++  "preview.shortcutNamesWarning": "Tên phải trùng ĐÚNG tên Phím tắt trong app Phím tắt, nếu không nút sẽ không chạy.",
++  "preview.shortcutNamesReset": "Khôi phục tên mặc định",
+ 
+   "weekday.short.0": "CN",
+   "weekday.short.1": "T2",
+@@ -242,20 +245,37 @@
+ 
+   "guide.installTitle": "1. Cài vào Màn hình chính",
+   "guide.installBody": "Mở LichKhoa bằng Safari trên iPhone. Bấm nút Chia sẻ (hình vuông có mũi tên lên) → \"Thêm vào MH chính\". Mở lại từ biểu tượng vừa thêm để dùng như một ứng dụng thật.",
+-  "guide.googleTitle": "2. Kết nối Google Calendar (tùy chọn)",
++  "guide.installShortcutsTitle": "2. Cài nhanh bộ Phím tắt",
++  "guide.installShortcutsBody": "Tải nhanh 5 Phím tắt qua link chia sẻ iCloud mà không cần dựng tay từng bước.",
++  "guide.googleTitle": "3. Kết nối Google Calendar (tùy chọn)",
+   "guide.googleBody": "Vào tab Đồng bộ, dán Google Client ID rồi bấm Kết nối. Chưa có Client ID? Tạo miễn phí tại console.cloud.google.com (khoảng 10 phút, không cần thẻ) — các bước ở mục B tài liệu Hướng dẫn đi kèm.",
+-  "guide.shortcutTitle": "3. Tạo Shortcut đặt hình nền (làm 1 lần)",
++  "guide.shortcutTitle": "4. Tạo Shortcut đặt hình nền (làm 1 lần)",
+   "guide.shortcutBody": "Mở app Shortcuts → dấu + → thêm hành động \"Set Wallpaper\" (Đặt hình nền): Image = Shortcut Input, chọn Lock Screen, tắt \"Show Preview\". Đặt tên Shortcut trùng tên trong app (mặc định \"DatHinhNen\"). Nếu Shortcut báo \"extensionKit… error 2\": lỗi của iOS, bấm \"Đặt hình nền\" thêm lần nữa.",
+-  "guide.dailyTitle": "4. Dùng hằng ngày (≤ 3 chạm)",
++  "guide.dailyTitle": "5. Dùng hằng ngày (≤ 3 chạm)",
+   "guide.dailyBody": "Mở app → tab Xem trước → bấm \"Đặt hình nền\". Ảnh được sao chép và Shortcut tự mở để đặt làm hình nền khóa. Lần đầu iOS sẽ hỏi quyền cho Shortcut — hãy cho phép.",
+-  "guide.fallbackTitle": "5. Nếu kết nối Google không quay lại app được",
++  "guide.fallbackTitle": "6. Nếu kết nối Google không quay lại app được",
+   "guide.fallbackBody": "Trên iPhone 13 Pro Max đã chạy tốt. Nếu máy khác bị kẹt sau khi đăng nhập: mở LichKhoa bằng Safari thường (lưu làm Bookmark) để dùng Google — dữ liệu ở Safari và ở app cài trên Màn hình chính tách riêng nhau, hãy chọn một nơi dùng xuyên suốt.",
+-  "guide.limitsTitle": "6. Giới hạn đã biết",
++  "guide.limitsTitle": "7. Giới hạn đã biết",
+   "guide.limitsBody": "Phiên Google chỉ sống 1 giờ, hết hạn bấm \"Kết nối lại\" (không tự làm mới trên iPhone được). App không tự đổi hình nền khi không chạm máy. Nếu không cài vào Màn hình chính, Safari có thể xóa dữ liệu sau 7 ngày không dùng. Muốn Lịch iPhone nhắc giờ: bấm \"Thêm vào Lịch iPhone\" cho từng sự kiện.",
+-  "guide.reminderTitle": "7. Cài Phím tắt nhắc trên iPhone",
++  "guide.reminderTitle": "8. Cài Phím tắt nhắc trên iPhone",
+   "guide.reminderBody": "Cần cài 2 Phím tắt trên iPhone: \"ThemBaoThuc\" (tạo báo thức trong app Đồng hồ) và \"ThemLoiNhac\" (tạo lời nhắc trong app Lời nhắc). Đổi tên được ở tab Xem trước. Xem hướng dẫn cài từng bước chi tiết tại mục E trong docs/HUONG-DAN.md.",
+-  "guide.dayAlarmTitle": "8. Báo thức đúng ngày (Tự động hóa, làm 1 lần)",
++  "guide.dayAlarmTitle": "9. Báo thức đúng ngày (Tự động hóa, làm 1 lần)",
+   "guide.dayAlarmBody": "Cho báo thức xa hơn 24 giờ: tạo danh sách Reminders \"BaoThuc\", Phím tắt \"ThemBaoThucNgay\" (nhân bản ThemLoiNhac, đổi List = BaoThuc) và \"TaoBaoThucSang\" (Find Reminders → Repeat with Each → Create Alarm), rồi Tự động hóa chạy 00:05 hằng ngày gọi TaoBaoThucSang. Không đảm bảo 100% (máy tắt/hết pin lúc 00:05). Xem đầy đủ tại mục E.3 trong docs/HUONG-DAN.md.",
+   "guide.goToSync": "Mở tab Đồng bộ",
+-  "guide.goToDesign": "Mở tab Thiết kế"
++  "guide.goToDesign": "Mở tab Thiết kế",
++  "guide.scInstall": "Tải",
++  "guide.scNoLink": "Chưa có link — dựng tay theo các thẻ bên dưới",
++  "guide.scLinksError": "Không tải được danh sách link — cần mạng để tải Phím tắt.",
++  "guide.scUpdated": "Cập nhật: {updated}",
++  "guide.scNameMismatch": "Tên trong app đang là \"{app}\", Phím tắt tải về tên \"{expected}\" — Xem trước › Đổi tên Phím tắt › Khôi phục tên mặc định",
++  "guide.scManualTitle": "Việc còn phải tự làm",
++  "guide.scManualStep1": "Tạo danh sách Lời nhắc BaoThuc TRƯỚC khi tải ThemBaoThucNgay/TaoBaoThucSang; khi cài nếu được hỏi danh sách → chọn hoặc mở Phím tắt sửa tay.",
++  "guide.scManualStep2": "Tự động hóa 00:05 (thẻ 9, bước 4 — iOS không chia sẻ Tự động hóa).",
++  "guide.scManualStep3": "Bật Nhạy cảm thời gian cho Lời nhắc (thẻ 8).",
++  "guide.scManualStep4": "Tên phải khớp app — máy đã có Phím tắt trùng tên thì iOS đặt \"… 2\" → xóa/đổi tên bản cũ.",
++  "sc-purpose-wallpaper": "Nhận ảnh từ clipboard và tự động đổi màn hình khóa",
++  "sc-purpose-alarm": "Tạo báo thức kêu to trong app Đồng hồ (trong vòng 24 giờ tới)",
++  "sc-purpose-reminder": "Tạo lời nhắc có ngày giờ hẹn và ghi chú trong app Lời nhắc",
++  "sc-purpose-dayAlarm": "Gửi lời nhắc vào danh sách BaoThuc làm kho hẹn cho ngày xa hơn",
++  "sc-purpose-morning": "Tự động hóa 00:05 quét danh sách BaoThuc để tạo báo thức đúng ngày"
+ }
+diff --git a/src/export/install.ts b/src/export/install.ts
+new file mode 100644
+index 0000000..5ac16f0
+--- /dev/null
++++ b/src/export/install.ts
+@@ -0,0 +1,110 @@
++import type { AppState } from '../core/model';
++
++/** v1.11 (D-037): 5 loại Phím tắt được hỗ trợ cài đặt qua link iCloud. */
++export type ShortcutKind = 'wallpaper' | 'alarm' | 'reminder' | 'dayAlarm' | 'morning';
++
++/** Đúng thứ tự cài đặt: wallpaper, alarm, reminder, dayAlarm, morning. */
++export const SHORTCUT_KINDS: readonly ShortcutKind[] = [
++  'wallpaper',
++  'alarm',
++  'reminder',
++  'dayAlarm',
++  'morning',
++] as const;
++
++/** Tên mặc định của 5 Phím tắt; 4 tên đầu đối chiếu với defaultState() trong model.ts. */
++export const SHORTCUT_DEFAULT_NAMES: Record<ShortcutKind, string> = {
++  wallpaper: 'DatHinhNen',
++  alarm: 'ThemBaoThuc',
++  reminder: 'ThemLoiNhac',
++  dayAlarm: 'ThemBaoThucNgay',
++  morning: 'TaoBaoThucSang',
++};
++
++/** Ánh xạ sang trường tên tương ứng trong AppState; morning không lưu trong state (null). */
++export const SHORTCUT_STATE_KEY: Record<
++  ShortcutKind,
++  'shortcutName' | 'alarmShortcutName' | 'reminderShortcutName' | 'dayAlarmShortcutName' | null
++> = {
++  wallpaper: 'shortcutName',
++  alarm: 'alarmShortcutName',
++  reminder: 'reminderShortcutName',
++  dayAlarm: 'dayAlarmShortcutName',
++  morning: null,
++};
++
++/** Regex kiểm tra link iCloud Shortcut: id 32 hex viết thường, không query/hash. */
++export const ICLOUD_SHORTCUT_URL: RegExp =
++  /^https:\/\/www\.icloud\.com\/shortcuts\/[0-9a-f]{32}$/;
++
++export type ShortcutLinks = Record<ShortcutKind, string | null>;
++
++function isPlainObject(v: unknown): v is Record<string, unknown> {
++  return typeof v === 'object' && v !== null && !Array.isArray(v);
++}
++
++/**
++ * Phân tích dữ liệu JSON tĩnh của danh sách link Phím tắt (SPEC §5, IN-14).
++ * Không ném ngoại lệ với mọi đầu vào; url không khớp regex / thiếu / không phải chuỗi → null;
++ * `updated` không khớp /^\d{4}-\d{2}-\d{2}$/ → null; khóa lạ bỏ qua.
++ */
++export function parseShortcutLinks(json: unknown): { links: ShortcutLinks; updated: string | null } {
++  const links: ShortcutLinks = {
++    wallpaper: null,
++    alarm: null,
++    reminder: null,
++    dayAlarm: null,
++    morning: null,
++  };
++  let updated: string | null = null;
++
++  try {
++    let raw = json;
++    if (typeof json === 'string') {
++      try {
++        raw = JSON.parse(json);
++      } catch {
++        return { links, updated: null };
++      }
++    }
++
++    if (isPlainObject(raw)) {
++      if (typeof raw['updated'] === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(raw['updated'])) {
++        updated = raw['updated'];
++      }
++      if (isPlainObject(raw['shortcuts'])) {
++        const shortcutsObj = raw['shortcuts'] as Record<string, unknown>;
++        for (const kind of SHORTCUT_KINDS) {
++          const item = shortcutsObj[kind];
++          if (isPlainObject(item) && typeof item['url'] === 'string' && ICLOUD_SHORTCUT_URL.test(item['url'])) {
++            links[kind] = item['url'];
++          }
++        }
++      }
++    }
++  } catch {
++    // Không ném ngoại lệ với bất kỳ đầu vào bất thường nào
++  }
++
++  return { links, updated };
++}
++
++/**
++ * Kiểm tra tên Phím tắt trong AppState có bị lệch so với tên mặc định không.
++ * state[SHORTCUT_STATE_KEY[kind]] !== SHORTCUT_DEFAULT_NAMES[kind] → { app, expected }; morning → luôn null.
++ */
++export function shortcutNameMismatch(
++  state: AppState,
++  kind: ShortcutKind
++): { app: string; expected: string } | null {
++  const stateKey = SHORTCUT_STATE_KEY[kind];
++  if (stateKey === null) {
++    return null;
++  }
++  const app = state ? state[stateKey] : '';
++  const expected = SHORTCUT_DEFAULT_NAMES[kind];
++  if (app !== expected) {
++    return { app, expected };
++  }
++  return null;
++}
+diff --git a/src/ui/screens/Guide.tsx b/src/ui/screens/Guide.tsx
+index a081169..a6e7dec 100644
+--- a/src/ui/screens/Guide.tsx
++++ b/src/ui/screens/Guide.tsx
+@@ -1,5 +1,14 @@
++import { useEffect, useState } from 'preact/hooks';
+ import { t } from '../../core/i18n';
+ import type { Store } from '../store';
++import { useStoreState } from '../useStoreState';
++import {
++  SHORTCUT_KINDS,
++  SHORTCUT_DEFAULT_NAMES,
++  parseShortcutLinks,
++  shortcutNameMismatch,
++  type ShortcutLinks,
++} from '../../export/install';
+ 
+ export interface GuideProps {
+   store: Store;
+@@ -14,14 +23,45 @@ interface Card {
+ }
+ 
+ /**
+- * Màn Hướng dẫn: 7 thẻ ngắn (không thay HUONG-DAN.md — chỉ tóm tắt trong app).
+- * Nội dung đầy đủ + "Bài thử trên iPhone" nằm ở docs/HUONG-DAN.md (SPEC §10, D-015/D-016).
++ * Màn Hướng dẫn: 9 thẻ ngắn (không thay HUONG-DAN.md — chỉ tóm tắt trong app).
++ * Nội dung đầy đủ + "Bài thử trên iPhone" nằm ở docs/HUONG-DAN.md (SPEC §10, D-015/D-016/D-037).
+  */
+ export function Guide({ store, onGoToTab }: GuideProps) {
+-  const lang = store.getState().design.lang;
++  const state = useStoreState(store);
++  const lang = state.design.lang;
+ 
+-  const cards: Card[] = [
+-    { key: 'install', title: t('guide.installTitle', lang), body: t('guide.installBody', lang) },
++  const [linksData, setLinksData] = useState<{ links: ShortcutLinks; updated: string | null } | null>(null);
++  const [fetchError, setFetchError] = useState(false);
++
++  useEffect(() => {
++    let canceled = false;
++    fetch(import.meta.env.BASE_URL + 'shortcut-links.json', { cache: 'no-cache' })
++      .then((res) => {
++        if (!res.ok) throw new Error(`HTTP ${res.status}`);
++        return res.json();
++      })
++      .then((data) => {
++        if (!canceled) {
++          const parsed = parseShortcutLinks(data);
++          setLinksData(parsed);
++          setFetchError(false);
++        }
++      })
++      .catch(() => {
++        if (!canceled) {
++          setLinksData({
++            links: { wallpaper: null, alarm: null, reminder: null, dayAlarm: null, morning: null },
++            updated: null,
++          });
++          setFetchError(true);
++        }
++      });
++    return () => {
++      canceled = true;
++    };
++  }, []);
++
++  const otherCards: Card[] = [
+     { key: 'google', title: t('guide.googleTitle', lang), body: t('guide.googleBody', lang) },
+     { key: 'shortcut', title: t('guide.shortcutTitle', lang), body: t('guide.shortcutBody', lang) },
+     { key: 'daily', title: t('guide.dailyTitle', lang), body: t('guide.dailyBody', lang) },
+@@ -33,13 +73,99 @@ export function Guide({ store, onGoToTab }: GuideProps) {
+ 
+   return (
+     <div class="preview-screen" data-testid="guide">
+-      {cards.map((c) => (
++      {/* Thẻ 1: Cài vào Màn hình chính */}
++      <section
++        class="settings-section"
++        data-testid="guide-card-install"
++        style={{ paddingBottom: 4 }}
++      >
++        <strong>{t('guide.installTitle', lang)}</strong>
++        <p class="hint">{t('guide.installBody', lang)}</p>
++      </section>
++
++      {/* Thẻ 2: Cài nhanh bộ Phím tắt (T-10.2 / SPEC §3 IN-14) */}
++      <section
++        class="settings-section"
++        data-testid="guide-card-installShortcuts"
++        style={{ paddingBottom: 4 }}
++      >
++        <strong>{t('guide.installShortcutsTitle', lang)}</strong>
++        <p class="hint">{t('guide.installShortcutsBody', lang)}</p>
++
++        {fetchError && (
++          <div class="sc-links-error" data-testid="sc-links-error">
++            {t('guide.scLinksError', lang)}
++          </div>
++        )}
++
++        {linksData?.updated && (
++          <div class="sc-updated hint" data-testid="sc-updated">
++            {t('guide.scUpdated', lang, { updated: linksData.updated })}
++          </div>
++        )}
++
++        {linksData && (
++          <div class="sc-rows">
++            {SHORTCUT_KINDS.map((kind, idx) => {
++              const url = linksData.links[kind];
++              const mismatch = shortcutNameMismatch(state, kind);
++              return (
++                <div key={kind} class="sc-row" data-testid={`sc-row-${kind}`}>
++                  <div class="sc-row-header">
++                    <span class="sc-index">{idx + 1}. </span>
++                    <span class="sc-name mono" data-testid={`sc-name-${kind}`}>
++                      {SHORTCUT_DEFAULT_NAMES[kind]}
++                    </span>
++                  </div>
++                  <p class="sc-purpose hint">{t(`sc-purpose-${kind}`, lang)}</p>
++                  {url ? (
++                    <a
++                      class="btn sc-install-btn"
++                      data-testid={`sc-install-${kind}`}
++                      href={url}
++                      target="_blank"
++                      rel="noopener noreferrer"
++                    >
++                      {t('guide.scInstall', lang)}
++                    </a>
++                  ) : (
++                    <div class="sc-nolink hint" data-testid={`sc-nolink-${kind}`}>
++                      {t('guide.scNoLink', lang)}
++                    </div>
++                  )}
++                  {mismatch && (
++                    <div class="sc-name-mismatch" data-testid={`sc-name-mismatch-${kind}`}>
++                      {t('guide.scNameMismatch', lang, {
++                        app: mismatch.app,
++                        expected: mismatch.expected,
++                      })}
++                    </div>
++                  )}
++                </div>
++              );
++            })}
++          </div>
++        )}
++
++        <div class="sc-manual">
++          <div class="sc-manual-title">
++            <strong>{t('guide.scManualTitle', lang)}</strong>
++          </div>
++          <ol class="sc-manual-steps" data-testid="sc-manual-steps">
++            <li>{t('guide.scManualStep1', lang)}</li>
++            <li>{t('guide.scManualStep2', lang)}</li>
++            <li>{t('guide.scManualStep3', lang)}</li>
++            <li>{t('guide.scManualStep4', lang)}</li>
++          </ol>
++        </div>
++      </section>
++
++      {/* Thẻ cũ 2–8 đánh số lại 3–9: data-testid giữ nguyên */}
++      {otherCards.map((c) => (
+         <section
+           key={c.key}
+           class="settings-section"
+           data-testid={`guide-card-${c.key}`}
+-          // Chưa có class thẻ/card riêng trong styles.css (T-4.6 song song đang sửa file này) —
+-          // dùng .settings-section (đã có border-top + gap) làm khối, thêm inline padding tối thiểu.
+           style={{ paddingBottom: 4 }}
+         >
+           <strong>{c.title}</strong>
+diff --git a/src/ui/screens/Preview.tsx b/src/ui/screens/Preview.tsx
+index 95c9a17..30e57b3 100644
+--- a/src/ui/screens/Preview.tsx
++++ b/src/ui/screens/Preview.tsx
+@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
+ import type { Store } from '../store';
+ import { useStoreState } from '../useStoreState';
+ import type { DesignConfig } from '../../core/model';
++import { defaultState } from '../../core/model';
+ import { DEVICES, customDevice, detectDevice } from '../../render/devices';
+ import { renderWallpaper } from '../../render/wallpaper';
+ import { loadBg, saveBg } from '../../storage/db';
+@@ -40,6 +41,8 @@ export function Preview({ store }: { store: Store }) {
+   const [reminderShortcutNameText, setReminderShortcutNameText] = useState(state.reminderShortcutName);
+   const [dayAlarmShortcutNameText, setDayAlarmShortcutNameText] = useState(state.dayAlarmShortcutName);
+   const [toastMsg, setToastMsg] = useState<string | null>(null);
++  // B-018: mở/đóng panel đổi tên Phím tắt chỉ trong bộ nhớ (không lưu state/JSON).
++  const [namesOpen, setNamesOpen] = useState(false);
+   const bgRef = useRef<Blob | null>(null);
+   const urlRef = useRef<string | null>(null);
+   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+@@ -223,6 +226,14 @@ export function Preview({ store }: { store: Store }) {
+     }
+   }
+ 
++  function onResetShortcutNames() {
++    const defaults = defaultState(state.device);
++    store.dispatch({ type: 'setShortcutName', shortcutName: defaults.shortcutName });
++    store.dispatch({ type: 'setAlarmShortcutName', name: defaults.alarmShortcutName });
++    store.dispatch({ type: 'setReminderShortcutName', name: defaults.reminderShortcutName });
++    store.dispatch({ type: 'setDayAlarmShortcutName', name: defaults.dayAlarmShortcutName });
++  }
++
+   async function onCopy() {
+     if (!blob) return;
+     // copyPng gọi navigator.clipboard.write ngay đầu — không await gì trước đó (user activation).
+@@ -284,42 +295,6 @@ export function Preview({ store }: { store: Store }) {
+         )}
+         {error && <p class="error">{error}</p>}
+         {imgUrl && <img data-testid="preview" src={imgUrl} alt={t('preview.previewAlt', lang)} />}
+-        <label class="field shortcut-name-field">
+-          {t('preview.shortcutName', lang)}
+-          <input
+-            type="text"
+-            data-testid="shortcut-name"
+-            value={shortcutNameText}
+-            onInput={(e) => onShortcutNameInput((e.target as HTMLInputElement).value)}
+-          />
+-        </label>
+-        <label class="field shortcut-name-field">
+-          {t('preview.shortcutAlarmName', lang)}
+-          <input
+-            type="text"
+-            data-testid="shortcut-alarm-name"
+-            value={alarmShortcutNameText}
+-            onInput={(e) => onAlarmShortcutNameInput((e.target as HTMLInputElement).value)}
+-          />
+-        </label>
+-        <label class="field shortcut-name-field">
+-          {t('preview.shortcutReminderName', lang)}
+-          <input
+-            type="text"
+-            data-testid="shortcut-reminder-name"
+-            value={reminderShortcutNameText}
+-            onInput={(e) => onReminderShortcutNameInput((e.target as HTMLInputElement).value)}
+-          />
+-        </label>
+-        <label class="field shortcut-name-field">
+-          {t('preview.shortcutDayAlarmName', lang)}
+-          <input
+-            type="text"
+-            data-testid="shortcut-dayalarm-name"
+-            value={dayAlarmShortcutNameText}
+-            onInput={(e) => onDayAlarmShortcutNameInput((e.target as HTMLInputElement).value)}
+-          />
+-        </label>
+         <div class="row-actions">
+           <button data-testid="save" onClick={() => void onSave()} disabled={!blob}>
+             {t('preview.save', lang)}
+@@ -336,6 +311,59 @@ export function Preview({ store }: { store: Store }) {
+             {t('preview.setWallpaper', lang)}
+           </button>
+         </div>
++        <button
++          type="button"
++          class="btn block"
++          data-testid="shortcut-names-toggle"
++          aria-expanded={namesOpen}
++          onClick={() => setNamesOpen((v) => !v)}
++        >
++          {t('preview.shortcutNamesToggle', lang)} {namesOpen ? '▴' : '▾'}
++        </button>
++        {namesOpen && (
++          <div class="shortcut-names-panel" data-testid="shortcut-names-panel">
++            <p class="hint">{t('preview.shortcutNamesWarning', lang)}</p>
++            <label class="field shortcut-name-field">
++              {t('preview.shortcutName', lang)}
++              <input
++                type="text"
++                data-testid="shortcut-name"
++                value={shortcutNameText}
++                onInput={(e) => onShortcutNameInput((e.target as HTMLInputElement).value)}
++              />
++            </label>
++            <label class="field shortcut-name-field">
++              {t('preview.shortcutAlarmName', lang)}
++              <input
++                type="text"
++                data-testid="shortcut-alarm-name"
++                value={alarmShortcutNameText}
++                onInput={(e) => onAlarmShortcutNameInput((e.target as HTMLInputElement).value)}
++              />
++            </label>
++            <label class="field shortcut-name-field">
++              {t('preview.shortcutReminderName', lang)}
++              <input
++                type="text"
++                data-testid="shortcut-reminder-name"
++                value={reminderShortcutNameText}
++                onInput={(e) => onReminderShortcutNameInput((e.target as HTMLInputElement).value)}
++              />
++            </label>
++            <label class="field shortcut-name-field">
++              {t('preview.shortcutDayAlarmName', lang)}
++              <input
++                type="text"
++                data-testid="shortcut-dayalarm-name"
++                value={dayAlarmShortcutNameText}
++                onInput={(e) => onDayAlarmShortcutNameInput((e.target as HTMLInputElement).value)}
++              />
++            </label>
++            <button type="button" class="btn block" data-testid="shortcut-names-reset" onClick={onResetShortcutNames}>
++              {t('preview.shortcutNamesReset', lang)}
++            </button>
++          </div>
++        )}
+       </div>
+ 
+       <div class="settings-section">
+diff --git a/src/ui/styles.css b/src/ui/styles.css
+index 707e339..4770c7d 100644
+--- a/src/ui/styles.css
++++ b/src/ui/styles.css
+@@ -178,6 +178,13 @@ select option {
+   padding-right: 4px;
+ }
+ 
++.shortcut-names-panel {
++  display: flex;
++  flex-direction: column;
++  gap: 10px;
++  flex-shrink: 0;
++}
++
+ .shortcut-name-field {
+   flex-shrink: 0;
+ }
+@@ -669,13 +676,20 @@ input[type='datetime-local'] {
+   color: #e0a030;
+ }
+ 
++a.btn,
+ .btn {
++  display: inline-flex;
++  align-items: center;
++  justify-content: center;
++  box-sizing: border-box;
++  text-decoration: none;
+   min-height: 44px;
+   border-radius: 10px;
+   border: none;
+   font-size: 15px;
+   background: #2a2a33;
+   color: #f2f2f2;
++  padding: 0 16px;
+ }
+ 
+ .btn.block {
+@@ -1305,3 +1319,129 @@ input[type='datetime-local'] {
+ .sync-calendar-item {
+   min-height: 44px;
+ }
++
++/* Thẻ Hướng dẫn số 2: Cài nhanh bộ Phím tắt (T-10.2 / SPEC §3 IN-14) */
++.mono {
++  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
++}
++
++.sc-rows {
++  display: flex;
++  flex-direction: column;
++  gap: 10px;
++  margin: 6px 0;
++}
++
++.sc-row {
++  display: flex;
++  flex-direction: column;
++  gap: 6px;
++  padding: 10px 12px;
++  background: #181822;
++  border-radius: 8px;
++  border: 1px solid #282835;
++}
++
++.sc-row-header {
++  display: flex;
++  align-items: baseline;
++  gap: 6px;
++}
++
++.sc-index {
++  font-weight: 700;
++  color: #a0a0b0;
++  font-size: 14px;
++}
++
++.sc-name {
++  font-weight: 600;
++  color: #fff;
++  font-size: 15px;
++}
++
++.sc-purpose {
++  margin: 0;
++  font-size: 13px;
++  line-height: 1.4;
++  color: #a0a0b0;
++}
++
++.sc-install-btn {
++  margin-top: 4px;
++  min-height: 44px;
++  background: #383848;
++  color: #fff;
++  font-weight: 500;
++  cursor: pointer;
++}
++
++.sc-install-btn:hover {
++  background: #48485c;
++}
++
++.sc-nolink {
++  margin-top: 4px;
++  font-size: 13px;
++  color: #787888;
++  font-style: italic;
++  line-height: 1.3;
++}
++
++.sc-links-error {
++  padding: 10px 12px;
++  border-radius: 8px;
++  background: rgba(224, 160, 48, 0.15);
++  border: 1px solid #e0a030;
++  color: #f2a365;
++  font-size: 13px;
++  line-height: 1.4;
++  margin: 6px 0;
++}
++
++.sc-updated {
++  font-size: 12px;
++  color: #888;
++  margin: -4px 0 6px;
++}
++
++.sc-name-mismatch {
++  margin-top: 6px;
++  padding: 8px 10px;
++  border-radius: 6px;
++  background: rgba(235, 87, 87, 0.15);
++  border: 1px solid #eb5757;
++  color: #ff8585;
++  font-size: 12px;
++  line-height: 1.4;
++}
++
++.sc-manual {
++  margin-top: 10px;
++  padding: 10px 12px;
++  background: #151520;
++  border-radius: 8px;
++  border: 1px solid #222230;
++}
++
++.sc-manual-title {
++  font-size: 14px;
++  margin-bottom: 6px;
++  color: #e0e0f0;
++}
++
++.sc-manual-steps {
++  margin: 0;
++  padding-left: 20px;
++  font-size: 13px;
++  line-height: 1.45;
++  color: #c0c0d0;
++}
++
++.sc-manual-steps li {
++  margin-bottom: 6px;
++}
++
++.sc-manual-steps li:last-child {
++  margin-bottom: 0;
++}
+diff --git a/tests/e2e/b018-shortcut-names.spec.ts b/tests/e2e/b018-shortcut-names.spec.ts
+new file mode 100644
+index 0000000..10c1e85
+--- /dev/null
++++ b/tests/e2e/b018-shortcut-names.spec.ts
+@@ -0,0 +1,109 @@
++import { test, expect } from '@playwright/test';
++
++/**
++ * B-018: Gom 4 ô tên Phím tắt vào nút "Đổi tên Phím tắt" (mặc định thu gọn).
++ * Mục tiêu: ảnh xem trước không bị 4 ô đổi tên chen giữa; panel mặc định ẩn,
++ * bấm toggle mới xổ ra; nút reset đưa cả 4 tên về mặc định (đọc từ defaultState).
++ */
++
++test.describe('B-018 Panel đổi tên Phím tắt thu gọn', () => {
++  test('mặc định ẩn 4 ô tên; bấm toggle mở/đóng đúng aria-expanded', async ({ page }) => {
++    await page.goto('/?test=1');
++
++    const preview = page.getByTestId('preview');
++    const rowActions = page.locator('.row-actions');
++    await expect(preview).toBeVisible();
++    await expect(rowActions).toBeVisible();
++    await expect(page.getByTestId('save')).toBeEnabled();
++
++    const panel = page.getByTestId('shortcut-names-panel');
++    await expect(panel).toHaveCount(0);
++    await expect(page.getByTestId('shortcut-name')).toHaveCount(0);
++    await expect(page.getByTestId('shortcut-alarm-name')).toHaveCount(0);
++    await expect(page.getByTestId('shortcut-reminder-name')).toHaveCount(0);
++    await expect(page.getByTestId('shortcut-dayalarm-name')).toHaveCount(0);
++
++    const toggle = page.getByTestId('shortcut-names-toggle');
++    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
++
++    await toggle.click();
++    await expect(panel).toBeVisible();
++    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
++    await expect(page.getByTestId('shortcut-name')).toBeVisible();
++    await expect(page.getByTestId('shortcut-alarm-name')).toBeVisible();
++    await expect(page.getByTestId('shortcut-reminder-name')).toBeVisible();
++    await expect(page.getByTestId('shortcut-dayalarm-name')).toBeVisible();
++
++    await toggle.click();
++    await expect(panel).toHaveCount(0);
++    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
++  });
++
++  test('đổi tên rồi bấm reset → cả 4 ô về mặc định, reload vẫn giữ mặc định', async ({ page }) => {
++    await page.goto('/?test=1');
++    // Chờ dựng ảnh xong (RENDER_DEBOUNCE_MS) để layout đứng yên trước khi bấm toggle —
++    // tránh WebKit mis-click do ảnh preview vừa nạp làm dịch chuyển nút ngay lúc click.
++    await expect(page.getByTestId('save')).toBeEnabled();
++    await page.getByTestId('shortcut-names-toggle').click();
++
++    await page.getByTestId('shortcut-alarm-name').fill('Ten Khac');
++    await expect(page.getByTestId('shortcut-alarm-name')).toHaveValue('Ten Khac');
++
++    await page.getByTestId('shortcut-names-reset').click();
++
++    await expect(page.getByTestId('shortcut-name')).toHaveValue('DatHinhNen');
++    await expect(page.getByTestId('shortcut-alarm-name')).toHaveValue('ThemBaoThuc');
++    await expect(page.getByTestId('shortcut-reminder-name')).toHaveValue('ThemLoiNhac');
++    await expect(page.getByTestId('shortcut-dayalarm-name')).toHaveValue('ThemBaoThucNgay');
++
++    // Chờ lưu vào IndexedDB (debounce trong createStore) trước khi reload.
++    await expect
++      .poll(() =>
++        page.evaluate(
++          () =>
++            new Promise<string | undefined>((resolve) => {
++              const req = indexedDB.open('keyval-store');
++              req.onerror = () => resolve(undefined);
++              req.onsuccess = () => {
++                const tx = req.result.transaction('keyval', 'readonly');
++                const getReq = tx.objectStore('keyval').get('lichkhoa:state');
++                getReq.onerror = () => resolve(undefined);
++                getReq.onsuccess = () => {
++                  const s = getReq.result as { alarmShortcutName?: string } | undefined;
++                  req.result.close();
++                  resolve(s?.alarmShortcutName);
++                };
++              };
++            }),
++        ),
++      )
++      .toBe('ThemBaoThuc');
++
++    await page.reload();
++    await expect(page.getByTestId('save')).toBeEnabled();
++    await page.getByTestId('shortcut-names-toggle').click();
++    await expect(page.getByTestId('shortcut-name')).toHaveValue('DatHinhNen');
++    await expect(page.getByTestId('shortcut-alarm-name')).toHaveValue('ThemBaoThuc');
++    await expect(page.getByTestId('shortcut-reminder-name')).toHaveValue('ThemLoiNhac');
++    await expect(page.getByTestId('shortcut-dayalarm-name')).toHaveValue('ThemBaoThucNgay');
++  });
++
++  test('chiều cao ảnh preview khi panel đóng >= khi panel mở (không còn ô tên chen giữa ảnh và nút)', async ({
++    page,
++  }) => {
++    await page.goto('/?test=1');
++    const preview = page.getByTestId('preview');
++    await expect(preview).toBeVisible();
++    await expect(page.getByTestId('save')).toBeEnabled();
++
++    const closedBox = (await preview.boundingBox())!;
++    // Ảnh nằm ngay trên .row-actions, không có ô tên nào chen giữa khi đóng.
++    const rowActionsClosedBox = (await page.locator('.row-actions').boundingBox())!;
++    expect(rowActionsClosedBox.y).toBeGreaterThanOrEqual(closedBox.y + closedBox.height);
++
++    await page.getByTestId('shortcut-names-toggle').click();
++    const openBox = (await preview.boundingBox())!;
++
++    expect(closedBox.height).toBeGreaterThanOrEqual(openBox.height);
++  });
++});
+diff --git a/tests/e2e/m10-install.spec.ts b/tests/e2e/m10-install.spec.ts
+new file mode 100644
+index 0000000..8e2f034
+--- /dev/null
++++ b/tests/e2e/m10-install.spec.ts
+@@ -0,0 +1,228 @@
++import { test, expect } from '@playwright/test';
++
++/**
++ * E2E M10 (T-10.END, SPEC §6 M10 gạch E2E (1)–(6)):
++ * tab Hướng dẫn thẻ 2 "Cài nhanh bộ Phím tắt" qua link iCloud tĩnh
++ * (public/shortcut-links.json). Chặn service worker (mẫu M3) để
++ * `context.route('**\/shortcut-links.json')` luôn thắng SW trên WebKit;
++ * `context.route('https://www.icloud.com/**')` trả trang rỗng 200 —
++ * không gọi mạng thật.
++ */
++
++test.use({ serviceWorkers: 'block' });
++
++// 5 id 32 hex BỊA, khác nhau, không phải Phím tắt thật.
++const FIXTURE_LINKS = {
++  wallpaper: 'https://www.icloud.com/shortcuts/147ad0369cf258be147ad0369cf258be',
++  alarm: 'https://www.icloud.com/shortcuts/8be147ad0369cf258be147ad0369cf25',
++  reminder: 'https://www.icloud.com/shortcuts/f258be147ad0369cf258be147ad0369c',
++  dayAlarm: 'https://www.icloud.com/shortcuts/69cf258be147ad0369cf258be147ad03',
++  morning: 'https://www.icloud.com/shortcuts/d0369cf258be147ad0369cf258be147a',
++} as const;
++
++const FIXTURE_UPDATED = '2026-09-22';
++
++const KINDS = ['wallpaper', 'alarm', 'reminder', 'dayAlarm', 'morning'] as const;
++
++function fullLinksBody(): string {
++  return JSON.stringify({
++    updated: FIXTURE_UPDATED,
++    shortcuts: {
++      wallpaper: { url: FIXTURE_LINKS.wallpaper },
++      alarm: { url: FIXTURE_LINKS.alarm },
++      reminder: { url: FIXTURE_LINKS.reminder },
++      dayAlarm: { url: FIXTURE_LINKS.dayAlarm },
++      morning: { url: FIXTURE_LINKS.morning },
++    },
++  });
++}
++
++async function routeLinks(context: import('@playwright/test').BrowserContext, body: string, status = 200) {
++  await context.route('**/shortcut-links.json', (route) =>
++    route.fulfill({ status, contentType: 'application/json', body }),
++  );
++}
++
++/**
++ * Mở panel "Đổi tên Phím tắt" ở tab mặc định 'preview'. Chờ ảnh preview dựng xong
++ * (`save` enabled) trước khi bấm toggle; bọc `toPass` vì đôi khi (đặc biệt sau khi
++ * Preview mount lại từ chuyển tab) cú bấm đầu rơi trước khi listener gắn xong
++ * (mẫu race B-018/B-020) — bấm lại tới khi panel thật sự hiện.
++ */
++async function openShortcutNamesPanel(page: import('@playwright/test').Page) {
++  await expect(page.getByTestId('save')).toBeEnabled();
++  await expect(async () => {
++    await page.getByTestId('shortcut-names-toggle').click();
++    await expect(page.getByTestId('shortcut-names-panel')).toBeVisible({ timeout: 1000 });
++  }).toPass({ timeout: 10000 });
++}
++
++test.beforeEach(async ({ context }) => {
++  // Không gọi mạng thật: trang rỗng 200 (đủ để popup có URL, không cần nội dung thật).
++  await context.route('https://www.icloud.com/**', (route) =>
++    route.fulfill({ status: 200, contentType: 'text/html', body: '<html></html>' }),
++  );
++});
++
++test.describe('M10 E2E: Cài bộ Phím tắt qua link iCloud', () => {
++  test('(1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn', async ({
++    page,
++    context,
++  }) => {
++    await routeLinks(context, fullLinksBody());
++
++    await page.goto('/?test=1');
++    await page.getByTestId('tab-guide').click();
++
++    // Thẻ 1 vẫn là guide-card-install, thẻ thứ 2 là guide-card-installShortcuts.
++    const cards = page.locator('[data-testid^="guide-card-"]');
++    await expect(cards.nth(0)).toHaveAttribute('data-testid', 'guide-card-install');
++    await expect(cards.nth(1)).toHaveAttribute('data-testid', 'guide-card-installShortcuts');
++
++    await expect(page.getByTestId('sc-updated')).toContainText('2026-09-22');
++    await expect(page.getByTestId('sc-links-error')).toHaveCount(0);
++
++    // 5 hàng ĐÚNG THỨ TỰ trong DOM: wallpaper, alarm, reminder, dayAlarm, morning.
++    await expect(page.locator('[data-testid^="sc-row-"]')).toHaveCount(5);
++    const rowIds = await page
++      .locator('[data-testid^="sc-row-"]')
++      .evaluateAll((els) => els.map((el) => el.getAttribute('data-testid')));
++    expect(rowIds).toEqual(KINDS.map((kind) => `sc-row-${kind}`));
++
++    for (const kind of KINDS) {
++      await expect(page.getByTestId(`sc-row-${kind}`)).toBeVisible();
++      const btn = page.getByTestId(`sc-install-${kind}`);
++      await expect(btn).toHaveAttribute('href', FIXTURE_LINKS[kind]);
++      await expect(btn).toHaveAttribute('target', '_blank');
++      await expect(btn).toHaveAttribute('rel', /noopener/);
++      const box = await btn.boundingBox();
++      expect(box).toBeTruthy();
++      expect(box!.height).toBeGreaterThanOrEqual(44);
++      await expect(page.getByTestId(`sc-nolink-${kind}`)).toHaveCount(0);
++    }
++
++    const [popup] = await Promise.all([
++      page.waitForEvent('popup'),
++      page.getByTestId('sc-install-alarm').click(),
++    ]);
++    expect(popup.url()).toBe(FIXTURE_LINKS.alarm);
++    await expect(page.getByTestId('guide-card-installShortcuts')).toBeVisible();
++  });
++
++  test('(2) JSON thiếu url / sai định dạng / thiếu khóa: đúng 3 nolink + 2 install, không lỗi tải', async ({
++    page,
++    context,
++  }) => {
++    const body = JSON.stringify({
++      updated: FIXTURE_UPDATED,
++      shortcuts: {
++        wallpaper: { url: FIXTURE_LINKS.wallpaper },
++        alarm: { url: '' },
++        reminder: { url: FIXTURE_LINKS.reminder },
++        dayAlarm: { url: 'https://www.icloud.com/shortcuts/XYZ' },
++        // morning: thiếu khóa
++      },
++    });
++    await routeLinks(context, body);
++
++    await page.goto('/?test=1');
++    await page.getByTestId('tab-guide').click();
++    await expect(page.getByTestId('sc-row-wallpaper')).toBeVisible();
++
++    await expect(page.getByTestId('sc-nolink-alarm')).toBeVisible();
++    await expect(page.getByTestId('sc-nolink-dayAlarm')).toBeVisible();
++    await expect(page.getByTestId('sc-nolink-morning')).toBeVisible();
++    await expect(page.locator('[data-testid^="sc-nolink-"]')).toHaveCount(3);
++
++    await expect(page.getByTestId('sc-install-wallpaper')).toBeVisible();
++    await expect(page.getByTestId('sc-install-reminder')).toBeVisible();
++    await expect(page.locator('[data-testid^="sc-install-"]')).toHaveCount(2);
++
++    await expect(page.getByTestId('sc-links-error')).toHaveCount(0);
++  });
++
++  test('(3) JSON 404: sc-links-error hiện, 5 nolink, 0 install, thẻ khác vẫn hiện', async ({
++    page,
++    context,
++  }) => {
++    await routeLinks(context, 'not found', 404);
++
++    await page.goto('/?test=1');
++    await page.getByTestId('tab-guide').click();
++
++    await expect(page.getByTestId('sc-links-error')).toBeVisible();
++    await expect(page.locator('[data-testid^="sc-nolink-"]')).toHaveCount(5);
++    await expect(page.locator('[data-testid^="sc-install-"]')).toHaveCount(0);
++
++    await expect(page.getByTestId('guide-card-install')).toBeVisible();
++    await expect(page.getByTestId('guide-card-dayAlarm')).toBeVisible();
++  });
++
++  test('(4) File thật trong repo: mỗi hàng đúng một trong install/nolink', async ({ page }) => {
++    await page.goto('/?test=1');
++    await page.getByTestId('tab-guide').click();
++    await expect(page.getByTestId('sc-row-wallpaper')).toBeVisible();
++
++    for (const kind of KINDS) {
++      const hasInstall = (await page.getByTestId(`sc-install-${kind}`).count()) > 0;
++      const hasNolink = (await page.getByTestId(`sc-nolink-${kind}`).count()) > 0;
++      expect(hasInstall || hasNolink, `${kind} phải có install hoặc nolink`).toBeTruthy();
++      expect(hasInstall && hasNolink, `${kind} không được có cả hai`).toBeFalsy();
++    }
++  });
++
++  test('(5) Lệch tên: đổi tên alarm → mismatch hiện ở Hướng dẫn; reset → mismatch biến mất', async ({
++    page,
++    context,
++  }) => {
++    await routeLinks(context, fullLinksBody());
++
++    await page.goto('/?test=1');
++    // shortcut-names-toggle / shortcut-alarm-name nằm ở tab mặc định 'preview' (Xem trước).
++    await openShortcutNamesPanel(page);
++    await page.getByTestId('shortcut-alarm-name').fill('Bao Thuc');
++    await expect(page.getByTestId('shortcut-alarm-name')).toHaveValue('Bao Thuc');
++
++    await page.getByTestId('tab-guide').click();
++    await expect(page.getByTestId('sc-name-mismatch-alarm')).toBeVisible();
++    await expect(page.getByTestId('sc-name-mismatch-alarm')).toContainText('Bao Thuc');
++    await expect(page.getByTestId('sc-name-mismatch-alarm')).toContainText('ThemBaoThuc');
++    await expect(page.locator('[data-testid^="sc-name-mismatch-"]')).toHaveCount(1);
++
++    // Preview unmount khi rời tab → panel đóng lại, phải mở lại trước khi bấm reset.
++    await page.getByTestId('tab-preview').click();
++    await openShortcutNamesPanel(page);
++    await page.getByTestId('shortcut-names-reset').click();
++    await expect(page.getByTestId('shortcut-alarm-name')).toHaveValue('ThemBaoThuc');
++
++    await page.getByTestId('tab-guide').click();
++    await expect(page.getByTestId('sc-name-mismatch-alarm')).toHaveCount(0);
++  });
++
++  test('(6) Việc tự làm: 4 li chứa BaoThuc/00:05; EN đổi tiêu đề + nút Get', async ({
++    page,
++    context,
++  }) => {
++    await routeLinks(context, fullLinksBody());
++
++    await page.goto('/?test=1');
++    await page.getByTestId('tab-guide').click();
++
++    const steps = page.getByTestId('sc-manual-steps');
++    const items = steps.getByRole('listitem');
++    await expect(items).toHaveCount(4);
++    await expect(steps).toContainText('BaoThuc');
++    await expect(steps).toContainText('00:05');
++
++    // 'lang' nằm ở tab mặc định 'preview'.
++    await page.getByTestId('tab-preview').click();
++    await page.getByTestId('lang').selectOption('en');
++
++    await page.getByTestId('tab-guide').click();
++    await expect(
++      page.getByTestId('guide-card-installShortcuts').locator('strong').first(),
++    ).toContainText('Install');
++    await expect(page.getByTestId('sc-install-wallpaper')).toContainText('Get');
++    await expect(page.getByTestId('sc-manual-steps').getByRole('listitem')).toHaveCount(4);
++  });
++});
+diff --git a/tests/e2e/m7-reminder.spec.ts b/tests/e2e/m7-reminder.spec.ts
+index 6ad5083..0fdb359 100644
+--- a/tests/e2e/m7-reminder.spec.ts
++++ b/tests/e2e/m7-reminder.spec.ts
+@@ -289,6 +289,7 @@ test('T-7.END luồng chính M7: 6 kịch bản nhắc Phím tắt (Báo thức
+   // --------------------------------------------------------------------------
+   await test.step('Kịch bản 6: Đổi shortcut-alarm-name thành Bao Thuc → reload giữ → __lastNav chứa name=Bao%20Thuc', async () => {
+     await page.getByTestId('tab-preview').click();
++    await page.getByTestId('shortcut-names-toggle').click();
+ 
+     const alarmInput = page.getByTestId('shortcut-alarm-name');
+     await expect(alarmInput).toBeVisible();
+@@ -316,6 +317,8 @@ test('T-7.END luồng chính M7: 6 kịch bản nhắc Phím tắt (Báo thức
+ 
+     // reload vẫn giữ
+     await page.reload();
++    await expect(page.getByTestId('save')).toBeEnabled(); // B-020: chờ app nạp xong trước khi bấm toggle
++    await page.getByTestId('shortcut-names-toggle').click();
+     await expect(page.getByTestId('shortcut-alarm-name')).toHaveValue('Bao Thuc');
+ 
+     // Kích hoạt báo thức để kiểm tra __lastNav chứa name=Bao%20Thuc
+diff --git a/tests/e2e/m8-dayalarm.spec.ts b/tests/e2e/m8-dayalarm.spec.ts
+index 5a68017..ab11020 100644
+--- a/tests/e2e/m8-dayalarm.spec.ts
++++ b/tests/e2e/m8-dayalarm.spec.ts
+@@ -317,6 +317,7 @@ test('T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-day
+   // --------------------------------------------------------------------------
+   await test.step('Kịch bản 7: Đổi shortcut-dayalarm-name = Hen Bao Thuc → reload giữ → __lastNav chứa name=Hen%20Bao%20Thuc', async () => {
+     await page.getByTestId('tab-preview').click();
++    await page.getByTestId('shortcut-names-toggle').click();
+ 
+     const dayAlarmInput = page.getByTestId('shortcut-dayalarm-name');
+     await expect(dayAlarmInput).toBeVisible();
+@@ -344,6 +345,8 @@ test('T-8.END luồng chính M8: 7 kịch bản Báo thức đúng ngày (m8-day
+ 
+     // reload vẫn giữ
+     await page.reload();
++    await expect(page.getByTestId('save')).toBeEnabled(); // B-020: chờ app nạp xong trước khi bấm toggle
++    await page.getByTestId('shortcut-names-toggle').click();
+     await expect(page.getByTestId('shortcut-dayalarm-name')).toHaveValue('Hen Bao Thuc');
+ 
+     // Kích hoạt Báo thức đúng ngày để kiểm tra __lastNav chứa name=Hen%20Bao%20Thuc
+diff --git a/tests/e2e/share.spec.ts b/tests/e2e/share.spec.ts
+index b2e25c6..fd96160 100644
+--- a/tests/e2e/share.spec.ts
++++ b/tests/e2e/share.spec.ts
+@@ -72,6 +72,7 @@ test.describe('Sao chép + Đặt hình nền (T-4.3)', () => {
+     await waitReady(page);
+ 
+     const name = 'Đặt hình nền của tôi';
++    await page.getByTestId('shortcut-names-toggle').click();
+     await page.getByTestId('shortcut-name').fill(name);
+     await page.getByTestId('set-wallpaper').click();
+ 
+@@ -91,6 +92,7 @@ test.describe('Sao chép + Đặt hình nền (T-4.3)', () => {
+     await waitReady(page);
+ 
+     const name = 'TenMoiChuaFlush';
++    await page.getByTestId('shortcut-names-toggle').click();
+     await page.getByTestId('shortcut-name').fill(name);
+     await page.getByTestId('set-wallpaper').click();
+ 
+diff --git a/tests/unit/install.test.ts b/tests/unit/install.test.ts
+new file mode 100644
+index 0000000..3896976
+--- /dev/null
++++ b/tests/unit/install.test.ts
+@@ -0,0 +1,437 @@
++import { describe, it, expect } from 'vitest';
++import * as fs from 'fs';
++import * as path from 'path';
++import { defaultState } from '../../src/core/model';
++import type { DeviceSpec } from '../../src/core/model';
++import {
++  SHORTCUT_KINDS,
++  SHORTCUT_DEFAULT_NAMES,
++  SHORTCUT_STATE_KEY,
++  ICLOUD_SHORTCUT_URL,
++  parseShortcutLinks,
++  shortcutNameMismatch,
++} from '../../src/export/install';
++import type { ShortcutKind } from '../../src/export/install';
++
++const mockDevice: DeviceSpec = {
++  id: 'test-device',
++  label: 'iPhone 13 Pro Max',
++  width: 1284,
++  height: 2778,
++  safeTop: 0.28,
++  safeBottom: 0.12,
++};
++
++describe('Hằng số & Danh mục Phím tắt (SPEC §5, IN-14)', () => {
++  it('SHORTCUT_KINDS đủ 5 kind theo đúng thứ tự cài đặt', () => {
++    expect(SHORTCUT_KINDS).toEqual([
++      'wallpaper',
++      'alarm',
++      'reminder',
++      'dayAlarm',
++      'morning',
++    ]);
++    expect(SHORTCUT_KINDS.length).toBe(5);
++  });
++
++  it('SHORTCUT_DEFAULT_NAMES khớp defaultState() cho 4 kind đầu và có morning', () => {
++    const state = defaultState(mockDevice);
++    expect(SHORTCUT_DEFAULT_NAMES.wallpaper).toBe(state.shortcutName);
++    expect(SHORTCUT_DEFAULT_NAMES.alarm).toBe(state.alarmShortcutName);
++    expect(SHORTCUT_DEFAULT_NAMES.reminder).toBe(state.reminderShortcutName);
++    expect(SHORTCUT_DEFAULT_NAMES.dayAlarm).toBe(state.dayAlarmShortcutName);
++    expect(SHORTCUT_DEFAULT_NAMES.morning).toBe('TaoBaoThucSang');
++  });
++
++  it('SHORTCUT_STATE_KEY ánh xạ đúng các trường của AppState, morning là null', () => {
++    expect(SHORTCUT_STATE_KEY.wallpaper).toBe('shortcutName');
++    expect(SHORTCUT_STATE_KEY.alarm).toBe('alarmShortcutName');
++    expect(SHORTCUT_STATE_KEY.reminder).toBe('reminderShortcutName');
++    expect(SHORTCUT_STATE_KEY.dayAlarm).toBe('dayAlarmShortcutName');
++    expect(SHORTCUT_STATE_KEY.morning).toBeNull();
++  });
++
++  it('ICLOUD_SHORTCUT_URL khớp URL mẫu và từ chối các URL không hợp lệ', () => {
++    const validUrl1 = 'https://www.icloud.com/shortcuts/0123456789abcdef0123456789abcdef';
++    const validUrl2 = 'https://www.icloud.com/shortcuts/a1b2c3d4e5f60718293a4b5c6d7e8f90';
++    expect(ICLOUD_SHORTCUT_URL.test(validUrl1)).toBe(true);
++    expect(ICLOUD_SHORTCUT_URL.test(validUrl2)).toBe(true);
++
++    // Chuỗi rỗng
++    expect(ICLOUD_SHORTCUT_URL.test('')).toBe(false);
++    // Chữ hoa hex (chỉ chấp nhận hex viết thường)
++    expect(ICLOUD_SHORTCUT_URL.test('https://www.icloud.com/shortcuts/0123456789ABCDEF0123456789ABCDEF')).toBe(false);
++    // Độ dài thiếu (31 ký tự)
++    expect(ICLOUD_SHORTCUT_URL.test('https://www.icloud.com/shortcuts/0123456789abcdef0123456789abcde')).toBe(false);
++    // Độ dài thừa (33 ký tự)
++    expect(ICLOUD_SHORTCUT_URL.test('https://www.icloud.com/shortcuts/0123456789abcdef0123456789abcdef0')).toBe(false);
++    // Ký tự không phải hex
++    expect(ICLOUD_SHORTCUT_URL.test('https://www.icloud.com/shortcuts/0123456789abcdef0123456789abcdeg')).toBe(false);
++    // Có query string
++    expect(ICLOUD_SHORTCUT_URL.test('https://www.icloud.com/shortcuts/0123456789abcdef0123456789abcdef?foo=bar')).toBe(false);
++    // Có hash
++    expect(ICLOUD_SHORTCUT_URL.test('https://www.icloud.com/shortcuts/0123456789abcdef0123456789abcdef#frag')).toBe(false);
++    // Thiếu www.
++    expect(ICLOUD_SHORTCUT_URL.test('https://icloud.com/shortcuts/0123456789abcdef0123456789abcdef')).toBe(false);
++    // Protocol http
++    expect(ICLOUD_SHORTCUT_URL.test('http://www.icloud.com/shortcuts/0123456789abcdef0123456789abcdef')).toBe(false);
++    // Deep link
++    expect(ICLOUD_SHORTCUT_URL.test('shortcuts://import-shortcut?url=abc')).toBe(false);
++  });
++});
++
++describe('parseShortcutLinks', () => {
++  it('đọc file thật public/shortcut-links.json -> 5 url rỗng (null), updated null', () => {
++    const filePath = path.resolve(__dirname, '../../public/shortcut-links.json');
++    expect(fs.existsSync(filePath)).toBe(true);
++    const content = fs.readFileSync(filePath, 'utf-8');
++    const parsed = parseShortcutLinks(content);
++    expect(parsed.updated).toBeNull();
++    for (const kind of SHORTCUT_KINDS) {
++      expect(parsed.links[kind]).toBeNull();
++    }
++  });
++
++  // Ca test 1: URL có khoảng trắng đầu-cuối
++  it('URL có khoảng trắng đầu-cuối: " https://www.icloud.com/shortcuts/<32hex> " -> null (giữ các kind khác là null hoặc hợp lệ)', () => {
++    const validUrl = 'https://www.icloud.com/shortcuts/11111111111111111111111111111111';
++    const hex = '0123456789abcdef0123456789abcdef';
++    const spacedBoth = ` https://www.icloud.com/shortcuts/${hex} `;
++    const spacedStart = ` https://www.icloud.com/shortcuts/${hex}`;
++    const spacedEnd = `https://www.icloud.com/shortcuts/${hex} `;
++
++    // Khoảng trắng cả đầu và cuối -> null, các kind khác giữ hợp lệ hoặc null
++    const res1 = parseShortcutLinks({
++      shortcuts: {
++        wallpaper: { url: spacedBoth },
++        alarm: { url: validUrl },
++        reminder: { url: '' },
++        dayAlarm: { url: validUrl },
++        morning: { url: null },
++      },
++    });
++    expect(res1.links.wallpaper).toBeNull();
++    expect(res1.links.alarm).toBe(validUrl);
++    expect(res1.links.reminder).toBeNull();
++    expect(res1.links.dayAlarm).toBe(validUrl);
++    expect(res1.links.morning).toBeNull();
++
++    // Khoảng trắng đầu -> null
++    const res2 = parseShortcutLinks({
++      shortcuts: {
++        wallpaper: { url: validUrl },
++        alarm: { url: spacedStart },
++        reminder: { url: validUrl },
++        dayAlarm: { url: validUrl },
++        morning: { url: validUrl },
++      },
++    });
++    expect(res2.links.alarm).toBeNull();
++    expect(res2.links.wallpaper).toBe(validUrl);
++
++    // Khoảng trắng cuối -> null
++    const res3 = parseShortcutLinks({
++      shortcuts: {
++        wallpaper: { url: validUrl },
++        alarm: { url: validUrl },
++        reminder: { url: spacedEnd },
++        dayAlarm: { url: validUrl },
++        morning: { url: validUrl },
++      },
++    });
++    expect(res3.links.reminder).toBeNull();
++    expect(res3.links.wallpaper).toBe(validUrl);
++  });
++
++  // Ca test 2: Đọc file public/shortcut-links.json thật bằng fs.readFileSync + JSON.parse
++  it('đọc file public/shortcut-links.json thật bằng fs.readFileSync + JSON.parse kiểm tra schema thô', () => {
++    const filePath = path.resolve(__dirname, '../../public/shortcut-links.json');
++    expect(fs.existsSync(filePath)).toBe(true);
++    const content = fs.readFileSync(filePath, 'utf-8');
++    const raw = JSON.parse(content);
++
++    // Khóa cấp gốc ⊆ {updated, shortcuts} (không khóa lạ)
++    expect(typeof raw).toBe('object');
++    expect(raw).not.toBeNull();
++    const rootKeys = Object.keys(raw);
++    for (const key of rootKeys) {
++      expect(['updated', 'shortcuts']).toContain(key);
++    }
++    expect(rootKeys).toContain('shortcuts');
++
++    // Object.keys(shortcuts) sắp xếp = đúng 5 khóa SHORTCUT_KINDS (không thừa, không thiếu)
++    expect(typeof raw.shortcuts).toBe('object');
++    expect(raw.shortcuts).not.toBeNull();
++    const shortcutKeys = Object.keys(raw.shortcuts).sort();
++    const expectedKeys = [...SHORTCUT_KINDS].sort();
++    expect(shortcutKeys).toEqual(expectedKeys);
++
++    // Mỗi mục trong shortcuts chỉ có khóa url (không khóa lạ)
++    // Mỗi url là '' (rỗng) hoặc khớp ICLOUD_SHORTCUT_URL regex
++    for (const kind of SHORTCUT_KINDS) {
++      const item = raw.shortcuts[kind];
++      expect(typeof item).toBe('object');
++      expect(item).not.toBeNull();
++      expect(Object.keys(item)).toEqual(['url']);
++      expect(typeof item.url).toBe('string');
++      expect(item.url === '' || ICLOUD_SHORTCUT_URL.test(item.url)).toBe(true);
++    }
++
++    // Nếu có updated, dạng YYYY-MM-DD
++    if ('updated' in raw && raw.updated !== null && raw.updated !== undefined) {
++      expect(typeof raw.updated).toBe('string');
++      expect(raw.updated).toMatch(/^\d{4}-\d{2}-\d{2}$/);
++    }
++  });
++
++  it('nhận đúng 5 URL hợp lệ và updated hợp lệ', () => {
++    const input = {
++      updated: '2026-09-22',
++      shortcuts: {
++        wallpaper: { url: 'https://www.icloud.com/shortcuts/00000000000000000000000000000001' },
++        alarm: { url: 'https://www.icloud.com/shortcuts/00000000000000000000000000000002' },
++        reminder: { url: 'https://www.icloud.com/shortcuts/00000000000000000000000000000003' },
++        dayAlarm: { url: 'https://www.icloud.com/shortcuts/00000000000000000000000000000004' },
++        morning: { url: 'https://www.icloud.com/shortcuts/00000000000000000000000000000005' },
++      },
++    };
++    const res = parseShortcutLinks(input);
++    expect(res.updated).toBe('2026-09-22');
++    expect(res.links.wallpaper).toBe('https://www.icloud.com/shortcuts/00000000000000000000000000000001');
++    expect(res.links.alarm).toBe('https://www.icloud.com/shortcuts/00000000000000000000000000000002');
++    expect(res.links.reminder).toBe('https://www.icloud.com/shortcuts/00000000000000000000000000000003');
++    expect(res.links.dayAlarm).toBe('https://www.icloud.com/shortcuts/00000000000000000000000000000004');
++    expect(res.links.morning).toBe('https://www.icloud.com/shortcuts/00000000000000000000000000000005');
++  });
++
++  // Ca test 3: URL sai kiểm qua parseShortcutLinks với JSON đầy đủ (5 kind, 4 hợp lệ + 1 sai)
++  describe('URL sai kiểm qua parseShortcutLinks với JSON đầy đủ (5 kind, 4 hợp lệ + 1 sai)', () => {
++    const validUrls: Record<ShortcutKind, string> = {
++      wallpaper: 'https://www.icloud.com/shortcuts/11111111111111111111111111111111',
++      alarm: 'https://www.icloud.com/shortcuts/22222222222222222222222222222222',
++      reminder: 'https://www.icloud.com/shortcuts/33333333333333333333333333333333',
++      dayAlarm: 'https://www.icloud.com/shortcuts/44444444444444444444444444444444',
++      morning: 'https://www.icloud.com/shortcuts/55555555555555555555555555555555',
++    };
++
++    const invalidCases: Array<{ label: string; kind: ShortcutKind; badUrl: string }> = [
++      {
++        label: '(a) protocol http:// (không https)',
++        kind: 'wallpaper',
++        badUrl: 'http://www.icloud.com/shortcuts/11111111111111111111111111111111',
++      },
++      {
++        label: '(b) thiếu www.',
++        kind: 'alarm',
++        badUrl: 'https://icloud.com/shortcuts/22222222222222222222222222222222',
++      },
++      {
++        label: '(c) id 31 ký tự',
++        kind: 'reminder',
++        badUrl: 'https://www.icloud.com/shortcuts/3333333333333333333333333333333',
++      },
++      {
++        label: '(d) id 33 ký tự',
++        kind: 'dayAlarm',
++        badUrl: 'https://www.icloud.com/shortcuts/444444444444444444444444444444444',
++      },
++      {
++        label: '(e) ký tự hoa ABCDEF',
++        kind: 'morning',
++        badUrl: 'https://www.icloud.com/shortcuts/5555555555555555555555555555555A',
++      },
++      {
++        label: '(f) có query ?x=1',
++        kind: 'alarm',
++        badUrl: 'https://www.icloud.com/shortcuts/22222222222222222222222222222222?x=1',
++      },
++      {
++        label: '(g) có hash #frag',
++        kind: 'reminder',
++        badUrl: 'https://www.icloud.com/shortcuts/33333333333333333333333333333333#frag',
++      },
++    ];
++
++    for (const c of invalidCases) {
++      it(`${c.label} -> kind ${c.kind} null, 4 kind khác giữ url hợp lệ`, () => {
++        const shortcutsObj: Record<string, { url: string }> = {};
++        for (const k of SHORTCUT_KINDS) {
++          shortcutsObj[k] = { url: k === c.kind ? c.badUrl : validUrls[k] };
++        }
++        const fullJson = {
++          updated: '2026-09-22',
++          shortcuts: shortcutsObj,
++        };
++        const res = parseShortcutLinks(fullJson);
++        // Kind sai bị null
++        expect(res.links[c.kind]).toBeNull();
++        // 4 kind khác giữ url hợp lệ
++        for (const k of SHORTCUT_KINDS) {
++          if (k !== c.kind) {
++            expect(res.links[k]).toBe(validUrls[k]);
++          }
++        }
++        expect(res.updated).toBe('2026-09-22');
++      });
++    }
++  });
++
++  it('url không hợp lệ (sai regex, rỗng, không phải chuỗi) -> trả null cho kind đó', () => {
++    const input = {
++      shortcuts: {
++        wallpaper: { url: '' },
++        alarm: { url: 'https://www.icloud.com/shortcuts/INVALID' },
++        reminder: { url: 12345 },
++        dayAlarm: {},
++        morning: null,
++      },
++    };
++    const res = parseShortcutLinks(input);
++    expect(res.links.wallpaper).toBeNull();
++    expect(res.links.alarm).toBeNull();
++    expect(res.links.reminder).toBeNull();
++    expect(res.links.dayAlarm).toBeNull();
++    expect(res.links.morning).toBeNull();
++  });
++
++  // Ca test 4: updated định dạng sai
++  it('updated định dạng sai: updated: "22/09/2026" (dạng dd/mm/yyyy) -> null; updated: 20260922 (số, không phải chuỗi) -> null', () => {
++    const fullShortcuts = {
++      wallpaper: { url: 'https://www.icloud.com/shortcuts/11111111111111111111111111111111' },
++      alarm: { url: 'https://www.icloud.com/shortcuts/22222222222222222222222222222222' },
++      reminder: { url: 'https://www.icloud.com/shortcuts/33333333333333333333333333333333' },
++      dayAlarm: { url: 'https://www.icloud.com/shortcuts/44444444444444444444444444444444' },
++      morning: { url: 'https://www.icloud.com/shortcuts/55555555555555555555555555555555' },
++    };
++
++    // updated: '22/09/2026' (dạng dd/mm/yyyy) -> null
++    const res1 = parseShortcutLinks({
++      updated: '22/09/2026',
++      shortcuts: fullShortcuts,
++    });
++    expect(res1.updated).toBeNull();
++    expect(res1.links.wallpaper).toBe('https://www.icloud.com/shortcuts/11111111111111111111111111111111');
++
++    // updated: 20260922 (số, không phải chuỗi) -> null
++    const res2 = parseShortcutLinks({
++      updated: 20260922,
++      shortcuts: fullShortcuts,
++    });
++    expect(res2.updated).toBeNull();
++    expect(res2.links.wallpaper).toBe('https://www.icloud.com/shortcuts/11111111111111111111111111111111');
++  });
++
++  it('updated không hợp lệ hoặc thiếu -> trả null', () => {
++    expect(parseShortcutLinks({ updated: '2026/09/22' }).updated).toBeNull();
++    expect(parseShortcutLinks({ updated: '2026-9-22' }).updated).toBeNull();
++    expect(parseShortcutLinks({ updated: 'invalid-date' }).updated).toBeNull();
++    expect(parseShortcutLinks({ updated: '' }).updated).toBeNull();
++    expect(parseShortcutLinks({ updated: 12345 }).updated).toBeNull();
++    expect(parseShortcutLinks({ updated: null }).updated).toBeNull();
++    expect(parseShortcutLinks({}).updated).toBeNull();
++  });
++
++  it('khóa lạ ở root và trong shortcuts được bỏ qua an toàn', () => {
++    const input = {
++      unknownField: 'test',
++      updated: '2026-09-22',
++      shortcuts: {
++        wallpaper: { url: 'https://www.icloud.com/shortcuts/00000000000000000000000000000001' },
++        extraShortcut: { url: 'https://www.icloud.com/shortcuts/00000000000000000000000000000009' },
++      },
++    };
++    const res = parseShortcutLinks(input);
++    expect(res.updated).toBe('2026-09-22');
++    expect(res.links.wallpaper).toBe('https://www.icloud.com/shortcuts/00000000000000000000000000000001');
++    expect(res.links.alarm).toBeNull();
++    expect((res.links as Record<string, unknown>)['extraShortcut']).toBeUndefined();
++    expect(Object.keys(res.links)).toEqual(SHORTCUT_KINDS);
++  });
++
++  it('không ném lỗi với mọi đầu vào bất thường', () => {
++    const badInputs: unknown[] = [
++      null,
++      undefined,
++      '',
++      'invalid json',
++      '{ incomplete json',
++      123,
++      true,
++      false,
++      [],
++      [1, 2, 3],
++      {},
++      { shortcuts: null },
++      { shortcuts: 123 },
++      { shortcuts: 'invalid' },
++      { shortcuts: [] },
++      { shortcuts: { wallpaper: 'not-object' } },
++      { shortcuts: { wallpaper: { url: null } } },
++      { shortcuts: { wallpaper: { url: false } } },
++    ];
++
++    for (const bad of badInputs) {
++      expect(() => {
++        const res = parseShortcutLinks(bad);
++        expect(res.updated).toBeNull();
++        for (const kind of SHORTCUT_KINDS) {
++          expect(res.links[kind]).toBeNull();
++        }
++      }).not.toThrow();
++    }
++  });
++});
++
++describe('shortcutNameMismatch', () => {
++  it('state mặc định -> tất cả kind đều trả về null', () => {
++    const state = defaultState(mockDevice);
++    for (const kind of SHORTCUT_KINDS) {
++      expect(shortcutNameMismatch(state, kind)).toBeNull();
++    }
++  });
++
++  it('lần lượt từng kind bị đổi tên -> trả về { app, expected } tương ứng', () => {
++    // 1. wallpaper
++    const state1 = { ...defaultState(mockDevice), shortcutName: 'DoiHinhNen' };
++    expect(shortcutNameMismatch(state1, 'wallpaper')).toEqual({
++      app: 'DoiHinhNen',
++      expected: 'DatHinhNen',
++    });
++    expect(shortcutNameMismatch(state1, 'alarm')).toBeNull();
++
++    // 2. alarm
++    const state2 = { ...defaultState(mockDevice), alarmShortcutName: 'BaoThucKhac' };
++    expect(shortcutNameMismatch(state2, 'alarm')).toEqual({
++      app: 'BaoThucKhac',
++      expected: 'ThemBaoThuc',
++    });
++    expect(shortcutNameMismatch(state2, 'wallpaper')).toBeNull();
++
++    // 3. reminder
++    const state3 = { ...defaultState(mockDevice), reminderShortcutName: 'LoiNhacKhac' };
++    expect(shortcutNameMismatch(state3, 'reminder')).toEqual({
++      app: 'LoiNhacKhac',
++      expected: 'ThemLoiNhac',
++    });
++    expect(shortcutNameMismatch(state3, 'dayAlarm')).toBeNull();
++
++    // 4. dayAlarm
++    const state4 = { ...defaultState(mockDevice), dayAlarmShortcutName: 'BaoThucNgayKhac' };
++    expect(shortcutNameMismatch(state4, 'dayAlarm')).toEqual({
++      app: 'BaoThucNgayKhac',
++      expected: 'ThemBaoThucNgay',
++    });
++    expect(shortcutNameMismatch(state4, 'reminder')).toBeNull();
++  });
++
++  it('morning luôn luôn trả về null kể cả khi state thay đổi', () => {
++    const state = {
++      ...defaultState(mockDevice),
++      shortcutName: 'Custom1',
++      alarmShortcutName: 'Custom2',
++      reminderShortcutName: 'Custom3',
++      dayAlarmShortcutName: 'Custom4',
++    };
++    expect(shortcutNameMismatch(state, 'morning')).toBeNull();
++  });
++});
