@@ -1323,4 +1323,4 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - Model: gemini (soat) · Trạng thái: DONE — Pro 4 phút, 0 vấn đề (báo cáo mỏng, 806 byte; chỉ là gợi ý cho Kiến trúc sư)
 ### T-10.6 — Khảo sát chập chờn `tests/e2e/week.spec.ts:12` webkit (làn doc, S4)
 - Chỉ đọc: tìm nguyên nhân khả dĩ (chờ điều kiện, animation, thời gian), đề xuất cách sửa test/app kèm file:dòng. Kết quả → `docs/gemini-out/T-10.6.md`. Không sửa file.
-- Model: gemini (doc) · Trạng thái: DOING
+- Model: gemini (doc) → khao-sat · Trạng thái: DOING — Gemini vòng 1 TRỐNG (dừng giữa lúc chạy test, chỉ còn dòng dò) = lỗi làn 1/2 phiên này → chuyển khao-sat (Haiku)
