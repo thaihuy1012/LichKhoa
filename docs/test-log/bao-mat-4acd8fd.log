@@ -1,0 +1,10 @@
+CỔNG BẢO MẬT — commit 4acd8fd (main), phạm vi origin/main..HEAD = 22 commit (B-018..B-020, SPEC v1.11, T-10.1..T-10.7, T-10.4)
+Ngày: 2026-10-26 · Người chạy: Quản lý · Commit kế tiếp chỉ thêm chính file log này.
+
+1. Bí mật trong mã: grep diff + cây làm việc (client_secret, PRIVATE KEY, refresh_token, access_token, api_key, password, Bearer, service_account) → 0 giá trị; chỉ có chữ nhắc tên khóa trong .gitignore/DECISIONS/TASKS/SPEC. Chuỗi dài ≥ 40 ký tự trong dòng thêm: chỉ URL iCloud Shortcuts (5 link thật cố ý công khai theo SPEC §6 M10 + id bịa trong test). → SẠCH
+2. File không được lên: không có .env*, *.pem/*.p12/*.key, sao lưu JSON, ảnh. docs/test-log + docs/gemini-out chỉ là log test/báo cáo với dữ liệu mẫu. → SẠCH
+3. PII: không email, số điện thoại, đường dẫn thư mục người dùng trong dòng thêm. Kiểm 5 link iCloud qua API records: tên = DatHinhNen, ThemBaoThuc, ThemLoiNhac, ThemBaoThucNgay, TaoBaoThucSang (đúng 5/5); trường người tạo chỉ là mã ẩn danh CloudKit (33 ký tự, dạng "_hex"), không tên thật/email. Nội dung 5 Phím tắt (plist): chỉ hành động hệ thống, tên biến, tên danh sách chung; không văn bản cá nhân, không danh bạ/vị trí/ảnh. → SẠCH
+4. Cấu hình: không đổi .github/workflows, vite.config, manifest, service worker. → SẠCH
+5. Phụ thuộc: package.json/package-lock.json không đổi. Mạng mới trong src: chỉ fetch(BASE_URL + 'shortcut-links.json') cùng origin. → SẠCH
+Kết luận: KHÔNG CHẶN — được đề nghị Chủ dự án git push.
+Test: build + npm run check EXIT 0 (unit 337×2, e2e 134 pass / 14 skip có sẵn) — docs/test-log/T-10.4-check.log; JS gzip 48.98 KB.

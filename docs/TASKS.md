@@ -1316,7 +1316,7 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 
 ### T-10.4 — Nạp 5 link thật (Chủ dự án tạo theo §10.G) + Cổng bảo mật + push
 - Quản lý tự làm (không giao thợ): theo SPEC §6 M10 gạch T-10.4. Trạng thái: DONE
-- Nhật ký: 2026-10-26 Chủ dự án gửi 5 link → `public/shortcut-links.json` + `updated` 2026-10-26 → unit fail 1 ca (test T-10.1 khóa cứng "5 url rỗng", trái SPEC) → D-038 sửa assert (khai báo) → unit 23/23, tsc OK, check 337×2 / 134 / 14 skip EXIT 0 (`T-10.4-check.log`), size 48.98 KB. Kiểm 5 link qua API iCloud: tên đúng 5/5, chủ sở hữu chỉ là mã ẩn danh, không email/tên thật; nội dung Phím tắt không có dữ liệu riêng (reminder có tên danh sách chung + Import Question).
+- Nhật ký: 2026-10-26 Chủ dự án gửi 5 link → `public/shortcut-links.json` + `updated` 2026-10-26 → unit fail 1 ca (test T-10.1 khóa cứng "5 url rỗng", trái SPEC) → D-038 sửa assert (khai báo) → unit 23/23, tsc OK, check 337×2 / 134 / 14 skip EXIT 0 (`T-10.4-check.log`), size 48.98 KB. Kiểm 5 link qua API iCloud: tên đúng 5/5, chủ sở hữu chỉ là mã ẩn danh, không email/tên thật; nội dung Phím tắt không có dữ liệu riêng (reminder có tên danh sách chung + Import Question). Cổng bảo mật 5 nhóm SẠCH (`docs/test-log/bao-mat-4acd8fd.log`) → chờ Chủ dự án `git push`, rồi thử tay B-018 + I0–I5 → bao-cao/M10.md → Kiến trúc sư duyệt → tag `M10-ok`.
 
 ### PHIÊN 2026-09-23 — làn Gemini BẬT lại mức NHIỀU (Chủ dự án: "việc làm ngay được thì giao Gemini hết, sắp reset tuần Gemini")
 ### T-10.5 — Soát chéo `M10-soat` (làn soat)
