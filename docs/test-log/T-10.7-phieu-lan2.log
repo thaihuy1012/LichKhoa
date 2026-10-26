@@ -1,0 +1,67 @@
+
+> lichkhoa@0.1.0 build
+> tsc --noEmit && vite build
+
+[36mvite v8.3.0 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 51 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/registerSW.js                0.13 kB
+dist/manifest.webmanifest         0.29 kB
+dist/index.html                   0.86 kB │ gzip:  0.42 kB
+dist/assets/index-7mDsfCmk.css   16.87 kB │ gzip:  4.03 kB
+dist/assets/index-DOHJ714J.js   139.25 kB │ gzip: 44.36 kB
+
+[32m✓ built in 200ms[39m
+
+PWA v1.3.0
+mode      generateSW
+precache  7 entries (153.44 KiB)
+files generated
+  dist/sw.js
+  dist/workbox-9c191d2f.js
+
+Running 40 tests using 4 workers
+
+[1/40] [chromium] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[2/40] [chromium] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[3/40] [chromium] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[4/40] [chromium] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[5/40] [chromium] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[6/40] [chromium] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[7/40] [chromium] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[8/40] [chromium] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[9/40] [chromium] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[10/40] [chromium] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[11/40] [chromium] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[12/40] [chromium] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[13/40] [chromium] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[14/40] [chromium] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[15/40] [chromium] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[16/40] [chromium] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[17/40] [chromium] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[18/40] [chromium] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[19/40] [chromium] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[20/40] [chromium] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[21/40] [webkit] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[22/40] [webkit] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[23/40] [webkit] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[24/40] [webkit] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[25/40] [webkit] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[26/40] [webkit] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[27/40] [webkit] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[28/40] [webkit] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[29/40] [webkit] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[30/40] [webkit] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[31/40] [webkit] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[32/40] [webkit] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[33/40] [webkit] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[34/40] [webkit] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[35/40] [webkit] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[36/40] [webkit] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[37/40] [webkit] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[38/40] [webkit] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+[39/40] [webkit] › tests\e2e\week.spec.ts:42:3 › Bố cục Tuần (T-5.3) › chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái
+[40/40] [webkit] › tests\e2e\week.spec.ts:117:3 › Bố cục Tuần (T-5.3) › ở 428x926: 4 nút bố cục nằm trên một hàng, không cuộn ngang, mỗi nút cao >= 44 px
+  40 passed (35.5s)

@@ -8,6 +8,36 @@ async function opsTexts(page: import('@playwright/test').Page): Promise<string[]
   );
 }
 
+/** Đọc design.layout đã lưu trong IndexedDB (keyval-store / lichkhoa:state) */
+async function readSavedLayout(page: import('@playwright/test').Page): Promise<string | undefined> {
+  return page.evaluate(
+    () =>
+      new Promise<string | undefined>((resolve) => {
+        const req = indexedDB.open('keyval-store');
+        req.onerror = () => resolve(undefined);
+        req.onsuccess = () => {
+          const db = req.result;
+          try {
+            const tx = db.transaction('keyval', 'readonly');
+            const getReq = tx.objectStore('keyval').get('lichkhoa:state');
+            getReq.onerror = () => {
+              db.close();
+              resolve(undefined);
+            };
+            getReq.onsuccess = () => {
+              const s = getReq.result as { design?: { layout?: string } } | undefined;
+              db.close();
+              resolve(s?.design?.layout);
+            };
+          } catch {
+            db.close();
+            resolve(undefined);
+          }
+        };
+      }),
+  );
+}
+
 test.describe('Bố cục Tuần (T-5.3)', () => {
   test('chọn bố cục Tuần: nút chọn, preview 1284x2778, đủ 7 nhãn thứ VI (T2 đầu), reload giữ trạng thái', async ({ page }) => {
     page.on('dialog', (d) => d.accept());
@@ -64,8 +94,8 @@ test.describe('Bố cục Tuần (T-5.3)', () => {
       }, { timeout: 10000 })
       .toEqual(expectedWeekdays);
 
-    // Reload -> vẫn chọn Tuần (IndexedDB persist debounce 300ms)
-    await page.waitForTimeout(500);
+    // Reload -> vẫn chọn Tuần (chờ IndexedDB persist debounce 300ms)
+    await expect.poll(() => readSavedLayout(page), { timeout: 10000 }).toBe('week');
     await page.reload();
 
     const weekBtnReloaded = page.getByTestId('layout-week');
