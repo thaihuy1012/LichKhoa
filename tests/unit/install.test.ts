@@ -81,14 +81,18 @@ describe('Hằng số & Danh mục Phím tắt (SPEC §5, IN-14)', () => {
 });
 
 describe('parseShortcutLinks', () => {
-  it('đọc file thật public/shortcut-links.json -> 5 url rỗng (null), updated null', () => {
+  // T-10.4 (D-038): trước đây khóa cứng "5 url rỗng" — sai SPEC §6 M10 (file thật phải pass cả trước và sau khi nạp link).
+  it('đọc file thật public/shortcut-links.json -> mỗi kind: url rỗng thì null, có url thì giữ nguyên; updated null hoặc YYYY-MM-DD', () => {
     const filePath = path.resolve(__dirname, '../../public/shortcut-links.json');
     expect(fs.existsSync(filePath)).toBe(true);
     const content = fs.readFileSync(filePath, 'utf-8');
+    const raw = JSON.parse(content);
     const parsed = parseShortcutLinks(content);
-    expect(parsed.updated).toBeNull();
+    if (raw.updated === undefined) expect(parsed.updated).toBeNull();
+    else expect(parsed.updated).toBe(raw.updated);
     for (const kind of SHORTCUT_KINDS) {
-      expect(parsed.links[kind]).toBeNull();
+      const url = raw.shortcuts[kind].url;
+      expect(parsed.links[kind]).toBe(url === '' ? null : url);
     }
   });
 

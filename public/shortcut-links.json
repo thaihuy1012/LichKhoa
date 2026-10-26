@@ -1,9 +1,10 @@
 {
+  "updated": "2026-10-26",
   "shortcuts": {
-    "wallpaper": { "url": "" },
-    "alarm": { "url": "" },
-    "reminder": { "url": "" },
-    "dayAlarm": { "url": "" },
-    "morning": { "url": "" }
+    "wallpaper": { "url": "https://www.icloud.com/shortcuts/8eb5d89657bb4fb6b15bd81992578a00" },
+    "alarm": { "url": "https://www.icloud.com/shortcuts/f32a31013a85440f9ddc785ac4d2c292" },
+    "reminder": { "url": "https://www.icloud.com/shortcuts/f9bd95b760a746199f5950e8958a4c6c" },
+    "dayAlarm": { "url": "https://www.icloud.com/shortcuts/5bfb20dbeeee4fada91ee79fb4eb7b97" },
+    "morning": { "url": "https://www.icloud.com/shortcuts/0dfb0d82336543ccbaae46458317f606" }
   }
 }
