@@ -1334,3 +1334,9 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - Model: gemini (code — đủ 4 điều: tiêu chí + lệnh rõ, 1 file, không đổi thiết kế, cây sạch) · Lần thử: 0/3 · Vòng Gemini: 1/3 · Trạng thái: DONE
 - Nhật ký: 2026-10-26 (phiên mới) Gemini vòng 1 đã sửa (agy DONE 0; báo cáo gemini-out chỉ có dòng dò, tho-gemini không kịp báo do hết phiên) → kiem-thu FAIL 36/40: 4 fail chromium đều ở lượt đầu nguội máy (worker 1–4, timeout 30 s), gồm cả test :117 không bị sửa; check 134/0/14 skip EXIT 0. Quản lý đối chứng: bản gốc chromium ×10 20/20 (`T-10.7-goc-chromium.log`), bản mới chromium ×10 20/20, lệnh phiếu chạy lại 40/40 (`T-10.7-phieu-lan2.log`) → kết luận chập chờn tải máy lúc khởi động, không do thay đổi → review diff đạt 3 tiêu chí → commit.
 - S4 theo dõi: e2e lượt đầu nguội máy đôi khi timeout 30 s khi chạy song song 4 worker (cả chromium).
+
+### Thử tay M10 — 2026-10-27 (Chủ dự án, iPhone, đang làm)
+- B-018: toggle + "Khôi phục tên mặc định" ĐẠT; chạm đầu không trượt (S4 theo dõi → đóng).
+- I0: "không hiện" — đang hỏi lại rõ (tên iCloud trên trang link / tham số List trong Import Question).
+- I1: đang làm. Chủ dự án đổi tên `-cu` ở ô tên TRONG LichKhoa thay vì trong app Phím tắt → iOS hỏi Replace/Keep Both. Đã hướng dẫn: Khôi phục tên mặc định trong LichKhoa → Cancel → đổi tên bản cũ `_cu` trong app Phím tắt → Add Shortcut. Lần thử đầu mở từ tab Safari (không phải bản Màn hình chính) → Safari chuyển thẳng sang app Phím tắt (ghi cho I5; vẫn cần thử từ PWA).
+- S4 mới: nhãn `preview.shortcutName` "Tên Shortcut" (vi.json:16) không rõ là Phím tắt hình nền — Chủ dự án không nhận ra → đổi "Tên Phím tắt hình nền" (+EN) trong đợt sửa sau thử tay.
