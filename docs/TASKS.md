@@ -1343,3 +1343,4 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 
 ### B-021 — Nhãn "Tên Shortcut" → "Tên Phím tắt hình nền" (S4 từ thử tay M10)
 - Quản lý tự làm (2 dòng i18n, nhỏ hơn một phiếu): `vi.json:16` "Tên Phím tắt hình nền", `en.json:16` "Wallpaper Shortcut name" (cùng kiểu 3 nhãn bên dưới). Không test nào khóa chữ cũ. `npm run check` EXIT 0 (134 e2e / 14 skip, `docs/test-log/B-021-check.log`). Trạng thái: DONE (chưa deploy — gộp đợt deploy sau thử tay M10).
+- 2026-10-28: trong lúc chờ thử tay — B-021 ✔ (chưa deploy); nháp `docs/bao-cao/M10.md` (đủ mọi mục trừ kết quả I0–I5). Khi Chủ dự án báo xong I-series: điền mục "Thử tay" → Kiến trúc sư DUYỆT MILESTONE → `git tag M10-ok`; deploy B-021 cùng đợt sửa sau thử tay (nhớ Cổng bảo mật).
