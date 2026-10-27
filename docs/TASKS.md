@@ -1340,3 +1340,6 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - I0: "không hiện" — đang hỏi lại rõ (tên iCloud trên trang link / tham số List trong Import Question).
 - I1: đang làm. Chủ dự án đổi tên `-cu` ở ô tên TRONG LichKhoa thay vì trong app Phím tắt → iOS hỏi Replace/Keep Both. Đã hướng dẫn: Khôi phục tên mặc định trong LichKhoa → Cancel → đổi tên bản cũ `_cu` trong app Phím tắt → Add Shortcut. Lần thử đầu mở từ tab Safari (không phải bản Màn hình chính) → Safari chuyển thẳng sang app Phím tắt (ghi cho I5; vẫn cần thử từ PWA).
 - S4 mới: nhãn `preview.shortcutName` "Tên Shortcut" (vi.json:16) không rõ là Phím tắt hình nền — Chủ dự án không nhận ra → đổi "Tên Phím tắt hình nền" (+EN) trong đợt sửa sau thử tay.
+
+### B-021 — Nhãn "Tên Shortcut" → "Tên Phím tắt hình nền" (S4 từ thử tay M10)
+- Quản lý tự làm (2 dòng i18n, nhỏ hơn một phiếu): `vi.json:16` "Tên Phím tắt hình nền", `en.json:16` "Wallpaper Shortcut name" (cùng kiểu 3 nhãn bên dưới). Không test nào khóa chữ cũ. `npm run check` EXIT 0 (134 e2e / 14 skip, `docs/test-log/B-021-check.log`). Trạng thái: DONE (chưa deploy — gộp đợt deploy sau thử tay M10).
