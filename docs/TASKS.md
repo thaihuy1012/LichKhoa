@@ -4,6 +4,7 @@ Nguồn sự thật: `docs/SPEC.md` (v1.5 — D-024 bố cục Tuần; v1.4 — 
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
+- **Điểm dừng mới nhất: mục "ĐIỂM DỪNG 2026-11-10 (khuya)" cuối file.**
 - **Làn Gemini: VỪA** (Chủ dự án 2026-11-10) · AGY_FORMAT=text (stream-json không tách được trên máy này → script đo hoạt động chủ yếu qua file thay đổi)
 - **Vòng 4 Argon: BẬT** · **Vòng 5 Sonnet qua agy: BẬT** (mặc định kit v5.3, đang chạy thử)
 - **Bộ quy trình: ai-team-kit v5.3** (nâng từ v2.1 ngày 2026-11-10, D-039) — Cổng bảo mật + quy tắc D-012 giữ trong CLAUDE.md.
@@ -1378,3 +1379,11 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - Tiêu chí nghiệm thu: [ ] hai helper đổi sang `expect.poll(page.evaluate…)`, giữ nguyên logic so và tham số `timeout` (persist-flush vẫn 150 ms) [ ] không đổi/bớt assert nào khác, không skip, không nới timeout [ ] unit guard mới: quét `tests/e2e/*.ts`, fail nếu có `waitForFunction(` mà hàm truyền vào trả `new Promise` [ ] kiểm đột biến bằng tay: tạm bỏ flush ở pagehide → `persist-flush` phải fail (không commit đột biến) [ ] lệnh kiểm tra pass.
 - Lệnh kiểm tra: `npx vitest run tests/unit/e2e-wait-guard.test.ts` ; `npm run build && npx playwright test tests/e2e/persist-flush.spec.ts tests/e2e/todo-gestures.spec.ts --repeat-each=5` ; `npm run check` (kiem-thu).
 - Model: gemini (code, bảo trì S3) · Lần thử: 0/3 · Vòng Gemini: 0/5 · Trạng thái: TODO
+
+### ĐIỂM DỪNG 2026-11-10 (khuya) — ĐỌC ĐẦU TIÊN Ở PHIÊN SAU
+- **Trạng thái**: KHÔNG sự cố mở (SC-006 ĐÃ ĐÓNG). Không phiếu DOING. Cây git sạch. Không lượt Gemini nào chạy. Làn Gemini: VỪA (Chủ dự án) · Vòng 4 Argon: BẬT · Vòng 5: BẬT.
+- **Chờ Chủ dự án `git push`** 13 commit (origin/main 40c9c04 → HEAD a365c71: B-021, B-022, kit v5.3, G-2, SC-006, D-040, sổ sách). Cổng bảo mật SẠCH trên ec1bbdc (`docs/test-log/bao-mat-ec1bbdc.log`; commit a365c71 chỉ thêm log đó + BAI-HOC). Có commit mới trước khi push → kiểm toán lại.
+- `! git push` trong Claude Code lỗi "could not read Username" (Mac mới chưa có credential, `!` không có TTY). Đã hướng dẫn: tạo fine-grained token (chỉ repo LichKhoa, Contents read/write) → `git push` trong app Terminal (user `thaihuy1012`, password = token) → osxkeychain lưu, lần sau `! git push` chạy được. Không có `gh`/`brew` trên máy.
+- **Sau push**: kiểm Actions run + trang 200 → điền `docs/bao-cao/M10.md` (SC-006, D-040, B-022, I4 hoãn) → Kiến trúc sư DUYỆT MILESTONE (soát chéo `M10-soat` đã có, T-10.5) → `git tag M10-ok` (Chủ dự án push tag).
+- **Rồi**: B-023 (S3, phiếu ở trên) → tho-gemini làn code (bảo trì S3). Nhắc thợ: log trong `docs/test-log/` phải che `$HOME` thành `~` trước commit (BAI-HOC).
+- **Ghi nhớ hạ tầng**: `agy-run.sh huy` hỏng khi PID 0; trên Windows `huy` giết mọi `agy.exe` (ảnh hưởng dự án khác chạy song song); trạng thái model nghỉ lưu theo từng dự án. Chủ dự án hỏi chạy 2 dự án song song → đã trả lời; phiếu sửa script chỉ làm khi Chủ dự án yêu cầu.
