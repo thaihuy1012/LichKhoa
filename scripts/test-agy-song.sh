@@ -17,7 +17,8 @@ TOTAL=7
 touch_secs_ago() {  # $1=file $2=giây trước
   local f=$1 s=$2 ts
   ts=$(( $(date +%s) - s ))
-  touch -d "@$ts" "$f" 2>/dev/null || touch -t "$(date -d "@$ts" +%Y%m%d%H%M.%S 2>/dev/null)" "$f" 2>/dev/null
+  touch -d "@$ts" "$f" 2>/dev/null || touch -t "$(date -d "@$ts" +%Y%m%d%H%M.%S 2>/dev/null)" "$f" 2>/dev/null \
+    || touch -t "$(date -r "$ts" +%Y%m%d%H%M.%S)" "$f"   # BSD/macOS
 }
 
 lam_sach_va_moi() {
@@ -64,9 +65,8 @@ start=$(( $(date +%s) - 1200 ))
 echo "RUNNING $pid $start" > "$TMP/docs/gemini-out/$n.status"
 echo "$(( start + 1800 ))" > "$TMP/docs/gemini-out/$n.deadline"
 ghi_meta "$n" code 0
-touch -d "@$(( $(date +%s) - 700 ))" "$TMP/docs/gemini-out/$n.md" 2>/dev/null \
-  || touch -t "$(date -d "@$(( $(date +%s) - 700 ))" +%Y%m%d%H%M.%S 2>/dev/null)" "$TMP/docs/gemini-out/$n.md" 2>/dev/null
-touch -d "@$(( $(date +%s) - 700 ))" "$TMP/docs/gemini-out/$n.err" 2>/dev/null
+touch_secs_ago "$TMP/docs/gemini-out/$n.md" 700
+touch_secs_ago "$TMP/docs/gemini-out/$n.err" 700
 out=$(chay_song "$n")
 kill "$pid" 2>/dev/null
 first=$(echo "$out" | head -n1)

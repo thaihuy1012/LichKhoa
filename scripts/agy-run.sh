@@ -26,10 +26,11 @@ set -u
 OUT=docs/gemini-out
 EXCL=(':!docs/gemini-out' ':!docs/tasks' ':!docs/bao-cao' ':!.claude')
 CLEAN_EX=(-e docs/gemini-out -e docs/tasks -e docs/bao-cao -e .claude -e node_modules -e .env)
-declare -A LIMIT=([doc]=15 [soat]=15 [sinh]=15 [code]=30)   # phút — hạn ban đầu
-declare -A TRAN_TONG=([doc]=45 [soat]=45 [sinh]=45 [code]=60)   # phút — trần tổng sau khi gia hạn hết mức (mục 5b)
-declare -A MODEL_LANE=([code]=$GEMINI_CODE [soat]=$GEMINI_SOAT [doc]=$GEMINI_DOC [sinh]=$GEMINI_SINH)
-declare -A EFFORT_LANE=([code]=$EFFORT_CODE [soat]=$EFFORT_SOAT [doc]=$EFFORT_DOC [sinh]=$EFFORT_SINH)
+# Bảng theo làn viết bằng hàm case (bash 3.2 của macOS không có declare -A).
+lane_limit() { case "$1" in code) echo 30 ;; doc|soat|sinh) echo 15 ;; *) echo "${2:-}" ;; esac; }   # phút — hạn ban đầu
+lane_tran()  { case "$1" in code) echo 60 ;; doc|soat|sinh) echo 45 ;; *) echo "${2:-}" ;; esac; }   # phút — trần tổng sau khi gia hạn hết mức (mục 5b)
+model_lane() { case "$1" in code) echo "$GEMINI_CODE" ;; soat) echo "$GEMINI_SOAT" ;; doc) echo "$GEMINI_DOC" ;; sinh) echo "$GEMINI_SINH" ;; esac; }
+effort_lane() { case "$1" in code) echo "$EFFORT_CODE" ;; soat) echo "$EFFORT_SOAT" ;; doc) echo "$EFFORT_DOC" ;; sinh) echo "$EFFORT_SINH" ;; esac; }
 IM_LANG=600   # giây — ngưỡng "đứng im" cho lệnh song (mục 5b)
 GIA_HAN_TRAN=2   # số lần gia hạn tối đa mỗi lượt
 
@@ -78,7 +79,7 @@ _worker() {
   start=$(date +%s)
   echo "RUNNING $BASHPID $start" > "$st"
   echo "$(( start + limit * 60 ))" > "$dl"
-  trancap=${TRAN_TONG[$mode]:-45}
+  trancap=$(lane_tran "$mode" 45)
   local prompt="Đọc AGENTS.md rồi đọc docs/tasks/$name.md và thực hiện đúng nội dung trong đó. Kết thúc bằng mục BÁO CÁO CUỐI theo khung trong file đó."
   local args=(-p "$prompt" --dangerously-skip-permissions --print-timeout "${trancap}m" --model "$model")
   [ -n "$effort" ] && args+=(--effort "$effort")
@@ -123,10 +124,10 @@ chay() {
   [ -n "$(thay_doi)" ] && die 1 "Cây làm việc chưa sạch — commit hoặc chờ thợ xong rồi mới gọi Gemini."
 
   local name; name=$(basename "$pf" .md)
-  local effort=${EFFORT_LANE[$mode]} r
-  [ -z "$model" ] && model=${MODEL_LANE[$mode]}
+  local effort; effort=$(effort_lane "$mode"); local r
+  [ -z "$model" ] && model=$(model_lane "$mode")
   r=$(resolve_model "$model" "$effort"); model=${r%%|*}; effort=${r#*|}
-  local limit=${LIMIT[$mode]}
+  local limit; limit=$(lane_limit "$mode")
   printf 'mode=%s\nmodel=%s\neffort=%s\nprompt=%s\nstart=%s\ngia_han=0\n' "$mode" "$model" "$effort" "$pf" "$(date +%s)" > "$OUT/$name.meta"
   rm -f "$OUT/$name.md" "$OUT/$name.err" "$OUT/$name.deadline"
   echo "RUNNING 0 $(date +%s)" > "$OUT/$name.status"
@@ -144,7 +145,7 @@ chay() {
 cho() {
   local name=$1 wait=${2:-100} st="$OUT/$1.status" state a b t0 now limit
   [ -f "$st" ] || die 42 "Không có lượt tên $name."
-  limit=$(sed -n 's/^mode=//p' "$OUT/$name.meta" 2>/dev/null); limit=${LIMIT[${limit:-code}]:-30}
+  limit=$(sed -n 's/^mode=//p' "$OUT/$name.meta" 2>/dev/null); limit=$(lane_limit "${limit:-code}" 30)
   t0=$(date +%s)
   while :; do
     sua_status_chet "$st"
@@ -219,7 +220,7 @@ ket_qua() {
     sinh|code)
       if [ -n "$changed" ] && [ -f "$pf" ]; then
         local -a allowed=()
-        mapfile -t allowed < <(file_duoc_phep "$pf")
+        allowed=(); while IFS= read -r _l; do allowed+=("$_l"); done < <(file_duoc_phep "$pf")
         if [ ${#allowed[@]} -gt 0 ]; then
           while IFS= read -r line; do
             [ -z "$line" ] && continue
@@ -276,15 +277,15 @@ kiem_tra() {
   models=$(agy models 2>/dev/null); MODELS_CACHE=$models
   [ -z "$models" ] && { echo "[X] 'agy models' không trả về gì — chưa đăng nhập? chạy 'agy' tương tác, đăng nhập, /quit"; ok=1; }
   for lane in code soat doc sinh; do
-    base=${MODEL_LANE[$lane]}
+    base=$(model_lane "$lane")
     if echo "$models" | grep -q "$base"; then
-      r=$(resolve_model "$base" "${EFFORT_LANE[$lane]}"); slug=${r%%|*}; eff=${r#*|}
+      r=$(resolve_model "$base" "$(effort_lane "$lane")"); slug=${r%%|*}; eff=${r#*|}
       echo "[OK] làn $lane → $slug${eff:+ --effort $eff}"
     else
       echo "[X] làn $lane: không thấy '$base' trong 'agy models' — sửa trong scripts/gemini.env (xem docs/LAN-GEMINI.md mục 1)"; ok=1
     fi
   done
-  r=$(resolve_model "${MODEL_LANE[code]}" "${EFFORT_LANE[code]}"); slug=${r%%|*}; eff=${r#*|}
+  r=$(resolve_model "$(model_lane code)" "$(effort_lane code)"); slug=${r%%|*}; eff=${r#*|}
   local -a targs=(--model "$slug"); [ -n "$eff" ] && targs+=(--effort "$eff")
   echo "... thử headless (tối đa 3 phút)"
   local t="$OUT/_kiem-tra.md"
@@ -359,7 +360,7 @@ gia_han() {
   { [ "$state" = "RUNNING" ] && kill -0 "$a" 2>/dev/null; } || die 1 "Lượt $name không đang chạy — không gia hạn được."
   [ -f "$dl" ] || die 42 "Không có file hạn cho lượt $name."
   mode=$(sed -n 's/^mode=//p' "$OUT/$name.meta" 2>/dev/null); mode=${mode:-code}
-  trancap=${TRAN_TONG[$mode]:-45}
+  trancap=$(lane_tran "$mode" 45)
   gh=$(sed -n 's/^gia_han=//p' "$OUT/$name.meta" 2>/dev/null); gh=${gh:-0}
   [ "$gh" -ge "$GIA_HAN_TRAN" ] && die 1 "Đã gia hạn đủ ${GIA_HAN_TRAN} lần cho lượt $name — từ chối gia hạn thêm."
   local han_hien=$(cat "$dl")
