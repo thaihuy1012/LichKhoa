@@ -1365,3 +1365,16 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 ### B-021 — Nhãn "Tên Shortcut" → "Tên Phím tắt hình nền" (S4 từ thử tay M10)
 - Quản lý tự làm (2 dòng i18n, nhỏ hơn một phiếu): `vi.json:16` "Tên Phím tắt hình nền", `en.json:16` "Wallpaper Shortcut name" (cùng kiểu 3 nhãn bên dưới). Không test nào khóa chữ cũ. `npm run check` EXIT 0 (134 e2e / 14 skip, `docs/test-log/B-021-check.log`). Trạng thái: DONE (chưa deploy — gộp đợt deploy sau thử tay M10).
 - 2026-10-28: trong lúc chờ thử tay — B-021 ✔ (chưa deploy); nháp `docs/bao-cao/M10.md` (đủ mọi mục trừ kết quả I0–I5). Khi Chủ dự án báo xong I-series: điền mục "Thử tay" → Kiến trúc sư DUYỆT MILESTONE → `git tag M10-ok`; deploy B-021 cùng đợt sửa sau thử tay (nhớ Cổng bảo mật).
+
+### PHIÊN 2026-11-10 (tối) — SC-006 ĐÃ ĐÓNG
+- SC-006 (S2) ĐÃ ĐÓNG: sua-loi lượt 1 sửa 3 test (4b66053) + Kiến trúc sư D-040 cho m10 webkit macOS (Quản lý áp dụng). `npm run check` 134 / 0 fail / 14 skip (`docs/test-log/SC-006-check2.log`).
+- Hạ tầng (S4): `agy-run.sh huy` không chạy khi status có PID 0 (kill_tree 0) — đã ghi tay status `SC-006-doc` DONE 130. Sửa khi chạm script lần sau.
+- **Việc tiếp**: Cổng bảo mật → xin `git push` (B-021, B-022, SC-006) → báo cáo M10 cho Kiến trúc sư duyệt → `git tag M10-ok`. B-023 sau push (chỉ test, không ảnh hưởng deploy).
+
+### B-023 — Hai helper chờ IndexedDB vô hiệu (`waitForFunction(() => Promise)`) (S3, từ SC-006)
+- Mục tiêu: helper chờ IndexedDB thật sự chờ (và thật sự fail khi quá hạn), như bản sửa SC-006 ở `m6-todo-gestures.spec.ts:38–71`.
+- Phạm vi file: `tests/e2e/persist-flush.spec.ts` (helper `waitForPersistedTodo`, dòng 16), `tests/e2e/todo-gestures.spec.ts` (helper `waitForPersistedTodoOrder`, dòng 27), `tests/unit/e2e-wait-guard.test.ts` (mới).
+- Giao diện có sẵn: mẫu `expect.poll(() => page.evaluate(...), { timeout }).toBe(true)` ở `tests/e2e/m6-todo-gestures.spec.ts:38–71`; mẫu guard đọc file bằng `fs` ở `tests/unit/store-subscribe-guard.test.ts`.
+- Tiêu chí nghiệm thu: [ ] hai helper đổi sang `expect.poll(page.evaluate…)`, giữ nguyên logic so và tham số `timeout` (persist-flush vẫn 150 ms) [ ] không đổi/bớt assert nào khác, không skip, không nới timeout [ ] unit guard mới: quét `tests/e2e/*.ts`, fail nếu có `waitForFunction(` mà hàm truyền vào trả `new Promise` [ ] kiểm đột biến bằng tay: tạm bỏ flush ở pagehide → `persist-flush` phải fail (không commit đột biến) [ ] lệnh kiểm tra pass.
+- Lệnh kiểm tra: `npx vitest run tests/unit/e2e-wait-guard.test.ts` ; `npm run build && npx playwright test tests/e2e/persist-flush.spec.ts tests/e2e/todo-gestures.spec.ts --repeat-each=5` ; `npm run check` (kiem-thu).
+- Model: gemini (code, bảo trì S3) · Lần thử: 0/3 · Vòng Gemini: 0/5 · Trạng thái: TODO

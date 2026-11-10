@@ -1,0 +1,64 @@
+
+> lichkhoa@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v8.3.0 building client environment for production...
+transforming...
+✓ 51 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/registerSW.js                0.13 kB
+dist/manifest.webmanifest         0.29 kB
+dist/index.html                   0.86 kB │ gzip:  0.41 kB
+dist/assets/index-7mDsfCmk.css   16.87 kB │ gzip:  4.03 kB
+dist/assets/index-CUBPNBih.js   139.75 kB │ gzip: 44.56 kB
+
+✓ built in 36ms
+
+PWA v1.3.0
+mode      generateSW
+precache  7 entries (153.93 KiB)
+files generated
+  dist/sw.js
+  dist/workbox-9c191d2f.js
+
+Running 36 tests using 7 workers
+
+  ✓   7 [chromium] › tests/e2e/m10-install.spec.ts:139:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (2) JSON thiếu url / sai định dạng / thiếu khóa: đúng 3 nolink + 2 install, không lỗi tải (274ms)
+  ✓   2 [chromium] › tests/e2e/m10-install.spec.ts:188:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (4) File thật trong repo: mỗi hàng đúng một trong install/nolink (277ms)
+  ✓   5 [chromium] › tests/e2e/m10-install.spec.ts:171:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (3) JSON 404: sc-links-error hiện, 5 nolink, 0 install, thẻ khác vẫn hiện (299ms)
+  ✓   1 [chromium] › tests/e2e/m10-install.spec.ts:229:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (6) Việc tự làm: 4 li chứa BaoThuc/00:05; EN đổi tiêu đề + nút Get (298ms)
+  ✓   6 [chromium] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn (333ms)
+  ✓   4 [chromium] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn (367ms)
+  ✓   8 [chromium] › tests/e2e/m10-install.spec.ts:229:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (6) Việc tự làm: 4 li chứa BaoThuc/00:05; EN đổi tiêu đề + nút Get (205ms)
+  ✓   9 [chromium] › tests/e2e/m10-install.spec.ts:171:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (3) JSON 404: sc-links-error hiện, 5 nolink, 0 install, thẻ khác vẫn hiện (225ms)
+  ✓  10 [chromium] › tests/e2e/m10-install.spec.ts:139:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (2) JSON thiếu url / sai định dạng / thiếu khóa: đúng 3 nolink + 2 install, không lỗi tải (230ms)
+  ✓  11 [chromium] › tests/e2e/m10-install.spec.ts:188:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (4) File thật trong repo: mỗi hàng đúng một trong install/nolink (230ms)
+  ✓  13 [chromium] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn (278ms)
+  ✓  14 [chromium] › tests/e2e/m10-install.spec.ts:139:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (2) JSON thiếu url / sai định dạng / thiếu khóa: đúng 3 nolink + 2 install, không lỗi tải (174ms)
+  ✓  15 [chromium] › tests/e2e/m10-install.spec.ts:229:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (6) Việc tự làm: 4 li chứa BaoThuc/00:05; EN đổi tiêu đề + nút Get (233ms)
+  ✓  17 [chromium] › tests/e2e/m10-install.spec.ts:188:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (4) File thật trong repo: mỗi hàng đúng một trong install/nolink (157ms)
+  ✓  16 [chromium] › tests/e2e/m10-install.spec.ts:171:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (3) JSON 404: sc-links-error hiện, 5 nolink, 0 install, thẻ khác vẫn hiện (169ms)
+  ✓   3 [chromium] › tests/e2e/m10-install.spec.ts:201:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (5) Lệch tên: đổi tên alarm → mismatch hiện ở Hướng dẫn; reset → mismatch biến mất (1.9s)
+  ✓  19 [webkit] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn (464ms)
+  ✓  20 [webkit] › tests/e2e/m10-install.spec.ts:139:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (2) JSON thiếu url / sai định dạng / thiếu khóa: đúng 3 nolink + 2 install, không lỗi tải (400ms)
+  ✓  21 [webkit] › tests/e2e/m10-install.spec.ts:171:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (3) JSON 404: sc-links-error hiện, 5 nolink, 0 install, thẻ khác vẫn hiện (382ms)
+  ✓  22 [webkit] › tests/e2e/m10-install.spec.ts:188:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (4) File thật trong repo: mỗi hàng đúng một trong install/nolink (411ms)
+  ✓  23 [webkit] › tests/e2e/m10-install.spec.ts:229:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (6) Việc tự làm: 4 li chứa BaoThuc/00:05; EN đổi tiêu đề + nút Get (331ms)
+  ✓  12 [chromium] › tests/e2e/m10-install.spec.ts:201:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (5) Lệch tên: đổi tên alarm → mismatch hiện ở Hướng dẫn; reset → mismatch biến mất (1.8s)
+  ✓  25 [webkit] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn (479ms)
+  ✓  26 [webkit] › tests/e2e/m10-install.spec.ts:139:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (2) JSON thiếu url / sai định dạng / thiếu khóa: đúng 3 nolink + 2 install, không lỗi tải (429ms)
+  ✓  27 [webkit] › tests/e2e/m10-install.spec.ts:171:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (3) JSON 404: sc-links-error hiện, 5 nolink, 0 install, thẻ khác vẫn hiện (414ms)
+  ✓  18 [chromium] › tests/e2e/m10-install.spec.ts:201:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (5) Lệch tên: đổi tên alarm → mismatch hiện ở Hướng dẫn; reset → mismatch biến mất (1.8s)
+  ✓  28 [webkit] › tests/e2e/m10-install.spec.ts:188:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (4) File thật trong repo: mỗi hàng đúng một trong install/nolink (454ms)
+  ✓  30 [webkit] › tests/e2e/m10-install.spec.ts:229:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (6) Việc tự làm: 4 li chứa BaoThuc/00:05; EN đổi tiêu đề + nút Get (361ms)
+  ✓  24 [webkit] › tests/e2e/m10-install.spec.ts:201:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (5) Lệch tên: đổi tên alarm → mismatch hiện ở Hướng dẫn; reset → mismatch biến mất (982ms)
+  ✓  31 [webkit] › tests/e2e/m10-install.spec.ts:139:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (2) JSON thiếu url / sai định dạng / thiếu khóa: đúng 3 nolink + 2 install, không lỗi tải (457ms)
+  ✓  29 [webkit] › tests/e2e/m10-install.spec.ts:201:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (5) Lệch tên: đổi tên alarm → mismatch hiện ở Hướng dẫn; reset → mismatch biến mất (987ms)
+  ✓  33 [webkit] › tests/e2e/m10-install.spec.ts:171:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (3) JSON 404: sc-links-error hiện, 5 nolink, 0 install, thẻ khác vẫn hiện (459ms)
+  ✓  32 [webkit] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn (591ms)
+  ✓  34 [webkit] › tests/e2e/m10-install.spec.ts:188:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (4) File thật trong repo: mỗi hàng đúng một trong install/nolink (446ms)
+  ✓  36 [webkit] › tests/e2e/m10-install.spec.ts:229:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (6) Việc tự làm: 4 li chứa BaoThuc/00:05; EN đổi tiêu đề + nút Get (486ms)
+  ✓  35 [webkit] › tests/e2e/m10-install.spec.ts:201:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (5) Lệch tên: đổi tên alarm → mismatch hiện ở Hướng dẫn; reset → mismatch biến mất (942ms)
+
+  36 passed (5.5s)

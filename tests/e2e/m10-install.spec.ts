@@ -68,6 +68,7 @@ test.describe('M10 E2E: Cài bộ Phím tắt qua link iCloud', () => {
   test('(1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn', async ({
     page,
     context,
+    browserName,
   }) => {
     await routeLinks(context, fullLinksBody());
 
@@ -101,11 +102,37 @@ test.describe('M10 E2E: Cài bộ Phím tắt qua link iCloud', () => {
       await expect(page.getByTestId(`sc-nolink-${kind}`)).toHaveCount(0);
     }
 
-    const [popup] = await Promise.all([
-      page.waitForEvent('popup'),
-      page.getByTestId('sc-install-alarm').click(),
-    ]);
-    expect(popup.url()).toBe(FIXTURE_LINKS.alarm);
+    if (browserName === 'webkit' && process.platform === 'darwin') {
+      // D-040 / SC-006: WebKit trên macOS giao link icloud.com/shortcuts/… cho Shortcuts.app
+      // (Universal Link) — không popup, context.route không chặn được. Bấm thật nhưng hủy mặc định
+      // ở window, assert cú bấm tới đúng thẻ a và app không tự preventDefault.
+      await page.evaluate(() =>
+        window.addEventListener('click', (e) => {
+          const a = e.target instanceof Element ? e.target.closest('a') : null;
+          (window as unknown as { __scClick?: unknown }).__scClick = {
+            testid: a?.getAttribute('data-testid') ?? null,
+            href: a?.href ?? null,
+            target: a?.target ?? null,
+            appPrevented: e.defaultPrevented,
+          };
+          e.preventDefault();
+        }),
+      );
+      await page.getByTestId('sc-install-alarm').click();
+      expect(await page.evaluate(() => (window as unknown as { __scClick?: unknown }).__scClick)).toEqual({
+        testid: 'sc-install-alarm',
+        href: FIXTURE_LINKS.alarm,
+        target: '_blank',
+        appPrevented: false,
+      });
+      expect(context.pages()).toHaveLength(1);
+    } else {
+      const [popup] = await Promise.all([
+        page.waitForEvent('popup'),
+        page.getByTestId('sc-install-alarm').click(),
+      ]);
+      expect(popup.url()).toBe(FIXTURE_LINKS.alarm);
+    }
     await expect(page.getByTestId('guide-card-installShortcuts')).toBeVisible();
   });
 

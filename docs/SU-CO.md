@@ -2,9 +2,9 @@
 (Chỉ Quản lý ghi. Đọc đầu mỗi phiên: sự cố chưa đóng xử lý trước mọi việc khác. Trạng thái: MỞ | ĐANG SỬA | CHỜ CHỦ DỰ ÁN | ĐÃ ĐÓNG.)
 
 ## Đang mở
-- **SC-006** (S2, ĐANG SỬA 2026-11-10) — chuyển máy Windows → Mac: 4 test e2e cũ fail trên cả HEAD 6aec632
+- (không)
 
-## SC-006 — Môi trường Mac mới: 4 test e2e cũ fail (có trên HEAD) · Mức S2 · Trạng thái: ĐANG SỬA
+## SC-006 — Môi trường Mac mới: 4 test e2e cũ fail (có trên HEAD) · Mức S2 · Trạng thái: ĐÃ ĐÓNG
 - Phát hiện: 2026-11-10 · Quản lý, khi chạy `npm run check` cho B-022 trên Mac (Node v26.13.0, `npm ci` lại cho darwin-arm64, Playwright chromium + WebKit 26.6 mới tải). Trước đây suite xanh trên Windows.
 - Triệu chứng (`docs/test-log/B-022-check.log`, `B-022-rerun.log` repeat-each=3): unit 337×2 TZ PASS; e2e 130 pass / 4 fail / 14 skip. (1) `notes.spec.ts:10` chromium 3/3 — `note-item` count 0 (cần 2) sau `nt-save`; webkit đạt. (2) `m10-install.spec.ts:68` webkit 3/3 — `page.waitForEvent` (popup) timeout 30 s. (3) `m6-todo-gestures.spec.ts:89` webkit 3/3 — `todo-edit` thứ tự sai (dòng 203). (4) `todo-touch.spec.ts:374` chromium 1/3 (chập chờn).
 - Tái hiện trên HEAD (worktree tạm, không có B-022): cùng 4 test fail → KHÔNG do B-022; nguyên nhân ở môi trường (OS / phiên bản trình duyệt / Node 26).
@@ -12,9 +12,12 @@
 - Đóng băng: không. Việc tiếp: giao `sua-loi` điều tra (tối đa 2 lượt): phân biệt test phụ thuộc môi trường với lỗi thật của app trên Chrome/WebKit mới.
 - 2026-11-10 (phiên mới): lượt Gemini `SC-006-doc` treo RUNNING với PID 0 (lỗi \$BASHPID) → `huy` không chạy được (kill_tree 0) → Quản lý ghi tay status DONE 130. Giao `sua-loi` (opus) lượt 1/2.
 - Lượt 1 `sua-loi` (opus) → CẦN KIẾN TRÚC SƯ. Đã sửa 3/4 (loại a, chỉ test, không đổi src): notes:10 reload trước debounce 300 ms → chờ IDB `2:true`; m6:89 `waitForFunction(()=>Promise)` không chờ (Playwright coi Promise truthy) → `expect.poll(page.evaluate)`; todo-touch:374 touchstart trước khi `useEffect` gắn listener → chờ 1 khung + macrotask. Còn m10:68 webkit: WebKit macOS giao `icloud.com/shortcuts/…` cho Shortcuts.app (Universal Link) → không popup. Check: 133 pass / 1 fail / 14 skip (`SC-006-check.log`). Ngoài phạm vi: `persist-flush.spec.ts:16`, `todo-gestures.spec.ts:30` cùng kiểu chờ vô hiệu.
-- Gửi Kiến trúc sư chế độ SỰ CỐ (m10 webkit) + `kiem-thu` kiểm độc lập 3 bản sửa (song song).
+- Gửi Kiến trúc sư chế độ SỰ CỐ (m10 webkit) + `kiem-thu` kiểm độc lập 3 bản sửa (song song). kiem-thu PASS → commit 4b66053.
+- Kiến trúc sư: PHÁN QUYẾT SỬA tại chỗ (D-040; SPEC §6 M10 E2E (1), §7 chỉnh chữ): webkit+darwin bấm thật + hủy mặc định ở `window`, assert thẻ `a`/href/target/không preventDefault/1 trang; không skip. Quản lý áp dụng (code cho sẵn trong phán quyết). kiem-thu PASS: m10 ×3 36/36; đột biến preventDefault → fail đúng chỗ; `npm run check` 134 / 0 fail / 14 skip (`SC-006-check2.log`).
+- ĐÃ ĐÓNG 2026-11-10. Theo sau: B-023 (S3) sửa 2 test chờ vô hiệu `persist-flush.spec.ts`, `todo-gestures.spec.ts`.
 
 ## Đã đóng gần đây
+- **SC-006** (S2, ĐÃ ĐÓNG 2026-11-10) — Mac mới: 3 test chờ không hiệu lực + m10 webkit Universal Link (D-040)
 - **SC-005** (S2, ĐÃ ĐÓNG 2026-09-22) — B-016 gộp Hoàn tác: regression m6:172 (vòng 2 thực chất test trên `dist/` cũ)
 - **SC-004** (S2, ĐÃ ĐÓNG 2026-09-19) — hàng thêm việc tràn 428 pt (M9)
 - **SC-003** (S2, ĐÃ ĐÓNG 2026-09-19) — Phím tắt Lời nhắc lỗi "No alert location was provided" → B, B', C KHÔNG ĐẠT trên iPhone thật (2026-09-19)
