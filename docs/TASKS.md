@@ -1340,6 +1340,21 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - I0: "không hiện" — đang hỏi lại rõ (tên iCloud trên trang link / tham số List trong Import Question).
 - I1: đang làm. Chủ dự án đổi tên `-cu` ở ô tên TRONG LichKhoa thay vì trong app Phím tắt → iOS hỏi Replace/Keep Both. Đã hướng dẫn: Khôi phục tên mặc định trong LichKhoa → Cancel → đổi tên bản cũ `_cu` trong app Phím tắt → Add Shortcut. Lần thử đầu mở từ tab Safari (không phải bản Màn hình chính) → Safari chuyển thẳng sang app Phím tắt (ghi cho I5; vẫn cần thử từ PWA).
 - S4 mới: nhãn `preview.shortcutName` "Tên Shortcut" (vi.json:16) không rõ là Phím tắt hình nền — Chủ dự án không nhận ra → đổi "Tên Phím tắt hình nền" (+EN) trong đợt sửa sau thử tay.
+- 2026-11-09/10 (iPhone iOS 27.0.1): **I0 ĐẠT** — `ThemLoiNhac` và `ThemBaoThucNgay` đều có Import Question cho "New Reminder" (màn Configure hiện ô List; chọn được "Sẽ làm" / `BaoThuc`); trang link KHÔNG hiện tên thật/email. Ghi chú iOS 27: không còn tab Setup — nằm ở Details › Import Questions; "Customize Shortcut…" mở lại màn Configure. Đã ghi `docs/bao-cao/M10.md`. → S4: HUONG-DAN §G bước 2 và SPEC §10.G.2 còn dùng tên "Setup / Add New Question" của iOS cũ — cập nhật cho iOS 27 ở đợt sửa sau thử tay (cùng B-021).
+
+### ĐIỂM DỪNG 2026-11-10 (chiều) — thay mục dưới
+- **Thử tay M10 XONG**: B-018 ✔, I0 ✔, I1 ✔ (nút Add Shortcut ở màn Configure không bấm được → Skip Setup), I2 ✔, I3 ✔ (tự động hóa 00:05 iOS 27 cài kèm nhưng TẮT; đã tắt bản `_cu`, bật bản mới), I4 HOÃN (Chủ dự án có máy thứ hai, thử sau — không chặn), I5 ✔. Chi tiết `docs/bao-cao/M10.md`.
+- **B-022 (Quản lý, đợt sửa sau thử tay)**: `vi.json`/`en.json` `guide.scManualStep1` (Skip Setup) + `scManualStep2` (bật tự động hóa iOS 27, tắt bản cũ); HUONG-DAN §F (đường mở link thật, đổi tên bản cũ `_cu`, Copy Link, Skip Setup, bật Automation) + §G.2 (Details › Import Questions); SPEC §10.G.2, §8.13 (d)(f). Node v26.13.0 + `npm ci` (darwin) xong. `npm run check`: unit 337×2 PASS, e2e 130/4 fail/14 skip — 4 fail CÓ SẴN trên HEAD → **SC-006** (S2), không do B-022. Trạng thái: DONE (commit), chưa deploy.
+- Đã đổi các file CRLF (chép từ Windows) về LF khớp chỉ mục — không đổi nội dung (hash = HEAD).
+- **Việc tiếp**: đóng SC-006 (sua-loi) → `npm run check` xanh → Cổng bảo mật → xin `git push` (gộp B-021) → Kiến trúc sư duyệt M10 → `git tag M10-ok`.
+- **Đề xuất mới của Chủ dự án (2026-11-10)**: chuyển app sang **iOS native** → Chủ dự án quyết định TẠM CHƯA LÀM (2026-11-10). Nếu mở lại: hỏi hướng (Capacitor / SwiftUI) + phân phối (tài khoản miễn phí / Apple Developer trả phí) → Kiến trúc sư soát phạm vi SPEC.
+
+### ĐIỂM DỪNG 2026-11-10 (đọc đầu tiên ở phiên sau)
+- **Trạng thái**: không sự cố mở, không phiếu DOING. M10 chờ thử tay: **I0 ✔**, **I1 đang làm** (Chủ dự án chưa báo kết quả: đã đổi tên 5 bản cũ `_cu` chưa, 5 bản mới đúng tên/không " 2" chưa; `ThemLoiNhac` đang tên không hậu tố và đã có "Change Answers" → nhiều khả năng đã cài từ link), **I2–I5 chưa làm** (I2: `ThemBaoThucNgay` List = `BaoThuc` + bộ lọc `TaoBaoThucSang` List is `BaoThuc`; I5: ghi đường mở link từ PWA Màn hình chính).
+- **Chưa deploy**: B-021 (b697ab4). Trước khi đề nghị `git push`: Cổng bảo mật trên đúng commit → `docs/test-log/bao-mat-<commit>.log`.
+- **Cần nhớ**: Tự động hóa 00:05 có thể còn trỏ `TaoBaoThucSang_cu` — kiểm ở I3 trước khi xóa bản `_cu` (chưa kiểm chứng).
+- **Phiên sau**: nhận kết quả I1–I5 từ Chủ dự án → điền `M10.md` mục "Thử tay" → sửa HUONG-DAN/SPEC theo S4 trên + B-021 → check + Cổng bảo mật → xin push → báo cáo Kiến trúc sư duyệt → `git tag M10-ok`.
+- **Môi trường**: thư mục đang ở Mac; `git` cần `xcode-select --install`, có thể cần `npm ci` (sổ cũ ghi Windows/PowerShell).
 
 ### B-021 — Nhãn "Tên Shortcut" → "Tên Phím tắt hình nền" (S4 từ thử tay M10)
 - Quản lý tự làm (2 dòng i18n, nhỏ hơn một phiếu): `vi.json:16` "Tên Phím tắt hình nền", `en.json:16` "Wallpaper Shortcut name" (cùng kiểu 3 nhãn bên dưới). Không test nào khóa chữ cũ. `npm run check` EXIT 0 (134 e2e / 14 skip, `docs/test-log/B-021-check.log`). Trạng thái: DONE (chưa deploy — gộp đợt deploy sau thử tay M10).

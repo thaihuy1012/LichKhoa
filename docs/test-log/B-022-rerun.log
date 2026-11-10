@@ -1,0 +1,306 @@
+
+Running 24 tests using 7 workers
+
+  ✓   4 [chromium] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn (302ms)
+  ✓   3 [chromium] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn (327ms)
+  ✓   9 [chromium] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn (233ms)
+  ✓   6 [chromium] › tests/e2e/todo-touch.spec.ts:374:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước (1.2s)
+  ✓   8 [chromium] › tests/e2e/todo-touch.spec.ts:374:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước (1.1s)
+  ✘  12 [chromium] › tests/e2e/todo-touch.spec.ts:374:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước (1.1s)
+  ✓   1 [chromium] › tests/e2e/m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (5.4s)
+  ✓   2 [chromium] › tests/e2e/m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (5.4s)
+  ✘   5 [chromium] › tests/e2e/notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload (5.7s)
+  ✘   7 [chromium] › tests/e2e/notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload (5.7s)
+  ✓  10 [chromium] › tests/e2e/m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (5.4s)
+  -  16 [webkit] › tests/e2e/todo-touch.spec.ts:374:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước
+  ✓  15 [webkit] › tests/e2e/notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload (1.0s)
+  ✘  11 [chromium] › tests/e2e/notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload (5.6s)
+  -  20 [webkit] › tests/e2e/todo-touch.spec.ts:374:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước
+  ✓  19 [webkit] › tests/e2e/notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload (1.0s)
+  ✓  23 [webkit] › tests/e2e/notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload (939ms)
+  -  24 [webkit] › tests/e2e/todo-touch.spec.ts:374:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước
+  ✘  14 [webkit] › tests/e2e/m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (7.6s)
+  ✘  18 [webkit] › tests/e2e/m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (7.6s)
+  ✘  22 [webkit] › tests/e2e/m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (7.6s)
+  ✘  13 [webkit] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn (30.0s)
+  ✘  17 [webkit] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn (30.0s)
+  ✘  21 [webkit] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn (30.0s)
+
+
+  1) [chromium] › tests/e2e/notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('note-item')
+    Expected: 2
+    Received: 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('note-item') with timeout 5000ms
+      - waiting for getByTestId('note-item')
+        14 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      53 |   await page.getByTestId('tab-events').click();
+      54 |   await page.getByTestId('seg-note').click();
+    > 55 |   await expect(page.getByTestId('note-item')).toHaveCount(2);
+         |                                               ^
+      56 | });
+      57 |
+      58 | test('T-4.10: ghim ghi chú (nt-pin) tự bật công tắc hiện trên hình nền', async ({ page }) => {
+        at <repo>/tests/e2e/notes.spec.ts:55:47
+
+    Error Context: test-results/notes-Ghi-chú-nhiều-ghi-ch-08a95-rên-hình-nền-còn-qua-reload-chromium/error-context.md
+
+  2) [chromium] › tests/e2e/notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('note-item')
+    Expected: 2
+    Received: 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('note-item') with timeout 5000ms
+      - waiting for getByTestId('note-item')
+        14 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      53 |   await page.getByTestId('tab-events').click();
+      54 |   await page.getByTestId('seg-note').click();
+    > 55 |   await expect(page.getByTestId('note-item')).toHaveCount(2);
+         |                                               ^
+      56 | });
+      57 |
+      58 | test('T-4.10: ghim ghi chú (nt-pin) tự bật công tắc hiện trên hình nền', async ({ page }) => {
+        at <repo>/tests/e2e/notes.spec.ts:55:47
+
+    Error Context: test-results/notes-Ghi-chú-nhiều-ghi-ch-08a95-rên-hình-nền-còn-qua-reload-chromium-repeat1/error-context.md
+
+  3) [chromium] › tests/e2e/notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload 
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  getByTestId('note-item')
+    Expected: 2
+    Received: 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveCount" getByTestId('note-item') with timeout 5000ms
+      - waiting for getByTestId('note-item')
+        14 × locator resolved to 0 elements
+           - unexpected value "0"
+
+
+      53 |   await page.getByTestId('tab-events').click();
+      54 |   await page.getByTestId('seg-note').click();
+    > 55 |   await expect(page.getByTestId('note-item')).toHaveCount(2);
+         |                                               ^
+      56 | });
+      57 |
+      58 | test('T-4.10: ghim ghi chú (nt-pin) tự bật công tắc hiện trên hình nền', async ({ page }) => {
+        at <repo>/tests/e2e/notes.spec.ts:55:47
+
+    Error Context: test-results/notes-Ghi-chú-nhiều-ghi-ch-08a95-rên-hình-nền-còn-qua-reload-chromium-repeat2/error-context.md
+
+  4) [chromium] › tests/e2e/todo-touch.spec.ts:374:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 10
+    + Received  + 10
+
+      Array [
+    -   true,
+    -   true,
+    -   true,
+    -   true,
+    -   true,
+    -   true,
+    -   true,
+    -   true,
+    -   true,
+    -   true,
+    +   false,
+    +   false,
+    +   false,
+    +   false,
+    +   false,
+    +   false,
+    +   false,
+    +   false,
+    +   false,
+    +   false,
+      ]
+
+      356 |   }
+      357 |   // Mọi touchmove khi đang kéo phải bị chặn (preventDefault) — nếu không iOS sẽ cuộn trang.
+    > 358 |   expect(prevented).toEqual(Array(10).fill(true));
+          |                     ^
+      359 |   if (ending === 'touchend') await syn(page, 'touchEndOnly', x, yA);
+      360 |   else await syn(page, 'touchCancel', x, yA);
+      361 |
+        at dragCOverAWithIosCancel (<repo>/tests/e2e/todo-touch.spec.ts:358:21)
+        at <repo>/tests/e2e/todo-touch.spec.ts:377:3
+
+    Error Context: test-results/todo-touch-Chuỗi-sự-kiện-i-9da0d----áp-thứ-tự-đang-xem-trước-chromium-repeat2/error-context.md
+
+  5) [webkit] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForEvent: Test timeout of 30000ms exceeded.
+    =========================== logs ===========================
+    waiting for event "popup"
+    ============================================================
+
+      103 |
+      104 |     const [popup] = await Promise.all([
+    > 105 |       page.waitForEvent('popup'),
+          |            ^
+      106 |       page.getByTestId('sc-install-alarm').click(),
+      107 |     ]);
+      108 |     expect(popup.url()).toBe(FIXTURE_LINKS.alarm);
+        at <repo>/tests/e2e/m10-install.spec.ts:105:12
+
+    Error Context: test-results/m10-install-M10-E2E-Cài-bộ-f7d96-mở-link-vẫn-ở-tab-Hướng-dẫn-webkit/error-context.md
+
+  6) [webkit] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForEvent: Test timeout of 30000ms exceeded.
+    =========================== logs ===========================
+    waiting for event "popup"
+    ============================================================
+
+      103 |
+      104 |     const [popup] = await Promise.all([
+    > 105 |       page.waitForEvent('popup'),
+          |            ^
+      106 |       page.getByTestId('sc-install-alarm').click(),
+      107 |     ]);
+      108 |     expect(popup.url()).toBe(FIXTURE_LINKS.alarm);
+        at <repo>/tests/e2e/m10-install.spec.ts:105:12
+
+    Error Context: test-results/m10-install-M10-E2E-Cài-bộ-f7d96-mở-link-vẫn-ở-tab-Hướng-dẫn-webkit-repeat1/error-context.md
+
+  7) [webkit] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.waitForEvent: Test timeout of 30000ms exceeded.
+    =========================== logs ===========================
+    waiting for event "popup"
+    ============================================================
+
+      103 |
+      104 |     const [popup] = await Promise.all([
+    > 105 |       page.waitForEvent('popup'),
+          |            ^
+      106 |       page.getByTestId('sc-install-alarm').click(),
+      107 |     ]);
+      108 |     expect(popup.url()).toBe(FIXTURE_LINKS.alarm);
+        at <repo>/tests/e2e/m10-install.spec.ts:105:12
+
+    Error Context: test-results/m10-install-M10-E2E-Cài-bộ-f7d96-mở-link-vẫn-ở-tab-Hướng-dẫn-webkit-repeat2/error-context.md
+
+  8) [webkit] › tests/e2e/m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  getByTestId('todo-item').first().getByTestId('todo-edit')
+    Expected: "C"
+    Received: "A"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveText" getByTestId('todo-item').first().getByTestId('todo-edit') with timeout 5000ms
+      - waiting for getByTestId('todo-item').first().getByTestId('todo-edit')
+        14 × locator resolved to <button type="button" data-testid="todo-edit" title="Chạm để sửa việc" aria-label="A — Chạm để sửa việc" class="todo-text todo-text-editable">A</button>
+           - unexpected value "A"
+
+
+      201 |   await page.reload();
+      202 |   await openTodos(page);
+    > 203 |   await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('C');
+          |                                                      ^
+      204 |   await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('A');
+      205 |   await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('B');
+      206 |   await expect(page.getByTestId('todo-item')).toHaveCount(3);
+        at <repo>/tests/e2e/m6-todo-gestures.spec.ts:203:54
+
+    Error Context: test-results/m6-todo-gestures-T-6-END-l-36503--sắp-xếp-reload-giữ-mọi-thứ-webkit/error-context.md
+
+  9) [webkit] › tests/e2e/m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  getByTestId('todo-item').first().getByTestId('todo-edit')
+    Expected: "C"
+    Received: "A"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveText" getByTestId('todo-item').first().getByTestId('todo-edit') with timeout 5000ms
+      - waiting for getByTestId('todo-item').first().getByTestId('todo-edit')
+        14 × locator resolved to <button type="button" data-testid="todo-edit" title="Chạm để sửa việc" aria-label="A — Chạm để sửa việc" class="todo-text todo-text-editable">A</button>
+           - unexpected value "A"
+
+
+      201 |   await page.reload();
+      202 |   await openTodos(page);
+    > 203 |   await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('C');
+          |                                                      ^
+      204 |   await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('A');
+      205 |   await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('B');
+      206 |   await expect(page.getByTestId('todo-item')).toHaveCount(3);
+        at <repo>/tests/e2e/m6-todo-gestures.spec.ts:203:54
+
+    Error Context: test-results/m6-todo-gestures-T-6-END-l-36503--sắp-xếp-reload-giữ-mọi-thứ-webkit-repeat1/error-context.md
+
+  10) [webkit] › tests/e2e/m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  getByTestId('todo-item').first().getByTestId('todo-edit')
+    Expected: "C"
+    Received: "A"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveText" getByTestId('todo-item').first().getByTestId('todo-edit') with timeout 5000ms
+      - waiting for getByTestId('todo-item').first().getByTestId('todo-edit')
+        14 × locator resolved to <button type="button" data-testid="todo-edit" title="Chạm để sửa việc" aria-label="A — Chạm để sửa việc" class="todo-text todo-text-editable">A</button>
+           - unexpected value "A"
+
+
+      201 |   await page.reload();
+      202 |   await openTodos(page);
+    > 203 |   await expect(rows.nth(0).getByTestId('todo-edit')).toHaveText('C');
+          |                                                      ^
+      204 |   await expect(rows.nth(1).getByTestId('todo-edit')).toHaveText('A');
+      205 |   await expect(rows.nth(2).getByTestId('todo-edit')).toHaveText('B');
+      206 |   await expect(page.getByTestId('todo-item')).toHaveCount(3);
+        at <repo>/tests/e2e/m6-todo-gestures.spec.ts:203:54
+
+    Error Context: test-results/m6-todo-gestures-T-6-END-l-36503--sắp-xếp-reload-giữ-mọi-thứ-webkit-repeat2/error-context.md
+
+  10 failed
+    [chromium] › tests/e2e/notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload 
+    [chromium] › tests/e2e/notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload 
+    [chromium] › tests/e2e/notes.spec.ts:10:1 › Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn qua reload 
+    [chromium] › tests/e2e/todo-touch.spec.ts:374:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước 
+    [webkit] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn 
+    [webkit] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn 
+    [webkit] › tests/e2e/m10-install.spec.ts:68:3 › M10 E2E: Cài bộ Phím tắt qua link iCloud › (1) JSON đủ 5 link + updated: 5 hàng install đúng thứ tự, popup mở link, vẫn ở tab Hướng dẫn 
+    [webkit] › tests/e2e/m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+    [webkit] › tests/e2e/m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+    [webkit] › tests/e2e/m6-todo-gestures.spec.ts:89:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ 
+  3 skipped
+  11 passed (38.2s)

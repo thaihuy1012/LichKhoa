@@ -2,7 +2,14 @@
 (Chỉ Quản lý ghi. Đọc đầu mỗi phiên: sự cố chưa đóng xử lý trước mọi việc khác. Trạng thái: MỞ | ĐANG SỬA | CHỜ CHỦ DỰ ÁN | ĐÃ ĐÓNG.)
 
 ## Đang mở
-- (không)
+- **SC-006** (S2, MỞ 2026-11-10) — chuyển máy Windows → Mac: 4 test e2e cũ fail trên cả HEAD 6aec632
+
+## SC-006 — Môi trường Mac mới: 4 test e2e cũ fail (có trên HEAD) · Mức S2 · Trạng thái: MỞ
+- Phát hiện: 2026-11-10 · Quản lý, khi chạy `npm run check` cho B-022 trên Mac (Node v26.13.0, `npm ci` lại cho darwin-arm64, Playwright chromium + WebKit 26.6 mới tải). Trước đây suite xanh trên Windows.
+- Triệu chứng (`docs/test-log/B-022-check.log`, `B-022-rerun.log` repeat-each=3): unit 337×2 TZ PASS; e2e 130 pass / 4 fail / 14 skip. (1) `notes.spec.ts:10` chromium 3/3 — `note-item` count 0 (cần 2) sau `nt-save`; webkit đạt. (2) `m10-install.spec.ts:68` webkit 3/3 — `page.waitForEvent` (popup) timeout 30 s. (3) `m6-todo-gestures.spec.ts:89` webkit 3/3 — `todo-edit` thứ tự sai (dòng 203). (4) `todo-touch.spec.ts:374` chromium 1/3 (chập chờn).
+- Tái hiện trên HEAD (worktree tạm, không có B-022): cùng 4 test fail → KHÔNG do B-022; nguyên nhân ở môi trường (OS / phiên bản trình duyệt / Node 26).
+- Commit tốt cuối: 6aec632 (mã sản phẩm không đổi so với bản đã deploy và đã thử tay iPhone ĐẠT).
+- Đóng băng: không. Việc tiếp: giao `sua-loi` điều tra (tối đa 2 lượt): phân biệt test phụ thuộc môi trường với lỗi thật của app trên Chrome/WebKit mới.
 
 ## Đã đóng gần đây
 - **SC-005** (S2, ĐÃ ĐÓNG 2026-09-22) — B-016 gộp Hoàn tác: regression m6:172 (vòng 2 thực chất test trên `dist/` cũ)

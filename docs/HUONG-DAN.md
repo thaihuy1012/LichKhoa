@@ -285,14 +285,16 @@ Trong LichKhoa, vào tab **Hướng dẫn** → cuộn đến thẻ số 2: **"C
 5. **`TaoBaoThucSang`** (Tạo báo thức sáng): Phím tắt quét danh sách `BaoThuc` vào lúc **00:05 hằng ngày** để tự động tạo báo thức Đồng hồ đúng giờ cho ngày hôm đó.
 
 **Thao tác khi tải**:
-- Chạm vào nút **"Tải"** của từng hàng. Khi dùng LichKhoa ở chế độ đã cài vào Màn hình chính (standalone), iOS sẽ mở trang web iCloud trong trình duyệt trong-app hoặc chuyển thẳng sang app Phím tắt (Shortcuts) → hiện màn hình mô tả phím tắt → bấm **"Thêm Phím tắt"** / **"Nhận Phím tắt"** (**Get Shortcut**).
-- **Cách sao chép link (nhấn giữ nút)**: Nếu trình duyệt trong-app bị đứng hoặc không chuyển được sang app Phím tắt, bạn hãy **nhấn giữ nút "Tải"** (hoặc nhấn giữ liên kết) → chọn **Sao chép liên kết** (Copy Link) → mở trình duyệt Safari thông thường, dán link vào thanh địa chỉ và truy cập để mở trực tiếp màn hình Get Shortcut trong app Phím tắt.
+- Chạm vào nút **"Tải"** của từng hàng. Khi dùng LichKhoa ở chế độ đã cài vào Màn hình chính (standalone), iOS **chuyển thẳng sang app Phím tắt** (đã thử iOS 27.0.1, 2026-11-10) → hiện màn hình mô tả phím tắt (tên, ngày chia sẻ) → bấm **"Add Shortcut" / "Thêm Phím tắt"**. Góc trên trái có **"◀ LichKhoa"** để quay lại app bấm nút kế tiếp.
+- **Máy đã có Phím tắt cùng tên** (cài lại / cập nhật): TRƯỚC khi bấm "Tải", vào app **Phím tắt** (không phải ô tên trong LichKhoa) đổi tên bản cũ, ví dụ thêm `_cu`; nếu không iOS hỏi **Replace / Keep Both** hoặc đặt tên "… 2". Cài xong, thử chạy được rồi mới xóa bản `_cu`.
+- **Cách sao chép link (nhấn giữ nút)**: Nhấn giữ nút "Tải" hiện menu iOS (Open · Open in "Shortcuts" · **Copy Link** · Share…). Nếu bấm nút mà không chuyển được sang app Phím tắt, bạn hãy **nhấn giữ nút "Tải"** (hoặc nhấn giữ liên kết) → chọn **Sao chép liên kết** (Copy Link) → mở trình duyệt Safari thông thường, dán link vào thanh địa chỉ và truy cập để mở trực tiếp màn hình Get Shortcut trong app Phím tắt.
 
 ### Câu hỏi khi cài đặt (Import Question)
 - Khi bạn cài đặt các phím tắt làm việc với app Lời nhắc như `ThemLoiNhac` và `ThemBaoThucNgay`, nếu Chủ dự án đã thiết lập câu hỏi cài đặt (**Import Question**), iOS sẽ hiện hộp thoại hỏi bạn: *"Chọn danh sách Lời nhắc..."*.
 - Bạn chỉ việc chạm và chọn danh sách tương ứng có sẵn trên iPhone của bạn:
   - Với `ThemLoiNhac`: chọn danh sách bạn hay dùng (ví dụ: *Lời nhắc* / *Reminders* / *Sẽ làm*).
   - Với `ThemBaoThucNgay`: chọn ĐÚNG danh sách **`BaoThuc`** (hãy chắc chắn bạn đã tạo danh sách này trước như hướng dẫn bên dưới).
+- **Nút "Add Shortcut" không bấm được ở màn "Configure This Shortcut"** (gặp ở iOS 27.0.1): bấm **"Skip Setup"** → phím tắt vẫn được cài nhưng giữ danh sách mặc định trong link → bắt buộc làm bước "Kiểm tra sau khi cài đặt" bên dưới.
 - Danh sách riêng của Chủ dự án đã được Apple xóa sạch khi tạo link chia sẻ, nên câu hỏi Import Question giúp bạn gắn phím tắt vào đúng danh sách trên máy của mình mà không bị lộ dữ liệu cá nhân của người chia sẻ. Nếu khi cài đặt iOS không hiện câu hỏi thì bạn chỉ cần chỉnh tay ở bước kiểm tra bên dưới.
 
 ### Kiểm tra sau khi cài đặt
@@ -302,9 +304,11 @@ Sau khi cài đủ 5 phím tắt, hãy mở app **Shortcuts (Phím tắt)** trê
 3. **Kiểm tra bộ lọc trong `TaoBaoThucSang`**: Mở phím tắt `TaoBaoThucSang` → kiểm tra hành động đầu tiên **Find Reminders (Tìm lời nhắc)**. Vì bộ lọc danh sách (`List is BaoThuc`) là thuộc tính cục bộ của máy tạo mà Apple không đóng gói mang sang máy khác được, hãy chạm vào ô danh sách của bộ lọc này và chọn lại đúng danh sách **`BaoThuc`** trên máy bạn.
 
 ### Việc còn phải tự làm (4 việc iOS không thể chia sẻ qua link)
-Hệ điều hành iOS không cho phép chia sẻ Tự động hóa và cài đặt thông báo qua link, nên sau khi tải 5 phím tắt, bạn vẫn cần tự hoàn thiện 4 bước sau:
+iOS không chia sẻ danh sách Lời nhắc và cài đặt thông báo qua link, còn Tự động hóa thì (iOS 27) được cài kèm nhưng để tắt, nên sau khi tải 5 phím tắt, bạn vẫn cần tự hoàn thiện 4 bước sau:
 1. **Tạo danh sách Lời nhắc `BaoThuc`**: Mở app **Lời nhắc (Reminders)** → Tạo danh sách mới đặt ĐÚNG tên **`BaoThuc`** (viết liền, không dấu cách). Làm bước này TRƯỚC khi tải `ThemBaoThucNgay` và `TaoBaoThucSang`.
-2. **Cài Tự động hóa chạy 00:05 hằng ngày**: Mở app **Shortcuts (Phím tắt)** → tab **Automation (Tự động hóa)** → bấm **+** → chọn **Time of Day (Thời điểm trong ngày)** lúc **00:05**, lặp **Daily (Hằng ngày)** → chọn **Run Immediately (Chạy ngay)**, tắt **Notify When Run (Thông báo khi chạy)** → chọn phím tắt **`TaoBaoThucSang`** (xem chi tiết tại mục E.3 Bước 4).
+2. **Bật Tự động hóa chạy 00:05 hằng ngày**:
+   - **iOS 27** (Tự động hóa nằm trong chính Phím tắt): mở `TaoBaoThucSang` → đầu phím tắt có khối **"Automation is turned off — At 00:05"** → chạm khối đó → bật **Automation**, tắt **Notify** (Event = Time of Day, Repeat = Every Day). Nếu máy còn bản cũ (`TaoBaoThucSang_cu`) thì mở nó và **tắt** Automation, tránh chạy 2 lần mỗi đêm.
+   - **iOS cũ hơn**: Mở app **Shortcuts (Phím tắt)** → tab **Automation (Tự động hóa)** → bấm **+** → chọn **Time of Day (Thời điểm trong ngày)** lúc **00:05**, lặp **Daily (Hằng ngày)** → chọn **Run Immediately (Chạy ngay)**, tắt **Notify When Run (Thông báo khi chạy)** → chọn phím tắt **`TaoBaoThucSang`** (xem chi tiết tại mục E.3 Bước 4).
 3. **Bật Nhạy cảm về thời gian**: Vào **Cài đặt (Settings) → Thông báo (Notifications) → Lời nhắc (Reminders)** → bật **Thông báo nhạy cảm về thời gian (Time Sensitive Notifications)**; đồng thời thêm Lời nhắc vào các chế độ Tập trung (Focus / Không làm phiền) bạn sử dụng (xem chi tiết tại mục E - Bật Nhạy cảm về thời gian).
 4. **Đồng bộ tên Phím tắt với LichKhoa**: Đảm bảo tên 4 phím tắt trong app LichKhoa (tab Xem trước › Đổi tên Phím tắt) khớp 100% với tên trên iPhone. Nếu trước đó bạn đã lỡ sửa tên trong app, hãy bấm nút **"Khôi phục tên mặc định"** để đồng bộ lại.
 
@@ -324,7 +328,7 @@ Trước khi chia sẻ, mở từng Phím tắt và kiểm tra kỹ:
 ### 2. Thêm "Import Question" (nếu có tham số danh sách)
 Với 2 Phím tắt tương tác với Lời nhắc (`ThemLoiNhac` và `ThemBaoThucNgay`):
 - Mở Phím tắt trong app Shortcuts → chạm biểu tượng **ⓘ (Details / Chi tiết)** ở cạnh dưới màn hình.
-- Chọn **Setup (Thiết lập)** → chọn **Add New Question (Thêm câu hỏi mới)**.
+- iOS 27: chọn **Details › Import Questions** → thêm câu hỏi (không còn tab Setup; "Customize Shortcut…" mở lại màn Configure để thử). iOS cũ hơn: **Setup (Thiết lập)** → **Add New Question (Thêm câu hỏi mới)**.
 - Chọn tham số danh sách (**List**) của hành động **Add New Reminder (Thêm lời nhắc mới)** (nếu iOS cho phép chọn tham số này trong danh sách thiết lập) → điền câu hỏi hướng dẫn: *"Chọn danh sách Lời nhắc (chọn BaoThuc nếu là ThemBaoThucNgay)"*.
 - *Ý nghĩa*: Khi người dùng khác bấm link cài đặt, iOS sẽ hiển thị câu hỏi này để họ chọn danh sách trên máy họ. Apple sẽ tự động xóa giá trị danh sách trên máy của bạn khi tạo link nên không lo lộ danh sách cá nhân. Nếu iOS không cho phép tạo câu hỏi cho tham số đó, bỏ qua bước này và người dùng sẽ chọn tay theo mục §F.
 
