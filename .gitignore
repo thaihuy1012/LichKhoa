@@ -29,3 +29,12 @@ docs/hinh-anh-loi/
 
 # macOS
 .DS_Store
+
+# ai-team-kit v5.3: file tạm của agy-run.sh + rác Finder
+docs/gemini-out/*.stream
+docs/gemini-out/*.log
+docs/gemini-out/*.heartbeat
+docs/gemini-out/*.limit
+docs/gemini-out/*.marker
+docs/gemini-out/_kiem-tra*
+._*

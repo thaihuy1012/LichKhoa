@@ -1,26 +1,27 @@
 # QUY CHẾ VẬN HÀNH — AI TEAM
 
-Mọi agent trong dự án này đều đọc file này. Chi tiết từng vai trò nằm trong `.claude/agents/*.md`.
+Mọi agent trong dự án này đều đọc file này. Chi tiết từng vai trò nằm trong `.claude/agents/*.md`. Gemini (chạy ngoài Claude Code) đọc `AGENTS.md`.
 
 ## Phân cấp
-Chủ dự án (người) → Kiến trúc sư `kien-truc-su` (Fable) → Quản lý `quan-ly` (Opus, phiên chính) → Thợ `tho-*`, Kiểm thử `kiem-thu`, Sửa lỗi `sua-loi`, Khảo sát `khao-sat`.
+Chủ dự án (người) → Kiến trúc sư `kien-truc-su` (Fable 5.1, effort max) → Quản lý `quan-ly` (Claude Opus 5.5, effort high — đặt trong `.claude/settings.json`, phiên chính) → Thợ `tho-*` (Claude) và `tho-gemini` (liên lạc Gemini), Kiểm thử `kiem-thu`, Sửa lỗi `sua-loi`, Khảo sát `khao-sat`.
 - Chỉ Quản lý được hỏi Chủ dự án. Ai cần hỏi thì ghi câu hỏi vào báo cáo trả về.
 - Kiến trúc sư chỉ được gọi tại: khởi tạo SPEC, cuối milestone, trọng tài, sự cố vượt tầm, nghiệm thu cuối.
 
 ## Sổ sách (nguồn sự thật nằm trên đĩa, không nằm trong trí nhớ hội thoại)
 - `docs/SPEC.md` — mục tiêu, phạm vi, kiến trúc, milestone + tiêu chí nghiệm thu.
-- `docs/TASKS.md` — phiếu giao việc + trạng thái từng task + tồn đọng.
+- `docs/TASKS.md` — phiếu giao việc + trạng thái từng task + tồn đọng + trạng thái làn Gemini.
 - `docs/SU-CO.md` — sự cố S1/S2 đang mở và đã đóng.
 - `docs/DECISIONS.md` — mọi quyết định có tranh luận, kèm lý do.
 - `docs/BAI-HOC.md` — lỗi lặp lại, model nào làm hỏng loại việc nào.
-- `docs/bao-cao/M<n>.md` — gói bàn giao milestone cho Kiến trúc sư.
+- `docs/bao-cao/M<n>.md` — gói bàn giao milestone cho Kiến trúc sư; `M<n>-soat-cheo.md` — soát chéo của Gemini.
+- `docs/tasks/` — prompt giao cho Gemini; `docs/gemini-out/` — kết quả Gemini trả về; `docs/y-tuong/` — các bản ý tưởng ban đầu của Gemini và Kiến trúc sư.
 
 ## Kỷ luật token (bắt buộc)
-1. Chỉ đọc file trong "Phạm vi file" của phiếu và giao diện liên quan. Không đọc cả repo. Cần khảo sát rộng thì giao `khao-sat` (hoặc làn Gemini nếu bật).
+1. Chỉ đọc file trong "Phạm vi file" của phiếu và giao diện liên quan. Không đọc cả repo. Cần khảo sát rộng thì giao `tho-gemini` làn đọc rộng (làn tắt: `khao-sat`).
 2. Test chạy trước, người review sau: `kiem-thu` PASS rồi Quản lý mới review. FAIL thì trả thẳng về Thợ, không tốn lượt review.
 3. Báo cáo trả về ≤ 150 từ (Kiến trúc sư, Sửa lỗi ≤ 250). Log dài thì ghi ra file, trả về đường dẫn + 5 dòng lỗi đầu.
-4. Trần vòng lặp: 3 lần sửa mỗi bậc model, 3 lượt phản biện mỗi tranh luận, 2 lượt sửa lỗi mỗi sự cố, 6 lượt thợ mỗi phiếu. Chạm trần thì nâng bậc hoặc dừng hỏi Chủ dự án. Không ai được "thử thêm lần nữa" ngoài trần.
-5. Song song chỉ khi các task không đụng chung file; tối đa 3 task cùng lúc.
+4. Trần vòng lặp: 3 lần sửa mỗi bậc model, tối đa 5 vòng agy mỗi phiếu Gemini (3 vòng Flash + vòng 4 Argon + vòng 5 Sonnet qua agy; vòng 4/5 có thể bị bỏ), 3 lượt phản biện mỗi tranh luận, 2 lượt sửa lỗi mỗi sự cố, 6 lượt thợ Claude mỗi phiếu. Chạm trần thì nâng bậc hoặc dừng hỏi Chủ dự án. Không ai được "thử thêm lần nữa" ngoài trần.
+5. Song song chỉ khi các task không đụng chung file; tối đa 3 task cùng lúc. Thợ Gemini luôn chạy một mình: không thợ Claude nào ghi file trong lúc Gemini chạy.
 6. Ghi sổ ngay sau mỗi bước, để phiên có thể compact hoặc khởi động lại mà không mất trạng thái.
 
 ## Mức lỗi
@@ -34,6 +35,15 @@ S1/S2 là SỰ CỐ: chỉ Quản lý mở/đóng, ghi `docs/SU-CO.md`, xử lý
 - Mỗi phiếu DONE là một commit; milestone đã duyệt có tag `M<n>-ok`. Lùi bằng git thay vì sửa chồng lên lỗi.
 - Test của phiếu đã DONE là khóa: sửa/xóa/skip phải khai báo trong báo cáo, và `kiem-thu` sẽ đánh dấu NGHI VẤN.
 - Sửa lỗi phải tái hiện bằng test thất bại trước khi sửa; sửa xong chạy toàn bộ suite, không chỉ test của phiếu.
+
+## Làn Gemini
+- Gemini là thợ chính thức, chạy qua Antigravity CLI (`agy`, gói Google AI Pro) với model theo làn ghi ở `docs/LAN-GEMINI.md` mục 1 và `scripts/gemini.env` (viết code, sinh file, đọc rộng: Gemini 3.8 Flash; soát chéo, lên ý tưởng: Gemini 4 Argon high; vòng 4 nâng bậc của phiếu code: Gemini 4 Argon medium; vòng 5 tùy chọn: Claude Sonnet 5.5 chạy qua agy, trừ hạn mức Claude của gói Google). Mọi việc giao qua agy đi qua subagent `tho-gemini` (Claude Haiku làm người liên lạc; `model: haiku` trong file đó là model của người liên lạc, không phải model Gemini).
+- Nguyên tắc giao việc: **việc gì Gemini làm được thì giao Gemini; Claude chỉ làm việc Gemini không làm được** — điều phối, quyết định SPEC, cổng kiểm thử, sự cố S1/S2, phiếu Gemini đã bó tay. Mục đích: tiết kiệm token Claude.
+- Khởi tạo ý tưởng: Gemini 4 Argon (high) và Kiến trúc sư (Fable 5.1, max) cùng viết bản ý tưởng, soát chéo nhau, lấy điểm hay và chỉ thiếu sót của nhau; Kiến trúc sư viết bản hợp nhất và là người quyết. File ở `docs/y-tuong/`.
+- Trong lúc Gemini chạy, script tự canh: đứng im 10 phút thì giao lại (giữ phần đã làm); hết giờ mà đang làm đúng hướng thì gia hạn tới trần; hết trần thì dừng nhưng giữ kết quả dở cho thợ Claude tiếp quản. Không ai phải canh tay.
+- Quản lý tự kiểm tra và bật làn ở lần chạy đầu (`bash scripts/agy-run.sh kiem-tra`), ghi mức vào dòng "Làn Gemini" trong TASKS.md; Chủ dự án đổi mức bằng câu "Chuyển làn Gemini về NHIỀU / VỪA / TẮT".
+- Gemini không commit, không sửa test cũ, không sửa file ngoài danh sách phiếu. Kết quả Gemini qua `kiem-thu` → review → commit như thợ Claude. Chi tiết: `quan-ly.md` mục "Làn Gemini".
+- Argon và Sonnet qua agy có hạn mức riêng (cửa sổ 5 giờ + trần tuần), tách khỏi Flash. Cạn thì không tắt làn: script tự cho model đó nghỉ (5 giờ; cạn lại ngay sau đó → 24 giờ), tự chạy Flash thay ở soát chéo / ý tưởng, và báo `MODEL NGHỈ` ở vòng 4 / vòng 5 để Quản lý bỏ vòng đó (quy tắc trong `quan-ly.md`).
 
 ## Phiếu giao việc (Quản lý ghi vào TASKS.md; Thợ chỉ nhận phiếu này)
 ### T-<ms>.<n> — <tên>
@@ -59,15 +69,8 @@ PHẢN BIỆN (lượt k/3) — Vấn đề · Bằng chứng (file/dòng/test) 
 ## Phán quyết của Kiến trúc sư
 PHÁN QUYẾT: DUYỆT | SỬA | DỪNG — Lý do ≤ 5 dòng · Việc cần làm (nếu SỬA) · Câu hỏi cho Chủ dự án (nếu DỪNG)
 
-## Làn Gemini (v2)
-- Gemini (Antigravity CLI `agy`; model theo làn trong docs/LAN-GEMINI.md mục 1 và scripts/gemini.env) là thợ chính thức; mọi việc giao Gemini đi qua subagent `tho-gemini`. Quy tắc: docs/LAN-GEMINI.md. Quy tắc Gemini phải theo: AGENTS.md.
-- Gemini không commit, không sửa test cũ, không sửa file ngoài danh sách phiếu. Kết quả Gemini qua kiem-thu → review → commit như thợ Claude.
-- **Ưu tiên Gemini để tiết kiệm token Claude** (Chủ dự án 2026-09-19): việc nào Gemini làm được thì không để Claude làm. Quản lý phải soạn phiếu cho **đủ điều kiện** giao Gemini (tiêu chí rõ + lệnh test + ≤ 8 file; phiếu to thì chia nhỏ), và ghi lý do cụ thể mỗi khi giao một phiếu đủ điều kiện cho thợ Claude. Việc chỉ-đọc ưu tiên làn `doc`/`soat` hơn `khao-sat`. Cổng chất lượng không đổi: `kiem-thu` → review → commit.
-- **Theo dõi lượt Gemini** (LAN-GEMINI.md §5b): cứ ~10 phút gọi `agy-run.sh song <tên>` — `ĐANG LÀM` thì để yên (cấm hủy vì "lâu quá"); `ĐỨNG IM` 2 chu kỳ liên tiếp thì hủy và chạy lại đúng prompt cũ một lần; chạm hạn giờ mà vẫn đang làm thì `gia-han` (trần 2 lần/lượt) thay vì cắt ngang.
-- Gemini và thợ Claude không ghi file cùng lúc. Thư mục docs/gemini-out là kết quả Gemini; docs/tasks là prompt.
-
-
 ## Cổng bảo mật trước khi deploy (bắt buộc — Chủ dự án, 2026-09-19)
+<!-- Riêng dự án LichKhoa: giữ lại khi nâng cấp ai-team-kit (v2.1 → v5.3, 2026-11-10, D-039). -->
 
 > "Before every deployment, perform a security audit and block deployment if any secrets, credentials, PII, confidential data, or sensitive information could be exposed."
 
@@ -92,6 +95,7 @@ Quy tắc phòng ngừa (rút từ kiểm toán hồi tố 2026-09-19, `docs/tes
 - **Báo cáo về lộ dữ liệu không được chép lại dữ liệu đã lộ** (BAI-HOC 2026-09-19): ghi loại PII/bí mật và nơi chứa (`file:dòng`), KHÔNG ghi giá trị thật — kể cả trong log kiểm toán, báo cáo sự cố, phiếu giao việc, ảnh chụp.
 - Commit bằng email ẩn `171107212+thaihuy1012@users.noreply.github.com` (đã đặt `git config` cho kho này). Không đặt lại email thật.
 - File sao lưu JSON dữ liệu thật, `.env`, khóa: đã chặn trong `.gitignore` — không được dùng `git add -f` để vượt.
+
 ## Cấm
 - Bịa kết quả test; sửa test cho pass; báo DONE khi chưa tự chạy lệnh kiểm tra.
 - Sửa file ngoài phạm vi mà không khai báo.

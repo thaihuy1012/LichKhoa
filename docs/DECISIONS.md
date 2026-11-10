@@ -230,3 +230,9 @@
 ## D-038 — T-10.4: sửa test khóa `install.test.ts:84` (2026-10-26 · người quyết: Quản lý)
 - Vấn đề: test T-10.1 "đọc file thật → 5 url rỗng, updated null" khóa cứng trạng thái trước T-10.4 → fail ngay khi nạp 5 link thật, trái SPEC §6 M10 (kiểm file thật: mỗi url `''` hoặc khớp regex; phải pass cả trước và sau T-10.4).
 - Quyết định: đổi assert thành "parse khớp file thật" (url rỗng → null, có url → giữ nguyên; `updated` khớp file). Không bớt kiểm schema (test dòng ~150 vẫn khóa đúng 5 khóa + regex). Khai báo sửa test khóa theo CLAUDE.md.
+
+## D-039 — Nâng bộ quy trình ai-team-kit v2.1 → v5.3, giữ Cổng bảo mật (2026-11-10 · người quyết: Chủ dự án; gộp: Quản lý)
+- Bối cảnh: chuyển máy Windows → macOS; `agy-run.sh` cũ hỏng trên bash 3.2 (G-2 vá thiếu `$BASHPID` → lượt SC-006-doc chết). Chủ dự án gửi kit v5.3 (chạy được macOS), yêu cầu "giữ được bản 5.3 mà vẫn có Cổng bảo mật của bản cũ".
+- Đã làm: chép đè từ kit 18 file máy móc (`scripts/agy-run.sh`, `scripts/gemini.env`, 9 `.claude/agents/*.md`, `.claude/settings.json`, `AGENTS.md`, `README.md`, `docs/LAN-GEMINI.md`, `docs/tasks/_MAU-{CODE,SOAT-CHEO,Y-TUONG}.md`) + `docs/y-tuong/`. `CLAUDE.md` = bản v5.3 + nối nguyên văn mục "Cổng bảo mật trước khi deploy" (2026-09-19) + 2 dòng phần Cấm: quy tắc git D-012 và "push phải qua Cổng bảo mật". `.gitignore` giữ của dự án, thêm file tạm v5.3 + `._*`. Không đụng SPEC/TASKS/SU-CO/DECISIONS/BAI-HOC/bao-cao.
+- Thay đổi hành vi đáng chú ý: làn `doc` dùng Gemini 3.8 Flash (không phải Argon); vòng 4 (Argon medium) và vòng 5 (Sonnet qua agy) cho phiếu code; script tự canh đứng im/gia hạn/hạn mức (Quản lý không tự canh); sự cố MỞ → không giao Gemini (trừ ý kiến thứ hai `soat` ở lượt sua-loi 2). Bản vá G-2 bị thay thế.
+- Kiểm: đọc toàn bộ file agent/quy tắc mới trước khi cài; soát `agy-run.sh` (không lệnh mạng/xóa ngoài phạm vi cũ, không cấu trúc bash 4, `bash -n` sạch); `kiem-tra` → SẴN SÀNG (ghi AGY_FORMAT=text).

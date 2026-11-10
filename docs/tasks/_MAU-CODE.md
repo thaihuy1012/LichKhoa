@@ -1,4 +1,4 @@
-THỢ CODE — làn code — vòng {1|2|3}
+THỢ CODE — làn code — vòng {1|2|3|4|5}
 # Phiếu {MÃ}: {tên phiếu}
 
 ## Việc cần làm
@@ -14,7 +14,7 @@ AGENTS.md, docs/SPEC.md, {các file liên quan trực tiếp tới phiếu}
 ## Lệnh kiểm thử (chạy trước khi kết thúc; test fail thì sửa rồi chạy lại, tối đa 3 lần)
 {npm test}
 
-## Kết quả kiểm thử lần trước (chỉ có ở vòng 2, 3 — chép log nguyên văn từ kiem-thu)
+## Kết quả kiểm thử lần trước (chỉ có ở vòng 2–5 — chép log nguyên văn từ kiem-thu; phần vòng trước đã làm vẫn nằm trong các file trên, sửa tiếp trên đó)
 {log lỗi}
 
 ## Cấm

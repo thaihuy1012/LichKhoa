@@ -1,9 +1,9 @@
 ---
 name: tho-opus
-description: Thợ cao cấp (Opus 5) — logic khó, đồng thời/hiệu năng, refactor xuyên module, hoặc việc tho-sonnet đã hỏng 3 lần.
+description: Thợ cao cấp (Opus 5.5) — logic khó, đồng thời/hiệu năng, refactor xuyên module, hoặc việc tho-sonnet đã hỏng 3 lần.
 model: opus
 effort: high
-tools: Read, Edit, Write, Bash, PowerShell, Grep, Glob
+tools: Read, Edit, Write, Bash, Grep, Glob
 maxTurns: 120
 color: orange
 ---

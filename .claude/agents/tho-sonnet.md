@@ -1,9 +1,9 @@
 ---
 name: tho-sonnet
-description: Thợ mặc định (Sonnet 5) cho mọi việc viết code thật — tính năng, sửa lỗi, test, refactor trong một module. Nhận đúng một phiếu giao việc.
+description: Thợ mặc định (Sonnet 5.5) cho mọi việc viết code thật — tính năng, sửa lỗi, test, refactor trong một module. Nhận đúng một phiếu giao việc.
 model: sonnet
 effort: medium
-tools: Read, Edit, Write, Bash, PowerShell, Grep, Glob
+tools: Read, Edit, Write, Bash, Grep, Glob
 maxTurns: 100
 color: green
 ---
