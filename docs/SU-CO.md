@@ -11,6 +11,8 @@
 - Commit tốt cuối: 6aec632 (mã sản phẩm không đổi so với bản đã deploy và đã thử tay iPhone ĐẠT).
 - Đóng băng: không. Việc tiếp: giao `sua-loi` điều tra (tối đa 2 lượt): phân biệt test phụ thuộc môi trường với lỗi thật của app trên Chrome/WebKit mới.
 - 2026-11-10 (phiên mới): lượt Gemini `SC-006-doc` treo RUNNING với PID 0 (lỗi \$BASHPID) → `huy` không chạy được (kill_tree 0) → Quản lý ghi tay status DONE 130. Giao `sua-loi` (opus) lượt 1/2.
+- Lượt 1 `sua-loi` (opus) → CẦN KIẾN TRÚC SƯ. Đã sửa 3/4 (loại a, chỉ test, không đổi src): notes:10 reload trước debounce 300 ms → chờ IDB `2:true`; m6:89 `waitForFunction(()=>Promise)` không chờ (Playwright coi Promise truthy) → `expect.poll(page.evaluate)`; todo-touch:374 touchstart trước khi `useEffect` gắn listener → chờ 1 khung + macrotask. Còn m10:68 webkit: WebKit macOS giao `icloud.com/shortcuts/…` cho Shortcuts.app (Universal Link) → không popup. Check: 133 pass / 1 fail / 14 skip (`SC-006-check.log`). Ngoài phạm vi: `persist-flush.spec.ts:16`, `todo-gestures.spec.ts:30` cùng kiểu chờ vô hiệu.
+- Gửi Kiến trúc sư chế độ SỰ CỐ (m10 webkit) + `kiem-thu` kiểm độc lập 3 bản sửa (song song).
 
 ## Đã đóng gần đây
 - **SC-005** (S2, ĐÃ ĐÓNG 2026-09-22) — B-016 gộp Hoàn tác: regression m6:172 (vòng 2 thực chất test trên `dist/` cũ)

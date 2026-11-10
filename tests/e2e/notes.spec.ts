@@ -48,6 +48,31 @@ test('Ghi chú: nhiều ghi chú, ghim 1 cái + hiện trên hình nền, còn q
   expect(hasNote2).toBe(true);
   expect(hasNote1).toBe(false);
 
+  // SC-006: chờ debounce 300 ms ghi xong IndexedDB rồi mới reload. Trước đây test dựa vào
+  // khoảng trễ ngẫu nhiên (máy chậm → debounce kịp chạy); máy nhanh reload trong < 300 ms thì
+  // chỉ còn flush ở `pagehide`, mà lệnh ghi IndexedDB bất đồng bộ bắt đầu trong lúc trang bị hủy
+  // không kịp commit (lưới dự phòng, SPEC v1.8 (e)). Cùng cách chờ với b018-shortcut-names.
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          new Promise<string>((resolve) => {
+            const req = indexedDB.open('keyval-store');
+            req.onerror = () => resolve('err');
+            req.onsuccess = () => {
+              const getReq = req.result.transaction('keyval', 'readonly').objectStore('keyval').get('lichkhoa:state');
+              getReq.onerror = () => resolve('err');
+              getReq.onsuccess = () => {
+                const s = getReq.result as { notes?: unknown[]; design?: { showNote?: boolean } } | undefined;
+                req.result.close();
+                resolve(`${s?.notes?.length ?? 0}:${s?.design?.showNote === true}`);
+              };
+            };
+          }),
+      ),
+    )
+    .toBe('2:true');
+
   // Reload: ghi chú vẫn còn (IndexedDB).
   await page.reload();
   await page.getByTestId('tab-events').click();

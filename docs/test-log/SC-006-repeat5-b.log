@@ -1,0 +1,26 @@
+
+Running 20 tests using 7 workers
+
+  ✓   6 [chromium] › tests/e2e/todo-touch.spec.ts:378:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước (1.2s)
+  ✓   3 [chromium] › tests/e2e/todo-touch.spec.ts:378:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước (1.2s)
+  ✓   4 [chromium] › tests/e2e/todo-touch.spec.ts:378:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước (1.2s)
+  ✓  10 [chromium] › tests/e2e/todo-touch.spec.ts:378:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước (1.1s)
+  ✓   9 [chromium] › tests/e2e/todo-touch.spec.ts:378:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước (1.1s)
+  -  12 [webkit] › tests/e2e/todo-touch.spec.ts:378:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước
+  ✓   1 [chromium] › tests/e2e/m6-todo-gestures.spec.ts:97:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (5.5s)
+  ✓   5 [chromium] › tests/e2e/m6-todo-gestures.spec.ts:97:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (5.5s)
+  ✓   2 [chromium] › tests/e2e/m6-todo-gestures.spec.ts:97:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (5.5s)
+  ✓   7 [chromium] › tests/e2e/m6-todo-gestures.spec.ts:97:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (5.5s)
+  ✓  11 [webkit] › tests/e2e/m6-todo-gestures.spec.ts:97:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (2.7s)
+  ✓  13 [webkit] › tests/e2e/m6-todo-gestures.spec.ts:97:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (2.7s)
+  -  15 [webkit] › tests/e2e/todo-touch.spec.ts:378:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước
+  -  16 [webkit] › tests/e2e/todo-touch.spec.ts:378:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước
+  -  18 [webkit] › tests/e2e/todo-touch.spec.ts:378:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước
+  ✓   8 [chromium] › tests/e2e/m6-todo-gestures.spec.ts:97:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (5.3s)
+  -  20 [webkit] › tests/e2e/todo-touch.spec.ts:378:1 › Chuỗi sự kiện iOS: kéo kết thúc bằng touchcancel (hệ thống giành ngón tay) -> áp thứ tự đang xem trước
+  ✓  14 [webkit] › tests/e2e/m6-todo-gestures.spec.ts:97:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (2.9s)
+  ✓  17 [webkit] › tests/e2e/m6-todo-gestures.spec.ts:97:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (2.9s)
+  ✓  19 [webkit] › tests/e2e/m6-todo-gestures.spec.ts:97:1 › T-6.END luồng chính: vuốt trái Xóa/Hoàn tác, Lưu trữ/Khôi phục ẩn khỏi hình nền, xuất JSON archived, kéo sắp xếp, reload giữ mọi thứ (2.7s)
+
+  5 skipped
+  15 passed (10.2s)

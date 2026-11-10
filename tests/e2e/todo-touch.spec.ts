@@ -342,6 +342,10 @@ async function dragCOverAWithIosCancel(page: Page, ending: 'touchend' | 'touchca
   const yA = boxA.y + boxA.height / 2;
   const at = (i: number) => yC + ((yA - yC) * i) / 10;
 
+  // SC-006: listener touch gốc của hàng gắn trong `useEffect` — Preact chạy sau khung vẽ kế tiếp
+  // (requestAnimationFrame rồi setTimeout). Máy nhanh bắn touchstart giả lên hàng C vừa thêm TRƯỚC
+  // khi listener gắn → không cử chỉ nào bắt đầu (chập chờn ~1/40). Chờ 1 khung + 1 macrotask.
+  await page.evaluate(() => new Promise<void>((r) => requestAnimationFrame(() => setTimeout(r, 0))));
   await syn(page, 'down', '[data-testid="todo-edit"]', 'C', x, yC);
   await page.waitForTimeout(600); // nhấn giữ qua LONG_PRESS_MS
   const prevented: boolean[] = [];

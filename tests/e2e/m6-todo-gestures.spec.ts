@@ -36,7 +36,13 @@ async function addTodo(page: import('@playwright/test').Page, text: string, due?
 /** `createStore` (src/ui/store.ts) ghi IndexedDB debounce 300ms sau mỗi dispatch — chờ đúng thứ tự
  * đã lưu (đọc thẳng IndexedDB, không sleep cố định) trước khi reload, xem `todo-gestures.spec.ts`. */
 async function waitForPersistedTodoOrder(page: import('@playwright/test').Page, expectedTexts: string[]) {
-  await page.waitForFunction(
+  // SC-006: trước đây dùng `page.waitForFunction(() => new Promise(...))` — Playwright KHÔNG chờ
+  // Promise trả về từ predicate (đối tượng Promise luôn truthy) nên hàm này trả về ngay, không chờ
+  // gì; máy nhanh reload khi debounce 300 ms chưa ghi → mất thứ tự. `page.evaluate` có await
+  // Promise, `expect.poll` lặp tới khi đúng.
+  await expect
+    .poll(() =>
+      page.evaluate(
     (expected) =>
       new Promise<boolean>((resolve) => {
         const req = indexedDB.open('keyval-store');
@@ -58,8 +64,10 @@ async function waitForPersistedTodoOrder(page: import('@playwright/test').Page, 
         };
       }),
     expectedTexts,
-    { timeout: 5000 },
-  );
+      ),
+      { timeout: 5000 },
+    )
+    .toBe(true);
 }
 
 async function swipeLeft(
