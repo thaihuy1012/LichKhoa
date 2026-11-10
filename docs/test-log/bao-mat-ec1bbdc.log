@@ -1,0 +1,149 @@
+# Kiểm toán bảo mật — commit 2dd9e19 — 2026-11-10 — phạm vi origin/main..HEAD (40c9c04..2dd9e19)
+## File thay đổi
+M	.claude/agents/khao-sat.md
+M	.claude/agents/kiem-thu.md
+M	.claude/agents/kien-truc-su.md
+M	.claude/agents/quan-ly.md
+M	.claude/agents/sua-loi.md
+M	.claude/agents/tho-gemini.md
+M	.claude/agents/tho-haiku.md
+M	.claude/agents/tho-opus.md
+M	.claude/agents/tho-sonnet.md
+M	.claude/settings.json
+M	.gitignore
+M	AGENTS.md
+M	CLAUDE.md
+M	README.md
+M	docs/BAI-HOC.md
+M	docs/DECISIONS.md
+M	docs/HUONG-DAN.md
+M	docs/LAN-GEMINI.md
+M	docs/SPEC.md
+M	docs/SU-CO.md
+M	docs/TASKS.md
+A	docs/bao-cao/M10.md
+A	docs/tasks/SC-006-doc.md
+M	docs/tasks/_MAU-CODE.md
+A	docs/tasks/_MAU-Y-TUONG.md
+A	docs/test-log/B-021-check.log
+A	docs/test-log/B-022-check.log
+A	docs/test-log/B-022-rerun.log
+A	docs/test-log/SC-006-check.log
+A	docs/test-log/SC-006-check2.log
+A	docs/test-log/SC-006-kiemthu-3test.log
+A	docs/test-log/SC-006-kiemthu-check.log
+A	docs/test-log/SC-006-m10.log
+A	docs/test-log/SC-006-repeat5-b.log
+A	docs/test-log/SC-006-repeat5.log
+A	docs/test-log/SC-006-repro.log
+A	docs/test-log/SC-006-stress.log
+A	docs/y-tuong/.gitkeep
+M	scripts/agy-run.sh
+M	scripts/gemini.env
+M	scripts/test-agy-song.sh
+M	src/core/i18n/en.json
+M	src/core/i18n/vi.json
+M	tests/e2e/m10-install.spec.ts
+M	tests/e2e/m6-todo-gestures.spec.ts
+M	tests/e2e/notes.spec.ts
+M	tests/e2e/todo-touch.spec.ts
+## 1. Bí mật trong diff (dòng thêm)
+1035:+    ============================================================
+1242:+    ============================================================
+1262:+    ============================================================
+1282:+    ============================================================
+1599:+    ============================================================
+2160:+    ============================================================
+2302:+    ============================================================
+2322:+    ============================================================
+2342:+    ============================================================
+2362:+    ============================================================
+2382:+    ============================================================
+2535:+    ============================================================
+2555:+    ============================================================
+2575:+    ============================================================
+## 1b. Cây làm việc (file theo dõi)
+.gitignore:19:*client_secret*.json
+docs/DECISIONS.md:66:- Bối cảnh: M3 đạt đủ tiêu chí SPEC §6 (KTS tự chạy `npm run check`: 183×2 unit, 39 e2e pass/1 skip, exit 0; `client_secret` trong `src/` r
+docs/DECISIONS.md:74:- Bằng chứng: KTS tự chạy `npm run check` exit 0 (tsc sạch; Vitest 209 × 2 TZ; e2e 64 pass / 6 skip webkit có lý do — clipboard-write không
+docs/DECISIONS.md:189:- Kiểm toán hồi tố toàn bộ 143 commit (132 đã push), kho CÔNG KHAI: không có API key, token, private key, `client_secret`, Client ID, emai
+docs/DECISIONS.md:192:- Quản lý tự quyết kèm theo: siết `.gitignore` (chặn `.env*`, `*.pem/*.p12/*.key`, `*credentials*.json`, `*service-account*.json`, `*clien
+docs/SPEC.md:213:  - [ ] Không có secret trong repo: `Select-String -Path src -Pattern client_secret -Recurse` trả rỗng.
+docs/TASKS.md:387:- Nhật ký: 2026-09-14 lượt 1: DONE (buildAuthUrl, parseFragment, newState, save/get/clearToken có storage tùy chọn; 152×2) → kiem-thu PASS (15
+docs/TASKS.md:422:- Tiêu chí: [ ] luồng mock OAuth + calendar như SPEC M3 (302 về `#access_token…&state=<từ query>` → chọn lịch → Đồng bộ → agenda có sự kiện fi
+docs/TASKS.md:966:  [ ] Không báo nhầm ngoại lệ đã chốt: Google OAuth **Client ID** phía client (chuỗi `*.apps.googleusercontent.com`) → KHÔNG chặn; `client_sec
+docs/TASKS.md:969:  [ ] `scripts/test-kiem-bao-mat.sh` (không cần mạng, tự dọn): ít nhất 6 ca — client_secret → CHẶN; PRIVATE KEY → CHẶN; `.env` có nội dung → C
+docs/bao-cao/M3.diff:91:+- Nhật ký: 2026-09-14 lượt 1: DONE (buildAuthUrl, parseFragment, newState, save/get/clearToken có storage tùy chọn; 152×2) → kiem-thu P
+docs/bao-cao/M3.diff:118: - Tiêu chí: [ ] luồng mock OAuth + calendar như SPEC M3 (302 về `#access_token…&state=<từ query>` → chọn lịch → Đồng bộ → agenda có sự
+docs/bao-cao/M3.diff:2075:+  it('không có client_secret ở bất kỳ đâu', () => {
+docs/bao-cao/M3.diff:2077:+    expect(url).not.toContain('client_secret');
+docs/bao-cao/M3.md:22:- `Select-String -Path src -Pattern client_secret -Recurse`: rỗng. Test M1–M2: không đổi (chỉ thêm).
+tests/unit/oauth.test.ts:29:  it('không có client_secret ở bất kỳ đâu', () => {
+tests/unit/oauth.test.ts:31:    expect(url).not.toContain('client_secret');
+## 2. File nhạy cảm được theo dõi
+docs/test-log/B-002-sau-chromium.png
+docs/test-log/B-002-sau.png
+docs/test-log/B-002-truoc.png
+docs/test-log/B-008-sau.png
+docs/test-log/B-008-truoc.png
+docs/test-log/T-5.2/week-note0-2.png
+docs/test-log/T-5.2/week-note1-15.png
+docs/tham-khao/inks-tuan.PNG
+public/apple-touch-icon.png
+public/icon-192.png
+public/icon-512.png
+tests/fixtures/photo-4000x3000.jpg
+tests/fixtures/transparent-10x10.png
+## 3. PII trong diff (email / sđt / email thật)
+391:+- Nhật ký: 2026-10-26 Chủ dự án gửi 5 link → `public/shortcut-links.json` + `updated` 2026-10-26 → unit fail 1 ca (test T-10.1 khóa cứng "5 url rỗng", trái
+466:+40c9c04 — Actions run 40346217210 success, trang 200, `shortcut-links.json` updated 2026-10-26. B-021 (b697ab4) chưa deploy.
+(không có email Chủ dự án trong file theo dõi)
+## 4. Cấu hình (workflow, manifest, sw, phụ thuộc)
+(eval):14: no matches found: public/manifest*
+## 5. Phụ thuộc mới
+(package.json không đổi)
+## 4. Cấu hình (chạy lại)
++  "effortLevel": "high",
++  "modelSettings": {
++    "claude-opus-5-5": {
++      "effortLevel": "high"
++    }
++  },
++# macOS
++.DS_Store
++# ai-team-kit v5.3: file tạm của agy-run.sh + rác Finder
++docs/gemini-out/*.stream
++docs/gemini-out/*.log
++docs/gemini-out/*.heartbeat
++docs/gemini-out/*.limit
++docs/gemini-out/*.marker
++docs/gemini-out/_kiem-tra*
++._*
+-# Model Gemini theo làn — sửa file này khi 'agy models' đổi tên. Slug có hoặc không kèm -high/-medium/-low đều được.
+-GEMINI_CODE=gemini-3.8-flash; EFFORT_CODE=high     # viết code
+-GEMINI_SOAT=gemini-3.1-pro;   EFFORT_SOAT=high     # soát chéo (model khác model viết code)
+-GEMINI_DOC=gemini-3.1-pro;    EFFORT_DOC=high      # đọc rộng
+-GEMINI_SINH=gemini-3.8-flash; EFFORT_SINH=low      # sinh file cơ học
++# Model theo làn — sửa file này khi 'agy models' đổi tên. Ghi tên gốc + effort riêng (trong agy, effort là thanh chọn riêng); tên đã kèm -high/-medium/-low cũn
++# Menu /model của agy (chữ "current", mức effort đang chọn) chỉ áp dụng khi bạn gõ tay trong agy; pipeline chạy theo file này cho từng làn.
++# v5.2 (10/11/2026): Flash (hạn mức dồi dào) làm mọi việc nhiều lượt gọi; Argon (hạn mức riêng: cửa sổ 5 giờ + trần tuần) chỉ cho việc ít lượt gọi mà giá trị c
++GEMINI_CODE=gemini-3.8-flash;   EFFORT_CODE=high     # thợ code vòng 1–3 (kể cả T-1.1, T-n.END, bug S3/S4); cũng là model chạy thay khi Argon nghỉ
++GEMINI_KHO=gemini-4-argon;      EFFORT_KHO=medium    # vòng 4 nâng bậc (agy-run.sh code <prompt> kho): phiếu agentic tốn nhiều lượt gọi nhất → medium
++GEMINI_SOAT=gemini-4-argon;     EFFORT_SOAT=high     # soát chéo milestone: 4 lượt/dự án, chốt chặn chất lượng, góc nhìn khác Claude
++GEMINI_DOC=gemini-3.8-flash;    EFFORT_DOC=high      # đọc rộng / khảo sát: nhiều lượt gọi, ngữ cảnh 1M+, không cần suy luận sâu
++GEMINI_SINH=gemini-3.8-flash;   EFFORT_SINH=low      # sinh file cơ học
++GEMINI_YTUONG=gemini-4-argon;   EFFORT_YTUONG=high   # cùng Kiến trúc sư (Fable 5.1 max) lên ý tưởng: 1–2 lượt/dự án, quyết định hướng đi
++MODEL_VONG5=claude-sonnet-5-5;  EFFORT_VONG5=medium  # vòng 5 (agy-run.sh code <prompt> vong5): Claude Sonnet QUA agy — trừ hạn mức Claude của gói Google, khôn
++# Không dùng: Claude Opus 5.5 trong agy (~10–25 lượt/5 giờ, một phiếu agentic dễ ăn hết). GPT-OSS 120B chỉ là dự phòng tay khi Flash cũng bị khóa (xem docs/LAN
++AGY_FORMAT=text
+## Kết luận (Quản lý)
+- Nhóm 1: chỉ dòng "=====" (khớp mẫu base64) và các nhắc chữ `client_secret` trong tài liệu/.gitignore — không có bí mật. SẠCH.
+- Nhóm 2: ảnh PNG/JPG đều có từ trước origin/main (đã kiểm hồi tố 2026-09-19), không ảnh mới. SẠCH.
+- Nhóm 3: không email/sđt; số khớp mẫu là mã run Actions. Email Chủ dự án không có trong file theo dõi. NHƯNG: 5 log mới docs/test-log/SC-006-{check,check2,kiemthu-check,repeat5,repro}.log chứa đường dẫn tuyệt đối có TÊN TÀI KHOẢN macOS của Chủ dự án (thư mục home), trong 2 commit chưa push 4b66053, 2dd9e19. Nghi ngờ PII (trùng phần đầu email riêng) → CHẶN, hỏi Chủ dự án.
+- Nhóm 4: settings.json chỉ effort; .gitignore thêm chặn; gemini.env tên model. Không workflow/manifest/SW/CORS đổi. SẠCH.
+- Nhóm 5: package.json không đổi. SẠCH.
+- KẾT QUẢ: CHẶN PUSH tới khi Chủ dự án quyết cách xử lý tên tài khoản trong log.
+## Xử lý (Chủ dự án chọn "Che + viết lại commit", 2026-11-10)
+- Thay đường dẫn home bằng `~` trong 5 log; viết lại 3 commit chưa push bằng `git rebase 87f41c8 -x <che + amend>` (không đụng origin/main 40c9c04). Hash mới: ae0b47c, 38e3c19, ec1bbdc (thay 4b66053, (D-040), 2dd9e19).
+- Kiểm lại: tên tài khoản xuất hiện 0 lần trong diff origin/main..HEAD, 0 trong commit message, 0 trong cây làm việc, 0 trong lịch sử đã push. Tác giả mọi commit mới: email ẩn noreply.
+- KẾT QUẢ CUỐI: SẠCH trên ec1bbdc (+ commit sổ sách chứa chính log này và BAI-HOC — chỉ tài liệu, đã soát).
