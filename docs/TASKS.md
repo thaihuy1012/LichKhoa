@@ -1382,7 +1382,7 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 
 ### ĐIỂM DỪNG 2026-11-10 (khuya) — ĐỌC ĐẦU TIÊN Ở PHIÊN SAU
 - **Trạng thái**: KHÔNG sự cố mở (SC-006 ĐÃ ĐÓNG). Không phiếu DOING. Cây git sạch. Không lượt Gemini nào chạy. Làn Gemini: VỪA (Chủ dự án) · Vòng 4 Argon: BẬT · Vòng 5: BẬT.
-- **Chờ Chủ dự án `git push`** 13 commit (origin/main 40c9c04 → HEAD a365c71: B-021, B-022, kit v5.3, G-2, SC-006, D-040, sổ sách). Cổng bảo mật SẠCH trên ec1bbdc (`docs/test-log/bao-mat-ec1bbdc.log`; commit a365c71 chỉ thêm log đó + BAI-HOC). Có commit mới trước khi push → kiểm toán lại.
+- **Chờ Chủ dự án `git push`** 15 commit (origin/main 40c9c04 → HEAD, kiểm toán phủ tới commit "Cong bao mat: bo sung b065b5d": B-021, B-022, kit v5.3, G-2, SC-006, D-040, sổ sách). Cổng bảo mật SẠCH trên ec1bbdc (`docs/test-log/bao-mat-ec1bbdc.log`; commit a365c71 chỉ thêm log đó + BAI-HOC). Có commit mới trước khi push → kiểm toán lại.
 - `! git push` trong Claude Code lỗi "could not read Username" (Mac mới chưa có credential, `!` không có TTY). Đã hướng dẫn: tạo fine-grained token (chỉ repo LichKhoa, Contents read/write) → `git push` trong app Terminal (user `thaihuy1012`, password = token) → osxkeychain lưu, lần sau `! git push` chạy được. Không có `gh`/`brew` trên máy.
 - **Sau push**: kiểm Actions run + trang 200 → điền `docs/bao-cao/M10.md` (SC-006, D-040, B-022, I4 hoãn) → Kiến trúc sư DUYỆT MILESTONE (soát chéo `M10-soat` đã có, T-10.5) → `git tag M10-ok` (Chủ dự án push tag).
 - **Rồi**: B-023 (S3, phiếu ở trên) → tho-gemini làn code (bảo trì S3). Nhắc thợ: log trong `docs/test-log/` phải che `$HOME` thành `~` trước commit (BAI-HOC).

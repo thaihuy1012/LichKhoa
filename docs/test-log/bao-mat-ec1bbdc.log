@@ -147,3 +147,4 @@ tests/fixtures/transparent-10x10.png
 - Thay đường dẫn home bằng `~` trong 5 log; viết lại 3 commit chưa push bằng `git rebase 87f41c8 -x <che + amend>` (không đụng origin/main 40c9c04). Hash mới: ae0b47c, 38e3c19, ec1bbdc (thay 4b66053, (D-040), 2dd9e19).
 - Kiểm lại: tên tài khoản xuất hiện 0 lần trong diff origin/main..HEAD, 0 trong commit message, 0 trong cây làm việc, 0 trong lịch sử đã push. Tác giả mọi commit mới: email ẩn noreply.
 - KẾT QUẢ CUỐI: SẠCH trên ec1bbdc (+ commit sổ sách chứa chính log này và BAI-HOC — chỉ tài liệu, đã soát).
+- b065b5d (sổ sách điểm dừng, chỉ docs/TASKS.md): soát tên tài khoản/bí mật → 0. SẠCH.
