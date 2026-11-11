@@ -1378,7 +1378,7 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - Giao diện có sẵn: mẫu `expect.poll(() => page.evaluate(...), { timeout }).toBe(true)` ở `tests/e2e/m6-todo-gestures.spec.ts:38–71`; mẫu guard đọc file bằng `fs` ở `tests/unit/store-subscribe-guard.test.ts`.
 - Tiêu chí nghiệm thu: [ ] hai helper đổi sang `expect.poll(page.evaluate…)`, giữ nguyên logic so và tham số `timeout` (persist-flush vẫn 150 ms) [ ] không đổi/bớt assert nào khác, không skip, không nới timeout [ ] unit guard mới: quét `tests/e2e/*.ts`, fail nếu có `waitForFunction(` mà hàm truyền vào trả `new Promise` [ ] kiểm đột biến bằng tay: tạm bỏ flush ở pagehide → `persist-flush` phải fail (không commit đột biến) [ ] lệnh kiểm tra pass.
 - Lệnh kiểm tra: `npx vitest run tests/unit/e2e-wait-guard.test.ts` ; `npm run build && npx playwright test tests/e2e/persist-flush.spec.ts tests/e2e/todo-gestures.spec.ts --repeat-each=5` ; `npm run check` (kiem-thu).
-- Model: gemini (code, bảo trì S3) · Lần thử: 0/3 · Vòng Gemini: 0/5 · Trạng thái: TODO
+- Model: gemini (code, bảo trì S3) · Lần thử: 0/3 · Vòng Gemini: 1/5 · Trạng thái: DOING (2026-11-11, làm trong lúc chờ Chủ dự án push; đột biến tay do Quản lý làm lúc review)
 
 ### ĐIỂM DỪNG 2026-11-10 (khuya) — ĐỌC ĐẦU TIÊN Ở PHIÊN SAU
 - **Trạng thái**: KHÔNG sự cố mở (SC-006 ĐÃ ĐÓNG). Không phiếu DOING. Cây git sạch. Không lượt Gemini nào chạy. Làn Gemini: VỪA (Chủ dự án) · Vòng 4 Argon: BẬT · Vòng 5: BẬT.
