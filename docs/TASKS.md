@@ -1398,7 +1398,7 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - Giao diện có sẵn: 5 hàng chỉ dựng sau khi tải xong JSON (`src/ui/screens/Guide.tsx:33`, `:107`); testid hàng `sc-install-alarm` (và các `sc-install-*`); cảnh báo `[data-testid^="sc-name-mismatch-"]`.
 - Tiêu chí nghiệm thu: [ ] (5): sau khi bấm lại `tab-guide`, chờ `sc-install-alarm` hiện (`toBeVisible`) RỒI mới `expect(locator('[data-testid^="sc-name-mismatch-"]')).toHaveCount(0)` [ ] (1): thêm `toHaveJSProperty('tagName', 'A')` cho cả 5 nút Tải [ ] không bớt/nới assert nào khác, không skip, không thêm retries [ ] đột biến (Quản lý làm lúc review): bỏ 2 dòng bấm `shortcut-names-reset` + `toHaveValue('ThemBaoThuc')` → (5) FAIL ở assert cuối trên cả chromium và webkit [ ] lệnh kiểm tra pass.
 - Lệnh kiểm tra: `npm run build && npx playwright test tests/e2e/m10-install.spec.ts --repeat-each=5` (60/60) ; `npm run check` (kiem-thu).
-- Model: gemini (code, bảo trì S3) · Lần thử: 0/3 · Vòng Gemini: 1/5 · Trạng thái: DOING (2026-11-11)
+- Model: gemini (code, bảo trì S3) · Lần thử: 0/3 · Vòng Gemini: 1/5 · Trạng thái: DONE (2026-11-11, Gemini Flash vòng 1; kiem-thu PASS 60/60 + check 338×2 / e2e 134/0/14; đột biến bỏ reset → (5) FAIL chromium+webkit ✔)
 
 ### B-025 — HUONG-DAN: bỏ lời bảo đảm sai "Apple xóa danh sách khi chia sẻ" + đồng bộ sau B-022 (S3, D-041)
 - Mục tiêu: hướng dẫn nói đúng: tên danh sách mặc định NẰM TRONG link iCloud công khai → Phím tắt chỉ trỏ tới `BaoThuc` hoặc danh sách tên chung; các dòng còn giả định trước thử tay khớp SPEC §8.13(d)(f) sau B-022.
@@ -1406,7 +1406,7 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - Giao diện có sẵn: D-041 (docs/DECISIONS.md) mục (2); SPEC §8.13(d)(f), §10.G.2; tên thẻ thật trong app: "Cài nhanh bộ Phím tắt"; trên iOS 27 tự động hóa nằm TRONG Phím tắt (chia sẻ kèm link, phải tắt bản `_cu` và bật bản mới); link mở thẳng app Phím tắt (không phải trình duyệt trong-app).
 - Tiêu chí nghiệm thu: [ ] `grep -c -E 'xóa sạch|tự động xóa giá trị|sẽ được Apple xóa' docs/HUONG-DAN.md` = 0 [ ] :279 dùng đúng tên thẻ "Cài nhanh bộ Phím tắt" [ ] :369/:405/:407 không còn "Tự động hóa không chia sẻ được" / "mở ở trình duyệt trong-app" [ ] §E không đổi (`git diff` không chạm khối §E) [ ] không thêm tên thật/email/danh sách riêng của Chủ dự án.
 - Lệnh kiểm tra: `test "$(grep -c -E 'xóa sạch|tự động xóa giá trị|sẽ được Apple xóa' docs/HUONG-DAN.md)" = 0 && ! grep -nE 'Tự động hóa không chia sẻ được|trình duyệt trong-app' docs/HUONG-DAN.md && npm run check`
-- Model: gemini (code/tài liệu) · Lần thử: 0/3 · Vòng Gemini: 0/5 · Trạng thái: TODO
+- Model: gemini (code/tài liệu) · Lần thử: 0/3 · Vòng Gemini: 1/5 · Trạng thái: DOING (2026-11-11)
 
 ### Tồn đọng S4 · M10 (D-041)
 - I4 (cài trên máy thứ hai) hoãn — GIỚI HẠN ĐÃ BIẾT số 1 của M10. Khi làm, ghi: Phím tắt nào hiện màn Configure, "Add Shortcut" bấm được không, sau "Skip Setup" ô List của `ThemLoiNhac`/`ThemBaoThucNgay` và bộ lọc `TaoBaoThucSang` trỏ vào đâu, khối Automation bật hay tắt.

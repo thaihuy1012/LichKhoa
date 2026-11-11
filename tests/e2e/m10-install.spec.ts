@@ -93,6 +93,7 @@ test.describe('M10 E2E: Cài bộ Phím tắt qua link iCloud', () => {
     for (const kind of KINDS) {
       await expect(page.getByTestId(`sc-row-${kind}`)).toBeVisible();
       const btn = page.getByTestId(`sc-install-${kind}`);
+      await expect(btn).toHaveJSProperty('tagName', 'A');
       await expect(btn).toHaveAttribute('href', FIXTURE_LINKS[kind]);
       await expect(btn).toHaveAttribute('target', '_blank');
       await expect(btn).toHaveAttribute('rel', /noopener/);
@@ -223,7 +224,8 @@ test.describe('M10 E2E: Cài bộ Phím tắt qua link iCloud', () => {
     await expect(page.getByTestId('shortcut-alarm-name')).toHaveValue('ThemBaoThuc');
 
     await page.getByTestId('tab-guide').click();
-    await expect(page.getByTestId('sc-name-mismatch-alarm')).toHaveCount(0);
+    await expect(page.getByTestId('sc-install-alarm')).toBeVisible();
+    await expect(page.locator('[data-testid^="sc-name-mismatch-"]')).toHaveCount(0);
   });
 
   test('(6) Việc tự làm: 4 li chứa BaoThuc/00:05; EN đổi tiêu đề + nút Get', async ({
