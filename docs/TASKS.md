@@ -4,10 +4,11 @@ Nguồn sự thật: `docs/SPEC.md` (v1.5 — D-024 bố cục Tuần; v1.4 — 
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- **Điểm dừng mới nhất: mục "DUYỆT M10 — PHÁN QUYẾT SỬA nhỏ (D-041)" cuối file** (2026-11-11: đã deploy c497607; B-024 → B-025 → tag `M10-ok`).
+- **Điểm dừng mới nhất: mục "DUYỆT M10 — PHÁN QUYẾT SỬA nhỏ (D-041)" cuối file** (2026-11-11: đã deploy c497607; B-024 ✔, B-025 ✔, tag `M10-ok` ✔ — M10 ĐÓNG; chờ Chủ dự án push commit + tag).
 - **Làn Gemini: VỪA** (Chủ dự án 2026-11-10) · AGY_FORMAT=text (stream-json không tách được trên máy này → script đo hoạt động chủ yếu qua file thay đổi)
 - **Vòng 4 Argon: BẬT** · **Vòng 5 Sonnet qua agy: BẬT** (mặc định kit v5.3, đang chạy thử)
 - **Bộ quy trình: ai-team-kit v5.3** (nâng từ v2.1 ngày 2026-11-10, D-039) — Cổng bảo mật + quy tắc D-012 giữ trong CLAUDE.md.
+- **M10: DUYỆT (D-041) + B-024, B-025 ✔ → tag `M10-ok` (2026-11-11).** Tồn đọng S4 · M10 ở cuối file.
 - M1: 8/8 ✔ tag `M1-ok` · M2: 15/15 ✔ tag `M2-ok` (D-012) + nối tiếp T-2.15, T-2.16 ✔ · M3: 5/5 ✔ tag `M3-ok` (D-015) · M4: 12/12 ✔ tag `M4-ok` (D-021 — DUYỆT M4 + nghiệm thu cuối, gộp)
 - **M5 (SPEC v1.5, D-024) — Bố cục Tuần giống Inks: 4/4 ✔ tag `M5-ok`** (D-025 — Kiến trúc sư DUYỆT sau soát chéo Gemini). Máy thật (Chủ dự án 2026-09-15): chữ chip đọc được ✔, "◷" hiện đúng ✔ → T-5.4 không cần gấp (chỉ còn S4 dọn code). Chủ dự án yêu cầu thêm (D-026, SPEC v1.6): bấm đúp mở Google Calendar → KHÔNG làm (OUT); sự kiện trùng local/Google → B-003 ✔ DONE (chờ Chủ dự án `git push`). Chủ dự án: "xử lý tồn đọng cho xong" → T-5.4 ✔, B-004 ✔ → **HẾT TỒN ĐỌNG**. Chủ dự án `git push` (a173446..bcb4c15) → Actions run 34922820757 success, trang 200. Sau đó Chủ dự án báo: 2 sự kiện trùng trong app vẫn hiện cả 2 → D-027 ẩn trùng mọi nguồn → B-005 ✔ DONE. Chủ dự án `git push` (bcb4c15..3ef433a) → Actions run 34923759379 success, trang 200. Dự án ĐÓNG lại (D-022).
 - **M7 (SPEC v1.8, D-031) — Nhắc trên iPhone qua Phím tắt: 5/5 ✔ + T-7.2b, T-7.5 (soát chéo), T-7.6, T-7.7 · Kiến trúc sư DUYỆT M7 (2026-09-19) (+T-7.2b vá)** (T-7.1 … T-7.END) · Chủ dự án DUYỆT SPEC v1.8 ngày 2026-09-19 (cả hai nút Báo thức + Lời nhắc, hỏi giờ mỗi lần + "Không báo thức", ghi chú chọn giờ tại nút, Chủ dự án tự cài 2 Phím tắt). Dự án MỞ LẠI từ trạng thái ĐÓNG (D-022). Chủ dự án yêu cầu (2026-09-19) **ưu tiên giao Gemini để tiết kiệm token Claude** → quy định mới CLAUDE.md + LAN-GEMINI §4b/§5b (commit a7ddcc9); làn Gemini BẬT mức NHIỀU ngay khi phiếu hạ tầng T-G.1 (`song`/`gia-han`) xong và cây git sạch. T-7.1 ✔ (giao Claude vì làm trước khi có quy định mới). Deploy 2026-09-19: Chủ dự án `git push` (c318e19..e432dce) → Pages 200, bản JS `index-BOpr_rIT.js` có đủ `rem-open`/`ThemBaoThuc`/`ThemLoiNhac`. Chờ Chủ dự án cài 2 Phím tắt + thử tay A–F, B′ trên iPhone để đóng M7. · **M8 (SPEC v1.9, D-034) CHỜ**: Chủ dự án duyệt SPEC nhưng hoãn làm tới khi thử tay M7 xong. Deploy 2026-09-19 (đợt bảo trì sau thử tay): `git push` (e432dce..a4bca49) → Pages 200, bản `index-DOl9Sm8a.js` có định dạng ngày mới + CSS `color-scheme:dark`. Chờ Chủ dự án dọn Phím tắt và thử lại B/B′/C/E.
@@ -1390,7 +1391,7 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 
 ### DUYỆT M10 — PHÁN QUYẾT SỬA nhỏ (D-041, 2026-11-11) — đọc mục này đầu tiên ở phiên sau
 - Đã deploy c497607 (2026-11-11, Actions run 42946848720 success, trang 200). Kiến trúc sư: `src/` không lỗi; sửa 2 phiếu rồi Quản lý tự gắn `M10-ok` (không gọi lại KTS, không cần deploy lại vì sản phẩm; push sau vẫn qua Cổng bảo mật).
-- Thứ tự: B-024 → B-025 (tho-gemini, tuần tự) → `git tag M10-ok` → Chủ dự án push (commit + tag).
+- Thứ tự: B-024 ✔ → B-025 ✔ → `git tag M10-ok` ✔ (2026-11-11) → Cổng bảo mật → Chủ dự án `! git push && ! git push origin M10-ok`.
 
 ### B-024 — E2E M10: kịch bản (5) pass rỗng + (1) thiếu assert thẻ `a` (S3, D-041)
 - Mục tiêu: assert cuối kịch bản (5) thật sự kiểm "reset → hết cảnh báo lệch tên"; kịch bản (1) khẳng định 5 nút Tải là thẻ `A`.
@@ -1406,7 +1407,7 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - Giao diện có sẵn: D-041 (docs/DECISIONS.md) mục (2); SPEC §8.13(d)(f), §10.G.2; tên thẻ thật trong app: "Cài nhanh bộ Phím tắt"; trên iOS 27 tự động hóa nằm TRONG Phím tắt (chia sẻ kèm link, phải tắt bản `_cu` và bật bản mới); link mở thẳng app Phím tắt (không phải trình duyệt trong-app).
 - Tiêu chí nghiệm thu: [ ] `grep -c -E 'xóa sạch|tự động xóa giá trị|sẽ được Apple xóa' docs/HUONG-DAN.md` = 0 [ ] :279 dùng đúng tên thẻ "Cài nhanh bộ Phím tắt" [ ] :369/:405/:407 không còn "Tự động hóa không chia sẻ được" / "mở ở trình duyệt trong-app" [ ] §E không đổi (`git diff` không chạm khối §E) [ ] không thêm tên thật/email/danh sách riêng của Chủ dự án.
 - Lệnh kiểm tra: `test "$(grep -c -E 'xóa sạch|tự động xóa giá trị|sẽ được Apple xóa' docs/HUONG-DAN.md)" = 0 && ! grep -nE 'Tự động hóa không chia sẻ được|trình duyệt trong-app' docs/HUONG-DAN.md && npm run check`
-- Model: gemini (code/tài liệu) · Lần thử: 0/3 · Vòng Gemini: 1/5 · Trạng thái: DOING (2026-11-11)
+- Model: gemini (code/tài liệu) · Lần thử: 0/3 · Vòng Gemini: 1/5 · Trạng thái: DONE (2026-11-11, Gemini Flash vòng 1; kiem-thu PASS, check 134/0/14; Quản lý review khớp SPEC §8.13/§6 M10)
 
 ### Tồn đọng S4 · M10 (D-041)
 - I4 (cài trên máy thứ hai) hoãn — GIỚI HẠN ĐÃ BIẾT số 1 của M10. Khi làm, ghi: Phím tắt nào hiện màn Configure, "Add Shortcut" bấm được không, sau "Skip Setup" ô List của `ThemLoiNhac`/`ThemBaoThucNgay` và bộ lọc `TaoBaoThucSang` trỏ vào đâu, khối Automation bật hay tắt.

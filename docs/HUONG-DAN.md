@@ -276,7 +276,7 @@ Nút "Báo thức đúng ngày" trong LichKhoa vượt giới hạn 24 giờ c�
 - **Đã có link chia sẻ**: Chủ dự án đã cấu hình danh sách link trong app (nạp qua file `shortcut-links.json`) hoặc gửi link trực tiếp cho bạn (dạng ví dụ: `https://www.icloud.com/shortcuts/<32 ký tự hex>`).
 
 ### Thứ tự cài đặt (1 → 5)
-Trong LichKhoa, vào tab **Hướng dẫn** → cuộn đến thẻ số 2: **"Cài bộ Phím tắt bằng link iCloud"**. Bấm nút **"Tải"** (Get Shortcut) lần lượt theo đúng thứ tự 1 → 5 sau:
+Trong LichKhoa, vào tab **Hướng dẫn** → cuộn đến thẻ số 2: **"Cài nhanh bộ Phím tắt"**. Bấm nút **"Tải"** (Get Shortcut) lần lượt theo đúng thứ tự 1 → 5 sau:
 
 1. **`DatHinhNen`** (Đặt hình nền): Nhận ảnh xuất từ LichKhoa qua clipboard và tự động đổi màn hình khóa (Lock Screen).
 2. **`ThemBaoThuc`** (Thêm báo thức): Nhận thông tin từ app để tạo báo thức rung chuông lớn trong app Đồng hồ (Clock), áp dụng cho các mốc trong vòng 24 giờ tới.
@@ -295,7 +295,7 @@ Trong LichKhoa, vào tab **Hướng dẫn** → cuộn đến thẻ số 2: **"C
   - Với `ThemLoiNhac`: chọn danh sách bạn hay dùng (ví dụ: *Lời nhắc* / *Reminders* / *Sẽ làm*).
   - Với `ThemBaoThucNgay`: chọn ĐÚNG danh sách **`BaoThuc`** (hãy chắc chắn bạn đã tạo danh sách này trước như hướng dẫn bên dưới).
 - **Nút "Add Shortcut" không bấm được ở màn "Configure This Shortcut"** (gặp ở iOS 27.0.1): bấm **"Skip Setup"** → phím tắt vẫn được cài nhưng giữ danh sách mặc định trong link → bắt buộc làm bước "Kiểm tra sau khi cài đặt" bên dưới.
-- Danh sách riêng của Chủ dự án đã được Apple xóa sạch khi tạo link chia sẻ, nên câu hỏi Import Question giúp bạn gắn phím tắt vào đúng danh sách trên máy của mình mà không bị lộ dữ liệu cá nhân của người chia sẻ. Nếu khi cài đặt iOS không hiện câu hỏi thì bạn chỉ cần chỉnh tay ở bước kiểm tra bên dưới.
+- Tên danh sách mặc định nằm trong link iCloud công khai (do đó Phím tắt chỉ trỏ tới `BaoThuc` hoặc danh sách tên chung), và câu hỏi Import Question giúp bạn gắn phím tắt vào đúng danh sách trên máy của mình. Nếu khi cài đặt iOS không hiện câu hỏi thì bạn chỉ cần chỉnh tay ở bước kiểm tra bên dưới.
 
 ### Kiểm tra sau khi cài đặt
 Sau khi cài đủ 5 phím tắt, hãy mở app **Shortcuts (Phím tắt)** trên iPhone và kiểm tra 3 điểm quan trọng:
@@ -330,7 +330,7 @@ Với 2 Phím tắt tương tác với Lời nhắc (`ThemLoiNhac` và `ThemBaoT
 - Mở Phím tắt trong app Shortcuts → chạm biểu tượng **ⓘ (Details / Chi tiết)** ở cạnh dưới màn hình.
 - iOS 27: chọn **Details › Import Questions** → thêm câu hỏi (không còn tab Setup; "Customize Shortcut…" mở lại màn Configure để thử). iOS cũ hơn: **Setup (Thiết lập)** → **Add New Question (Thêm câu hỏi mới)**.
 - Chọn tham số danh sách (**List**) của hành động **Add New Reminder (Thêm lời nhắc mới)** (nếu iOS cho phép chọn tham số này trong danh sách thiết lập) → điền câu hỏi hướng dẫn: *"Chọn danh sách Lời nhắc (chọn BaoThuc nếu là ThemBaoThucNgay)"*.
-- *Ý nghĩa*: Khi người dùng khác bấm link cài đặt, iOS sẽ hiển thị câu hỏi này để họ chọn danh sách trên máy họ. Apple sẽ tự động xóa giá trị danh sách trên máy của bạn khi tạo link nên không lo lộ danh sách cá nhân. Nếu iOS không cho phép tạo câu hỏi cho tham số đó, bỏ qua bước này và người dùng sẽ chọn tay theo mục §F.
+- *Ý nghĩa*: Khi người dùng khác bấm link cài đặt, iOS sẽ hiển thị câu hỏi này để họ chọn danh sách trên máy họ. Lưu ý: tên danh sách mặc định vẫn nằm trong link iCloud công khai, do đó Phím tắt chỉ được trỏ tới danh sách `BaoThuc` hoặc danh sách có tên chung, không đặt tên riêng tư. Nếu iOS không cho phép tạo câu hỏi cho tham số đó, bỏ qua bước này và người dùng sẽ chọn tay theo mục §F.
 
 ### 3. Bật iCloud › Phím tắt
 Trên iPhone của Chủ dự án:
@@ -366,7 +366,7 @@ Sau khi nhận 5 liên kết từ Chủ dự án, Quản lý thực hiện:
 - **Thu hồi trên LichKhoa**: Trong file `public/shortcut-links.json`, đặt URL của phím tắt đó về chuỗi rỗng `""` (ví dụ `"wallpaper": { "url": "" }`) rồi push cập nhật. LichKhoa sẽ tự động nhận biết và hiển thị dòng thông báo *"Chưa có link — dựng tay theo các thẻ bên dưới"* (`sc-nolink`), đảm bảo giao diện không bị lỗi.
 
 > 🔒 **Ghi chú về bảo mật**:
-> Tự động hóa (Automation 00:05 hằng ngày) và danh sách Lời nhắc riêng `BaoThuc` **không thể chia sẻ qua link iCloud**. Đây là cơ chế bảo mật của Apple nhằm tránh ứng dụng can thiệp trái phép vào hệ thống của người dùng khác. Do đó, người nhận bắt buộc phải tự tạo danh sách `BaoThuc` và thiết lập Tự động hóa trên máy của họ (theo mục §F và §E.3).
+> Danh sách Lời nhắc riêng `BaoThuc` và cài đặt thông báo không thể chia sẻ qua link iCloud; trên iOS 27, Tự động hóa 00:05 nằm trong Phím tắt và được chia sẻ kèm link nhưng ở trạng thái tắt (phải tự bật bản mới và tắt bản cũ; iOS cũ hơn cần tự tạo). Do đó, người nhận vẫn cần hoàn thiện các bước thiết lập trên máy của họ (theo mục §F và §E.3).
 
 ---
 
@@ -399,12 +399,12 @@ Sau khi nhận 5 liên kết từ Chủ dự án, Quản lý thực hiện:
   - **(g) "Nhạy cảm thời gian" là cài đặt hệ thống**: Tùy chọn Time Sensitive Notifications nằm trong Cài đặt hệ thống của iOS (Cài đặt → Thông báo → Lời nhắc), không thể cấu hình từ trong app. Người dùng bắt buộc phải tự bật thủ công để thông báo không bị chặn bởi chế độ Tập trung.
   - **(h) Yêu cầu tài khoản iCloud và phiên bản iOS**: Máy Chủ dự án phải bật iCloud › Phím tắt (tính năng iCloud Private Sharing cho Phím tắt) mới có thể tạo link chia sẻ `https://www.icloud.com/shortcuts/<32 ký tự hex>`. Người nhận cần iOS 15 trở lên để mở link iCloud (LichKhoa yêu cầu iOS 17+ để chạy đầy đủ các tính năng).
 - Cài bộ Phím tắt bằng link iCloud — chi tiết rủi ro SPEC §8.13 (D-037):
-  - **Link là công khai**: Bất kỳ ai có link đều xem và cài được nội dung Phím tắt (Apple lưu và ký bản sao trên máy chủ iCloud; bản người dùng đã tải về máy không thu hồi từ xa được). Trước khi chia sẻ phải soát kỹ, không để sót Text / thông báo / bình luận / danh sách / liên hệ / vị trí riêng. Các trường có Import Question sẽ được Apple xóa khi chia sẻ. Quản lý dự án cần mở link trên trình duyệt máy tính để xác nhận trang không hiển thị tên thật hoặc email cá nhân của Chủ dự án trước khi đưa vào `public/shortcut-links.json`.
+  - **Link là công khai**: Bất kỳ ai có link đều xem và cài được nội dung Phím tắt (Apple lưu và ký bản sao trên máy chủ iCloud; bản người dùng đã tải về máy không thu hồi từ xa được). Trước khi chia sẻ phải soát kỹ, không để sót Text / thông báo / bình luận / danh sách / liên hệ / vị trí riêng. Tên danh sách mặc định vẫn nằm trong link công khai nên Phím tắt chỉ trỏ tới `BaoThuc` hoặc danh sách tên chung, không đặt danh sách riêng. Quản lý dự án cần mở link trên trình duyệt máy tính để xác nhận trang không hiển thị tên thật hoặc email cá nhân của Chủ dự án trước khi đưa vào `public/shortcut-links.json`.
   - **Link là ảnh chụp tĩnh (snapshot)**: Chỉnh sửa Phím tắt trên iPhone sẽ không tự cập nhật lên link cũ. Muốn phát hành bản mới, Chủ dự án phải Copy iCloud Link lại (sinh link mới) → Quản lý cập nhật vào `public/shortcut-links.json` và cập nhật ngày `updated` → push bản mới. Link cũ vẫn tải bản cũ cho tới khi Chủ dự án bấm "Stop Sharing".
   - **Tham số danh sách Reminders và bộ lọc `List is BaoThuc` không mang sang máy khác**: Tham số danh sách là định danh cục bộ trên máy Chủ dự án; người nhận nếu không có Import Question hoặc bỏ qua câu hỏi thì "Add New Reminder" sẽ ghi vào danh sách mặc định, và `TaoBaoThucSang` không tìm thấy gì (lỗi im lặng không báo). Do đó bước "Kiểm tra sau khi cài" ở §F là bắt buộc.
-  - **Tự động hóa 00:05, danh sách `BaoThuc` và Nhạy cảm thời gian không chia sẻ được**: 4 bước này thuộc về hệ thống và thiết bị của từng người, bắt buộc phải tự làm như đã nêu trong thẻ Hướng dẫn.
+  - **Danh sách `BaoThuc` và Nhạy cảm thời gian không chia sẻ được; Tự động hóa 00:05 cần bật thủ công**: Danh sách và cài đặt thông báo thuộc về thiết bị của từng người; trên iOS 27, Tự động hóa nằm trong Phím tắt và được cài kèm nhưng để tắt (phải bật bản mới và tắt bản cũ; iOS cũ hơn cần tự tạo) — các bước này người dùng phải tự làm như đã nêu trong thẻ Hướng dẫn.
   - **Trùng tên Phím tắt**: Nếu máy đã có phím tắt cùng tên, iOS sẽ tự động đổi tên bản mới thành đuôi " 2" khiến nút bấm trong app gọi sai tên. App chỉ phát hiện lệch giữa tên trong app và tên mặc định, không thể đọc được tên phím tắt thực tế trên máy người dùng.
-  - **Mở link từ PWA standalone**: Link khác origin mở ở trình duyệt trong-app (in-app browser), người dùng có thể phải bấm "Get Shortcut" thêm một lần; nếu cửa sổ trong-app không chuyển tiếp được sang app Phím tắt thì cần nhấn giữ nút, chọn Sao chép liên kết và dán vào Safari.
+  - **Mở link từ PWA standalone**: Thực tế thử nghiệm (iOS 27.0.1) cho thấy bấm nút từ PWA chuyển thẳng sang app Phím tắt, hiện màn hình mô tả để bấm "Add Shortcut"; nếu gặp sự cố không mở được app Phím tắt thì người dùng có thể nhấn giữ nút, chọn Sao chép liên kết và dán vào Safari.
   - **Cần mạng khi cài đặt**: Tải phím tắt qua link iCloud bắt buộc phải có kết nối Internet; file tĩnh `public/shortcut-links.json` không được precache trong Service Worker nên khi offline sẽ hiện thông báo lỗi tải link (`sc-links-error`). Bộ nhớ đệm của GitHub Pages có thể mất tới 10 phút để hiển thị link mới sau khi deploy.
   - **Yêu cầu bật iCloud Phím tắt**: Máy Chủ dự án phải bật iCloud › Phím tắt để tạo link chia sẻ; người nhận cần iOS 15+ (LichKhoa yêu cầu iOS 17+).
 
