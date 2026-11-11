@@ -4,7 +4,7 @@ Nguồn sự thật: `docs/SPEC.md` (v1.5 — D-024 bố cục Tuần; v1.4 — 
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- **Điểm dừng mới nhất: mục "ĐIỂM DỪNG 2026-11-10 (khuya)" cuối file** — cập nhật 2026-11-11: B-023 ✔ DONE; vẫn chờ Chủ dự án `git push` (cần kiểm toán lại trên HEAD mới).
+- **Điểm dừng mới nhất: mục "ĐIỂM DỪNG 2026-11-10 (khuya)" cuối file** — cập nhật 2026-11-11: B-023 ✔ DONE; Cổng bảo mật SẠCH trên 7ba2e29 (`docs/test-log/bao-mat-7ba2e29.log`) → chờ Chủ dự án `git push` (18 commit).
 - **Làn Gemini: VỪA** (Chủ dự án 2026-11-10) · AGY_FORMAT=text (stream-json không tách được trên máy này → script đo hoạt động chủ yếu qua file thay đổi)
 - **Vòng 4 Argon: BẬT** · **Vòng 5 Sonnet qua agy: BẬT** (mặc định kit v5.3, đang chạy thử)
 - **Bộ quy trình: ai-team-kit v5.3** (nâng từ v2.1 ngày 2026-11-10, D-039) — Cổng bảo mật + quy tắc D-012 giữ trong CLAUDE.md.

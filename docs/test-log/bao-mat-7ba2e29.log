@@ -1,0 +1,65 @@
+# Kiểm toán bảo mật — commit 7ba2e29 — 2026-11-11 — phạm vi origin/main..HEAD (40c9c04..7ba2e29), 17 commit
+## File thay đổi
+M	.claude/agents/khao-sat.md
+M	.claude/agents/kiem-thu.md
+M	.claude/agents/kien-truc-su.md
+M	.claude/agents/quan-ly.md
+M	.claude/agents/sua-loi.md
+M	.claude/agents/tho-gemini.md
+M	.claude/agents/tho-haiku.md
+M	.claude/agents/tho-opus.md
+M	.claude/agents/tho-sonnet.md
+M	.claude/settings.json
+M	.gitignore
+M	AGENTS.md
+M	CLAUDE.md
+M	README.md
+M	docs/BAI-HOC.md
+M	docs/DECISIONS.md
+M	docs/HUONG-DAN.md
+M	docs/LAN-GEMINI.md
+M	docs/SPEC.md
+M	docs/SU-CO.md
+M	docs/TASKS.md
+A	docs/bao-cao/M10.md
+A	docs/gemini-out/B-023.md
+A	docs/tasks/B-023.md
+A	docs/tasks/SC-006-doc.md
+M	docs/tasks/_MAU-CODE.md
+A	docs/tasks/_MAU-Y-TUONG.md
+A	docs/test-log/B-021-check.log
+A	docs/test-log/B-022-check.log
+A	docs/test-log/B-022-rerun.log
+A	docs/test-log/B-023-check.log
+A	docs/test-log/B-023-e2e.log
+A	docs/test-log/B-023-unit.log
+A	docs/test-log/SC-006-check.log
+A	docs/test-log/SC-006-check2.log
+A	docs/test-log/SC-006-kiemthu-3test.log
+A	docs/test-log/SC-006-kiemthu-check.log
+A	docs/test-log/SC-006-m10.log
+A	docs/test-log/SC-006-repeat5-b.log
+A	docs/test-log/SC-006-repeat5.log
+A	docs/test-log/SC-006-repro.log
+A	docs/test-log/SC-006-stress.log
+A	docs/test-log/bao-mat-ec1bbdc.log
+A	docs/y-tuong/.gitkeep
+M	scripts/agy-run.sh
+M	scripts/gemini.env
+M	scripts/test-agy-song.sh
+M	src/core/i18n/en.json
+M	src/core/i18n/vi.json
+M	tests/e2e/m10-install.spec.ts
+M	tests/e2e/m6-todo-gestures.spec.ts
+M	tests/e2e/notes.spec.ts
+M	tests/e2e/persist-flush.spec.ts
+M	tests/e2e/todo-gestures.spec.ts
+M	tests/e2e/todo-touch.spec.ts
+A	tests/unit/e2e-wait-guard.test.ts
+## Kết quả 5 nhóm
+- Nhóm 1 (bí mật): mẫu client_secret/PRIVATE KEY/token/api_key/password/Bearer/service_account/ghp_/github_pat_/AIza trên dòng thêm: chỉ nhắc chữ trong tài liệu, test khẳng định "không chứa client_secret", .gitignore, và log kiểm toán cũ. Chuỗi dài ≥40: đường dẫn test, dòng "=====", URL bài viết — không bí mật. SẠCH.
+- Nhóm 2 (file cấm): không .env/.pem/.p12/.key/JSON sao lưu. Ảnh trong kho: icon public, fixture tổng hợp, ảnh test-log cũ (đã soát ở d6c7bec) — không ảnh mới trong phạm vi. SẠCH.
+- Nhóm 3 (PII): đường dẫn home trong log mới đã che thành "~" (26 chỗ, 0 chỗ còn tên tài khoản máy); không email/sđt (khớp số 11 chữ số = mã Actions run). Tác giả + người commit cả 17 commit: email ẩn noreply; commit message không chứa tên tài khoản/email. SẠCH.
+- Nhóm 4 (cấu hình): diff không đụng .github/, vite.config, manifest, service worker, public/. SẠCH.
+- Nhóm 5 (phụ thuộc): package.json/package-lock.json không đổi. SẠCH.
+## KẾT LUẬN: SẠCH — được đề nghị Chủ dự án git push (commit sau chỉ thêm log này).
