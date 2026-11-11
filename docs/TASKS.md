@@ -4,7 +4,7 @@ Nguồn sự thật: `docs/SPEC.md` (v1.5 — D-024 bố cục Tuần; v1.4 — 
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- **Điểm dừng mới nhất: mục "ĐIỂM DỪNG 2026-11-10 (khuya)" cuối file** — cập nhật 2026-11-11: B-023 ✔ DONE; Cổng bảo mật SẠCH trên 7ba2e29 (`docs/test-log/bao-mat-7ba2e29.log`) → chờ Chủ dự án `git push` (18 commit).
+- **Điểm dừng mới nhất: mục "DUYỆT M10 — PHÁN QUYẾT SỬA nhỏ (D-041)" cuối file** (2026-11-11: đã deploy c497607; B-024 → B-025 → tag `M10-ok`).
 - **Làn Gemini: VỪA** (Chủ dự án 2026-11-10) · AGY_FORMAT=text (stream-json không tách được trên máy này → script đo hoạt động chủ yếu qua file thay đổi)
 - **Vòng 4 Argon: BẬT** · **Vòng 5 Sonnet qua agy: BẬT** (mặc định kit v5.3, đang chạy thử)
 - **Bộ quy trình: ai-team-kit v5.3** (nâng từ v2.1 ngày 2026-11-10, D-039) — Cổng bảo mật + quy tắc D-012 giữ trong CLAUDE.md.
@@ -1387,3 +1387,29 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - **Sau push**: kiểm Actions run + trang 200 → điền `docs/bao-cao/M10.md` (SC-006, D-040, B-022, I4 hoãn) → Kiến trúc sư DUYỆT MILESTONE (soát chéo `M10-soat` đã có, T-10.5) → `git tag M10-ok` (Chủ dự án push tag).
 - **Rồi**: B-023 (S3, phiếu ở trên) → tho-gemini làn code (bảo trì S3). Nhắc thợ: log trong `docs/test-log/` phải che `$HOME` thành `~` trước commit (BAI-HOC).
 - **Ghi nhớ hạ tầng**: `agy-run.sh huy` hỏng khi PID 0; trên Windows `huy` giết mọi `agy.exe` (ảnh hưởng dự án khác chạy song song); trạng thái model nghỉ lưu theo từng dự án. Chủ dự án hỏi chạy 2 dự án song song → đã trả lời; phiếu sửa script chỉ làm khi Chủ dự án yêu cầu.
+
+### DUYỆT M10 — PHÁN QUYẾT SỬA nhỏ (D-041, 2026-11-11) — đọc mục này đầu tiên ở phiên sau
+- Đã deploy c497607 (2026-11-11, Actions run 42946848720 success, trang 200). Kiến trúc sư: `src/` không lỗi; sửa 2 phiếu rồi Quản lý tự gắn `M10-ok` (không gọi lại KTS, không cần deploy lại vì sản phẩm; push sau vẫn qua Cổng bảo mật).
+- Thứ tự: B-024 → B-025 (tho-gemini, tuần tự) → `git tag M10-ok` → Chủ dự án push (commit + tag).
+
+### B-024 — E2E M10: kịch bản (5) pass rỗng + (1) thiếu assert thẻ `a` (S3, D-041)
+- Mục tiêu: assert cuối kịch bản (5) thật sự kiểm "reset → hết cảnh báo lệch tên"; kịch bản (1) khẳng định 5 nút Tải là thẻ `A`.
+- Phạm vi file: `tests/e2e/m10-install.spec.ts` (chỉ kịch bản (1) dòng ~68 và (5) dòng ~200–226).
+- Giao diện có sẵn: 5 hàng chỉ dựng sau khi tải xong JSON (`src/ui/screens/Guide.tsx:33`, `:107`); testid hàng `sc-install-alarm` (và các `sc-install-*`); cảnh báo `[data-testid^="sc-name-mismatch-"]`.
+- Tiêu chí nghiệm thu: [ ] (5): sau khi bấm lại `tab-guide`, chờ `sc-install-alarm` hiện (`toBeVisible`) RỒI mới `expect(locator('[data-testid^="sc-name-mismatch-"]')).toHaveCount(0)` [ ] (1): thêm `toHaveJSProperty('tagName', 'A')` cho cả 5 nút Tải [ ] không bớt/nới assert nào khác, không skip, không thêm retries [ ] đột biến (Quản lý làm lúc review): bỏ 2 dòng bấm `shortcut-names-reset` + `toHaveValue('ThemBaoThuc')` → (5) FAIL ở assert cuối trên cả chromium và webkit [ ] lệnh kiểm tra pass.
+- Lệnh kiểm tra: `npm run build && npx playwright test tests/e2e/m10-install.spec.ts --repeat-each=5` (60/60) ; `npm run check` (kiem-thu).
+- Model: gemini (code, bảo trì S3) · Lần thử: 0/3 · Vòng Gemini: 0/5 · Trạng thái: TODO
+
+### B-025 — HUONG-DAN: bỏ lời bảo đảm sai "Apple xóa danh sách khi chia sẻ" + đồng bộ sau B-022 (S3, D-041)
+- Mục tiêu: hướng dẫn nói đúng: tên danh sách mặc định NẰM TRONG link iCloud công khai → Phím tắt chỉ trỏ tới `BaoThuc` hoặc danh sách tên chung; các dòng còn giả định trước thử tay khớp SPEC §8.13(d)(f) sau B-022.
+- Phạm vi file: `docs/HUONG-DAN.md` (chỉ dòng ~279, 298, 333, 369, 402, 405, 407 và câu liền kề cần cho mạch văn).
+- Giao diện có sẵn: D-041 (docs/DECISIONS.md) mục (2); SPEC §8.13(d)(f), §10.G.2; tên thẻ thật trong app: "Cài nhanh bộ Phím tắt"; trên iOS 27 tự động hóa nằm TRONG Phím tắt (chia sẻ kèm link, phải tắt bản `_cu` và bật bản mới); link mở thẳng app Phím tắt (không phải trình duyệt trong-app).
+- Tiêu chí nghiệm thu: [ ] `grep -c -E 'xóa sạch|tự động xóa giá trị|sẽ được Apple xóa' docs/HUONG-DAN.md` = 0 [ ] :279 dùng đúng tên thẻ "Cài nhanh bộ Phím tắt" [ ] :369/:405/:407 không còn "Tự động hóa không chia sẻ được" / "mở ở trình duyệt trong-app" [ ] §E không đổi (`git diff` không chạm khối §E) [ ] không thêm tên thật/email/danh sách riêng của Chủ dự án.
+- Lệnh kiểm tra: `test "$(grep -c -E 'xóa sạch|tự động xóa giá trị|sẽ được Apple xóa' docs/HUONG-DAN.md)" = 0 && ! grep -nE 'Tự động hóa không chia sẻ được|trình duyệt trong-app' docs/HUONG-DAN.md && npm run check`
+- Model: gemini (code/tài liệu) · Lần thử: 0/3 · Vòng Gemini: 0/5 · Trạng thái: TODO
+
+### Tồn đọng S4 · M10 (D-041)
+- I4 (cài trên máy thứ hai) hoãn — GIỚI HẠN ĐÃ BIẾT số 1 của M10. Khi làm, ghi: Phím tắt nào hiện màn Configure, "Add Shortcut" bấm được không, sau "Skip Setup" ô List của `ThemLoiNhac`/`ThemBaoThucNgay` và bộ lọc `TaoBaoThucSang` trỏ vào đâu, khối Automation bật hay tắt.
+- Guard `tests/unit/e2e-wait-guard.test.ts` chưa bắt predicate `async` và chưa có ca tự kiểm hàm dò.
+- E2E lượt đầu nguội máy đôi khi timeout 30 s (không thêm `retries` — che regression).
+- `docs/bao-cao/M10.md` mục I1 ghi `ThemBaoThuc` có màn Configure "List = BaoThuc" trong khi I0/I2 nói `ThemBaoThucNgay` → Quản lý đối chiếu ảnh / hỏi Chủ dự án rồi sửa.
