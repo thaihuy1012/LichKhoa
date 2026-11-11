@@ -1398,7 +1398,7 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - Giao diện có sẵn: 5 hàng chỉ dựng sau khi tải xong JSON (`src/ui/screens/Guide.tsx:33`, `:107`); testid hàng `sc-install-alarm` (và các `sc-install-*`); cảnh báo `[data-testid^="sc-name-mismatch-"]`.
 - Tiêu chí nghiệm thu: [ ] (5): sau khi bấm lại `tab-guide`, chờ `sc-install-alarm` hiện (`toBeVisible`) RỒI mới `expect(locator('[data-testid^="sc-name-mismatch-"]')).toHaveCount(0)` [ ] (1): thêm `toHaveJSProperty('tagName', 'A')` cho cả 5 nút Tải [ ] không bớt/nới assert nào khác, không skip, không thêm retries [ ] đột biến (Quản lý làm lúc review): bỏ 2 dòng bấm `shortcut-names-reset` + `toHaveValue('ThemBaoThuc')` → (5) FAIL ở assert cuối trên cả chromium và webkit [ ] lệnh kiểm tra pass.
 - Lệnh kiểm tra: `npm run build && npx playwright test tests/e2e/m10-install.spec.ts --repeat-each=5` (60/60) ; `npm run check` (kiem-thu).
-- Model: gemini (code, bảo trì S3) · Lần thử: 0/3 · Vòng Gemini: 0/5 · Trạng thái: TODO
+- Model: gemini (code, bảo trì S3) · Lần thử: 0/3 · Vòng Gemini: 1/5 · Trạng thái: DOING (2026-11-11)
 
 ### B-025 — HUONG-DAN: bỏ lời bảo đảm sai "Apple xóa danh sách khi chia sẻ" + đồng bộ sau B-022 (S3, D-041)
 - Mục tiêu: hướng dẫn nói đúng: tên danh sách mặc định NẰM TRONG link iCloud công khai → Phím tắt chỉ trỏ tới `BaoThuc` hoặc danh sách tên chung; các dòng còn giả định trước thử tay khớp SPEC §8.13(d)(f) sau B-022.
