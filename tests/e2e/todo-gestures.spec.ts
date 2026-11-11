@@ -25,27 +25,32 @@ async function addTodo(page: import('@playwright/test').Page, text: string) {
  * chạy xong -> đây là race của TEST (gọi reload sớm), không phải mất dữ liệu thật (app không tự
  * reload). Chờ đúng thứ tự đã lưu (đọc thẳng IndexedDB, không sleep cố định) trước khi reload. */
 async function waitForPersistedTodoOrder(page: import('@playwright/test').Page, expectedTexts: string[]) {
-  await page.waitForFunction(
-    (expected) =>
-      new Promise<boolean>((resolve) => {
-        const req = indexedDB.open('keyval-store');
-        req.onerror = () => resolve(false);
-        req.onsuccess = () => {
-          const tx = req.result.transaction('keyval', 'readonly');
-          const getReq = tx.objectStore('keyval').get('lichkhoa:state');
-          getReq.onerror = () => resolve(false);
-          getReq.onsuccess = () => {
-            const state = getReq.result as { todos?: { text: string; order: number }[] } | undefined;
-            req.result.close();
-            if (!state?.todos) return resolve(false);
-            const order = [...state.todos].sort((a, b) => a.order - b.order).map((t) => t.text);
-            resolve(JSON.stringify(order) === JSON.stringify(expected));
-          };
-        };
-      }),
-    expectedTexts,
-    { timeout: 5000 },
-  );
+  await expect
+    .poll(
+      () =>
+        page.evaluate(
+          (expected) =>
+            new Promise<boolean>((resolve) => {
+              const req = indexedDB.open('keyval-store');
+              req.onerror = () => resolve(false);
+              req.onsuccess = () => {
+                const tx = req.result.transaction('keyval', 'readonly');
+                const getReq = tx.objectStore('keyval').get('lichkhoa:state');
+                getReq.onerror = () => resolve(false);
+                getReq.onsuccess = () => {
+                  const state = getReq.result as { todos?: { text: string; order: number }[] } | undefined;
+                  req.result.close();
+                  if (!state?.todos) return resolve(false);
+                  const order = [...state.todos].sort((a, b) => a.order - b.order).map((t) => t.text);
+                  resolve(JSON.stringify(order) === JSON.stringify(expected));
+                };
+              };
+            }),
+          expectedTexts,
+        ),
+      { timeout: 5000 },
+    )
+    .toBe(true);
 }
 
 /** Vuốt trái một hàng (chuột/pointer): đủ xa để mở hẳn (>40% panel).

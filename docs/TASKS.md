@@ -4,7 +4,7 @@ Nguồn sự thật: `docs/SPEC.md` (v1.5 — D-024 bố cục Tuần; v1.4 — 
 Lệnh test tổng: `npm run check` (tại `E:\DuAn\thu-nghiem`, PowerShell).
 
 ## Tiến độ
-- **Điểm dừng mới nhất: mục "ĐIỂM DỪNG 2026-11-10 (khuya)" cuối file.**
+- **Điểm dừng mới nhất: mục "ĐIỂM DỪNG 2026-11-10 (khuya)" cuối file** — cập nhật 2026-11-11: B-023 ✔ DONE; vẫn chờ Chủ dự án `git push` (cần kiểm toán lại trên HEAD mới).
 - **Làn Gemini: VỪA** (Chủ dự án 2026-11-10) · AGY_FORMAT=text (stream-json không tách được trên máy này → script đo hoạt động chủ yếu qua file thay đổi)
 - **Vòng 4 Argon: BẬT** · **Vòng 5 Sonnet qua agy: BẬT** (mặc định kit v5.3, đang chạy thử)
 - **Bộ quy trình: ai-team-kit v5.3** (nâng từ v2.1 ngày 2026-11-10, D-039) — Cổng bảo mật + quy tắc D-012 giữ trong CLAUDE.md.
@@ -1378,7 +1378,7 @@ Nguồn chuẩn: SPEC §6 M10 (Nội dung, Phiếu, Tiêu chí, Thử tay I0–I
 - Giao diện có sẵn: mẫu `expect.poll(() => page.evaluate(...), { timeout }).toBe(true)` ở `tests/e2e/m6-todo-gestures.spec.ts:38–71`; mẫu guard đọc file bằng `fs` ở `tests/unit/store-subscribe-guard.test.ts`.
 - Tiêu chí nghiệm thu: [ ] hai helper đổi sang `expect.poll(page.evaluate…)`, giữ nguyên logic so và tham số `timeout` (persist-flush vẫn 150 ms) [ ] không đổi/bớt assert nào khác, không skip, không nới timeout [ ] unit guard mới: quét `tests/e2e/*.ts`, fail nếu có `waitForFunction(` mà hàm truyền vào trả `new Promise` [ ] kiểm đột biến bằng tay: tạm bỏ flush ở pagehide → `persist-flush` phải fail (không commit đột biến) [ ] lệnh kiểm tra pass.
 - Lệnh kiểm tra: `npx vitest run tests/unit/e2e-wait-guard.test.ts` ; `npm run build && npx playwright test tests/e2e/persist-flush.spec.ts tests/e2e/todo-gestures.spec.ts --repeat-each=5` ; `npm run check` (kiem-thu).
-- Model: gemini (code, bảo trì S3) · Lần thử: 0/3 · Vòng Gemini: 1/5 · Trạng thái: DOING (2026-11-11, làm trong lúc chờ Chủ dự án push; đột biến tay do Quản lý làm lúc review)
+- Model: gemini (code, bảo trì S3) · Lần thử: 0/3 · Vòng Gemini: 1/5 · Trạng thái: DONE (2026-11-11, Gemini Flash vòng 1; guard fail trên code cũ ✔; kiem-thu PASS: vitest 338, e2e 134/14 skip; đột biến bỏ listener pagehide → test pagehide fail cả chromium+webkit ✔, đã hoàn tác)
 
 ### ĐIỂM DỪNG 2026-11-10 (khuya) — ĐỌC ĐẦU TIÊN Ở PHIÊN SAU
 - **Trạng thái**: KHÔNG sự cố mở (SC-006 ĐÃ ĐÓNG). Không phiếu DOING. Cây git sạch. Không lượt Gemini nào chạy. Làn Gemini: VỪA (Chủ dự án) · Vòng 4 Argon: BẬT · Vòng 5: BẬT.

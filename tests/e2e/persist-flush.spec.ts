@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 /** B-006: Ghi ngay dữ liệu chờ khi app bị ẩn/đóng (pagehide, visibilitychange=hidden). */
 
@@ -14,26 +14,31 @@ async function addTodo(page: import('@playwright/test').Page, text: string) {
 
 /** Đọc IndexedDB (keyval-store, key lichkhoa:state), chờ việc xuất hiện trong vòng timeout ms. */
 async function waitForPersistedTodo(page: import('@playwright/test').Page, expectedText: string, timeout = 150) {
-  await page.waitForFunction(
-    (expected) =>
-      new Promise<boolean>((resolve) => {
-        const req = indexedDB.open('keyval-store');
-        req.onerror = () => resolve(false);
-        req.onsuccess = () => {
-          const tx = req.result.transaction('keyval', 'readonly');
-          const getReq = tx.objectStore('keyval').get('lichkhoa:state');
-          getReq.onerror = () => resolve(false);
-          getReq.onsuccess = () => {
-            const state = getReq.result as { todos?: { text: string }[] } | undefined;
-            req.result.close();
-            if (!state?.todos) return resolve(false);
-            resolve(state.todos.some((t) => t.text === expected));
-          };
-        };
-      }),
-    expectedText,
-    { timeout, polling: 10 },
-  );
+  await expect
+    .poll(
+      () =>
+        page.evaluate(
+          (expected) =>
+            new Promise<boolean>((resolve) => {
+              const req = indexedDB.open('keyval-store');
+              req.onerror = () => resolve(false);
+              req.onsuccess = () => {
+                const tx = req.result.transaction('keyval', 'readonly');
+                const getReq = tx.objectStore('keyval').get('lichkhoa:state');
+                getReq.onerror = () => resolve(false);
+                getReq.onsuccess = () => {
+                  const state = getReq.result as { todos?: { text: string }[] } | undefined;
+                  req.result.close();
+                  if (!state?.todos) return resolve(false);
+                  resolve(state.todos.some((t) => t.text === expected));
+                };
+              };
+            }),
+          expectedText,
+        ),
+      { timeout },
+    )
+    .toBe(true);
 }
 
 test('pagehide: ghi ngay việc cần làm đang chờ vào IndexedDB trong vòng 150 ms', async ({ page }) => {

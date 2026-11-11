@@ -1,0 +1,9 @@
+
+ RUN  v5.0.0 ~/Developer/LICH-KHOA/thu-nghiem
+
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  09:07:02
+   Duration  61ms (transform 44%, tests 34%, import 17%, worker 6%)
+
